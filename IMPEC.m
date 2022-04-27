@@ -77,85 +77,33 @@ else
         order*ones(elemsize,1),'i',1,normk);
 end
 
-%Chose the type of MPFA according "pmethod"
-%Traditional Two-Point Flux Approximation (TPFA), Aziz and Set. (1979)
 if numcase~=246 && numcase~=246 && numcase~=247 && numcase~=248 && numcase~=249 && numcase~=250
     if strcmp(pmethod,'tpfa') && numcase~=31.1
         
         %Get "pressure" and "flowrate"
         [pressure,flowrateadvec,flowresult] = solvePressure_TPFA(Kde, Kn, nflag, Hesq,wells);
-        if numcase==231 || numcase==232 || numcase==243
-            velmedio=1;
-        elseif numcase==233
-            velmedio=0.5; % quando a pessão no contorno é 5
-        elseif numcase==234
-            velmedio=1;   % quando a pressão no contorno é 10
-        elseif numcase==235
-            velmedio=2;    % quando a pressão no contorno é 15
-        elseif numcase==236 || numcase==237 || numcase==238 || numcase==239 || numcase==241 || numcase==242 || numcase==244
-            velmedio=1;
-        end
+      
         %MPFA-D (Gao and Wu, 2010)
     elseif strcmp(pmethod,'mpfad') &&  numcase~=31.1
         
         %Calculate "pressure", "flowrate" and "flowresult"
         [pressure,flowrateadvec,flowresult] = ferncodes_solverpressure(kmap,...
             1,wells,Con,V,N,Hesq,Kde,Kn,Kt,Ded,nflag);
-        if numcase==231 || numcase==232 || numcase==243
-            velmedio=1;
-        elseif numcase==233
-            velmedio=0.5; % quando a pessão no contorno é 5
-        elseif numcase==234
-            velmedio=1;   % quando a pressão no contorno é 10
-        elseif numcase==235
-            velmedio=2;    % quando a pressão no contorno é 15
-        elseif numcase==236 || numcase==237 || numcase==238 || numcase==239 || numcase==241 || numcase==242 || numcase==244
-            velmedio=1;
-        end
+       
     elseif strcmp(pmethod,'mpfaql')
         [pressure,flowrateadvec,flowresult]=ferncodes_solverpressureMPFAQL(nflag,...
             parameter,kmap,weightDMP,wells,1,V,Con,N);
-        if numcase==231 || numcase==232 || numcase==243
-            velmedio=1;
-        elseif numcase==233
-            velmedio=0.5; % quando a pessão no contorno é 5
-        elseif numcase==234
-            velmedio=1;   % quando a pressão no contorno é 10
-        elseif numcase==235
-            velmedio=2;    % quando a pressão no contorno é 15
-        elseif numcase==236 || numcase==237 || numcase==238 || numcase==239 || numcase==241 || numcase==242 || numcase==244
-            velmedio=1;
-        end
+       
     elseif strcmp(pmethod,'mpfah')
         
         [pressure,flowrateadvec,flowresult]=ferncodes_solverpressureMPFAH(nflagface,...
             parameter,weightDMP,wells);
-        if numcase==231 || numcase==232 || numcase==243
-            velmedio=1;
-        elseif numcase==233
-            velmedio=0.5; % quando a pessão no contorno é 5
-        elseif numcase==234
-            velmedio=1;   % quando a pressão no contorno é 10
-        elseif numcase==235
-            velmedio=2;    % quando a pressão no contorno é 15
-        elseif numcase==236 || numcase==237 || numcase==238 || numcase==239 || numcase==241 || numcase==242 || numcase==244|| numcase==245
-            velmedio=1;
-        end
+       
     elseif strcmp(pmethod,'nlfvpp')
         
         [pressure,flowrateadvec,flowresult]=ferncodes_solverpressureNLFVPP(nflag,...
             parameter,kmap,wells,1,V,Con,N,p_old,contnorm);
-        if numcase==231 || numcase==232 || numcase==243
-            velmedio=1;
-        elseif numcase==233
-            velmedio=0.5; % quando a pessão no contorno é 5
-        elseif numcase==234
-            velmedio=1;   % quando a pressão no contorno é 10
-        elseif numcase==235
-            velmedio=2;    % quando a pressão no contorno é 15
-        else 
-            velmedio=1;
-        end
+        
         %Any other type of scheme to solve the Pressure Equation
     elseif strcmp(pmethod,'nlfvh')&& numcase~=31.1 % revisar com cuidado
         
@@ -174,22 +122,29 @@ if numcase~=246 && numcase~=246 && numcase~=247 && numcase~=248 && numcase~=249 
             bodyterm);
     end  %End of IF (type of pressure solver)
 end
-
-
 %It switches according to "interptype"
 switch char(interptype)
     %LPEW 1
     case 'lpew1'
         % calculo dos pesos que correspondem ao LPEW1
-        [wight,s] = ferncodes_Pre_LPEW_1(kmap,1,V,Sw,N);
+        [weight,s] = ferncodes_Pre_LPEW_1(kmap,1,V,Sw,N);
         %LPEW 2
     case 'lpew2'
         % calculo dos pesos que correspondem ao LPEW2
-        [wight,s] = ferncodes_Pre_LPEW_2(kmap,N);
+        [weight,s] = ferncodes_Pre_LPEW_2(kmap,N);
         
 end  %End of SWITCH
 
-
+if numcase==233
+    velmedio=0.5; % quando a pessão no contorno é 5
+elseif numcase==235
+    velmedio=2;    % quando a pressão no contorno é 15
+elseif numcase==231 || numcase==232 || numcase==243 || ...
+        numcase==236 || numcase==237 || numcase==238 ||...
+        numcase==239 || numcase==241 || numcase==242 ||...
+        numcase==244  || numcase==234|| numcase==233 || numcase==248
+    velmedio=1;
+end
 
 q=zeros(size(elem,1),1);
 while stopcriteria < 100
@@ -205,18 +160,18 @@ while stopcriteria < 100
     if numcase==246 || numcase==245 || numcase==247 || numcase==248 || numcase==249 || numcase==250
         [viscosity] = ferncodes_getviscosity(satinbound,injecelem,Con,earlysw,smethod,...
             timelevel,numcase,Sleft,Sright,c,overedgecoord,nflagc,nflagfacec);
-        % calculo da pressão e fluxo 
+        % calculo da pressão e fluxo
+    if strcmp(pmethod,'nlfvpp')    
         [pressure,flowrateadvec,flowresult,flowratedif]=ferncodes_solverpressureNLFVPP(nflag,...
-            parameter,kmap,wells,viscosity,V,Con,N,p_old,contnorm,wight,s,Con,nflagc,wightc,sc,dparameter);
-        
-        if numcase==233
-            velmedio=0.5; % quando a pessão no contorno é 5
-        elseif numcase==235
-            velmedio=2;    % quando a pressão no contorno é 15
-        else
-            velmedio=1;
-        end
- 
+            parameter,kmap,wells,viscosity,V,Con,N,p_old,contnorm,weight,s,Con,nflagc,wightc,sc,dparameter);
+    elseif strcmp(pmethod,'mpfad')
+       [pressure,flowrateadvec,flowresult,flowratedif] = ferncodes_solverpressure(...
+            viscosity,wells,Hesq,Kde,Kn,Kt,Ded,nflag,weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc); 
+    else
+       [pressure,flowrateadvec,flowresult] = solvePressure_TPFA(transmvecleft,...
+            knownvecleft,viscosity,wells,Fg,bodyterm,Con);  
+    end
+       
     end
     
     %----------------------------------------------------------------------
