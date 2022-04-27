@@ -4,7 +4,7 @@ function [M,I] = ferncodes_globalmatrix(w,s,Kde,Ded,Kn,Kt,Hesq,viscosity,...
     nflag)
 %Define global variables:
 global coord elem esurn1 esurn2 bedge inedge centelem bcflag ...
-    phasekey;
+    phasekey numcase;
 
 %-----------------------inicio da rOtina ----------------------------------%
 %Constrói a matriz global.
@@ -21,13 +21,12 @@ I = zeros(size(elem,1),1);
 for ifacont = 1:bedgesize
     %Define "mobonface" (for "bedge")
     %It is a One-phase flow. In this case, "mobility" is "1"
-    if phasekey == 1
-        visonface = viscosity;
-    %It is a Two-phase flow
+    if numcase == 246 || numcase == 245 || numcase==247 || numcase==248 || numcase==249
+        % vicosity on the boundary edge
+        visonface = viscosity(ifacont,:);
+        %It is a Two-phase flow
     else
-        %"mobonface" receivees the summation of water and oil
-        %mobilities (came from "IMPES" - Marcio's code modification)
-        visonface = sum(viscosity(ifacont,:));
+        visonface = 1;
     end  %End of IF
         
     %Get element on the left:
@@ -70,15 +69,12 @@ end  %End of FOR
 
 % contribuição nas faces internas
 for iface = 1:inedgesize
-    %Define "mobonface" (for "inedge")
-    %It is a One-phase flow
-    if phasekey == 1
-        visonface = viscosity;
-    %It is a Two-phase flow
+    if numcase == 246 || numcase == 245 || numcase==247 || numcase==248 || numcase==249
+        % vicosity on the boundary edge
+        visonface = viscosity(bedgesize + iface,:);
+        %It is a Two-phase flow
     else
-        %"mobonface" receivees the summation of water and oil
-        %mobilities (came from "IMPES" - Marcio's code modification)
-        visonface = sum(viscosity(bedgesize + iface,:));
+        visonface = 1;
     end  %End of IF
 
     % pressão prescrita no elemento do poço injetor
