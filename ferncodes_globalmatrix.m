@@ -1,6 +1,6 @@
 %It is called by "ferncodes_solvepressure.m"
 
-function [M,I] = ferncodes_globalmatrix(w,s,Kde,Ded,Kn,Kt,Hesq,...
+function [M,I] = ferncodes_globalmatrix(w,s,Kde,Ded,Kn,Kt,Hesq,viscosity,...
     nflag)
 %Define global variables:
 global coord elem esurn1 esurn2 bedge inedge centelem bcflag ...
@@ -17,22 +17,19 @@ inedgesize = size(inedge,1);
 M = sparse(size(elem,1),size(elem,1)); %Prealocação de M.
 I = zeros(size(elem,1),1);
 
-% % contribuição dos poços
-% if max(wells)~=0
-%     sumvol=0;
-%     for iw = 1:size(wells,1)
-%         
-%         if wells(iw,2)==1            % injetor
-%             I(wells(iw,1))= 1*elemarea(wells(iw,1));        % injeta um m3 de agua por dia (d)
-%             sumvol = sumvol + elemarea(wells(iw,1));
-%         end
-%     end
-%     I = I./sumvol;
-% else
-    
 %Evaluate "bedge"
 for ifacont = 1:bedgesize
-            
+    %Define "mobonface" (for "bedge")
+    %It is a One-phase flow. In this case, "mobility" is "1"
+    if phasekey == 1
+        visonface = viscosity;
+    %It is a Two-phase flow
+    else
+        %"mobonface" receivees the summation of water and oil
+        %mobilities (came from "IMPES" - Marcio's code modification)
+        visonface = sum(viscosity(ifacont,:));
+    end  %End of IF
+        
     %Get element on the left:
     lef = bedge(ifacont,3);
     %Get another parameters:
@@ -55,12 +52,12 @@ for ifacont = 1:bedgesize
         %Preenchimento
         
         M(bedge(ifacont,3),bedge(ifacont,3)) = M(bedge(ifacont,3),...
-            bedge(ifacont,3)) - A*(norm(v0)^2);
+            bedge(ifacont,3)) - visonface*A*(norm(v0)^2);
             
         %!!!!!!!!!!!!!!!!!!!!Vericar no monofásico o sinal
         I(bedge(ifacont,3)) = I(bedge(ifacont,3)) - ...
-            (dot(v2,-v0)*c1 + dot(v1,v0)*c2)*A + ...
-            (c2 - c1)*Kt(ifacont); 
+            visonface*(dot(v2,-v0)*c1 + dot(v1,v0)*c2)*A + ...
+            visonface*(c2 - c1)*Kt(ifacont); 
             
     %Neumann boundary
     else
@@ -73,47 +70,57 @@ end  %End of FOR
 
 % contribuição nas faces internas
 for iface = 1:inedgesize
-    
+    %Define "mobonface" (for "inedge")
+    %It is a One-phase flow
+    if phasekey == 1
+        visonface = viscosity;
+    %It is a Two-phase flow
+    else
+        %"mobonface" receivees the summation of water and oil
+        %mobilities (came from "IMPES" - Marcio's code modification)
+        visonface = sum(viscosity(bedgesize + iface,:));
+    end  %End of IF
+
     % pressão prescrita no elemento do poço injetor
     %Contabiliza as contribuições do fluxo numa aresta para os elementos %
     %a direita e a esquerda dela.                                        %
     
     M(inedge(iface,3),inedge(iface,3)) = ...
-        M(inedge(iface,3),inedge(iface,3)) - Kde(iface);
+        M(inedge(iface,3),inedge(iface,3)) - visonface*Kde(iface);
     M(inedge(iface,3),inedge(iface,4)) = ...
-        M(inedge(iface,3),inedge(iface,4)) + Kde(iface);
+        M(inedge(iface,3),inedge(iface,4)) + visonface*Kde(iface);
     M(inedge(iface,4),inedge(iface,4)) = ...
-        M(inedge(iface,4), inedge(iface,4)) - Kde(iface);
+        M(inedge(iface,4), inedge(iface,4)) - visonface*Kde(iface);
     M(inedge(iface,4),inedge(iface,3)) = ...
-        M(inedge(iface,4), inedge(iface,3)) + Kde(iface);
+        M(inedge(iface,4), inedge(iface,3)) + visonface*Kde(iface);
     
     if nflag(inedge(iface,1),1) < 200
-        I(inedge(iface,3)) = I(inedge(iface,3)) - Kde(iface)*...
+        I(inedge(iface,3)) = I(inedge(iface,3)) - visonface*Kde(iface)*...
             Ded(iface)*nflag(inedge(iface,1),2);
-        I(inedge(iface,4)) = I(inedge(iface,4)) + Kde(iface)*...
+        I(inedge(iface,4)) = I(inedge(iface,4)) + visonface*Kde(iface)*...
             Ded(iface)*nflag(inedge(iface,1),2);
     end
     if nflag(inedge(iface,2),1) < 200
-        I(inedge(iface,3)) = I(inedge(iface,3)) +Kde(iface)*...
+        I(inedge(iface,3)) = I(inedge(iface,3)) + visonface*Kde(iface)*...
             Ded(iface)*nflag(inedge(iface,2),2);
-        I(inedge(iface,4)) = I(inedge(iface,4)) - Kde(iface)*...
+        I(inedge(iface,4)) = I(inedge(iface,4)) - visonface*Kde(iface)*...
             Ded(iface)*nflag(inedge(iface,2),2);
     end
     % quando o nó pertece ao contorno de Neumann
     if nflag(inedge(iface,1),1) == 202
         
-        I(inedge(iface,3)) = I(inedge(iface,3)) - Kde(iface)*...
+        I(inedge(iface,3)) = I(inedge(iface,3)) - visonface*Kde(iface)*...
             Ded(iface)*s(inedge(iface,1)); %ok
         
-        I(inedge(iface,4)) = I(inedge(iface,4)) + Kde(iface)*...
+        I(inedge(iface,4)) = I(inedge(iface,4)) + visonface*Kde(iface)*...
             Ded(iface)*s(inedge(iface,1)); %ok
     end
     if nflag(inedge(iface,2),1) == 202
         
-        I(inedge(iface,3)) = I(inedge(iface,3)) + Kde(iface)*...
+        I(inedge(iface,3)) = I(inedge(iface,3)) + visonface*Kde(iface)*...
             Ded(iface)*s(inedge(iface,2)); %ok
         
-        I(inedge(iface,4)) = I(inedge(iface,4)) - Kde(iface)*...
+        I(inedge(iface,4)) = I(inedge(iface,4)) - visonface*Kde(iface)*...
             Ded(iface)*s(inedge(iface,2)); %ok
         
     end
@@ -127,10 +134,10 @@ for iface = 1:inedgesize
             post_cont = esurn2(inedge(iface,1)) + j;
             
             M(inedge(iface,3),esurn1(post_cont)) = M(inedge(iface,3),...
-                esurn1(post_cont)) + Kde(iface)*Ded(iface)*w(post_cont);
+                esurn1(post_cont)) + visonface*Kde(iface)*Ded(iface)*w(post_cont);
             
             M(inedge(iface,4),esurn1(post_cont)) = M(inedge(iface,4),...
-                esurn1(post_cont)) - Kde(iface)*Ded(iface)*w(post_cont);
+                esurn1(post_cont)) - visonface*Kde(iface)*Ded(iface)*w(post_cont);
             
         end
     end
@@ -140,10 +147,10 @@ for iface = 1:inedgesize
             post_cont = esurn2(inedge(iface,2)) + j;
             
             M(inedge(iface,3), esurn1(post_cont)) = M(inedge(iface,3),...
-                esurn1(post_cont)) - Kde(iface)*Ded(iface)*w(post_cont);
+                esurn1(post_cont)) - visonface*Kde(iface)*Ded(iface)*w(post_cont);
             
             M(inedge(iface,4), esurn1(post_cont)) = M(inedge(iface,4),...
-                esurn1(post_cont)) + Kde(iface)*Ded(iface)*w(post_cont);
+                esurn1(post_cont)) + visonface*Kde(iface)*Ded(iface)*w(post_cont);
         end
     end
    
