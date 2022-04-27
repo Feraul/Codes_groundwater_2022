@@ -43,6 +43,7 @@ switch phasekey
         %Chose the type of scheme according "pmethod"
         %Traditional Two-Point Flux Approximation (TPFA),
         %Aziz and Settary (1979)
+        
         if strcmp(pmethod,'tpfa')
             %Get "pressure" and "flowrate"
             [pressure,flowrate,] = solvePressure_TPFA(transmvecleft,...
@@ -119,7 +120,7 @@ switch phasekey
             amountofneigvec,rtmd_storepos,rtmd_storeleft,rtmd_storeright,...
             isonbound,elemsize,bedgesize,inedgesize,parameter,...
             weightDMP,nflagface,p_old,contnorm);
-    case 3
+    case 3 % contaminant simulation 
         
         [dmap,Dmedio,gamma] = PLUG_dfunction;
         %          if numcase==243 || numcase==245 || numcase==247
@@ -154,7 +155,7 @@ switch phasekey
             %Get preprocessed terms:
             [Hesq,Kdec,Knc,Ktc,Dedc] = ferncodes_Kde_Ded_Kt_Kn(dmap);
             % calculate inpertolation weigts
-            
+            weightDMPc=0;
             [wightc,sc] = ferncodes_Pre_LPEW_2_con(dmap,N);
         elseif strcmp(pmethod,'tpfa')
             [Hesq,Kdec,Knc,Ktc,Dedc] = ferncodes_Kde_Ded_Kt_Kn(dmap);
@@ -195,6 +196,9 @@ switch phasekey
             isonbound,elemsize,bedgesize,inedgesize,parameter,...
             weightDMP,nflagface,p_old,contnorm,dmap,dparameter,nflagnoc,...
             gamma,Dmedio,Kdec,Knc,Ktc,Dedc,wightc,sc,nflagfacec,weightDMPc,wellsc);
+        
+    case 4 % hidrological simulation
+        % ainda falta implementar
         
         %It Souves only the HYPERBOLIC Equation:
     otherwise
