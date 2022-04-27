@@ -82,27 +82,49 @@ if numcase~=246 && numcase~=246 && numcase~=247 && numcase~=248 && numcase~=249 
         
         %Get "pressure" and "flowrate"
         [pressure,flowrateadvec,flowresult] = solvePressure_TPFA(Kde, Kn, nflag, Hesq,wells);
-      
+        
         %MPFA-D (Gao and Wu, 2010)
     elseif strcmp(pmethod,'mpfad') &&  numcase~=31.1
-        
+        %It switches according to "interptype"
+        switch char(interptype)
+            %LPEW 1
+            case 'lpew1'
+                % calculo dos pesos que correspondem ao LPEW1
+                [weight,s] = ferncodes_Pre_LPEW_1(kmap,1,V,Sw,N);
+                %LPEW 2
+            case 'lpew2'
+                % calculo dos pesos que correspondem ao LPEW2
+                [weight,s] = ferncodes_Pre_LPEW_2(kmap,N);
+                
+        end  %End of SWITCH
         %Calculate "pressure", "flowrate" and "flowresult"
-        [pressure,flowrateadvec,flowresult] = ferncodes_solverpressure(kmap,...
-            1,wells,Con,V,N,Hesq,Kde,Kn,Kt,Ded,nflag);
-       
+        [pressure,flowrateadvec,flowresult,flowratedif] = ferncodes_solverpressure(...
+            1,wells,Hesq,Kde,Kn,Kt,Ded,nflag,weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc);
+        
     elseif strcmp(pmethod,'mpfaql')
         [pressure,flowrateadvec,flowresult]=ferncodes_solverpressureMPFAQL(nflag,...
             parameter,kmap,weightDMP,wells,1,V,Con,N);
-       
+        
     elseif strcmp(pmethod,'mpfah')
         
         [pressure,flowrateadvec,flowresult]=ferncodes_solverpressureMPFAH(nflagface,...
             parameter,weightDMP,wells);
-       
-    elseif strcmp(pmethod,'nlfvpp')
         
-        [pressure,flowrateadvec,flowresult]=ferncodes_solverpressureNLFVPP(nflag,...
-            parameter,kmap,wells,1,V,Con,N,p_old,contnorm);
+    elseif strcmp(pmethod,'nlfvpp')
+        %It switches according to "interptype"
+        switch char(interptype)
+            %LPEW 1
+            case 'lpew1'
+                % calculo dos pesos que correspondem ao LPEW1
+                [weight,s] = ferncodes_Pre_LPEW_1(kmap,1,V,Sw,N);
+                %LPEW 2
+            case 'lpew2'
+                % calculo dos pesos que correspondem ao LPEW2
+                [weight,s] = ferncodes_Pre_LPEW_2(kmap,N);
+                
+        end  %End of SWITCH
+        [pressure,flowrateadvec,flowresult,flowratedif]=ferncodes_solverpressureNLFVPP(nflag,...
+            parameter,kmap,wells,1,V,Con,N,p_old,contnorm,weight,s,Con,nflagc,wightc,sc,dparameter);
         
         %Any other type of scheme to solve the Pressure Equation
     elseif strcmp(pmethod,'nlfvh')&& numcase~=31.1 % revisar com cuidado
@@ -122,18 +144,7 @@ if numcase~=246 && numcase~=246 && numcase~=247 && numcase~=248 && numcase~=249 
             bodyterm);
     end  %End of IF (type of pressure solver)
 end
-%It switches according to "interptype"
-switch char(interptype)
-    %LPEW 1
-    case 'lpew1'
-        % calculo dos pesos que correspondem ao LPEW1
-        [weight,s] = ferncodes_Pre_LPEW_1(kmap,1,V,Sw,N);
-        %LPEW 2
-    case 'lpew2'
-        % calculo dos pesos que correspondem ao LPEW2
-        [weight,s] = ferncodes_Pre_LPEW_2(kmap,N);
-        
-end  %End of SWITCH
+
 
 if numcase==233
     velmedio=0.5; % quando a pessão no contorno é 5
@@ -161,17 +172,30 @@ while stopcriteria < 100
         [viscosity] = ferncodes_getviscosity(satinbound,injecelem,Con,earlysw,smethod,...
             timelevel,numcase,Sleft,Sright,c,overedgecoord,nflagc,nflagfacec);
         % calculo da pressão e fluxo
-    if strcmp(pmethod,'nlfvpp')    
-        [pressure,flowrateadvec,flowresult,flowratedif]=ferncodes_solverpressureNLFVPP(nflag,...
-            parameter,kmap,wells,viscosity,V,Con,N,p_old,contnorm,weight,s,Con,nflagc,wightc,sc,dparameter);
-    elseif strcmp(pmethod,'mpfad')
-       [pressure,flowrateadvec,flowresult,flowratedif] = ferncodes_solverpressure(...
-            viscosity,wells,Hesq,Kde,Kn,Kt,Ded,nflag,weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc); 
-    else
-       [pressure,flowrateadvec,flowresult] = solvePressure_TPFA(transmvecleft,...
-            knownvecleft,viscosity,wells,Fg,bodyterm,Con);  
-    end
-       
+        if strcmp(pmethod,'nlfvpp')
+            [pressure,flowrateadvec,flowresult,flowratedif]=ferncodes_solverpressureNLFVPP(nflag,...
+                parameter,kmap,wells,viscosity,V,Con,N,p_old,contnorm,weight,s,Con,nflagc,wightc,sc,dparameter);
+        elseif strcmp(pmethod,'mpfad')
+            [pressure,flowrateadvec,flowresult,flowratedif] = ferncodes_solverpressure(...
+                viscosity,wells,Hesq,Kde,Kn,Kt,Ded,nflag,weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc);
+        else
+            [pressure,flowrateadvec,flowresult] = solvePressure_TPFA(transmvecleft,...
+                knownvecleft,viscosity,wells,Fg,bodyterm,Con);
+        end
+    elseif numcase==241
+        
+        if strcmp(pmethod,'nlfvpp')
+            [pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(p_old,nflag,weight,s,Con,nflagc,wightc,sc);
+            
+            [flowrate,flowresult,flowratedif]=ferncodes_flowrateNLFVPP(p_old, pinterp, parameter,1,Con,nflagc,wightc,sc,dparameter,cinterp);
+        elseif strcmp(pmethod,'mpfad')
+            [flowrate,flowresult,flowratedif] = ferncodes_flowrate(pressure,weight,s,Kde,...
+                Ded,Kn,Kt,Hesq,1,nflag,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc);
+        else
+            [pressure,flowrateadvec,flowresult] = solvePressure_TPFA(transmvecleft,...
+                knownvecleft,viscosity,wells,Fg,bodyterm,Con);
+        end
+        
     end
     
     %----------------------------------------------------------------------
@@ -215,7 +239,7 @@ while stopcriteria < 100
     
     
     if any(producelem)
-                
+        
         %Write table (Time (VPI), Oil Flow rate, Accumulated Oil and Water Cut)
         %Create the file name
         prfilename = [resfolder '_' 'ProdutionReport.dat'];
