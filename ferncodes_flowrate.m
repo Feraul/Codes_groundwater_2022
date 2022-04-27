@@ -3,22 +3,34 @@
 %funçao que calcula os fluxos nas arestas internas
 %equacoes 28 e 29 (heterogeneo) ou 15 e 16 (homogeneo)
 
-function [flowrate,flowresult] = ferncodes_flowrate(p,w,s,Kde,Ded,Kn,Kt,...
-    Hesq,nflag)
+function [flowrate,flowresult,flowratedif] = ferncodes_flowrate(p,w,s,Kde,Ded,Kn,Kt,...
+    Hesq,viscosity,nflag,Con,Kdec,Knc,Ktc,Dedc,nflagc,wc,sc)
 %Define global variables:
 global coord esurn1 esurn2 bedge inedge centelem bcflag phasekey smethod;
 
 %Initialize "bedgesize" and "inedgesize"
 bedgesize = size(bedge,1);
 inedgesize = size(inedge,1);
+%Initialize "bedgeamount"
+bedgeamount = 1:bedgesize;
 
 %Initialize "flowrate" and "flowresult"
 flowrate = zeros(bedgesize + inedgesize,1);
 flowresult = zeros(size(centelem,1),1);
-
+flowratedif = zeros(bedgesize + inedgesize,1);
 %Swept "bedge"
 for ifacont = 1:bedgesize
-    
+    %Define "mobonface" (for "bedge")
+    %It is a One-phase flow. In this case, "mobility" is "1"
+    if phasekey == 1
+        visonface = viscosity;
+    %It is a Two-phase flow
+    else
+        %"mobonface" receivees the summation of water and oil
+        %mobilities (came from "IMPES" - Marcio's code modification)
+        visonface = sum(viscosity(ifacont,:));
+    end  %End of IF
+
     lef = bedge(ifacont,3);
     C = centelem(lef,:); % baricentro do elemento a esuqerda
     nor = norm(coord(bedge(ifacont,1),:) - coord(bedge(ifacont,2),:));
@@ -33,10 +45,17 @@ for ifacont = 1:bedgesize
             coord(bedge(ifacont,1),:))'*c2 - (nor^2)*p(lef)) + ...
             (c2 - c1)*Kt(ifacont);
         
-        flowrate(ifacont) = flowrate(ifacont);
+        flowrate(ifacont) = visonface*flowrate(ifacont);
+        % calculo do fluxo difusivo
+        flowratedif(ifacont)= -(Knc(ifacont)/(Hesq(ifacont)*nor))*...
+            (((C - coord(bedge(ifacont,2),:)))*(coord(bedge(ifacont,1),:) - ...
+            coord(bedge(ifacont,2),:))'*nflagc(bedge(ifacont,1),2) + ...
+            (C - coord(bedge(ifacont,1),:))*(coord(bedge(ifacont,2),:) - ...
+            coord(bedge(ifacont,1),:))'*nflagc(bedge(ifacont,2),2) - (nor^2)*Con(lef)) + ...
+            (nflagc(bedge(ifacont,2),2) - nflagc(bedge(ifacont,1),2))*Ktc(ifacont);
     else
         x = logical(bcflag(:,1) == bedge(ifacont,5));
-        flowrate(ifacont)= -nor*bcflag(x,2);
+        flowrate(ifacont)= nor*bcflag(x,2);
     end
     
     %Attribute the flow rate to "flowresult"
@@ -46,7 +65,17 @@ end  %End of FOR ("bedge")
 
 %Swept "inedge"
 for iface = 1:inedgesize
-    
+    %Define "mobonface" (for "inedge")
+    %It is a One-phase flow. In this case, "mobility" is "1"
+    if phasekey == 1
+        visonface = viscosity;
+    %It is a Two-phase flow
+    else
+        %"mobonface" receivees the summation of water and oil
+        %mobilities (came from "IMPES" - Marcio's code modification)
+        visonface = sum(viscosity(bedgesize + iface,:));
+    end  %End of IF
+
     lef = inedge(iface,3); %indice do elemento a direita da aresta i
     rel = inedge(iface,4); %indice do elemento a esquerda da aresta i
     % interpolando os nós (ou vértices) 
@@ -95,13 +124,60 @@ for iface = 1:inedgesize
     
     %calculo das vazões
    
-    flowrate(bedgesize + iface) = Kde(iface)*(p(rel) - p(lef) - Ded(iface)*(p2 - p1));
+    flowrate(bedgesize + iface) = ...
+        visonface*Kde(iface)*(p(rel) - p(lef) - Ded(iface)*(p2 - p1));
 
     %Attribute the flow rate to "flowresult"
     %On the left:
     flowresult(lef) = flowresult(lef) + flowrate(bedgesize + iface);  
     %On the right:
     flowresult(rel) = flowresult(rel) - flowrate(bedgesize + iface);  
+    
+    %% calculo do fluxo difusivo
+     p1c = 0;
+    if nflagc(inedge(iface,1),1) > 200
+        if nflagc(inedge(iface,1),1) == 202
+            for j = 1:nec1
+                element1 = esurn1(esurn2(inedge(iface,1)) + j);
+                p1c = p1c + wc(esurn2(inedge(iface,1)) + j)*Con(element1);
+            end
+            p1c = p1c + sc(inedge(iface,1),1);
+        else
+            for j = 1:nec1
+                element1 = esurn1(esurn2(inedge(iface,1)) + j);
+                p1c = p1c + wc(esurn2(inedge(iface,1)) + j)*Con(element1);
+            end
+        end
+        
+    else
+        p1c = nflagc(inedge(iface,1),2);
+    end
+    
+    % calculo da pressão no "inedge(i,2)"
+    nec2 = esurn2(inedge(iface,2) + 1) - esurn2(inedge(iface,2));
+    p2c = 0;
+    if nflagc(inedge(iface,2),1) > 200
+        if nflagc(inedge(iface,2),1) == 202
+            for j = 1:nec2
+                element2 = esurn1(esurn2(inedge(iface,2)) + j);
+                p2c = p2c + wc(esurn2(inedge(iface,2)) + j)*Con(element2);
+            end
+            p2c = p2c + sc(inedge(iface,2),1);
+        else
+            for j = 1:nec2
+                element2 = esurn1(esurn2(inedge(iface,2)) + j);
+                p2c = p2c + wc(esurn2(inedge(iface,2)) + j)*Con(element2);
+            end
+            
+        end
+        
+    else
+        p2c = nflagc(inedge(iface,2),2);
+    end
+    
+    %calculo das vazões
+   
+    flowratedif(bedgesize + iface) =Kdec(iface)*(Con(rel) - Con(lef) - Dedc(iface)*(p2c - p1c));
 end  %End of FOR ("inedge")
 
 %--------------------------------------------------------------------------
