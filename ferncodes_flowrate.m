@@ -6,7 +6,7 @@
 function [flowrate,flowresult,flowratedif] = ferncodes_flowrate(p,w,s,Kde,Ded,Kn,Kt,...
     Hesq,viscosity,nflag,Con,Kdec,Knc,Ktc,Dedc,nflagc,wc,sc)
 %Define global variables:
-global coord esurn1 esurn2 bedge inedge centelem bcflag phasekey smethod;
+global coord esurn1 esurn2 bedge inedge centelem bcflag phasekey smethod numcase;
 
 %Initialize "bedgesize" and "inedgesize"
 bedgesize = size(bedge,1);
@@ -20,15 +20,12 @@ flowresult = zeros(size(centelem,1),1);
 flowratedif = zeros(bedgesize + inedgesize,1);
 %Swept "bedge"
 for ifacont = 1:bedgesize
-    %Define "mobonface" (for "bedge")
-    %It is a One-phase flow. In this case, "mobility" is "1"
-    if phasekey == 1
-        visonface = viscosity;
-    %It is a Two-phase flow
+    if numcase == 246 || numcase == 245 || numcase==247 || numcase==248 || numcase==249
+        % vicosity on the boundary edge
+        visonface = viscosity(bedgesize,:);
+        %It is a Two-phase flow
     else
-        %"mobonface" receivees the summation of water and oil
-        %mobilities (came from "IMPES" - Marcio's code modification)
-        visonface = sum(viscosity(ifacont,:));
+        visonface = 1;
     end  %End of IF
 
     lef = bedge(ifacont,3);
@@ -65,17 +62,14 @@ end  %End of FOR ("bedge")
 
 %Swept "inedge"
 for iface = 1:inedgesize
-    %Define "mobonface" (for "inedge")
-    %It is a One-phase flow. In this case, "mobility" is "1"
-    if phasekey == 1
-        visonface = viscosity;
-    %It is a Two-phase flow
+    if numcase == 246 || numcase == 245 || numcase==247 || numcase==248 || numcase==249
+        % vicosity on the boundary edge
+        visonface = viscosity(bedgesize + iface,:);
+        %It is a Two-phase flow
     else
-        %"mobonface" receivees the summation of water and oil
-        %mobilities (came from "IMPES" - Marcio's code modification)
-        visonface = sum(viscosity(bedgesize + iface,:));
+        visonface = 1;
     end  %End of IF
-
+    
     lef = inedge(iface,3); %indice do elemento a direita da aresta i
     rel = inedge(iface,4); %indice do elemento a esquerda da aresta i
     % interpolando os nós (ou vértices) 
