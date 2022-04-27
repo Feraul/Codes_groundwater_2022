@@ -1,25 +1,23 @@
+%--------------------------------------------------------------------------
+%UNIVERSIDADE FEDERAL DE PERNAMBUCO
+%CENTRO DE TECNOLOGIA E GEOCIENCIAS
+%PROGRAMA DE POS GRADUACAO EM ENGENHARIA CIVIL
+%TOPICOS ESPECIAIS EM DINAMICA DOS FLUIDOS COMPUTACIONAL
+%--------------------------------------------------------------------------
+%Subject: numerical routine to solve hyperbolic scalar equation with 
+%high-order resolution 
+%Type of file: FUNCTION
+%Criate date: 18/01/2014
+%Modify data:   /  /2014
+%Advisor: Paulo Lyra and Darlan Karlo
+%Programer: Márcio Souza
 
 %Modified: Fernando Contreras, 2021
-function [p,flowrate,flowresult] = ferncodes_solverpressure(kmap,mobility,...
-    wells,Sw,V,N,Hesq,Kde,Kn,Kt,Ded,nflag)
-%Define global parameters
-global interptype;
-
-%It switches according to "interptype"
-switch char(interptype)
-    %LPEW 1
-    case 'lpew1'
-        % calculo dos pesos que correspondem ao LPEW1
-        [wight,s] = ferncodes_Pre_LPEW_1(kmap,mobility,V,Sw,N);
-    %LPEW 2
-    case 'lpew2'
-        % calculo dos pesos que correspondem ao LPEW2
-        [wight,s] = ferncodes_Pre_LPEW_2(kmap,N);
-end  %End of SWITCH
+function [p,flowrate,flowresult,flowratedif] = ferncodes_solverpressure(viscosity,...
+    wells,Hesq,Kde,Kn,Kt,Ded,nflag,weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wc,sc)
 
 % Montagem da matriz global
-[M,I] = ferncodes_globalmatrix(wight,s,Kde,Ded,Kn,Kt,Hesq,nflag);
-
+[M,I] = ferncodes_globalmatrix(weight,s,Kde,Ded,Kn,Kt,Hesq,viscosity,nflag);
 %--------------------------------------------------------------------------
 %Add a source therm to independent vector "mvector" 
 
@@ -36,7 +34,9 @@ p = solver(M,I);
 disp('>> The Pressure field was calculated with success!');
 
 %Get the flow rate (Diamond)
-[flowrate,flowresult] = ferncodes_flowrate(p,wight,s,Kde,Ded,Kn,Kt,Hesq,nflag);
+[flowrate,flowresult,flowratedif] = ferncodes_flowrate(p,weight,s,Kde,...
+    Ded,Kn,Kt,Hesq,viscosity,nflag,Con,Kdec,Knc,Ktc,Dedc,nflagc,wc,sc);
+
 
 %Message to user:
 disp('>> The Flow Rate field was calculated with success!');
