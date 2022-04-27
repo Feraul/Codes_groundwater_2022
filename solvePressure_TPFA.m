@@ -10,7 +10,6 @@
 %Modify data:   /  /2015
 %Adviser: Paulo Lyra and Darlan Karlo
 %Programer: Márcio Souza
-%Modified: Fernando Contreras, 2021
 %--------------------------------------------------------------------------
 %Goals: This function solves the pressure equation by TPFA scheme.
 
@@ -19,56 +18,85 @@
 
 %--------------------------------------------------------------------------
 
-function [pressure,flowrate,flowresult] = solvePressure_TPFA(Kde, Kn, nflag, Hesq,wells)
+function [pressure,flowrate,flowresult] = solvePressure_TPFA(transmvecleft,...
+    knownvecleft,viscosity,wells,Fg,bodyterm,Con)
 %Define global parameters:
+global elem bedge inedge phasekey;
 
-global inedge bedge elem coord centelem bcflag
+%Initialize "bedgesize" and "inedgesize"
+bedgesize = size(bedge,1);
+inedgesize = size(inedge,1);
 
-% Constrói a matriz global.
-% prealocação da matriz global e do vetor termo de fonte
-M=zeros(size(elem,1),size(elem,1));
-mvector=zeros(size(elem,1),1);
+%Initialize the global matrix which have order equal to parameter 
+%"size(elem)".
+M = zeros(size(elem,1));
+%Initialize "mvector" which is the independent vector of algebric system.
+mvector = zeros(size(elem,1),1);
 
-    % Loop de faces de contorno
+%Swept "bedge"
+for ibedg = 1:bedgesize
+    %Get "leftelem"
+    leftelem = bedge(ibedg,3);
     
-    for ifacont=1:size(bedge,1)
-        v0=coord(bedge(ifacont,2),:)-coord(bedge(ifacont,1),:);
-        
-        % calculo das constantes nas faces internas
-        A=-Kn(ifacont)/(Hesq(ifacont)*norm(v0));     
-        
-        if bedge(ifacont,5)<200
-            
-            c1=nflag(bedge(ifacont,1),2);
-            
-            
-            %Preenchimento
-            
-            M(bedge(ifacont,3),bedge(ifacont,3))=M(bedge(ifacont,3),bedge(ifacont,3))- A*(norm(v0)^2);
-            
-            mvector(bedge(ifacont,3))=mvector(bedge(ifacont,3))-c1*A*(norm(v0)^2);
-            
-        else
-            x=bcflag(:,1)==bedge(ifacont,5);
-            r=find(x==1);
-              mvector(bedge(ifacont,3))=mvector(bedge(ifacont,3))- norm(v0)*bcflag(r,2);
-          
-            
-        end
-    end
-
-for iface=1:size(inedge,1),
+    %MOBILITY:
+    %One-Phase flow
+    if phasekey == 1
+        %Define the mobility on the face
+        totalmobility = viscosity;
+    %Two-Phase flow
+    else
+        %Define the mobility on the face
+        totalmobility = sum(viscosity(ibedg,:));
+    end  %End of IF
     
-    %Contabiliza as contribuições do fluxo numa faces  para os elementos %
-    %a direita e a esquerda dela.                                        %
-    M(inedge(iface,3), inedge(iface,3))=M(inedge(iface,3), inedge(iface,3))-Kde(iface,1);
-    M(inedge(iface,3), inedge(iface,4))=M(inedge(iface,3), inedge(iface,4))+Kde(iface,1);
-    M(inedge(iface,4), inedge(iface,4))=M(inedge(iface,4), inedge(iface,4))-Kde(iface,1);
-    M(inedge(iface,4), inedge(iface,3))=M(inedge(iface,4), inedge(iface,3))+Kde(iface,1);
-end
+    %Fill the global matrix "M" and known vector "mvector"
+    M(leftelem,leftelem) = M(leftelem,leftelem) + ...
+        totalmobility*transmvecleft(ibedg);
+    %Update "transmvecleft"
+    transmvecleft(ibedg) = totalmobility*transmvecleft(ibedg);
+    
+    %Fill "mvector"
+    mvector(leftelem) = ...
+        mvector(leftelem) + totalmobility*knownvecleft(ibedg);
+end  %End of FOR ("bedge") 
 
+%Swept "inedge"
+for iinedg = 1:inedgesize
+    %Get "leftelem" and "right"
+    leftelem = inedge(iinedg,3);
+    rightelem = inedge(iinedg,4);
+    
+    %MOBILITY:
+    %One-Phase flow
+    if phasekey == 1
+        %Define the mobility on the face
+        totalmobility = viscosity;
+    %Two-Phase flow
+    else
+        %Define the mobility on the face
+        totalmobility = sum(viscosity(bedgesize + iinedg,:));
+    end  %End of IF
 
-
+    %Fill the global matrix "M" and known vector "mvector"
+    %Contribution from the element on the LEFT to:
+    %Left
+    M(leftelem,leftelem) = M(leftelem,leftelem) + ...
+        totalmobility*transmvecleft(bedgesize + iinedg);
+    %Right
+    M(leftelem,rightelem) = M(leftelem,rightelem) - ...
+        totalmobility*transmvecleft(bedgesize + iinedg);
+    %Contribution from the element on the RIGHT to:
+    %Right
+    M(rightelem,rightelem) = M(rightelem,rightelem) + ...
+        totalmobility*transmvecleft(bedgesize + iinedg);
+    %Right
+    M(rightelem,leftelem) = M(rightelem,leftelem) - ...
+        totalmobility*transmvecleft(bedgesize + iinedg);
+    
+    %Update "transmvecleft"
+    transmvecleft(bedgesize + iinedg) = ...
+        totalmobility*transmvecleft(bedgesize + iinedg);
+end  %End of FOR ("inedge")
 
 %--------------------------------------------------------------------------
 %Add a source therm to independent vector "mvector" 
@@ -92,7 +120,7 @@ disp('>> The Pressure field was calculated with success!');
 
 %Calculate flow rate through edge. "satkey" equal to "1" means one-phase
 %flow (the flow rate is calculated throgh whole edge)
-[flowrate, flowresult]=ferncodes_flowrateTPFA(pressure,Kde,Kn,Hesq,nflag);
+[flowrate,flowresult] = calcflowrateTPFA(transmvecleft,pressure,con);
     
 %Message to user:
 disp('>> The Flow Rate field was calculated with success!');
