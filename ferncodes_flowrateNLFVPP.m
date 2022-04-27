@@ -103,10 +103,10 @@ for iface=1:inedgesize
     %On the right:
     flowresult(rel) = flowresult(rel) - flowrate(bedgesize + iface);  
     
-    %======================================================================
-    %======================================================================
+    %% ===================================================================
     
-    %% calculo do a Eq. 2.7 (resp. eq. 16) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
+    % calculo do fluxo para o campo deconcentracoes
+    % calculo do a Eq. 2.7 (resp. eq. 16) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
     % esquerda
     alef=norma*(dparameter(1,1,ifactual)*cinterp(dparameter(1,3,ifactual))+...
         dparameter(1,2,ifactual)*cinterp(dparameter(1,4,ifactual)));
@@ -114,7 +114,7 @@ for iface=1:inedgesize
     
     arel= norma*(dparameter(2,1,ifactual)*cinterp(dparameter(2,3,ifactual))+...
         dparameter(2,2,ifactual)*cinterp(dparameter(2,4,ifactual)));
-    %% calculo dos "mu", Eq. 2.8 (resp. eq. 18) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
+    % calculo dos "mu", Eq. 2.8 (resp. eq. 18) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
     if alef==0 && arel==0
         mulef= 0.5;
         murel=1-mulef;
@@ -122,7 +122,7 @@ for iface=1:inedgesize
         mulef=abs(arel)/(abs(alef)+abs(arel));
         murel=1-mulef;
     end
-    %% calculo da contribuição, Eq. 2.12 (resp. Eq. 21) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
+    % calculo da contribuição, Eq. 2.12 (resp. Eq. 21) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
     ALLc=norma*mulef*(dparameter(1,1,ifactual)+dparameter(1,2,ifactual));
     ALRc=norma*murel*(dparameter(2,1,ifactual)+dparameter(2,2,ifactual));
     
