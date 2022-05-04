@@ -18,10 +18,10 @@
 
 %--------------------------------------------------------------------------
 
-function [pressure,flowrate,flowresult] = solvePressure_TPFA(transmvecleft,...
-    knownvecleft,viscosity,wells,Fg,bodyterm,Con)
+function [pressure,flowrate,flowresult,flowratedif] = solvePressure_TPFA(transmvecleft,...
+    knownvecleft,viscosity,wells,Fg,bodyterm,Con,transmvecleftc,aa)
 %Define global parameters:
-global elem bedge inedge phasekey;
+global elem bedge inedge phasekey numcase;
 
 %Initialize "bedgesize" and "inedgesize"
 bedgesize = size(bedge,1);
@@ -37,27 +37,24 @@ mvector = zeros(size(elem,1),1);
 for ibedg = 1:bedgesize
     %Get "leftelem"
     leftelem = bedge(ibedg,3);
-    
-    %MOBILITY:
-    %One-Phase flow
-    if phasekey == 1
-        %Define the mobility on the face
-        totalmobility = viscosity;
-    %Two-Phase flow
+    %viscosidade
+    if numcase == 246 || numcase == 245 || numcase==247 || numcase==248 || numcase==249
+        % vicosity on the boundary edge
+        visonface = viscosity(ibedg,1);
+        %It is a Two-phase flow
     else
-        %Define the mobility on the face
-        totalmobility = sum(viscosity(ibedg,:));
+        visonface = 1;
     end  %End of IF
     
     %Fill the global matrix "M" and known vector "mvector"
     M(leftelem,leftelem) = M(leftelem,leftelem) + ...
-        totalmobility*transmvecleft(ibedg);
+       visonface*transmvecleft(ibedg);
     %Update "transmvecleft"
-    transmvecleft(ibedg) = totalmobility*transmvecleft(ibedg);
-    
+    transmvecleft(ibedg) = visonface*transmvecleft(ibedg);
+
     %Fill "mvector"
     mvector(leftelem) = ...
-        mvector(leftelem) + totalmobility*knownvecleft(ibedg);
+        mvector(leftelem) + visonface*knownvecleft(ibedg);
 end  %End of FOR ("bedge") 
 
 %Swept "inedge"
@@ -65,37 +62,34 @@ for iinedg = 1:inedgesize
     %Get "leftelem" and "right"
     leftelem = inedge(iinedg,3);
     rightelem = inedge(iinedg,4);
-    
-    %MOBILITY:
-    %One-Phase flow
-    if phasekey == 1
-        %Define the mobility on the face
-        totalmobility = viscosity;
-    %Two-Phase flow
+    %viscosidade
+    if numcase == 246 || numcase == 245 || numcase==247 || numcase==248 || numcase==249
+        % vicosity on the boundary edge
+        visonface = viscosity(bedgesize + iinedg,1);
+        %It is a Two-phase flow
     else
-        %Define the mobility on the face
-        totalmobility = sum(viscosity(bedgesize + iinedg,:));
+        visonface = 1;
     end  %End of IF
-
+    
     %Fill the global matrix "M" and known vector "mvector"
     %Contribution from the element on the LEFT to:
     %Left
     M(leftelem,leftelem) = M(leftelem,leftelem) + ...
-        totalmobility*transmvecleft(bedgesize + iinedg);
+        visonface*transmvecleft(bedgesize + iinedg);
     %Right
     M(leftelem,rightelem) = M(leftelem,rightelem) - ...
-        totalmobility*transmvecleft(bedgesize + iinedg);
+        visonface*transmvecleft(bedgesize + iinedg);
     %Contribution from the element on the RIGHT to:
     %Right
     M(rightelem,rightelem) = M(rightelem,rightelem) + ...
-        totalmobility*transmvecleft(bedgesize + iinedg);
+        visonface*transmvecleft(bedgesize + iinedg);
     %Right
     M(rightelem,leftelem) = M(rightelem,leftelem) - ...
-        totalmobility*transmvecleft(bedgesize + iinedg);
+        visonface*transmvecleft(bedgesize + iinedg);
     
     %Update "transmvecleft"
     transmvecleft(bedgesize + iinedg) = ...
-        totalmobility*transmvecleft(bedgesize + iinedg);
+        visonface*transmvecleft(bedgesize + iinedg);
 end  %End of FOR ("inedge")
 
 %--------------------------------------------------------------------------
@@ -120,7 +114,7 @@ disp('>> The Pressure field was calculated with success!');
 
 %Calculate flow rate through edge. "satkey" equal to "1" means one-phase
 %flow (the flow rate is calculated throgh whole edge)
-[flowrate,flowresult] = calcflowrateTPFA(transmvecleft,pressure,con);
+[flowrate,flowresult,flowratedif] = calcflowrateTPFA(transmvecleft,pressure,Con,transmvecleftc,aa);
     
 %Message to user:
 disp('>> The Flow Rate field was calculated with success!');
