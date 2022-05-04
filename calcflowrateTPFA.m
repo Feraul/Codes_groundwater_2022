@@ -18,9 +18,9 @@
 
 %--------------------------------------------------------------------------
 
-function [flowrate,flowresult] = calcflowrateTPFA(transmvecleft,pressure,Con)
+function [flowrate,flowresult,flowratedif] = calcflowrateTPFA(transmvecleft,pressure,Con,transmvecleftc,aa)
 %Define global parameters
-global elem bedge inedge bcflag normals phasekey smethod;
+global elem bedge inedge bcflag normals phasekey smethod coord;
 
 %Initialize "bedgesize" and "inedgesize"
 bedgesize = size(bedge,1);
@@ -28,6 +28,7 @@ inedgesize = size(inedge,1);
 
 %Initialize "flowrate" and "flowresult"
 flowrate = zeros(bedgesize + inedgesize,1);
+flowratedif = zeros(bedgesize + inedgesize,1);
 flowresult = zeros(size(elem,1),1);
 
 %Swept "bedge"
@@ -39,7 +40,7 @@ for ibedg = 1:bedgesize
     
     %Get known pressure or flow rate
     flagpointer = logical(bcflag(:,1) == bedge(ibedg,5));
-    knownval = PLUG_bcfunction(vertices,flagpointer);
+    knownval = PLUG_bcfunction(vertices,flagpointer,aa);
     %Dirichlet boundary condition (known pressure)
     if bedge(ibedg,5) < 200
         %Calculate the flow rate (for LEFT normal).
@@ -50,9 +51,27 @@ for ibedg = 1:bedgesize
         %Calculate the flow rate (for LEFT normal).
         flowrate(ibedg) = knownval*norm(normals(ibedg,:));
     end  %End of IF
-
+    
     %Attribute the "flowrate" to "flowresult"
     flowresult(leftelem) = flowresult(leftelem) + flowrate(ibedg); 
+    %% ====================================================================
+    vertex1 = bedge(ibedg,1);
+    vertex2 = bedge(ibedg,2);
+    auxvertex= 0.5*(coord(vertex1,:)+coord(vertex2,:));
+    x1 = auxvertex(1,1);
+    y1 = auxvertex(1,2);
+    y= x1+y1;
+    knownvalc = PLUG_bcfunction_con(y,aa);
+    if bedge(ibedg,7) < 200
+        %Calculate the flow rate (for LEFT normal).
+        flowratedif(ibedg) = ...
+            transmvecleftc(ibedg)*(Con(leftelem) - knownvalc);
+    %There is a Neumann boundary
+    else
+        %Calculate the flow rate (for LEFT normal).
+        flowratedif(ibedg) = knownvalc*norm(normals(ibedg,:));
+    end  %End of IF
+
 end  %End of FOR ("bedge")
 
 %Swept "inedge"
@@ -70,7 +89,11 @@ for iinedg = 1:inedgesize
         flowresult(leftelem) + flowrate(bedgesize + iinedg);  
     %On the right
     flowresult(rightelem) = ...
-        flowresult(rightelem) - flowrate(bedgesize + iinedg);  
+        flowresult(rightelem) - flowrate(bedgesize + iinedg);
+    %% ====================================================================
+    %Calculate the flow rate (left element)
+    flowratedif(bedgesize + iinedg) = -transmvecleftc(bedgesize + iinedg)*...
+        (Con(rightelem) - Con(leftelem));
 end  %End of FOR ("inedge")
 
 %--------------------------------------------------------------------------
