@@ -59,9 +59,9 @@
 %--------------------------------------------------------------------------
 
 function [viscosity] = ferncodes_getviscosity(satinbound,injecelem,Sw,earlysw,...
-    smethod,timelevel,benchkey,Sw_left,Sw_right,c,overedgecoord,nflagc,nflagfacec)
+    Sw_left,Sw_right,c,overedgecoord,nflagc,nflagfacec)
 %Define global parameters:
-global coord bedge inedge visc elemarea;
+global coord bedge inedge visc smethod timelevel numcase;
 
 %Initialize "interpmobility". It is the type of strategy used for calculate 
 %the MOBILITY.
@@ -90,7 +90,7 @@ switch interpmobility
 
         %Get the relative permeability for water and oil (It uses the sat. 
         %on the MIDEDGES)
-        [~,~,~,krw,kro,] = twophasevar(satinedges,benchkey);
+        [~,~,~,krw,kro,] = twophasevar(satinedges,numcase);
         
         %Fill "mobility"
         for i = 1:length(satinedges)
@@ -120,7 +120,7 @@ switch interpmobility
 
         %Get the relative permeability for water and oil (It uses the satur. 
         %on the VERTICES)
-        [~,~,~,krw,kro,] = twophasevar(satinvertices,benchkey);
+        [~,~,~,krw,kro,] = twophasevar(satinvertices,numcase);
         %Fill "mobinvertices"
         i = 1:length(satinvertices);
         %Attribute WATER mobility
@@ -155,7 +155,7 @@ switch interpmobility
     
         %Get the relative permeability for water and oil (It uses the sat. 
         %on the MIDEDGES)
-        [~,~,~,krw,kro,] = twophasevar(satinedges,benchkey);
+        [~,~,~,krw,kro,] = twophasevar(satinedges,numcase);
         
         %Fill "mobility"
         i = 1:length(satinedges);
@@ -168,7 +168,7 @@ switch interpmobility
     case 4
         %Get the relative permeability for water and oil (It uses the sat. 
         %on the control volume centroid)
-        [~,~,~,krw,kro,] = twophasevar(Sw,benchkey);
+        [~,~,~,krw,kro,] = twophasevar(Sw,numcase);
         
         %Define lambda_w and lambda_o for the control volumes:
         lambda_w = krw/visc(1);
@@ -196,7 +196,7 @@ switch interpmobility
 
         %Get the relative permeability for water and oil (It uses the satur. 
         %on the VERTICES)
-        [~,~,~,krw,kro,] = twophasevar(satinvertices,benchkey);
+        [~,~,~,krw,kro,] = twophasevar(satinvertices,numcase);
         %Fill "mobinvertices"
         i = 1:length(satinvertices);
         %Attribute WATER mobility
@@ -252,7 +252,7 @@ switch interpmobility
 
             %Get the relative permeability for water and oil (It uses the sat. 
             %on the MIDEDGES)
-            [~,~,~,krw,kro,] = twophasevar(satinedges,benchkey);
+            [~,~,~,krw,kro,] = twophasevar(satinedges,numcase);
 
             %Initialize "j" and "c"
             j = 1;
@@ -296,7 +296,7 @@ switch interpmobility
 
             %Get the relative permeability for water and oil (It uses the sat. 
             %on the MIDEDGES)
-            [~,~,~,krw,kro,] = twophasevar(satinedges,benchkey);
+            [~,~,~,krw,kro,] = twophasevar(satinedges,numcase);
         
             %Fill "mobility"
             for i = 1:size(viscosity,1)
@@ -328,7 +328,7 @@ switch interpmobility
         %Initialize "mobinbound"
         mobinbound = zeros(length(satinbound),2);
         
-        [exponente,] = twophasevar(Sw,benchkey);
+        [exponente,] = twophasevar(Sw,numcase);
         
         %Fill "mobilityoncentroid"
         i = 1:length(Sw);
@@ -340,7 +340,7 @@ switch interpmobility
         if any(satinbound) && length(satinbound) > 1
             %Get the relative permeability for water and oil on the 
             %boundary (It uses the sat. on the Cell-center)
-             [exponente,] = twophasevar(satinbound,benchkey);
+             [exponente,] = twophasevar(satinbound,numcase);
 %             %Clear the null variable
 %             clear null1 null2 null3;
             
@@ -365,7 +365,7 @@ switch interpmobility
         
         %Get the relative permeability for water and oil (It uses the sat. 
         %on the Cell-center)
-        [~,~,~,krw,kro,] = twophasevar(swonedge,benchkey);
+        [~,~,~,krw,kro,] = twophasevar(swonedge,numcase);
         
         %Fill "mobility"
         viscosity(:,1:2) = [(krw/visc(1)) (kro/visc(2))];
@@ -380,7 +380,7 @@ switch interpmobility
         
         %Get the relative permeability for water and oil (It uses the sat. 
         %on the Cell-center)
-        [~,~,~,krw,kro,] = twophasevar(Sw,benchkey);
+        [~,~,~,krw,kro,] = twophasevar(Sw,numcase);
         
         %Fill "mobilityoncentroid"
         i = 1:length(Sw);
@@ -394,7 +394,7 @@ switch interpmobility
             %Get the relative permeability for water and oil on the 
             %boundary (It uses the sat. on the Cell-center)
             [~,~,~,krw,kro,] = twophasevar(satinbound,...
-                benchkey);
+                numcase);
             
             %Fill "mobinbound"
             i = 1:length(satinbound);
@@ -442,7 +442,7 @@ switch interpmobility
         
         %Get the relative permeability for water and oil (It uses the sat. 
         %on the Cell-center)
-        [~,~,~,krw,kro,] = twophasevar(Sw,benchkey);
+        [~,~,~,krw,kro,] = twophasevar(Sw,numcase);
         
         %Fill "mobilityoncentroid"
         i = 1:length(Sw);
@@ -576,7 +576,7 @@ switch interpmobility
             
             %Get the relative permeability for water and oil 
             %(It uses the sat on the MIDEDGES)
-            [~,~,~,krw,kro,] = twophasevar(satonedges,benchkey,...
+            [~,~,~,krw,kro,] = twophasevar(satonedges,numcase,...
                 overedgecoord(:,1),injecelem);
 
             %Fill "mobility"
@@ -606,7 +606,7 @@ switch interpmobility
                 
                 %Get the relative permeability for water and oil (It uses the sat. 
                 %on the MIDEDGES)
-                [~,~,~,krw,kro,] = twophasevar(satonedges,benchkey);
+                [~,~,~,krw,kro,] = twophasevar(satonedges,numcase);
         
                 %Fill "mobility"
                 %Attribute WATER mobility
@@ -638,7 +638,7 @@ switch interpmobility
                     %("bedge")    
                     %Get mobility on the left:
                     [~,~,~,krw_left,kro_left,] = ...
-                        twophasevar(Sw_left(1:2*bedgesize),benchkey);
+                        twophasevar(Sw_left(1:2*bedgesize),numcase);
                     %Water
                     viscosity(1:bedgesize,1) = ...
                         krw_left(1:2:2*bedgesize)/visc(1); 
@@ -656,10 +656,10 @@ switch interpmobility
                     %Get mobility on the left:
                     [~,~,~,krw_left,kro_left,] = ...
                         twophasevar(Sw_left(2*bedgesize + 1:...
-                        2*(bedgesize + inedgesize)),benchkey);
+                        2*(bedgesize + inedgesize)),numcase);
                     %Get mobility on the left:
                     [~,~,~,krw_right,kro_right,] = ...
-                        twophasevar(Sw_right,benchkey);
+                        twophasevar(Sw_right,numcase);
 
                     meanlamb_w = mean([(krw_left/visc(1)) (krw_right/visc(1))],2); 
                     meanlamb_o = mean([(kro_left/visc(2)) (kro_right/visc(2))],2); 
