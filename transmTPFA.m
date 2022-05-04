@@ -18,7 +18,7 @@
 
 %--------------------------------------------------------------------------
 
-function [transmvecleft,knownvecleft,Fg,bodyterm] = transmTPFA(kmap)
+function [transmvecleft,knownvecleft,Fg,bodyterm] = transmTPFA(kmap,aa)
 %Define global parameters:
 global coord elem centelem bedge inedge normals bcflag phasekey keygravity;
 
@@ -77,7 +77,7 @@ for ibedg = 1:bedgesize
     %It chooses according to boundary condition type
     %Get known pressure and flow rate
     flagpointer = logical(bcflag(:,1) == bedge(ibedg,5));
-    knownval = PLUG_bcfunction(vertices,flagpointer);
+    knownval = PLUG_bcfunction(vertices,flagpointer,aa);
     
     %Dirichlet boundary condition (known pressure)
     if bedge(ibedg,5) < 200
