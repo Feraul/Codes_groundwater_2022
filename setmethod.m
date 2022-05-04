@@ -131,7 +131,8 @@ switch phasekey
         Kdec=0;
         Knc=0;
         Ktc=0; Dedc=0;
-        
+        transmvecleftc=0;
+        knownvecleftc=0;
         if strcmp(pmethod,'nlfvpp')
             %temos usado para muitos estes o seguinte rutina
             [dparameter,]=ferncodes_coefficient(dmap);
@@ -158,8 +159,8 @@ switch phasekey
             weightDMPc=0;
             [wightc,sc] = ferncodes_Pre_LPEW_2_con(dmap,N);
         elseif strcmp(pmethod,'tpfa')
-            [Hesq,Kdec,Knc,Ktc,Dedc] = ferncodes_Kde_Ded_Kt_Kn(dmap);
-            wightc=0;sc=0;
+            [transmvecleftc,knownvecleftc,] = transmTPFA(dmap,0);
+            wightc=0;sc=0;weightDMPc=0;
         end
         
         %Initialize and preprocess the parameters:
@@ -194,8 +195,9 @@ switch phasekey
             prodwellinedg,mwmaprodelem,vtxmaprodelem,coordmaprodelem,...
             amountofneigvec,rtmd_storepos,rtmd_storeleft,rtmd_storeright,...
             isonbound,elemsize,bedgesize,inedgesize,parameter,...
-            weightDMP,nflagface,p_old,contnorm,dmap,dparameter,nflagnoc,...
-            gamma,Dmedio,Kdec,Knc,Ktc,Dedc,wightc,sc,nflagfacec,weightDMPc,wellsc);
+            weightDMP,nflagface,p_old,contnorm,dparameter,nflagnoc,...
+            gamma,Dmedio,Kdec,Knc,Ktc,Dedc,wightc,sc,nflagfacec,...
+            weightDMPc,wellsc,transmvecleftc,knownvecleftc);
         
     case 4 % hidrological simulation
         % ainda falta implementar
