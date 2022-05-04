@@ -34,8 +34,9 @@ p = solver(M,I);
 disp('>> The Pressure field was calculated with success!');
 
 %Get the flow rate (Diamond)
-[flowrate,flowresult,flowratedif] = ferncodes_flowrate(p,weight,s,Kde,...
-    Ded,Kn,Kt,Hesq,viscosity,nflag,Con,Kdec,Knc,Ktc,Dedc,nflagc,wc,sc);
+[pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(p,nflag,weight,s,Con,nflagc,wc,sc);
+[flowrate,flowresult,flowratedif] = ferncodes_flowrate(p,pinterp,cinterp,Kde,...
+    Ded,Kn,Kt,Hesq,viscosity,nflag,Con,Kdec,Knc,Ktc,Dedc,nflagc);
 
 
 %Message to user:
