@@ -198,7 +198,7 @@ while (dmp ~= 0 || convwell == 0)
     %for each element.
     if order > 1 && strcmp(limiterflag{3},'on') && ...
             strcmp(cvbtype(1,1:3),'mlp')
-            %strcmp(cvbtype(1:3),'mlp') %%%%%%%%%%%%%%%%%%%%%%%ative se você
+            %strcmp(cvbtype(:),'mlp') %%%%%%%%%%%%%%%%%%%%%%%ative se você
             %não vai rodar com "mlp"%%%%%%%%%%%%%%%%%%%%%
         %Get the MLP limiter for all elements.
         mlplimiter = MLPlimiter(auxvecforswept,Sw,taylorterms,cvbtype,...
