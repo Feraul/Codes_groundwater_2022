@@ -367,7 +367,7 @@ elseif numcase > 200
             % plot (posit,analsolution,'k','LineWidth',2)
             %Plot the results (Actual Numerical Solution)
             hold on;
-            plot(posit,confield,'-rs','LineWidth',1.5);
+            plot(posit,confield,'--r>','LineWidth',1.5);
             %View "analytical curve"
             %     plot(xanal,blcurve(xanal),'-r','LineWidth',2)
             hold on;
