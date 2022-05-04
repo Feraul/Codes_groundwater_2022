@@ -198,11 +198,12 @@ while stopcriteria < 100
     elseif numcase==241 || numcase==242
         
         if strcmp(pmethod,'nlfvpp')
-            [pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(p_old,nflag,weight,s,Con,nflagc,wightc,sc);
+            [pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(pressure,nflag,weight,s,Con,nflagc,wightc,sc);
             
-            [flowrate,flowresult,flowratedif]=ferncodes_flowrateNLFVPP(p_old, pinterp, parameter,1,Con,nflagc,wightc,sc,dparameter,cinterp);
+            [flowrate,flowresult,flowratedif]=ferncodes_flowrateNLFVPP(pressure, pinterp, parameter,1,Con,nflagc,wightc,sc,dparameter,cinterp);
         elseif strcmp(pmethod,'mpfad')
-            [flowrate,flowresult,flowratedif] = ferncodes_flowrate(pressure,weight,s,Kde,...
+            [pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(pressure,nflag,weight,s,Con,nflagc,wightc,sc);
+            [flowrate,flowresult,flowratedif] = ferncodes_flowrate(pressure,pinterp,cinterp, weight,s,Kde,...
                 Ded,Kn,Kt,Hesq,1,nflag,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc);
         else
             [pressure,flowrateadvec,flowresult] = solvePressure_TPFA(transmvecleft,...
