@@ -21,7 +21,7 @@
 
 function [bcattrib] = PLUG_bcfunction(vertices,flagptr,aa)
 %Define global parameters
-global coord bcflag numcase;
+global coord bcflag numcase pmethod;
 
 %Define a boolean parameter
 boolean = length(vertices) == 1;
@@ -327,9 +327,15 @@ coordmid = mean(coord(vertices,1:2))*(1 - boolean) + ...
                 ((1 - coordmid(1))^3)*((1 - coordmid(2))^2)); 
 
         case 248
-            x=coord(vertices,1);
-            y=coord(vertices,2);
-            bcattrib = (0.8/pi)*cos(0.25*pi*(x+y+2*aa))+0.5*(x+y);           
+            if strcmp(pmethod,'tpfa')
+                x= coordmid(1);
+                y=coordmid(2);
+                bcattrib = (0.8/pi)*cos(0.25*pi*(x+y+2*aa))+0.5*(x+y);
+            else
+                x=coord(vertices,1);
+                y=coord(vertices,2);
+                bcattrib = (0.8/pi)*cos(0.25*pi*(x+y+2*aa))+0.5*(x+y);
+            end
         %When the boundary condition cames from "bcflag"
 %         case 231
 %             bcattrib=bcflagc(flagptr,2);
