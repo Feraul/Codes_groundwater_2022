@@ -156,7 +156,20 @@ elseif numcase==231 || numcase==232 || numcase==243 || ...
         numcase==244  || numcase==234|| numcase==233 || numcase==248
     velmedio=1;
 end
-
+if numcase==248
+%It switches according to "interptype"
+        switch char(interptype)
+            %LPEW 1
+            case 'lpew1'
+                % calculo dos pesos que correspondem ao LPEW1
+                [weight,s] = ferncodes_Pre_LPEW_1(kmap,1,V,Sw,N);
+                %LPEW 2
+            case 'lpew2'
+                % calculo dos pesos que correspondem ao LPEW2
+                [weight,s] = ferncodes_Pre_LPEW_2(kmap,N);
+                
+        end  %End of SWITCH
+end
 q=zeros(size(elem,1),1);
 while stopcriteria < 100
     
@@ -169,8 +182,8 @@ while stopcriteria < 100
     timelevel
     
     if numcase==246 || numcase==245 || numcase==247 || numcase==248 || numcase==249 || numcase==250
-        [viscosity] = ferncodes_getviscosity(satinbound,injecelem,Con,earlysw,smethod,...
-            timelevel,numcase,Sleft,Sright,c,overedgecoord,nflagc,nflagfacec);
+        [viscosity] = ferncodes_getviscosity(satinbound,injecelem,Con,earlysw,...
+            Sleft,Sright,c,overedgecoord,nflagc,nflagfacec);
         % calculo da pressão e fluxo
         if strcmp(pmethod,'nlfvpp')
             [pressure,flowrateadvec,flowresult,flowratedif]=ferncodes_solverpressureNLFVPP(nflag,...
@@ -182,7 +195,7 @@ while stopcriteria < 100
             [pressure,flowrateadvec,flowresult] = solvePressure_TPFA(transmvecleft,...
                 knownvecleft,viscosity,wells,Fg,bodyterm,Con);
         end
-    elseif numcase==241
+    elseif numcase==241 || numcase==242
         
         if strcmp(pmethod,'nlfvpp')
             [pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(p_old,nflag,weight,s,Con,nflagc,wightc,sc);
@@ -301,8 +314,8 @@ while stopcriteria < 100
     
     c=c+1;
     %It gives the time spent per "timelevel"
-    if time>1000 && (numcase==242 || numcase==243 || numcase==249 || numcase==250)
-        %if time>0.5 && (numcase==242 || numcase==243 || numcase==245)
+    %if time>1000 && (numcase==242 || numcase==243 || numcase==249 || numcase==250)
+     if time>1 && (numcase==242 || numcase==243 || numcase==245)
         if numcase==245 || numcase==247
             wellsc(1:2,4)=0;
             Con(wells(1,1),1)=wells(1,4);
