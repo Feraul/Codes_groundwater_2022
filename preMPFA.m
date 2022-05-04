@@ -64,7 +64,7 @@ knownboundlength = getknownboundlength(klb);
 switch char(pmethod)
     %Calculate the transmissibilities from TPFA
     case 'tpfa'
-        [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap);
+        [transmvecleft,knownvecleft,Fg,bodyterm] = transmTPFA(kmap,0);
         nflag = ferncodes_calflag(0);
         %Calculate the little matrices for MPFA-TPS (Aavatsmark et al., 1998)
     case 'mpfao'
