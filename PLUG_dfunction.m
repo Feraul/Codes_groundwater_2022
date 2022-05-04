@@ -84,10 +84,10 @@ switch numcase
         dmedio=norm(dmap(1,2:4),inf);
         gamma=0;
     case 243
-        dmap(1,:) = [1 0.01 0 0 0.01]; % para malha menos refinada dx=0.5
-        dmedio=norm(dmap(1,2:4),inf);
-        %dmap(1,:) = [1 0.004 0 0 0.004]; % para malha mas refinada dx=0.2
-        %dmedio=0.004;
+        %dmap(1,:) = [1 0.01 0 0 0.01]; % para malha menos refinada dx=0.5
+        %dmedio=norm(dmap(1,2:4),inf);
+        dmap(1,:) = [1 0.004 0 0 0.004]; % para malha mas refinada dx=0.2
+        dmedio=0.004;
         gamma=0;
     case 244
         dmap(1,:) = [1 0.15 0 0 0.15]; % para malha menos refinada dx=0.5
