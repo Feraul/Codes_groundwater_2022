@@ -26,7 +26,7 @@ switch numcase
     case 231
         
         %Build "dmap"
-        dmap(1,:) = [1 12 0 0 12];
+        dmap(1,:) = [1 10 0 0 10];
         dmedio=10;
         gamma=0;
         
