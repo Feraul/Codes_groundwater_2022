@@ -159,7 +159,8 @@ switch phasekey
             weightDMPc=0;
             [wightc,sc] = ferncodes_Pre_LPEW_2_con(dmap,N);
         elseif strcmp(pmethod,'tpfa')
-            [transmvecleftc,knownvecleftc,] = transmTPFA(dmap,0);
+            %[transmvecleftc,knownvecleftc,] = transmTPFA(dmap,0);
+            [Hesq,Kdec,Knc,Ktc,Dedc] = ferncodes_Kde_Ded_Kt_Kn(dmap);
             wightc=0;sc=0;weightDMPc=0;
         end
         
