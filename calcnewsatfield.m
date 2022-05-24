@@ -196,10 +196,8 @@ while (dmp ~= 0 || convwell == 0)
 
     %Verify if there exists MLP limiter. If yes, it calculates the limiter
     %for each element.
-    if order > 1 && strcmp(limiterflag{3},'on') && ...
-            strcmp(cvbtype(1,1:3),'mlp')
-            %strcmp(cvbtype(:),'mlp') %%%%%%%%%%%%%%%%%%%%%%%ative se você
-            %não vai rodar com "mlp"%%%%%%%%%%%%%%%%%%%%%
+    if order > 1 && strcmp(limiterflag{3},'on') && strcmp(cvbtype,'mlp')
+            
         %Get the MLP limiter for all elements.
         mlplimiter = MLPlimiter(auxvecforswept,Sw,taylorterms,cvbtype,...
             flagknownvert,satonvertices,constraint);
