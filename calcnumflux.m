@@ -77,11 +77,7 @@ if any(pointbndedg)
             [Sleftlim,Sleftnonlim] = getsatonedge(elemeval,vertices,verticescoord,...
                 taylorterms,Con,limiterflag,faceorder,constraint,flagknownvert,...
                 satonvertices,mlpbyelem,centelem(leftelem,1:2));
-%             if Sleftlim<0
-%                 Sleftlim=0;
-%             elseif Sleftlim>1
-%                 Sleftlim=1;
-%             end
+
           if strcmp(limiterflag{9},'on')|| strcmp(limiterflag{11},'on')|| strcmp(limiterflag{12},'on')
                
 %                if Sleftnonlim>10 || Sleftnonlim<0
@@ -170,12 +166,7 @@ for i = 1:length(pointinedg)
      [Sleftlim,Sleftnonlim] = getsatonedge(elemeval,vertices,verticescoord,taylorterms,Con,...
         limiterflag,faceorder,constraint,flagknownvert,satonvertices,...
         mlpbyelem,centelem(elemeval,1:2));
-%     if Sleftlim<0
-%         Sleftlim=0;
-%     elseif Sleftlim>1
-%         
-%        Sleftlim=1; 
-%     end
+
     %Right Contribution:
     %Define the order for this edge.
     faceorder = orderinedgdist(i,2);
@@ -188,12 +179,7 @@ for i = 1:length(pointinedg)
     [Srightlim,Srightnonlim]= getsatonedge(elemeval,vertices,verticescoord,taylorterms,Con,...
         limiterflag,faceorder,constraint,flagknownvert,satonvertices,...
         mlpbyelem,centelem(elemeval,1:2));
-%    if Srightlim <0
-%        
-%        Srightlim=0;
-%    elseif Srightlim>1
-%        Srightlim=1;       
-%    end
+
     %PAD
     if (strcmp(limiterflag{9},'on')|| strcmp(limiterflag{11},'on')|| strcmp(limiterflag{12},'on') ) && (countinter==0)
         [Sleft,Sright,mLLF]=PhysicalAD(Con,taylorterms,limiterflag,flagknownvert,satonvertices,...
