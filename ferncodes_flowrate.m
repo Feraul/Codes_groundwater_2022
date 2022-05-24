@@ -5,6 +5,7 @@
 
 function [flowrate,flowresult,flowratedif] = ferncodes_flowrate(p,pinterp,cinterp,Kde,Ded,Kn,Kt,...
     Hesq,viscosity,nflag,Con,Kdec,Knc,Ktc,Dedc,nflagc)
+
 %Define global variables:
 global coord  bedge inedge centelem bcflag phasekey ...
        smethod numcase bcflagc;
