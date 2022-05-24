@@ -1,8 +1,4 @@
-%--------------------------------------------------------------------------
-%UNIVERSIDADE FEDERAL DE PERNAMBUCO
-%CENTRO DE TECNOLOGIA E GEOCIENCIAS
-%PROGRAMA DE POS GRADUACAO EM ENGENHARIA CIVIL
-%TOPICOS ESPECIAIS EM DINAMICA DOS FLUIDOS COMPUTACIONAL
+
 %--------------------------------------------------------------------------
 %Subject: numerical code used to simulate fluid flow in porous media. That 
 %routine calls several others which defines how the equation will be solved 
@@ -17,8 +13,8 @@
 
 %--------------------------------------------------------------------------
 %In this numerical routine the flow may be simulated with one or two phase 
-%(water-oil generaly). The functions below are organized in order give 
-%flexibility to software resourcers.
+% or contaminants or groundwater. The functions below are organized in order
+%give flexibility to software resourcers.
 %For example: the saturation and pressure fields are calculated by IMPES,
 %but it may be calculated also by a fully implicit scheme. This change is
 %done in the present rountine just call each function.
@@ -57,12 +53,13 @@ global coord centelem elem esurn1 esurn2 nsurn1 nsurn2 bedge inedge ...
 
 
 
-if numcase>200
+if numcase >200
     % Flags adequation for contamination and groundwater problem
-    [bedge,bcflagc,wellsc,auxpar]=preconcentration(bedge,wells);
+     [bedge,bcflagc,wellsc,auxpar]=preconcentration(bedge,wells);
     
     if numcase==247 || numcase==249 || numcase==250 
-        % permeability field obtained by: Nicolaides, Cueto-Filgueroso, juanes 2015.
+        % permeability field obtained by: Nicolaides, Cueto-Filgueroso, 
+        % Juanes 2015.
         % reorganização da matriz de permeabilidade
         load('Perm_Var0p1.mat')
         %==================================================================
