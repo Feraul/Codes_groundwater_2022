@@ -26,8 +26,9 @@ function IMPEC(Con,injecelem,producelem,satinbound,wells,klb,satonvertices,...
     lastimeval,prodwellbedg,prodwellinedg,mwmaprodelem,vtxmaprodelem,...
     coordmaprodelem,amountofneigvec,rtmd_storepos,rtmd_storeleft,...
     rtmd_storeright,isonbound,elemsize,bedgesize,inedgesize,parameter,...
-    weightDMP,nflagface,p_old,contnorm,dmap,dparameter,nflagc,gamma,...
-    Dmedio,Kdec,Knc,Ktc,Dedc,wightc,sc,nflagfacec,weightDMPc,wellsc)
+    weightDMP,nflagface,p_old,contnorm,dparameter,nflagc,gamma,...
+    Dmedio,Kdec,Knc,Ktc,Dedc,wightc,sc,nflagfacec,weightDMPc,wellsc,...
+    transmvecleftc,knownvecleftc)
 %Define global parameters:
 global timew elemarea totaltime timelevel pormap numcase pmethod smethod ...
     filepath benchkey resfolder order bcflagc bedge inedge elem interptype ;
@@ -77,7 +78,7 @@ else
         order*ones(elemsize,1),'i',1,normk);
 end
 
-if numcase~=246 && numcase~=246 && numcase~=247 && numcase~=248 && numcase~=249 && numcase~=250
+if numcase~=246 & numcase~=246 & numcase~=247 & numcase~=248 & numcase~=249 & numcase~=250
     if strcmp(pmethod,'tpfa') && numcase~=31.1
         
         %Get "pressure" and "flowrate"
@@ -156,7 +157,7 @@ elseif numcase==231 || numcase==232 || numcase==243 || ...
         numcase==244  || numcase==234|| numcase==233 || numcase==248
     velmedio=1;
 end
-if numcase==248
+if numcase==248 && (strcmp(pmethod,'nlfvpp') || strcmp(pmethod,'mpfad'))
 %It switches according to "interptype"
         switch char(interptype)
             %LPEW 1
@@ -192,22 +193,35 @@ while stopcriteria < 100
             [pressure,flowrateadvec,flowresult,flowratedif] = ferncodes_solverpressure(...
                 viscosity,wells,Hesq,Kde,Kn,Kt,Ded,nflag,weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc);
         else
-            [pressure,flowrateadvec,flowresult] = solvePressure_TPFA(transmvecleft,...
-                knownvecleft,viscosity,wells,Fg,bodyterm,Con);
+%             [pressure,flowrateadvec,flowresult,flowratedif] = solvePressure_TPFA(transmvecleft,...
+%                 knownvecleft,viscosity,wells,Fg,bodyterm,Con,transmvecleftc,time);
+
+
+        [pressure,flowrateadvec,flowresult,flowratedif]=...
+            ferncodes_solvePressure_TPFA(Kde, Kn, nflag, Hesq,wells,...
+            viscosity,Kdec,Knc,nflagc,Con);
         end
-    elseif numcase==241 || numcase==242
-        
+    elseif numcase==241 || numcase==242 || numcase==231 || numcase==232
+        viscosity=1;
         if strcmp(pmethod,'nlfvpp')
-            [pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(pressure,nflag,weight,s,Con,nflagc,wightc,sc);
-            
-            [flowrate,flowresult,flowratedif]=ferncodes_flowrateNLFVPP(pressure, pinterp, parameter,1,Con,nflagc,wightc,sc,dparameter,cinterp);
+            % interpolando as pressoes e concentracoes
+            [pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(pressure,nflag,...
+                weight,s,Con,nflagc,wightc,sc);
+            % calculo do fluxo difusivo
+            [flowrate,flowresult,flowratedif]=ferncodes_flowrateNLFVPP(pressure,...
+                pinterp, parameter,viscosity,Con,nflagc,wightc,sc,dparameter,cinterp);
         elseif strcmp(pmethod,'mpfad')
-            [pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(pressure,nflag,weight,s,Con,nflagc,wightc,sc);
-            [flowrate,flowresult,flowratedif] = ferncodes_flowrate(pressure,pinterp,cinterp, weight,s,Kde,...
-                Ded,Kn,Kt,Hesq,1,nflag,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc);
+            % interpolando as pressoes e concentracoes
+            [pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(pressure,nflag,...
+                weight,s,Con,nflagc,wightc,sc);
+            % calculo do fluxo diffusivo
+            [flowrate,flowresult,flowratedif] = ferncodes_flowrate(pressure,...
+                pinterp,cinterp,Kde,...
+                Ded,Kn,Kt,Hesq,viscosity,nflag,Con,Kdec,Knc,Ktc,Dedc,nflagc);
         else
-            [pressure,flowrateadvec,flowresult] = solvePressure_TPFA(transmvecleft,...
-                knownvecleft,viscosity,wells,Fg,bodyterm,Con);
+            % calculo do fluxo difusivo
+            [flowrate,flowresult,flowratedif] = calcflowrateTPFA(transmvecleft,...
+                pressure,Con,transmvecleftc,time);
         end
         
     end
