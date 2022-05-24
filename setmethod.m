@@ -1,8 +1,4 @@
-%--------------------------------------------------------------------------
-%UNIVERSIDADE FEDERAL DE PERNAMBUCO
-%CENTRO DE TECNOLOGIA E GEOCIENCIAS
-%PROGRAMA DE POS GRADUACAO EM ENGENHARIA CIVIL
-%TOPICOS ESPECIAIS EM DINAMICA DOS FLUIDOS COMPUTACIONAL
+
 %--------------------------------------------------------------------------
 %Subject: numerical routine to solve a two phase flow in porous media
 %Type of file: FUNCTION
