@@ -12,7 +12,7 @@ nflagfacec(:,2:3)=0;
 for ifacont = 1:size(bedge,1)
     
     %----------------------------------------------------------------------
-    % flag na vertice
+    % flag no vertice
     x = logical(bcflagc(:,1) == bedge(ifacont,6));
     vertex = bedge(ifacont,1);
    %First column receives the boundary condition flag.
@@ -30,12 +30,14 @@ for ifacont = 1:size(bedge,1)
         nflagnoc(vertex,2) = PLUG_bcfunction_con(x,a);
     else
         %Second column receives the boundary condition value.
+        
         nflagnoc(vertex,2) = PLUG_bcfunction_con(x,a);
+       
     end
     % primeira coluna flag das condições de contorno de Dirichlet
-    % segunda coluna valores das concentrações impostos sobre as condições
+    % segunda coluna valores das concentrações impostos sobre as condicoes
     % de contorno
-    % terceira coluna, é flag de no em 1s.
+    % terceira coluna, é flag de no vertice.
     
     if nflagnoc(vertex,1)<100
         
@@ -44,8 +46,8 @@ for ifacont = 1:size(bedge,1)
        nflagnoc(vertex,3)=0; 
     end
     
-    %----------------------------------------------------------------------
-    % flag na face
+    %% --------------------------------------------------------------------
+    % flag sobre a face
     
     y = logical(bcflagc(:,1) == bedge(ifacont,7));
     %First column receives the boundary condition flag.
