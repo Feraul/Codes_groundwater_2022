@@ -303,6 +303,7 @@ else
         pos = 2*booleanelem + (1 - booleanelem);
         if strcmp(limiterflag{6},'on')|| strcmp(limiterflag{11},'on')
             
+            
             %Calculate the gradients centered and upwind.
             %Calculate the vector distance between colocation points.
             dlr = pointr - pointl;            
