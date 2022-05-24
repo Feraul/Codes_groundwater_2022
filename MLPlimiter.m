@@ -64,20 +64,21 @@ for ivtx = vetxtoeval
     
     %Get max and min value of Sw (projected)
     % para concentração apagamos esta 
-%     if flagknownvert(ivtx) == 1 % Sw no contorno
-%         
-%         extr_sw = satonvertices(ivtx)*e - proj_sw;
-%         %Get max and min value of Sw (projected)
-%         max_sw = max([satonvertices(ivtx); proj_sw]);
-%         min_sw = min([satonvertices(ivtx); proj_sw]);
-%         
-%     else
+    if flagknownvert(ivtx) == 1 % Sw no contorno
+        extr_sw = dot(localgrad',r_esrn')';
+        %extr_sw = satonvertices(ivtx)*e - proj_sw;
+        %Get max and min value of Sw (projected)
+       
+        max_sw = max([satonvertices(ivtx); proj_sw]);
+        min_sw = min([satonvertices(ivtx); proj_sw]);
+        
+    else
         %Get the extrapolated Sw
         extr_sw = dot(localgrad',r_esrn')';
         %Get max and min value of Sw (projected)
         max_sw = max(proj_sw);
         min_sw = min(proj_sw);
-%    end  %End of IF
+    end  %End of IF
 
     %Verify accuracy
     extr_sw = extr_sw.*(abs(extr_sw) > tol);
