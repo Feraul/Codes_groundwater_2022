@@ -20,7 +20,7 @@
 
 function plotandwrite(producelem,Sw,pressure,satonvertices,Dmedio,velmedio,gamma,p)
 %Define global parameters:
-global filepath satlimit resfolder bcflag numcase totaltime  elemarea;
+global filepath satlimit resfolder bcflag bcflagc numcase totaltime  elemarea;
 
 %"getgeodata" reads each row of *.geo and store it as a string array.
 %Get the data according to "producelem" size
@@ -225,29 +225,71 @@ elseif numcase > 200
         case 231
             [posit,confield,elemonline] = getlineresult(Sw,satonvertices);
             [analsolution]=ferncodes_analyticalSolution(satonvertices,Dmedio,velmedio,posit,gamma);
+            % readequacao
+            analsolutionaux=length(analsolution)+1;
+            confieldaux= length(analsolution)+1;
+            positaux= length(posit)+1;
+            analsolutionaux(1)=bcflagc(2,2); % concentratio na fronteira;
+            confieldaux(1)=bcflagc(2,2);
+            positaux(1)=0;
+            
+            analsolutionaux(2:length(analsolution)+1,1)=analsolution;
+            confieldaux(2:length(confield)+1,1)=confield;
+            positaux(2:length(posit)+1,1)=posit;
+
             hold on
+            
             %Plot the results (Analitical Solution)
-            plot (posit,analsolution,'LineWidth',2)
+            %plot (positaux,analsolutionaux,'k','LineWidth',2)
             %Plot the results (Actual Numerical Solution)
-            hold on;
-            plot(posit,confield,'-rv');
-            %View "analytical curve"
-            %     plot(xanal,blcurve(xanal),'-r','LineWidth',2)
+            %hold on;
+            
+            plot(positaux,confieldaux,'-gs','LineWidth',1.5);
+           
             hold on;
             
             grid on;
             title ('Concentration Solution')
             xlabel ('Reservoir Length');
             ylabel ('Concentration (C)');
+            % Calculo dos erros
+            
+             %Calculate the relative error of "el2" ("relerrorL2")
+            relerrorL2 = (abs(confield - analsolution).^2).*elemarea(elemonline,:);
+           
+            relerrorL1=  (abs(confield - analsolution).^1).*elemarea(elemonline,:);
+            abserrorMAX = abs(analsolution - confield);
+            
+            %Calculate "emax"
+            emaxc = max(abserrorMAX)
+            %calculate "el1"
+            el1c = sum(relerrorL1)/sum(elemarea(elemonline,:))
+            %Calculate "el2"
+            el2c = sqrt(sum(relerrorL2)/sum(elemarea(elemonline,:)))
+           
+            
         case 232
             [posit,confield,elemonline] = getlineresult(Sw,satonvertices);
             [analsolution]=ferncodes_analyticalSolution(satonvertices,Dmedio,velmedio,posit,gamma);
+           % readequacao
+            analsolutionaux=length(analsolution)+1;
+            confieldaux= length(analsolution)+1;
+            positaux= length(posit)+1;
+            analsolutionaux(1)=bcflagc(2,2); % concentratio na fronteira;
+            confieldaux(1)=bcflagc(2,2);
+            positaux(1)=0;
+            
+            analsolutionaux(2:length(analsolution)+1,1)=analsolution;
+            confieldaux(2:length(confield)+1,1)=confield;
+            positaux(2:length(posit)+1,1)=posit;
+
             hold on
+            
             %Plot the results (Analitical Solution)
-            plot (posit,analsolution,'LineWidth',2)
+            %plot (positaux,analsolutionaux,'k','LineWidth',2)
             %Plot the results (Actual Numerical Solution)
-            hold on;
-            plot(posit,confield,'-bv');
+            %hold on;
+            plot(positaux,confieldaux,'-ms','LineWidth',1.5);
             %View "analytical curve"
             %     plot(xanal,blcurve(xanal),'-r','LineWidth',2)
             hold on;
@@ -256,6 +298,22 @@ elseif numcase > 200
             title ('Concentration Solution')
             xlabel ('Reservoir Length');
             ylabel ('Concentration (C)');
+            % Calculo dos erros
+            
+             %Calculate the relative error of "el2" ("relerrorL2")
+            relerrorL2 = (abs(confield - analsolution).^2).*elemarea(elemonline,:);
+           
+            relerrorL1=  (abs(confield - analsolution).^1).*elemarea(elemonline,:);
+            abserrorMAX = abs(analsolution - confield);
+            
+            %Calculate "emax"
+            emaxc = max(abserrorMAX)
+            %calculate "el1"
+            el1c = sum(relerrorL1)/sum(elemarea(elemonline,:))
+            %Calculate "el2"
+            el2c = sqrt(sum(relerrorL2)/sum(elemarea(elemonline,:)))
+
+
         case 233
             [posit,confield,elemonline] = getlineresult(Sw,satonvertices);
             [analsolution]=ferncodes_analyticalSolution(satonvertices,Dmedio,velmedio,posit,gamma);
@@ -492,7 +550,7 @@ end  %End of IF
 
 function [posit,satfield,elemonline] = getlineresult(Sw,satonvertices)
 %Define global parameters:
-global centelem numcase;
+global centelem numcase coord;
 
 
 %Catch the "y" value in "centelem"
@@ -507,13 +565,19 @@ j = 1;
 %Swept "centelem"
 for i = 1:size(centelem,1)
     if numcase==242
-        %malha grossa
+        % ative para malha grossa
         ymax= 2.7;
         ymin= 2.5;
-    else
-        %malha fina
-        ymax= 2.2;
-        ymin= 2.4;
+        % native para malha fina
+        %ymax= 2.2;
+        %ymin= 2.4;
+    elseif numcase==231 || numcase==232
+        % malha utilizado na tese de Nilson e Uewerton.
+        % malha11
+        ymax=max(coord(:,2));
+        %ymax=10;
+        ymin=ymax/2;
+        
     end
     if (ymin<=centelem(i,2)) && (centelem(i,2) <= ymax)
         %if (2.2<=centelem(i,2)) && (centelem(i,2) <= 2.4)
@@ -530,6 +594,7 @@ for i = 1:size(centelem,1)
     end  %End of IF
 end  %End of FOR
 
+
 %Fix "getxvalue" and "getsatfield"
 posit = sort(getxvalue);
 satfield = zeros(length(getxvalue),1);
@@ -543,7 +608,7 @@ for i = 1:length(getxvalue)
 end  %End of FOR
 
 %Update "elemonline" without the first positio (it is on face)
-elemonline = elemonline(2:length(elemonline));
+elemonline = elemonline(1:length(elemonline));
 posit=posit';
 
 %--------------------------------------------------------------------------
