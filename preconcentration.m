@@ -3,7 +3,7 @@
 
 
 function [bedge,bcflagc,wellsc,auxpar]= preconcentration(bedge,wells)
-global  coord numcase
+global numcase
 
 auxpar=0;
 wellsc=zeros(2,6);
@@ -12,10 +12,10 @@ switch numcase
     case 231
         bcflagc(1,1)=251;
         bcflagc(1,2)=0;
-        bcflagc(2,1)=50;  % dicichlet concen
-        bcflagc(2,2)=10; % valor dirich
+        bcflagc(2,1)=50;  % flag de concentracao tipo Dirichlet
+        bcflagc(2,2)=10; % valor concentracao
         bcflagc(3,1)=250; % dirich neumann
-        bcflagc(3,2)=0;  % valor concent
+        bcflagc(3,2)=0;  % valor do fluxo de concentracao
         
         c=logical(bedge(:,4)==201);
         bedge([c],6)=251;
