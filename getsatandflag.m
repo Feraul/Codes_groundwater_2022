@@ -42,6 +42,11 @@ if (numcase==249 || numcase==247)&& m==1
     % R>0 indicates that the contaminant is less viscous than the
     % aquifer water
     satonvertices=exp(R.*nflagc(:,2));
+elseif numcase==251 && m==1
+    M=visc(2)/visc(1);
+    MM=1/M;
+    cc=nflagc(:,2);
+    satonvertices=((1-cc)+(MM^0.25).*cc).^4;
 else
     %Initialize the vectors "satonvertices" and "satonedges"
     satonvertices = nflagc(:,2);
