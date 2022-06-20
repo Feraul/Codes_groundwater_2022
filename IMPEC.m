@@ -196,7 +196,6 @@ while stopcriteria < 100
 %             [pressure,flowrateadvec,flowresult,flowratedif] = solvePressure_TPFA(transmvecleft,...
 %                 knownvecleft,viscosity,wells,Fg,bodyterm,Con,transmvecleftc,time);
 
-
         [pressure,flowrateadvec,flowresult,flowratedif]=...
             ferncodes_solvePressure_TPFA(Kde, Kn, nflag, Hesq,wells,...
             viscosity,Kdec,Knc,nflagc,Con);
@@ -231,13 +230,13 @@ while stopcriteria < 100
     
     %This function obtains the time step using the "Courant" number.
     %The necessity of calculate the time step is ensure the stability of
-    %explicit saturation formulation.
+    %explicit concentration formulation.
     
     dt = calctimestep(flowrateadvec,satinbound,gamma,Dmedio)
     
     %----------------------------------------------------------------------
     
-    %Calculate the CONCENTRATION field (choose saturation method):
+    %Calculate the CONCENTRATION field (choose concentration method):
     [newC,cflowrate,Sleft,Sright] = ...
         solveSaturation(Con,flowrateadvec,flowratedif,dt,injecelem,producelem,satinbound,...
         Fg,flagknownvert,satonvertices,flagknownedge,satonedges,flowresult,...
@@ -247,7 +246,7 @@ while stopcriteria < 100
         amountofneigvec,rtmd_storepos,rtmd_storeleft,rtmd_storeright,...
         isonbound,elemsize,bedgesize,inedgesize,gamma,time);
     
-    %Update the saturation field
+    %Update the concentration field
     Con = newC;
     
     %----------------------------------------------------------------------
@@ -319,9 +318,9 @@ while stopcriteria < 100
     %Show extrema values
     C_extrema = [max(Con); min(Con)]
     
-    %Store maximum and minimum saturation values:
+    %Store maximum and minimum concentration values:
     maxminconval = [max(C_extrema(1),C_extrema_old(1)) min(C_extrema(2),C_extrema_old(2))];
-    %Update "S_extrema"
+    %Update "C_extrema"
     C_extrema_old = C_extrema;
     
     %Increment the parameters "timelevel" and "countstore"
