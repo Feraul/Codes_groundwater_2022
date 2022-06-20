@@ -407,7 +407,35 @@ elseif numcase > 200
             plot (posit,analsolution,'LineWidth',2)
             %Plot the results (Actual Numerical Solution)
             hold on;
-            plot(posit,confield,'-gv');
+            plot(posit,confield,'-gs');
+            %View "analytical curve"
+            %     plot(xanal,blcurve(xanal),'-r','LineWidth',2)
+            hold on;
+            
+            grid on;
+            title ('Concentration Solution')
+            xlabel ('Reservoir Length');
+            ylabel ('Concentration (C)');
+        case 241
+            [posit,confield,elemonline] = getlineresult(Sw,satonvertices);
+            [analsolution]=ferncodes_analyticalSolution(satonvertices,Dmedio,velmedio,posit,gamma);
+            
+            analsolutionaux=length(analsolution)+1;
+            confieldaux= length(analsolution)+1;
+            positaux= length(posit)+1;
+            analsolutionaux(1)=1; % concentratio na fronteira;
+            confieldaux(1)=1;
+            positaux(1)=0;
+            
+            analsolutionaux(2:length(analsolution)+1,1)=analsolution;
+            confieldaux(2:length(confield)+1,1)=confield;
+            positaux(2:length(posit)+1,1)=posit;
+           % hold on
+            %Plot the results (Analitical Solution)
+             plot (positaux,analsolutionaux,'k','LineWidth',2)
+            %Plot the results (Actual Numerical Solution)
+            hold on;
+            plot(positaux,confieldaux,'b','LineWidth',1.5);
             %View "analytical curve"
             %     plot(xanal,blcurve(xanal),'-r','LineWidth',2)
             hold on;
@@ -420,12 +448,26 @@ elseif numcase > 200
             [posit,confield,elemonline] = getlineresult(Sw,satonvertices);
             [analsolution]=ferncodes_analyticalSolution(satonvertices,Dmedio,velmedio,posit,gamma);
             
-            % hold on
+            % readequacao ative para malha grossa dx=0.5
+            
+            confieldaux= length(analsolution)+1;
+            positaux= length(posit)+1;
+            
+            confieldaux(1)=0;
+            positaux(1)=0;
+            
+            
+            confieldaux(2:length(confield)+1,1)=confield;
+            positaux(2:length(posit)+1,1)=posit;
+
+            confield=confieldaux;
+            posit=positaux;
+           % hold on
             %Plot the results (Analitical Solution)
-            % plot (posit,analsolution,'k','LineWidth',2)
+           %  plot (posit,analsolution,'k','LineWidth',2)
             %Plot the results (Actual Numerical Solution)
             hold on;
-            plot(posit,confield,'--r>','LineWidth',1.5);
+            plot(posit,confield,'b','LineWidth',1.5);
             %View "analytical curve"
             %     plot(xanal,blcurve(xanal),'-r','LineWidth',2)
             hold on;
@@ -564,13 +606,15 @@ getelemonline(1) = 0;
 j = 1;
 %Swept "centelem"
 for i = 1:size(centelem,1)
-    if numcase==242
+    if numcase==242 || numcase==241
         % ative para malha grossa
-        ymax= 2.7;
-        ymin= 2.5;
+        %ymax= 2.7;
+        %ymin= 2.5;
         % native para malha fina
-        %ymax= 2.2;
-        %ymin= 2.4;
+        ymax= 2.4;
+        ymin= 2.2;
+        %ymax=1.72;
+        %ymin=1.58;
     elseif numcase==231 || numcase==232
         % malha utilizado na tese de Nilson e Uewerton.
         % malha11
