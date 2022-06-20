@@ -44,10 +44,13 @@ switch numcase
        ud1=exp((-x./(2.*Dmedio)).*sqrt((velmedio.^2)+4.*gamma.*Dmedio)).*erfc((x-t.*sqrt((velmedio.^2)+4.*gamma.*Dmedio))./(2.*sqrt(Dmedio.*t)));
  
       analsolution=(max(satonvertices)./2).*exp(f2).*(ud1-ud2);
+    case 241
+        t=totaltime(2);
+        analsolution=(max(satonvertices)/2).*(erfc((x-velmedio.*t)./(2.*sqrt(Dmedio.*t)))+exp((velmedio.*x)./Dmedio).*erfc((x+velmedio.*t)./(2.*sqrt(Dmedio.*t))));
     case 242
      t=totaltime(2);
-     A1= 0.5*(erfc((x-velmedio*t)/(2*sqrt(Dmedio*t)))+        exp((velmedio.*x)./(Dmedio)).*erfc((x+velmedio*t)/(2*sqrt(Dmedio*t))));
-     A2= 0.5*(erfc((x-velmedio*(t-1))/(2*sqrt(Dmedio*(t-1))))+exp((velmedio.*x)./(Dmedio)).*erfc((x+velmedio*(t-1))/(2*sqrt(Dmedio*(t-1)))));
+     A1= 0.5*(erfc((x-velmedio*t)/(2*sqrt(0.01*t)))+        exp((velmedio.*x)./(0.01)).*erfc((x+velmedio*t)/(2*sqrt(0.01*t))));
+     A2= 0.5*(erfc((x-velmedio*(t-1))/(2*sqrt(0.01*(t-1))))+exp((velmedio.*x)./(0.01)).*erfc((x+velmedio*(t-1))/(2*sqrt(0.01*(t-1)))));
      analsolution= A1-A2;
     case 248
         t=totaltime(2);

@@ -464,6 +464,28 @@ switch numcase
         bedge([e1],7)=250;
         f1=logical(bedge(:,5)==201);
         bedge([f1],7)=251;
+    case 251
+         bcflagc(1,1)=50;% dicichlet concen
+        bcflagc(1,2)=1;% valor dirich
+        bcflagc(2,1)=251; % Neumann 
+        bcflagc(2,2)=0; % valor dirich
+        bcflagc(3,1)=250; % neumann boundary
+        bcflagc(3,2)=0;  % valor 
+       
+        
+        c=logical(bedge(:,4)==101);
+        bedge([c],6)=50;
+        d=logical(bedge(:,4)==102);
+        bedge([d],6)=251;
+        f=logical(bedge(:,4)==201);
+        bedge([f],6)=250;
+        
+        c1=logical(bedge(:,5)==101);
+        bedge([c1],7)=50;
+        d1=logical(bedge(:,5)==102);
+        bedge([d1],7)=251;
+        f1=logical(bedge(:,5)==201);
+        bedge([f1],7)=250;
 end
 % end flags
 %% flags adicionais para o problema 5.3.3 Darlan
