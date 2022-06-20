@@ -29,12 +29,18 @@ switch numcase
     case 244
        bcattrib=bcflagc(flagptr,2); 
     case  245
+        
       bcattrib=bcflagc(flagptr,2);
+    case 246
+      bcattrib=bcflagc(flagptr,2);  
     case  247
       bcattrib=bcflagc(flagptr,2);
      case  249
       bcattrib=bcflagc(flagptr,2);
     case 250
+        
+      bcattrib=bcflagc(flagptr,2);
+     case 251
         
       bcattrib=bcflagc(flagptr,2);
     case 248
@@ -44,7 +50,6 @@ switch numcase
         bcattrib = sin(0.25*pi*(flagptr+2*a));
       
       
-    case 246
-      bcattrib=bcflagc(flagptr,2);  
+    
 end
 end

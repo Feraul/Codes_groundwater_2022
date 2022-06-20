@@ -71,11 +71,11 @@ switch numcase
         dmedio=4;
         gamma=0;
     case 241
-        %dmap(1,:) = [1 4 0 0 4]; % r=1
+        dmap(1,:) = [1 4 0 0 4]; % r=1, pe=0.05, dx=0.2
         %dmap(1,:) = [1 4 0 0 0.4]; % r=10
-        dmap(1,:) = [1 4 0 0 0.04]; % r=100
+        %dmap(1,:) = [1 4 0 0 0.04]; % r=100
         %dmap(1,:) = [1 4 0 0 0.004]; % r=10000
-        dmedio=4;
+        dmedio=norm(dmap(1,2:4),inf);
         gamma=0;
     case 242
         dmap(1,:) = [1 0.01 0 0 0.01]; % para malha menos refinada dx=0.5
@@ -119,7 +119,12 @@ switch numcase
             dmap(i,:) = [i 1.0000e-04 0 0 1.0000e-04];
         end
         dmedio=norm(dmap(1,2:4),inf);
-        gamma=0;  
+        gamma=0;
+    case 251
+        dmap(1,:) = [1 0.1 5.625072-5 5.625072-5 0.1];
+        dmap(2,:) = [2 0.1 5.625072-5 5.625072-5 0.1];
+        dmedio=norm(dmap(1,2:4),inf);
+        gamma=0;    
     case 248
         
         dmap = [1 0.01 0 0 0.01];
