@@ -21,9 +21,9 @@
 %--------------------------------------------------------------------------
 
 function [expo,fw,fo,gama,kro,nw,no,kwmax,komax] = twophasevar(Sw,...
-    numcase,overedgecoord,injecelem)
+  overedgecoord,injecelem)
 %Define global parameters:
-global centelem satlimit visc;
+global centelem satlimit visc numcase;
 
 %Initialize the parameters:
 krw = zeros(length(Sw),1);
@@ -49,9 +49,13 @@ gama = krw;
         % R>0 indicates that the contaminant is less viscous than the
         % aquifer water
         expo=exp(R*Sw);
+    elseif numcase==251
+        M=visc(2)/visc(1);
+        MM=1/M;
+        exp=((1-Sw)+(MM^0.25).*Sw).^4;
     elseif numcase==248
         % convergence test
-        expo=1./(0.5-0.2*Sw);
+        expo=1./(0.5-0.2.*Sw);
     elseif numcase == 34.3 || numcase == 34.4
         %Define Mobility ratio:
         M = visc(2)/visc(1);
