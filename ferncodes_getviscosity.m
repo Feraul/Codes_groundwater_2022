@@ -328,7 +328,7 @@ switch interpmobility
         %Initialize "mobinbound"
         mobinbound = zeros(length(satinbound),2);
         
-        [exponente,] = twophasevar(Sw,numcase);
+        [exponente,] = twophasevar(Sw);
         
         %Fill "mobilityoncentroid"
         i = 1:length(Sw);
@@ -340,7 +340,7 @@ switch interpmobility
         if any(satinbound) && length(satinbound) > 1
             %Get the relative permeability for water and oil on the 
             %boundary (It uses the sat. on the Cell-center)
-             [exponente,] = twophasevar(satinbound,numcase);
+             [exponente,] = twophasevar(satinbound);
 %             %Clear the null variable
 %             clear null1 null2 null3;
             
