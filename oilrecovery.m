@@ -1,4 +1,3 @@
-
 %--------------------------------------------------------------------------
 %Subject: numerical code used to simulate fluid flow in porous media. That 
 %routine calls several others which defines how the equation will be solved 
@@ -28,7 +27,7 @@ clear all;
 format short;
 %It begins the time counter and "profile".
 tic
-% profile on -history;
+% profile on
 
 %--------------------------------------------------------------------------
 %Define the global variables:
@@ -73,6 +72,8 @@ if numcase >200
             end
         end
         kmap=auxperm3;
+    elseif numcase==251
+        kmap=kmap;
         %==================================================================
     end
 end
