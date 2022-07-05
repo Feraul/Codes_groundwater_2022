@@ -22,7 +22,8 @@ flowresult = zeros(size(centelem,1),1);
 flowratedif = zeros(bedgesize + inedgesize,1);
 %Swept "bedge"
 for ifacont = 1:bedgesize
-    if numcase == 246 || numcase == 245 || numcase==247 || numcase==248 || numcase==249
+    if numcase == 246 || numcase == 245 || numcase==247 ||...
+            numcase==248 || numcase==249 || numcase==251
         % vicosity on the boundary edge
         visonface = viscosity(ifacont,1);
         %It is a Two-phase flow
@@ -52,7 +53,7 @@ for ifacont = 1:bedgesize
     %Attribute the flow rate to "flowresult"
     %On the left:
     flowresult(lef) = flowresult(lef) + flowrate(ifacont);  
-    %======================================================================
+    %% ===================================================================
     
     if bedge(ifacont,7)>200
         x=bcflagc(:,1)==bedge(ifacont,7);
@@ -71,7 +72,8 @@ end  %End of FOR ("bedge")
 
 %Swept "inedge"
 for iface = 1:inedgesize
-    if numcase == 246 || numcase == 245 || numcase==247 || numcase==248 || numcase==249
+    if numcase == 246 || numcase == 245 || numcase==247 ||...
+            numcase==248 || numcase==249 || numcase==251
         % vicosity on the boundary edge
         visonface = viscosity(bedgesize + iface,1);
         %It is a Two-phase flow
@@ -85,10 +87,6 @@ for iface = 1:inedgesize
     p1=pinterp(inedge(iface,1),1);
     p2=pinterp(inedge(iface,2),1);
     
-    conno1=cinterp(inedge(iface,1),1);
-    conno2=cinterp(inedge(iface,2),1);
-    
-    
     %calculo das vazões
    
     flowrate(bedgesize + iface) =visonface*Kde(iface)*(p(rel)-p(lef)-Ded(iface)*(p2 - p1));
@@ -98,9 +96,11 @@ for iface = 1:inedgesize
     flowresult(lef) = flowresult(lef) + flowrate(bedgesize + iface);  
     %On the right:
     flowresult(rel) = flowresult(rel) - flowrate(bedgesize + iface);  
-    %================================================================================
-    %% calculo do fluxo difusivo
+    %% ====================================================================
+    % calculo do fluxo difusivo
 
+    conno1=cinterp(inedge(iface,1),1);
+    conno2=cinterp(inedge(iface,2),1);
     %calculo das vazões difusivas
    
     flowratedif(bedgesize + iface) =Kdec(iface)*(Con(rel) - Con(lef) - Dedc(iface)*(conno2 - conno1));
