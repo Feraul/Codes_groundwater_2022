@@ -78,7 +78,7 @@ else
         order*ones(elemsize,1),'i',1,normk);
 end
 
-if numcase~=246 & numcase~=246 & numcase~=247 & numcase~=248 & numcase~=249 & numcase~=250
+if numcase~=246 & numcase~=246 & numcase~=247 & numcase~=248 & numcase~=249 & numcase~=250 & numcase~=251
     if strcmp(pmethod,'tpfa') && numcase~=31.1
         
         %Get "pressure" and "flowrate"
@@ -146,7 +146,7 @@ if numcase~=246 & numcase~=246 & numcase~=247 & numcase~=248 & numcase~=249 & nu
     end  %End of IF (type of pressure solver)
 end
 
-
+% velocidades medias
 if numcase==233
     velmedio=0.5; % quando a pessão no contorno é 5
 elseif numcase==235
@@ -154,10 +154,11 @@ elseif numcase==235
 elseif numcase==231 || numcase==232 || numcase==243 || ...
         numcase==236 || numcase==237 || numcase==238 ||...
         numcase==239 || numcase==241 || numcase==242 ||...
-        numcase==244  || numcase==234|| numcase==233 || numcase==248
+        numcase==244  || numcase==234|| numcase==233 ||...
+        numcase==248 || numcase==251
     velmedio=1;
 end
-if numcase==248 && (strcmp(pmethod,'nlfvpp') || strcmp(pmethod,'mpfad'))
+if (numcase==248 || numcase==251) && (strcmp(pmethod,'nlfvpp') || strcmp(pmethod,'mpfad'))
 %It switches according to "interptype"
         switch char(interptype)
             %LPEW 1
@@ -182,9 +183,12 @@ while stopcriteria < 100
     disp('>> Show timelevel:')
     timelevel
     
-    if numcase==246 || numcase==245 || numcase==247 || numcase==248 || numcase==249 || numcase==250
-        [viscosity] = ferncodes_getviscosity(satinbound,injecelem,Con,earlysw,...
-            Sleft,Sright,c,overedgecoord,nflagc,nflagfacec);
+    if numcase==246 || numcase==245 || numcase==247 || numcase==248 ||...
+            numcase==249 || numcase==250 || numcase==251
+        %[viscosity] = ferncodes_getviscosity(satinbound,injecelem,Con,earlysw,...
+        %    Sleft,Sright,c,overedgecoord,nflagc,nflagfacec);
+        [viscosity]=calc_viscosity(Con,nflagfacec);
+        
         % calculo da pressão e fluxo
         if strcmp(pmethod,'nlfvpp')
             [pressure,flowrateadvec,flowresult,flowratedif]=ferncodes_solverpressureNLFVPP(nflag,...
@@ -298,7 +302,7 @@ while stopcriteria < 100
     %Call the "postprocessor" (plot results in each time step)
     
     %Just create the vtk file if "flagtoplot" reaches 0.1.
-    if flagtoplot >= 1
+    %if flagtoplot >= 1
         %This function create the "*.vtk" file used in VISIT to posprocessing
         %the results
         if numcase==247
@@ -310,7 +314,7 @@ while stopcriteria < 100
         flagtoplot = 0;
         %Update "contiterplot"
         contiterplot = contiterplot + 1;
-    end  %End of IF
+    %end  %End of IF
     
     %User mesage
     disp('>> Concentration field calculated with success!');
