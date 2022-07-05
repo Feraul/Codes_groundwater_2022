@@ -47,8 +47,8 @@ for i = 1:inedgesize
     dx= norm(centelem(inedge(i,3),:)-centelem(inedge(i,4),:));
     
     %Define delta t:
-    
-    dtbyedge(i)= ((courant/((2*n) + 1))*dx^2)/((Dmedio+(abs(flowrate(bedgesize+ i)/A)*dx)/pormap(1) +gamma*dx^2));
+    vel=flowrate(bedgesize+ i)/A;
+    dtbyedge(i)= ((courant/((2*n) + 1))*dx^2)/((Dmedio+(abs(vel)*dx)/pormap(1) +gamma*dx^2));
     
 end  %End of FOR
 
@@ -71,8 +71,8 @@ for i = 1:bedgesize
     %Define delta t:
     %Chose according physical effects (gravity existence etc)
     %There is gravity effects
-    
-    dtbyboundedge(i)= ((courant/((2*n) + 1))*dx^2)/((Dmedio+(abs(flowrate(i)/A)*dx)/pormap(1) +gamma*dx^2));
+    vel=flowrate(i)/A;
+    dtbyboundedge(i)= ((courant/((2*n) + 1))*dx^2)/((Dmedio+(abs(vel)*dx)/pormap(1) +gamma*dx^2));
     
 end  %End of FOR
 
