@@ -13,7 +13,8 @@ I = zeros(size(elem,1),1);
 
 for ifacont=1:bedgesize
     
-    if numcase == 246 || numcase == 245 || numcase==247 || numcase==248 || numcase==249
+    if numcase == 246 || numcase == 245 || numcase==247 || ...
+            numcase==248 || numcase==249 || numcase==251
         % vicosity on the boundary edge
         visonface = viscosity(ifacont,:);
         %It is a Two-phase flow
@@ -48,7 +49,8 @@ end
 %% Montagem da matriz global
 
 for iface=1:inedgesize
-    if numcase == 246 || numcase == 245 || numcase==247 || numcase==248 || numcase==249
+    if numcase == 246 || numcase == 245 || numcase==247 ||...
+            numcase==248 || numcase==249 || numcase==251
         % vicosity on the boundary edge
         visonface = viscosity(bedgesize + iface,:);
         %It is a Two-phase flow
