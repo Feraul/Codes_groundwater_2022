@@ -52,7 +52,8 @@ gama = krw;
     elseif numcase==251
         M=visc(2)/visc(1);
         MM=1/M;
-        exp=((1-Sw)+(MM^0.25).*Sw).^4;
+        %expo=((1-Sw)+(MM^(0.25)).*Sw).^4;
+        expo=((1-Sw).*visc(2)^-0.25+(visc(1)^(-0.25)).*Sw).^4;
     elseif numcase==248
         % convergence test
         expo=1./(0.5-0.2.*Sw);
