@@ -21,7 +21,8 @@ I = zeros(size(elem,1),1);
 for ifacont = 1:bedgesize
     %Define "mobonface" (for "bedge")
     %It is a One-phase flow. In this case, "mobility" is "1"
-    if numcase == 246 || numcase == 245 || numcase==247 || numcase==248 || numcase==249
+    if numcase == 246 || numcase == 245 || numcase==247 || ...
+            numcase==248 || numcase==249 ||numcase==251
         % vicosity on the boundary edge
         visonface = viscosity(ifacont,:);
         %It is a Two-phase flow
@@ -69,7 +70,8 @@ end  %End of FOR
 
 % contribuição nas faces internas
 for iface = 1:inedgesize
-    if numcase == 246 || numcase == 245 || numcase==247 || numcase==248 || numcase==249
+    if numcase == 246 || numcase == 245 || numcase==247 ||...
+            numcase==248 || numcase==249 || numcase==251
         % vicosity on the boundary edge
         visonface = viscosity(bedgesize + iface,:);
         %It is a Two-phase flow
