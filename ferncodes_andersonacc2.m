@@ -78,60 +78,68 @@ DG = []; % Storage of g-value differences.
 % Initialize the number of stored residuals.
 mAA = 0; % é o "m_{k}" no artigo
 % Top of the iteration loop.
+%% Interpolação das pressões na arestas (faces)
+if strcmp(pmethod,'nlfvpp')
+    [pinterp_new,]=ferncodes_pressureinterpNLFVPP(x,nflag,w,s,Con,nflagc,wightc,sc);
+    [M,I]=ferncodes_assemblematrixNLFVPP(pinterp_new,parameter,mobility,contnorm);
+    %Often it may change the global matrix "M"
+    [M_new,RHS_new] = addsource(sparse(M),I,wells);
+    
+elseif  strcmp(pmethod,'nlfvh')
+    [pinterp_new]=ferncodes_pressureinterpHP(x,nflag,parameter,weightDMP,mobility);
+    
+    [M,I]=ferncodes_assemblematrixNLFVH(pinterp_new,parameter,mobility);
+    %Often it may change the global matrix "M"
+    [M_new,RHS_new] = addsource(sparse(M),I,wells);
+elseif strcmp(pmethod,'nlfvdmp')
+    % interpolação nos nós ou faces
+    [pinterp_new]=ferncodes_pressureinterpHP(x,nflag,parameter,weightDMP,mobility);
+    % Montagem da matriz global
+    
+    [M,I]=ferncodes_assemblematrixDMP(x,pinterp_new,0,parameter,weightDMP,mobility);
+    %--------------------------------------------------------------------------
+    %Add a source therm to independent vector "mvector"
+    
+    %Often it may change the global matrix "M"
+    [M_new,RHS_new] = addsource(sparse(M),I,wells);
+else
+    [pinterp_new]=ferncodes_pressureinterpHP(x,nflag,parameter,weightDMP,mobility);
+    %% Calculo da matriz global
+    [M,I]=ferncodes_assemblematrixNLFVH(pinterp_new,parameter,mobility);
+    %--------------------------------------------------------------------------
+    %Add a source therm to independent vector "mvector"
+    
+    %Often it may change the global matrix "M"
+    [M_new,RHS_new] = addsource(sparse(M),I,wells);
+    
+end
+
+RR = norm(M_new*x - RHS_new);
+
+if (R0 ~= 0.0)
+    erro = abs(RR/R0);
+else
+    erro = 0.0; %exact
+end
+erroaux1=0;
+erroaux2=erro;
 for iter = 0:itmax
     % Apply g and compute the current residual norm.
-    %% Interpolação das pressões na arestas (faces)
-    if strcmp(pmethod,'nlfvpp')
-        [pinterp_new,]=ferncodes_pressureinterpNLFVPP(x,nflag,w,s,Con,nflagc,wightc,sc);
-        [M,I]=ferncodes_assemblematrixNLFVPP(pinterp_new,parameter,mobility,contnorm);
-        %Often it may change the global matrix "M"
-        [M_new,RHS_new] = addsource(sparse(M),I,wells);
-        
-    elseif  strcmp(pmethod,'nlfvh')
-        [pinterp_new]=ferncodes_pressureinterpHP(x,nflag,parameter,weightDMP,mobility);
-
-        [M,I]=ferncodes_assemblematrixNLFVH(pinterp_new,parameter,mobility);
-            %Often it may change the global matrix "M"
-        [M_new,RHS_new] = addsource(sparse(M),I,wells);
-    elseif strcmp(pmethod,'nlfvdmp')
-        % interpolação nos nós ou faces
-        [pinterp_new]=ferncodes_pressureinterpHP(x,nflag,parameter,weightDMP,mobility);
-        % Montagem da matriz global
-        
-        [M,I]=ferncodes_assemblematrixDMP(x,pinterp_new,0,parameter,weightDMP,mobility);
-        %--------------------------------------------------------------------------
-        %Add a source therm to independent vector "mvector"
-        
-        %Often it may change the global matrix "M"
-        [M_new,RHS_new] = addsource(sparse(M),I,wells);
-    else
-        [pinterp_new]=ferncodes_pressureinterpHP(x,nflag,parameter,weightDMP,mobility);
-        %% Calculo da matriz global
-        [M,I]=ferncodes_assemblematrixNLFVH(pinterp_new,parameter,mobility);
-        %--------------------------------------------------------------------------
-        %Add a source therm to independent vector "mvector"
-        
-        %Often it may change the global matrix "M"
-        [M_new,RHS_new] = addsource(sparse(M),I,wells);
-        
-    end
     
-    RR = norm(M_new*x - RHS_new);
-    
-    if (R0 ~= 0.0)
-        erro = abs(RR/R0);
-    else
-        erro = 0.0; %exact
-    end
     %tabletol(iter+1,1:2)=[iter, er];
     if erro<nltol
         break
     else
-        [L,U] = ilu(M_new,struct('type','ilutp','droptol',1e-6));
-       
-        %[gval,fl1,rr1,it1,rv1]=bicgstab(M_new,RHS_new,1e-10,1000,L,U);
-        [gval,fl1,rr1,it1,rv1]=gmres(M_new,RHS_new,10,1e-9,1000,L,U);
-        %gval=M_new\RHS_new;
+        if abs(erroaux1-erroaux2)<1e-10
+            % utilizo quando a sequencia de erros se mantem quase constantes
+            gval=M_new\RHS_new;
+        else
+            [L,U] = ilu(M_new,struct('type','ilutp','droptol',1e-6));
+            
+            %[gval,fl1,rr1,it1,rv1]=bicgstab(M_new,RHS_new,1e-10,1000,L,U);
+            [gval,fl1,rr1,it1,rv1]=gmres(M_new,RHS_new,10,1e-9,1000,L,U);
+            %gval=M_new\RHS_new;
+        end
     end
     fval = gval - x;
     res_norm = norm(fval);
@@ -142,10 +150,10 @@ for iter = 0:itmax
         tol = max(atol,rtol*res_norm);
     end
     % Test for stopping.
-%     if res_norm <= tol,
-%         fprintf('Terminate with residual norm = %e \n\n', res_norm);
-%         break;
-%     end
+    %     if res_norm <= tol,
+    %         fprintf('Terminate with residual norm = %e \n\n', res_norm);
+    %         break;
+    %     end
     if mMax == 0 || iter < AAstart,
         % Without acceleration, update x <- g(x) to obtain the next
         % approximate solution.
@@ -230,9 +238,58 @@ for iter = 0:itmax
                     x = x - (1-beta)*(fval - Q*R*gamma);
                 end
             end
-            x=x-min(x,0);
+            
+            
         end
     end
+    x=x-min(x,0);
+    %% Interpolação das pressões na arestas (faces)
+    if strcmp(pmethod,'nlfvpp')
+        [pinterp_new,]=ferncodes_pressureinterpNLFVPP(x,nflag,w,s,Con,nflagc,wightc,sc);
+        [M,I]=ferncodes_assemblematrixNLFVPP(pinterp_new,parameter,mobility,contnorm);
+        %Often it may change the global matrix "M"
+        [M_new,RHS_new] = addsource(sparse(M),I,wells);
+        
+    elseif  strcmp(pmethod,'nlfvh')
+        [pinterp_new]=ferncodes_pressureinterpHP(x,nflag,parameter,weightDMP,mobility);
+        
+        [M,I]=ferncodes_assemblematrixNLFVH(pinterp_new,parameter,mobility);
+        %Often it may change the global matrix "M"
+        [M_new,RHS_new] = addsource(sparse(M),I,wells);
+    elseif strcmp(pmethod,'nlfvdmp')
+        % interpolação nos nós ou faces
+        [pinterp_new]=ferncodes_pressureinterpHP(x,nflag,parameter,weightDMP,mobility);
+        % Montagem da matriz global
+        
+        [M,I]=ferncodes_assemblematrixDMP(x,pinterp_new,0,parameter,weightDMP,mobility);
+        %--------------------------------------------------------------------------
+        %Add a source therm to independent vector "mvector"
+        
+        %Often it may change the global matrix "M"
+        [M_new,RHS_new] = addsource(sparse(M),I,wells);
+    else
+        [pinterp_new]=ferncodes_pressureinterpHP(x,nflag,parameter,weightDMP,mobility);
+        %% Calculo da matriz global
+        [M,I]=ferncodes_assemblematrixNLFVH(pinterp_new,parameter,mobility);
+        %--------------------------------------------------------------------------
+        %Add a source therm to independent vector "mvector"
+        
+        %Often it may change the global matrix "M"
+        [M_new,RHS_new] = addsource(sparse(M),I,wells);
+        
+    end
+    RR = norm(M_new*x - RHS_new);
+    
+    if (R0 ~= 0.0)
+        erro = abs(RR/R0);
+        
+    else
+        erro = 0.0; %exact
+    end
+    tabletol(iter+2,1:2)=[iter+1, erro];
+    % guarda o erro atual e anterior com objetivo de comparar depois
+    erroaux1=tabletol(iter+1,2);
+    erroaux2=erro;
 end
 %Bottom of the iteration loop.
 % if res_norm > tol && iter == itmax,
