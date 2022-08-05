@@ -1,4 +1,4 @@
-function [numflux, earlysw]=riemannsolver(Sright,Sleft,method,bedgesize, inedg,dotvn,dotvg,charvel_rh,dotdif)
+function [numflux, Saproxima]=riemannsolver(Sright,Sleft,method,bedgesize, inedg,dotvn,dotvg,charvel_rh,dotdif)
 
 switch method
    
@@ -13,7 +13,7 @@ switch method
                  %Calculate the numerical flux through interface
                  numflux = Sleft*dotvn + dotdif ;
                 %Fill "earlysw"
-                earlysw(bedgesize + inedg) = Sleft;
+                Saproxima=Sleft;
                 
                 %It uses the saturation on the right
             else
@@ -21,7 +21,7 @@ switch method
                  %Calculate the numerical flux through interface
                  numflux = Sright*dotvn + dotdif;
                 %Fill "earlysw"
-                earlysw(bedgesize + inedg) = Sright;
+                Saproxima = Sright;
                 
             end  %End of IF (Upwind flux)
    
