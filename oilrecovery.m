@@ -74,6 +74,7 @@ if numcase >200
         kmap=auxperm3;
     elseif numcase==251
         kmap=kmap;
+        %adeSPE; % para um campo de permeabilidade da SPE active descomente.
         %==================================================================
     end
 end
