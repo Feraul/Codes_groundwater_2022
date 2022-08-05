@@ -353,6 +353,8 @@ switch interpmobility
         %Get the Water MOBILITY on the midedges
         [~,convisco,] = getsatandflag(mobinbound(:,1),injecelem,...
             mobilityoncentroid(:,1),nflagc,nflagfacec,m);
+        
+       
         %Fill "mobility"
         viscosity(:,1) = convisco;
         
@@ -360,15 +362,18 @@ switch interpmobility
     %the vertices "i" and "j". After that, calculate the mean value on the 
     %mid-point on the evaluated face.
     case 9
+        m=1;
+        i = 1:length(Sw); mobilityoncentroid(i,1) = Sw(i);
         %Get the Water saturation on the mid-edges
-        [~,swonedge,] = getsatandflag(satinbound,injecelem,Sw,1);
+        [~,swonedge,] = getsatandflag(satinbound,injecelem,...
+            mobilityoncentroid(:,1),nflagc,nflagfacec,m);
         
         %Get the relative permeability for water and oil (It uses the sat. 
         %on the Cell-center)
-        [~,~,~,krw,kro,] = twophasevar(swonedge,numcase);
+        [exponente,] = twophasevar(swonedge,numcase);
         
         %Fill "mobility"
-        viscosity(:,1:2) = [(krw/visc(1)) (kro/visc(2))];
+        viscosity(:,1) = exponente;
 
     %Alternative 10 (Get MOBILITY instead saturation) - Linear Interpol.:
     case 10
@@ -519,6 +524,7 @@ switch interpmobility
     %It uses extrapolated value up to the quadrature point instead the 
     %finite volume value over the element. 
     case 12
+        m=1;
         %Verify the numerical scheme:
         %When we have a multidimensional scheme with half-edges loop.
 %         if strcmp(smethod,'mwec') || strcmp(smethod,'mwic')
@@ -526,8 +532,19 @@ switch interpmobility
             satonedges = zeros(bedgesize + inedgesize,1);
             %Verify if the iteraction ("timelevel") is the first
             if timelevel == 1 || (c == 0 && timelevel > 1)
+                mobilityoncentroid = zeros(length(Sw),2);
+                %Initialize "mobinbound"
+                mobinbound = zeros(length(satinbound),2);
+                
+                [exponente,] = twophasevar(Sw);
+                
+                %Fill "mobilityoncentroid"
+                i = 1:length(Sw);
+                %Attribute WATER mobility
+                mobilityoncentroid(i,1) = exponente(i);
                 %Get the saturation on the vertices and midedges ("interptype" = 2)
-                [~,satonedges_aux,] = getsatandflag(satinbound,injecelem,Sw,2);
+                 [~,satonedges_aux,] = getsatandflag(satinbound,injecelem,...
+            mobilityoncentroid(:,1),nflagc,nflagfacec,m);
                 satonedges = satonedges_aux;
                 clear satonedges_aux;
             %Any other timelevel.
@@ -576,14 +593,13 @@ switch interpmobility
             
             %Get the relative permeability for water and oil 
             %(It uses the sat on the MIDEDGES)
-            [~,~,~,krw,kro,] = twophasevar(satonedges,numcase,...
-                overedgecoord(:,1),injecelem);
+            [convisco,] = twophasevar(satonedges);
+            
+              
+       
+        %Fill "mobility"
+        viscosity(:,1) = convisco;
 
-            %Fill "mobility"
-            %Attribute WATER mobility
-            viscosity(:,1) = krw/visc(1);
-            %Attribute OIL mobility
-            viscosity(:,2) = kro/visc(2);
 %         else
 %         end  %End of IF        
 
