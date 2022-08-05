@@ -212,8 +212,8 @@ for i = 1:length(pointinedg)
 
     method='upwind';
    
-    [numflux, earlysw]=riemannsolver(Sright,Sleft,method,bedgesize, inedg,dotvn,dotvg,charvel_rh,dotdif);
- 
+    [numflux, Saproxima]=riemannsolver(Sright,Sleft,method,bedgesize, inedg,dotvn,dotvg,charvel_rh,dotdif);
+    earlysw(bedgesize + inedg) = Saproxima;
     %Obtain the contribution of interface over element to LEFT
     advecterm(leftelem) = advecterm(leftelem) + numflux;
     %Obtain the contribution of interface over element to RIGHT
