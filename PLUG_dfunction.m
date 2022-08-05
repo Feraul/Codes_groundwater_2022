@@ -121,9 +121,10 @@ switch numcase
         dmedio=norm(dmap(1,2:4),inf);
         gamma=0;
     case 251
-        %for i=1:size(elem,1) 
-        dmap(1,:) = [1 0.1 5.625072e-5 5.625072e-5 0.1];
-        dmap(2,:) = [2 0.1 5.625072e-5 5.625072e-5 0.1];
+        %for i=1:size(elem,1)
+       
+       dmap(1,:) = [1 6.25e-05 0 0 6.25e-06];
+        %dmap(2,:) = [2 0.1 5.625072e-5 5.625072e-5 0.1];
         %dmap(i,:)=[i 0.1 5.625072e-5 5.625072e-5 0.1];
         %end
         dmedio=norm(dmap(1,2:4),inf);
