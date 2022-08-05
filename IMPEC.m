@@ -159,18 +159,18 @@ elseif numcase==231 || numcase==232 || numcase==243 || ...
     velmedio=1;
 end
 if (numcase==248 || numcase==251) && (strcmp(pmethod,'nlfvpp') || strcmp(pmethod,'mpfad'))
-%It switches according to "interptype"
-        switch char(interptype)
-            %LPEW 1
-            case 'lpew1'
-                % calculo dos pesos que correspondem ao LPEW1
-                [weight,s] = ferncodes_Pre_LPEW_1(kmap,1,V,Sw,N);
-                %LPEW 2
-            case 'lpew2'
-                % calculo dos pesos que correspondem ao LPEW2
-                [weight,s] = ferncodes_Pre_LPEW_2(kmap,N);
-                
-        end  %End of SWITCH
+    %It switches according to "interptype"
+    switch char(interptype)
+        %LPEW 1
+        case 'lpew1'
+            % calculo dos pesos que correspondem ao LPEW1
+            [weight,s] = ferncodes_Pre_LPEW_1(kmap,1,V,Sw,N);
+            %LPEW 2
+        case 'lpew2'
+            % calculo dos pesos que correspondem ao LPEW2
+            [weight,s] = ferncodes_Pre_LPEW_2(kmap,N);
+            
+    end  %End of SWITCH
 end
 q=zeros(size(elem,1),1);
 while stopcriteria < 100
@@ -185,10 +185,11 @@ while stopcriteria < 100
     
     if numcase==246 || numcase==245 || numcase==247 || numcase==248 ||...
             numcase==249 || numcase==250 || numcase==251
-        %[viscosity] = ferncodes_getviscosity(satinbound,injecelem,Con,earlysw,...
-        %    Sleft,Sright,c,overedgecoord,nflagc,nflagfacec);
-        [viscosity]=calc_viscosity(Con,nflagfacec);
+        % [viscosity] = ferncodes_getviscosity(satinbound,injecelem,Con,earlysw,...
+        %     Sleft,Sright,c,overedgecoord,nflagc,nflagfacec);
         
+            [viscosity]=calc_viscosity(nflagfacec,Sleft,Sright,timelevel,earlysw);
+       
         % calculo da pressão e fluxo
         if strcmp(pmethod,'nlfvpp')
             [pressure,flowrateadvec,flowresult,flowratedif]=ferncodes_solverpressureNLFVPP(nflag,...
@@ -197,12 +198,10 @@ while stopcriteria < 100
             [pressure,flowrateadvec,flowresult,flowratedif] = ferncodes_solverpressure(...
                 viscosity,wells,Hesq,Kde,Kn,Kt,Ded,nflag,weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc);
         else
-%             [pressure,flowrateadvec,flowresult,flowratedif] = solvePressure_TPFA(transmvecleft,...
-%                 knownvecleft,viscosity,wells,Fg,bodyterm,Con,transmvecleftc,time);
-
-        [pressure,flowrateadvec,flowresult,flowratedif]=...
-            ferncodes_solvePressure_TPFA(Kde, Kn, nflag, Hesq,wells,...
-            viscosity,Kdec,Knc,nflagc,Con);
+            
+            [pressure,flowrateadvec,flowresult,flowratedif]=...
+                ferncodes_solvePressure_TPFA(Kde, Kn, nflag, Hesq,wells,...
+                viscosity,Kdec,Knc,nflagc,Con);
         end
     elseif numcase==241 || numcase==242 || numcase==231 || numcase==232
         viscosity=1;
@@ -241,7 +240,7 @@ while stopcriteria < 100
     %----------------------------------------------------------------------
     
     %Calculate the CONCENTRATION field (choose concentration method):
-    [newC,cflowrate,Sleft,Sright] = ...
+    [newC,cflowrate,earlysw,Sleft,Sright] = ...
         solveSaturation(Con,flowrateadvec,flowratedif,dt,injecelem,producelem,satinbound,...
         Fg,flagknownvert,satonvertices,flagknownedge,satonedges,flowresult,...
         wvector,wmap,constraint,lsw,limiterflag,1,massweigmap,...
@@ -249,6 +248,8 @@ while stopcriteria < 100
         prodwellinedg,mwmaprodelem,vtxmaprodelem,coordmaprodelem,...
         amountofneigvec,rtmd_storepos,rtmd_storeleft,rtmd_storeright,...
         isonbound,elemsize,bedgesize,inedgesize,gamma,time);
+    
+ 
     
     %Update the concentration field
     Con = newC;
@@ -303,17 +304,17 @@ while stopcriteria < 100
     
     %Just create the vtk file if "flagtoplot" reaches 0.1.
     %if flagtoplot >= 1
-        %This function create the "*.vtk" file used in VISIT to posprocessing
-        %the results
-        if numcase==247
-            postprocessor(pressure,flowrateadvec,Con,contiterplot,overedgecoord,'i',1,log(kmap(:,2)));
-        else
-            postprocessor(pressure,flowrateadvec,Con,contiterplot,overedgecoord,'i',1,normk);
-            %Update "flagtoplot"
-        end
-        flagtoplot = 0;
-        %Update "contiterplot"
-        contiterplot = contiterplot + 1;
+    %This function create the "*.vtk" file used in VISIT to posprocessing
+    %the results
+    if numcase==247
+        postprocessor(pressure,flowrateadvec,Con,contiterplot,overedgecoord,'i',1,log(kmap(:,2)));
+    else
+        postprocessor(pressure,flowrateadvec,Con,contiterplot,overedgecoord,'i',1,normk);
+        %Update "flagtoplot"
+    end
+    flagtoplot = 0;
+    %Update "contiterplot"
+    contiterplot = contiterplot + 1;
     %end  %End of IF
     
     %User mesage
@@ -333,7 +334,7 @@ while stopcriteria < 100
     c=c+1;
     %It gives the time spent per "timelevel"
     %if time>1000 && (numcase==242 || numcase==243 || numcase==249 || numcase==250)
-     if time>1 && (numcase==242 || numcase==243 || numcase==245)
+    if time>1 && (numcase==242 || numcase==243 || numcase==245)
         if numcase==245 || numcase==247
             wellsc(1:2,4)=0;
             Con(wells(1,1),1)=wells(1,4);
@@ -363,14 +364,14 @@ while stopcriteria < 100
         end
     end
     
-    if numcase==248
-        %Initialize and preprocess the parameters:
-        nflag = ferncodes_calflag(time);
-        [nflagc,nflagfacec] = ferncodes_calflag_con(time);
-        %Define flags and known saturation on the vertices and edges.
-        [satonvertices,satonedges,flagknownvert,flagknownedge] = ...
-            getsatandflag(satinbound,injecelem,Con,nflagc,nflagfacec);
-    end
+     if numcase==248
+         %Initialize and preprocess the parameters:
+         nflag = ferncodes_calflag(time);
+         [nflagc,nflagfacec] = ferncodes_calflag_con(time);
+         %Define flags and known saturation on the vertices and edges.
+         [satonvertices,satonedges,flagknownvert,flagknownedge] = ...
+             getsatandflag(satinbound,injecelem,Con,nflagc,nflagfacec);
+     end
     %[analsol]=anasolaux(velmedio,Dmedio,time);
 end  %End of While
 toc
