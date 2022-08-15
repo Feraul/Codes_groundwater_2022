@@ -118,6 +118,9 @@ switch phasekey
             weightDMP,nflagface,p_old,contnorm);
     case 3 % contaminant simulation 
         
+        %Get the initial condition for the hyperbolic equation
+        [Con,lastimelevel,lastimeval] = applyinicialcond;
+        
         [dmap,Dmedio,gamma] = PLUG_dfunction;
         %          if numcase==243 || numcase==245 || numcase==247
         %              elem(:,5)=1;
@@ -135,7 +138,13 @@ switch phasekey
             % calculate inpertolation weigts
             
             [wightc,sc] = ferncodes_Pre_LPEW_2_con(dmap,N);
+            
             weightDMPc=0;
+            if lastimeval~=0
+                % adequação dos flags de contorno
+                nflag = ferncodes_calflag(lastimeval);
+            end
+        
         elseif strcmp(pmethod,'mpfaql')
             %temos usado para muitos estes o seguinte rutina
             [dparameter,]=ferncodes_coefficient(dmap);
@@ -154,17 +163,20 @@ switch phasekey
             % calculate inpertolation weigts
             weightDMPc=0;
             [wightc,sc] = ferncodes_Pre_LPEW_2_con(dmap,N);
+            
+            if lastimeval~=0
+                % adequação dos flags de contorno
+                nflag = ferncodes_calflag(lastimeval);
+            end
         elseif strcmp(pmethod,'tpfa')
             %[transmvecleftc,knownvecleftc,] = transmTPFA(dmap,0);
             [Hesq,Kdec,Knc,Ktc,Dedc] = ferncodes_Kde_Ded_Kt_Kn(dmap);
             wightc=0;sc=0;weightDMPc=0;
         end
-        
+               
         %Initialize and preprocess the parameters:
         
-        [nflagnoc,nflagfacec] = ferncodes_calflag_con(0);
-        %Get the initial condition for the hyperbolic equation
-        [Con,lastimelevel,lastimeval] = applyinicialcond;
+        [nflagnoc,nflagfacec] = ferncodes_calflag_con(lastimeval);
         
         %Define elements associated to INJECTOR and PRODUCER wells.
         [injecelem,producelem,satinbound,Con,wellsc] = wellsparameter(wellsc,...
@@ -244,7 +256,7 @@ global filepath benchkey
 lastimelevel = 0;
 lastimeval = 0;
 %Verify if there exists a restart condition
-command = [char(filepath) '\' 'restart.dat'];
+command = [char(filepath) '\' 'Results_teste_Report.dat'];
 restartkey = exist(command,'file');
 
 %There exists a restart condition
@@ -254,7 +266,7 @@ if restartkey ~= 0 && strcmp(benchkey,'r')
     %There exists a restart condition, BUT the user does NOT set this option.
 elseif restartkey ~= 0 && strcmp(benchkey,'r') == 0
     %It deletes the "restart.dat" file
-    command = ['del ' char(filepath) '\' 'restart.dat'];
+    command = ['del ' char(filepath) '\' 'Results_teste_Report.dat'];
     %It calls system
     system(command);
     %Attribute INITIAL CONDITION

@@ -188,8 +188,8 @@ while stopcriteria < 100
         % [viscosity] = ferncodes_getviscosity(satinbound,injecelem,Con,earlysw,...
         %     Sleft,Sright,c,overedgecoord,nflagc,nflagfacec);
         
-            [viscosity]=calc_viscosity(nflagfacec,Sleft,Sright,timelevel,earlysw);
-       
+        [viscosity]=calc_viscosity(nflagfacec,Sleft,Sright,timelevel,earlysw,Con,lastimelevel);
+        
         % calculo da pressão e fluxo
         if strcmp(pmethod,'nlfvpp')
             [pressure,flowrateadvec,flowresult,flowratedif]=ferncodes_solverpressureNLFVPP(nflag,...
@@ -249,13 +249,34 @@ while stopcriteria < 100
         amountofneigvec,rtmd_storepos,rtmd_storeleft,rtmd_storeright,...
         isonbound,elemsize,bedgesize,inedgesize,gamma,time);
     
- 
+    
     
     %Update the concentration field
     Con = newC;
     
     %----------------------------------------------------------------------
-    %Define PVI or DIMENTIONAL TIME
+    if numcase==248
+        %Write table (Time , conecntration)
+        %Create the file name
+        prfilename = [resfolder '_' 'Report.dat'];
+        
+        %Select the "letter" for "fopen"
+        if timelevel == 1
+            letter = 'w';
+        else
+            letter = 'w';
+        end  %End of IF
+        
+        %Open the file
+        writeproductionreport = fopen([filepath '\' prfilename],letter);
+        
+        A=[timelevel;time; Con];
+        fprintf(writeproductionreport,'%26.16E \r\n',A);
+        %end  %End of IF
+        
+        %Close the file "writeproductionreport.dat"
+        fclose(writeproductionreport);
+    end
     
     %Dimentional (s, h, day, etc)
     
@@ -270,34 +291,7 @@ while stopcriteria < 100
     status = [concluded '% concluded']
     
     
-    if any(producelem)
-        
-        %Write table (Time (VPI), Oil Flow rate, Accumulated Oil and Water Cut)
-        %Create the file name
-        prfilename = [resfolder '_' 'ProdutionReport.dat'];
-        
-        %Select the "letter" for "fopen"
-        if timelevel == 1
-            letter = 'w';
-        else
-            letter = 'a';
-        end  %End of IF
-        
-        %Open the file
-        writeproductionreport = fopen([filepath '\' prfilename],letter);
-        
-        %Write "productionreport" according to "producelem" size
-        %There is one producer well
-        if length(producelem) == 1
-            fprintf(writeproductionreport,'%26.16E %26.16E\r\n',[time cflowrate]);
-            %There are more than one producer wells (but just write two)
-        else
-            fprintf(writeproductionreport,'%26.16E %26.16E\r\n',[time cflowrate]);
-        end  %End of IF
-        
-        %Close the file "writeproductionreport.dat"
-        fclose(writeproductionreport);
-    end  %End of IF (when there exists producer well)
+    
     
     %----------------------------------------------------------------------
     %Call the "postprocessor" (plot results in each time step)
@@ -364,14 +358,14 @@ while stopcriteria < 100
         end
     end
     
-     if numcase==248
-         %Initialize and preprocess the parameters:
-         nflag = ferncodes_calflag(time);
-         [nflagc,nflagfacec] = ferncodes_calflag_con(time);
-         %Define flags and known saturation on the vertices and edges.
-         [satonvertices,satonedges,flagknownvert,flagknownedge] = ...
-             getsatandflag(satinbound,injecelem,Con,nflagc,nflagfacec);
-     end
+    if numcase==248
+        %Initialize and preprocess the parameters:
+        nflag = ferncodes_calflag(time);
+        [nflagc,nflagfacec] = ferncodes_calflag_con(time);
+        %Define flags and known saturation on the vertices and edges.
+        [satonvertices,satonedges,flagknownvert,flagknownedge] = ...
+            getsatandflag(satinbound,injecelem,Con,nflagc,nflagfacec);
+    end
     %[analsol]=anasolaux(velmedio,Dmedio,time);
 end  %End of While
 toc
