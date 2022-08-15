@@ -49,7 +49,11 @@ global coord centelem elem esurn1 esurn2 nsurn1 nsurn2 bedge inedge ...
    multdopt,goefreeopt,order,timeorder,recovtype,lsneightype,...
     lsexp,keygravity,g,keycapil,ncaplcorey,filepath,resfolder,benchkey,...
     kmap,wells,klb,limiterflag,rowposit,nltol,maxiter,acel] = preprocessor;
-
+% utilize Tipo1Malha4.msh, Tipo1Malha5.msh, Tipo1Malha6.msh
+%x=bedge(:,1);
+%y=bedge(:,2);
+%bedge(:,1)=y;
+%bedge(:,2)=x;
 
 
 if numcase >200
