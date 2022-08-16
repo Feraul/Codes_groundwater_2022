@@ -851,10 +851,6 @@ disp('"coord" was generated!');
 %Gives the information of "elem" generated
 disp('"elem" was generated!');
 
-%   x1=elem(:,1);
-%   x2=elem(:,3);
-%   elem(:,1)=x2;
-%   elem(:,3)=x1; 
 %--------------------------------------------------------------------------
 %"centelem" matrix - It get the centroid coordinate for each control volume 
 
@@ -889,6 +885,15 @@ disp('"elemarea" was generated!');
 disp('"bedge" was generated!');
 disp('"inedge" was generated!');
 
+% utilize Tipo1Malha2.msh, Tipo1Malha3.msh
+    x=bedge(:,1);
+    y=bedge(:,2);
+    bedge(:,1)=y;
+    bedge(:,2)=x;
+  x1=elem(:,1);
+  x2=elem(:,3);
+  elem(:,1)=x2;
+  elem(:,3)=x1; 
 %--------------------------------------------------------------------------
 %"normals" is a matrix with the normal vectors (normal to left element)
 
