@@ -258,7 +258,7 @@ while stopcriteria < 100
     if numcase==248
         %Write table (Time , conecntration)
         %Create the file name
-        prfilename = [resfolder '_' 'Report.dat'];
+        prfilename = [resfolder '_' 'ConReport.dat'];
         
         %Select the "letter" for "fopen"
         if timelevel == 1
@@ -273,7 +273,22 @@ while stopcriteria < 100
         A=[timelevel;time+dt; Con];
         fprintf(writeproductionreport,'%26.16E \r\n',A);
         %end  %End of IF
+        %------------------------------------------------------------------
+        % pressure report
+        %Create the file name
+        prfilename = [resfolder '_' 'PresReport.dat'];
         
+        %Select the "letter" for "fopen"
+        if timelevel == 1
+            letter = 'w';
+        else
+            letter = 'w';
+        end  %End of IF
+        
+        %Open the file
+        writeproductionreport = fopen([filepath '\' prfilename],letter);
+        B=[timelevel;time+dt; pressure];
+        fprintf(writeproductionreport,'%26.16E \r\n',B);
         %Close the file "writeproductionreport.dat"
         fclose(writeproductionreport);
     end
