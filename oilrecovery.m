@@ -50,12 +50,12 @@ global coord centelem elem esurn1 esurn2 nsurn1 nsurn2 bedge inedge ...
     lsexp,keygravity,g,keycapil,ncaplcorey,filepath,resfolder,benchkey,...
     kmap,wells,klb,limiterflag,rowposit,nltol,maxiter,acel] = preprocessor;
 % utilize Tipo1Malha4.msh, Tipo1Malha5.msh, Tipo1Malha6.msh
-x=bedge(:,1);
-y=bedge(:,2);
-bedge(:,1)=y;
-bedge(:,2)=x;
+% x=bedge(:,1);
+% y=bedge(:,2);
+% bedge(:,1)=y;
+% bedge(:,2)=x;
 
-
+% necesitamos ajeitar para o campo de pressao quando tem "restart"
 if numcase >200
     % Flags adequation for contamination and groundwater problem
      [bedge,bcflagc,wellsc,auxpar]=preconcentration(bedge,wells);
