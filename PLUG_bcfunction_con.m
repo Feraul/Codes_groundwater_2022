@@ -1,5 +1,5 @@
 function [bcattrib] = PLUG_bcfunction_con(flagptr,a)
-global numcase bcflagc benchkey centelem bedge coord;
+global numcase bcflagc centelem bedge coord;
 
 switch numcase
     case 231
@@ -48,7 +48,7 @@ switch numcase
         %The initial condition is a integral mean of function.
         
         bcattrib = sin(0.25*pi*(flagptr+2*a));
-        
+        %bcattrib = sin(pi*(flagptr-2*a));
       
       
     

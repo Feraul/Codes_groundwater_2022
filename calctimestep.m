@@ -18,7 +18,7 @@
 
 function [dt] = calctimestep(flowrate,satinbound,gamma,Dmedio)
 %Define global parameters:
-global pormap elemarea courant order inedge bedge normals smethod coord centelem;
+global pormap courant order inedge bedge smethod coord centelem;
 
 %Define the degree of the reconstruction polynomium "n"
 n = order - 1;

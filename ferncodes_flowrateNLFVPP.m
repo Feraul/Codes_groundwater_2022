@@ -1,4 +1,4 @@
-function [flowrate,flowresult,flowratec]=ferncodes_flowrateNLFVPP(p, pinterp, parameter,viscosity,Con,nflagc,wightc,sc,dparameter,cinterp)
+function [flowrate,flowresult,flowratec,flowresultc]=ferncodes_flowrateNLFVPP(p, pinterp, parameter,viscosity,Con,nflagc,wightc,sc,dparameter,cinterp)
 global inedge coord bedge bcflag centelem numcase bcflagc
 
 %Initialize "bedgesize" and "inedgesize"
@@ -107,7 +107,7 @@ for iface=1:inedgesize
     
     %% ===================================================================
     
-    % calculo do fluxo para o campo deconcentracoes
+    % calculo do fluxo para o campo de concentracoes
     % calculo do a Eq. 2.7 (resp. eq. 16) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
     % esquerda
     alef=norma*(dparameter(1,1,ifactual)*cinterp(dparameter(1,3,ifactual))+...

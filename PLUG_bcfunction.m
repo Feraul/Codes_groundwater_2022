@@ -335,6 +335,7 @@ coordmid = mean(coord(vertices,1:2))*(1 - boolean) + ...
                 x=coord(vertices,1);
                 y=coord(vertices,2);
                 bcattrib = (0.8/pi)*cos(0.25*pi*(x+y+2*aa))+0.5*(x+y);
+                %bcattrib = (0.2/pi)*cos(pi*(x+y-2*aa))-0.5*(x+y);
             end
         %When the boundary condition cames from "bcflag"
 %         case 231

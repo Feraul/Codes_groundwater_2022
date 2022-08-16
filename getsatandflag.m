@@ -124,8 +124,11 @@ end  %End of FOR (swept the vertices)
 %Swept "bedge"
 for i = 1:length(unknownedge)
     %Calculate the saturation into each unknown edge ("bedge")
-    %satonedges(unknownedge(i)) = nflagfacec(i,2);
-    satonedges(unknownedge(i))= 0.5*(satonvertices(bedge(i,1)) + satonvertices(bedge(i,2)));
+    if numcase==248
+        satonedges(unknownedge(i)) = nflagfacec(i,2);
+    else
+        satonedges(unknownedge(i))= 0.5*(satonvertices(bedge(i,1)) + satonvertices(bedge(i,2)));
+    end
     %It is an indication there is a known value over edge
     if nflagfacec(i,1)<100
         knownvalinedge(i)=1;

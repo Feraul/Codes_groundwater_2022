@@ -270,7 +270,7 @@ while stopcriteria < 100
         %Open the file
         writeproductionreport = fopen([filepath '\' prfilename],letter);
         
-        A=[timelevel;time; Con];
+        A=[timelevel;time+dt; Con];
         fprintf(writeproductionreport,'%26.16E \r\n',A);
         %end  %End of IF
         
@@ -316,12 +316,7 @@ while stopcriteria < 100
     disp('>> Concentration extrema values [Con_max con_min]:');
     %Show extrema values
     C_extrema = [max(Con); min(Con)]
-    
-    %Store maximum and minimum concentration values:
-    maxminconval = [max(C_extrema(1),C_extrema_old(1)) min(C_extrema(2),C_extrema_old(2))];
-    %Update "C_extrema"
-    C_extrema_old = C_extrema;
-    
+        
     %Increment the parameters "timelevel" and "countstore"
     timelevel = timelevel + 1;
     
@@ -371,7 +366,7 @@ end  %End of While
 toc
 %Write data file ("ProdutionReport.dat" and others)
 
-plotandwrite(producelem,Con,pressure,satonvertices,Dmedio,velmedio,gamma);
+plotandwrite(producelem,Con,pressure,satonvertices,Dmedio,velmedio,gamma,time-dt);
 
 
 %--------------------------------------------------------------------------
@@ -382,10 +377,11 @@ plotandwrite(producelem,Con,pressure,satonvertices,Dmedio,velmedio,gamma);
 %Mesage for the user:
 disp('------------------------------------------------');
 disp('>> Global Concentration extrema values [Con_max Con_min]:');
-max_conval = max(maxminconval(:,1))
-min_conval = min(maxminconval(:,2))
+max_conval = max(Con)
+min_conval = min(Con)
 %It deletes the "restart.dat" file
 command = ['del ' char(filepath) '\' 'restart.dat'];
 %It calls system
+
 
 system(command);
