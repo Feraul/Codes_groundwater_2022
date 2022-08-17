@@ -63,8 +63,8 @@ for ivtx = vetxtoeval
     r_esrn = vert_coord_aux - localcentcoord;
     
     %Get max and min value of Sw (projected)
-    % para concentração apagamos esta 
-    if flagknownvert(ivtx) == 1 % Sw no contorno
+    
+    if flagknownvert(ivtx) == 1 % Sw only contour
         extr_sw = dot(localgrad',r_esrn')';
         %extr_sw = satonvertices(ivtx)*e - proj_sw;
         %Get max and min value of Sw (projected)

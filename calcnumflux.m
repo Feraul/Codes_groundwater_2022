@@ -55,7 +55,7 @@ if any(pointbndedg)
         verticescoord = coord(vertices,:);
         %Define left elements
         leftelem = bedge(ibedg,3);
-                    
+        
         %------------------------------------------------------------------
         
         %Define the elements that share the edge evaluated
@@ -77,32 +77,27 @@ if any(pointbndedg)
             [Sleftlim,Sleftnonlim] = getsatonedge(elemeval,vertices,verticescoord,...
                 taylorterms,Con,limiterflag,faceorder,constraint,flagknownvert,...
                 satonvertices,mlpbyelem,centelem(leftelem,1:2));
-
-          if strcmp(limiterflag{9},'on')|| strcmp(limiterflag{11},'on')|| strcmp(limiterflag{12},'on')
-               
-%                if Sleftnonlim>10 || Sleftnonlim<0
-%                    Sleft=Sleftlim;
-%                    
-%                else
-                   Sleft= Sleftnonlim;
-               %end
-               % %==========================================================================
-               
-           else
-               Sleft=Sleftlim;
-           end
-           
-           
-       end  %End of IF
-       
+            
+            if strcmp(limiterflag{9},'on')|| strcmp(limiterflag{11},'on')|| strcmp(limiterflag{12},'on')
+                
+                Sleft= Sleftnonlim;
+                % %==========================================================================
+                
+            else
+                Sleft=Sleftlim;
+            end
+            
+            
+        end  %End of IF
+        
         %Fill "earlysw"
         earlysw(ibedg) = Sleft;
-                
+        
         %Define the normal velocity into face
         dotvn = flowrateadvec(ibedg);
         %Get accuracy for "dotvn"
         dotvn = dotvn*(abs(dotvn) > tol);
-        % 
+        %
         dotdif=flowratedif(ibedg);
         %Calculate the numerical flux through interface.
         numflux = dotvn*Sleft + dotdif;
@@ -161,12 +156,12 @@ for i = 1:length(pointinedg)
     %Get the statment regarding to mlp limiter:
     boolmlp = (length(mlplimiter) == 1);
     mlpbyelem = mlplimiter(boolmlp + (1 - boolmlp)*elemeval(1),:);
-   
+    
     %Left Contribution:
-     [Sleftlim,Sleftnonlim] = getsatonedge(elemeval,vertices,verticescoord,taylorterms,Con,...
+    [Sleftlim,Sleftnonlim] = getsatonedge(elemeval,vertices,verticescoord,taylorterms,Con,...
         limiterflag,faceorder,constraint,flagknownvert,satonvertices,...
         mlpbyelem,centelem(elemeval,1:2));
-
+    
     %Right Contribution:
     %Define the order for this edge.
     faceorder = orderinedgdist(i,2);
@@ -174,29 +169,23 @@ for i = 1:length(pointinedg)
     elemeval = [rightelem leftelem];
     %Get the statment regarding to mlp limiter:
     mlpbyelem = mlplimiter(boolmlp + (1 - boolmlp)*elemeval(1),:);
-  
+    
     %Get the saturation value recovered on each quadrature point ("on_q")
     [Srightlim,Srightnonlim]= getsatonedge(elemeval,vertices,verticescoord,taylorterms,Con,...
         limiterflag,faceorder,constraint,flagknownvert,satonvertices,...
         mlpbyelem,centelem(elemeval,1:2));
-
+    
     %PAD
     if (strcmp(limiterflag{9},'on')|| strcmp(limiterflag{11},'on')|| strcmp(limiterflag{12},'on') ) && (countinter==0)
         [Sleft,Sright,mLLF]=PhysicalAD(Con,taylorterms,limiterflag,flagknownvert,satonvertices,...
             constraint,mlplimiter,leftelem,rightelem,vertices,...
-            verticescoord,Sleftlim,Sleftnonlim,Srightlim,Srightnonlim,dotvn,tol,rijL,rijR);       
-%         if Sleft>10
-%             Sleft=10;
-%         end
-%         if Sright>10
-%             Sright=10;
-%         end
+            verticescoord,Sleftlim,Sleftnonlim,Srightlim,Srightnonlim,dotvn,tol,rijL,rijR);
     else
         Sleft= Sleftlim;
         Sright=Srightlim;
     end
     %%
-
+    
     vectorSleft(size(bedge,1)+i,1)=Sleft;
     vectorSright(i,1)=Sright;
     %Discrete:
@@ -205,13 +194,13 @@ for i = 1:length(pointinedg)
     dotvn = dotvn*(abs(dotvn) > tol);
     dotvg = dotvg*(abs(dotvg) > tol);
     %---------------------------------------
-
+    
     
     %Define the Rankine-Hugoniout velocity
     charvel_rh = dotvn;
-
+    
     method='upwind';
-   
+    
     [numflux, Saproxima]=riemannsolver(Sright,Sleft,method,bedgesize, inedg,dotvn,dotvg,charvel_rh,dotdif);
     earlysw(bedgesize + inedg) = Saproxima;
     %Obtain the contribution of interface over element to LEFT

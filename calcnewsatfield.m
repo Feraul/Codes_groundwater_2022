@@ -224,7 +224,8 @@ while (dmp ~= 0 || convwell == 0)
             %#########################
             if setvar == 1
                 %Call a Standard strategy to calculate the Numerical Flux
-                [advecterm,entrineqterm,earlysw,Sleft,Sright] = calcnumflux(Sw,Fg,flowrateadvec,flowratedif,...
+                [advecterm,entrineqterm,earlysw,Sleft,Sright] = ...
+                    calcnumflux(Sw,Fg,flowrateadvec,flowratedif,...
                     taylorterms,limiterflag,flagknownvert,satonvertices,...
                     flagknownedge,satonboundedges,pointbndedg,pointinedg,...
                     orderbedgdist,orderinedgdist,constraint,mlplimiter,...
@@ -459,7 +460,14 @@ while (dmp ~= 0 || convwell == 0)
                 any(ielem == injecelem) == 0))
             %Calculate new saturation field
             if numcase==248
-                Swaux(i) = Sw(ielem) - (dt*advecterm(ielem)/(elemarea(ielem)*pormap))+dt*(0.01*(pi^2)/8)*Sw(ielem);
+                x=centelem(i,1);
+                y=centelem(i,2);
+                
+                % termo de fonte (0.01*(pi^2)/8)*sin(0.25*pi*(x+y+2*time)) 
+                % tem dimensao s^{-1}, pag.32 EL HOUSSINE QUENJEL
+               
+                Swaux(i) = Sw(ielem) - (dt*advecterm(ielem)/(elemarea(ielem)*pormap))+dt*(0.01*(pi^2)/8)*sin(0.25*pi*(x+y+2*time));
+                %Swaux(i) = Sw(ielem) - (dt*advecterm(ielem)/(elemarea(ielem)*pormap))+dt*(2*0.01*(pi^2))*sin(pi*(x+y-2*time));
             else
                 Swaux(i) = Sw(ielem) - (dt*advecterm(ielem)/(elemarea(ielem)*pormap))-gamma*Sw(ielem)*dt;
             end

@@ -1,4 +1,4 @@
-function [p,flowrate,flowresult,flowratedif]=ferncodes_iterpicardANLFVPP2(M_old,RHS_old,...
+function [p,flowrate,flowresult,flowratedif,flowresultc]=ferncodes_iterpicardANLFVPP2(M_old,RHS_old,...
     parameter,w,s,p_old,nflag,wells,mobility,weightDMP,contnorm,Con,nflagc,wightc,sc,dparameter)
 
 %% calculo do residuo Inicial
@@ -15,7 +15,7 @@ fprintf('\n Residual error, error = %d \n',erro)
 disp('>> The Pressure field was calculated with success!');
 [pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(p,nflag,w,s,Con,nflagc,wightc,sc);
 %Get the flow rate (Diamond)
-[flowrate,flowresult,flowratedif]=ferncodes_flowrateNLFVPP(p, pinterp, ...
+[flowrate,flowresult,flowratedif,flowresultc]=ferncodes_flowrateNLFVPP(p, pinterp, ...
     parameter,mobility,Con,nflagc,wightc,sc,dparameter,cinterp);
 
 %Message to user:

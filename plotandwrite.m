@@ -18,7 +18,7 @@
 
 %--------------------------------------------------------------------------
 
-function plotandwrite(producelem,Sw,pressure,satonvertices,Dmedio,velmedio,gamma,p)
+function [analsw, presanal]=plotandwrite(producelem,Sw,pressure,satonvertices,Dmedio,velmedio,gamma,time)
 %Define global parameters:
 global filepath satlimit resfolder bcflag bcflagc numcase totaltime  elemarea;
 
@@ -478,7 +478,7 @@ elseif numcase > 200
             ylabel ('Concentration (C)');
         case 248
             
-            [analsw, presanal]=ferncodes_analyticalSolution(satonvertices,Dmedio,velmedio,0,gamma);
+            [analsw, presanal]=ferncodes_analyticalSolution(satonvertices,Dmedio,velmedio,0,gamma,time);
             abserrorMAX = abs(analsw - Sw);
             %Calculate the relative error of "el2" ("relerrorL2")
             relerrorL2 = (abs(Sw - analsw).^2).*elemarea;

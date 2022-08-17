@@ -12,7 +12,7 @@
 %Advisor: Paulo Lyra and Darlan Karlo
 %Programer: Márcio Souza
 %Modified: Fernando Contreras,
-function [p,flowrate,flowresult,flowratedif]=ferncodes_solverpressureNLFVPP(nflag,...
+function [p,flowrate,flowresult,flowratedif,flowresultc]=ferncodes_solverpressureNLFVPP(nflag,...
                                   parameter,kmap,wells,viscosity,V,Sw,N,...
                                   p_old,contnorm,wight,s,Con,nflagc,wightc,sc,dparameter)
 %Define global parameters
@@ -32,7 +32,7 @@ if strcmp(acel,'FPI')
         parameter,wight,s,p_old,nflag,wells,viscosity,Con,nflagc,wightc,sc,dparameter);
 elseif strcmp(acel,'AA')
     %% Picard-Anderson Acceleration
-    [p,flowrate,flowresult,flowratedif]=ferncodes_iterpicardANLFVPP2(M_old,RHS_old,...
+    [p,flowrate,flowresult,flowratedif,flowresultc]=ferncodes_iterpicardANLFVPP2(M_old,RHS_old,...
         parameter,wight,s,p_old,nflag,wells,viscosity,0,contnorm,Con,nflagc,wightc,sc,dparameter);
 end
 end
