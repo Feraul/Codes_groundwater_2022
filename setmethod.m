@@ -65,7 +65,7 @@ switch phasekey
             %Any other Pressure solver (traditionals MPFA schemes)
         elseif strcmp(pmethod,'nlfvdmp')
             [pressure,flowrate,]=ferncodes_solverpressureDMP(nflagface,...
-            parameter,wells,1,weightDMP,p_old,0,0,0);
+                parameter,wells,1,weightDMP,p_old,0,0,0);
         else
             %Get "pressure" and "flowrate"
             [pressure,flowrate,] = ...
@@ -116,7 +116,7 @@ switch phasekey
             amountofneigvec,rtmd_storepos,rtmd_storeleft,rtmd_storeright,...
             isonbound,elemsize,bedgesize,inedgesize,parameter,...
             weightDMP,nflagface,p_old,contnorm);
-    case 3 % contaminant simulation 
+    case 3 % contaminant simulation
         
         %Get the initial condition for the hyperbolic equation
         [Con,lastimelevel,lastimeval] = applyinicialcond;
@@ -140,22 +140,10 @@ switch phasekey
             [wightc,sc] = ferncodes_Pre_LPEW_2_con(dmap,N);
             
             weightDMPc=0;
-            if lastimeval~=0
-                %Open the restart.dat file:
-                command = [char(filepath) '\' 'Results_teste_PresReport.dat'];
-                readfile = fopen(command);
-                
-                %"getgeodata" reads each row of *.geo and store it as a string array.
-                getdata = textscan(readfile,'%f');
-                %Attribute the data to "getgeodata"
-                getvecdata = cell2mat(getdata);
-                %Fill the variables:
-                lastimelevelp = getvecdata(1);
-                lastimevalp = getvecdata(2);
-                % adequação dos flags de contorno
-                nflag = ferncodes_calflag(lastimeval);
-            end
-        
+            
+            % adequação dos flags de contorno
+            nflag = logical(lastimeval~=0)*ferncodes_calflag(lastimeval)+...
+                logical(lastimeval==0)*nflag;
         elseif strcmp(pmethod,'mpfaql')
             %temos usado para muitos estes o seguinte rutina
             [dparameter,]=ferncodes_coefficient(dmap);
@@ -175,16 +163,15 @@ switch phasekey
             weightDMPc=0;
             [wightc,sc] = ferncodes_Pre_LPEW_2_con(dmap,N);
             
-            if lastimeval~=0
-                % adequação dos flags de contorno
-                nflag = ferncodes_calflag(lastimeval);
-            end
+            % adequação dos flags de contorno
+            nflag = logical(lastimeval~=0)*ferncodes_calflag(lastimeval)+...
+                logical(lastimeval==0)*nflag;
         elseif strcmp(pmethod,'tpfa')
             %[transmvecleftc,knownvecleftc,] = transmTPFA(dmap,0);
             [Hesq,Kdec,Knc,Ktc,Dedc] = ferncodes_Kde_Ded_Kt_Kn(dmap);
             wightc=0;sc=0;weightDMPc=0;
         end
-               
+        
         %Initialize and preprocess the parameters:
         
         [nflagnoc,nflagfacec] = ferncodes_calflag_con(lastimeval);

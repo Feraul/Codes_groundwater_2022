@@ -19,7 +19,7 @@
 //Do you want to run a benchmark case? [y] ==> "yes"; [n] ==> "no";
 // [r]==> "restart"  
 
-r
+y
 
 //If [y], write below the path where where you want to store the
 //results (vtk, images, tables):

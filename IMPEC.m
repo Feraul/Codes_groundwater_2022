@@ -55,7 +55,12 @@ flagtoplot = 0;
 contiterplot = 1;
 earlysw = 0;
 oilaccum = 0;
+%--------------------------------------------------------------------------
+%Verify if there exists a restart
 
+%Verify if the "lastimelevel" is bigger than zero
+%In this case, the production parameters must be cought
+% Alocate sleft and Sright
 if lastimelevel~=0
     %Open the restart.dat file:
     command = [char(filepath) '\' 'Results_teste_SleftReport.dat'];
@@ -84,26 +89,12 @@ else
     Sleft = 0;
     Sright = 0;
 end
-%Parameters to plot
-%It is an auxiliary counter. When it get "10", the production parameters
-%and saturation field are stored in a file *.dat
-
-C_extrema_old = zeros(1,2);
-%--------------------------------------------------------------------------
-%Verify if there exists a restart
-
-%Verify if the "lastimelevel" is bigger than zero
-%In this case, the production parameters must be cought
 
 %Call the postprocessor:
-if numcase==247
+auxkmap=logical(numcase==247)*log(kmap(:,2))+logical(numcase~=247)*normk;
     postprocessor(ones(elemsize,1),0,Con,contiterplot - 1,...
-        order*ones(elemsize,1),'i',1,log(kmap(:,2)));
-else
-    postprocessor(ones(elemsize,1),0,Con,contiterplot - 1,...
-        order*ones(elemsize,1),'i',1,normk);
-end
-
+        order*ones(elemsize,1),'i',1,auxkmap);
+% 
 if numcase~=246 & numcase~=246 & numcase~=247 & numcase~=248 & numcase~=249 & numcase~=250 & numcase~=251
     if strcmp(pmethod,'tpfa') && numcase~=31.1
         
@@ -275,13 +266,11 @@ while stopcriteria < 100
         amountofneigvec,rtmd_storepos,rtmd_storeleft,rtmd_storeright,...
         isonbound,elemsize,bedgesize,inedgesize,gamma,time);
     
-    
-    
     %Update the concentration field
     Con = newC;
     
     %----------------------------------------------------------------------
-    if numcase==248 
+    if numcase==248
         %Write table (Time , conecntration)
         %Create the file name
         prfilename = [resfolder '_' 'ConReport.dat'];
@@ -298,7 +287,7 @@ while stopcriteria < 100
         
         A=[timelevel;time+dt; Con];
         fprintf(writeproductionreport,'%26.16E \r\n',A);
-       
+        
         %------------------------------------------------------------------
         % Pressure field storage
         %Create the file name
@@ -313,7 +302,7 @@ while stopcriteria < 100
         %------------------------------------------------------------------
         % Concentration storage in the cell left
         prfilename = [resfolder '_' 'SleftReport.dat'];
-               
+        
         %Open the file
         writeproductionreport = fopen([filepath '\' prfilename],letter);
         CC=[timelevel;time+dt; Sleft];
@@ -323,7 +312,7 @@ while stopcriteria < 100
         %-----------------------------------------------------------------------
         % Concentration storage in the cell right
         prfilename = [resfolder '_' 'RightReport.dat'];
-                
+        
         %Open the file
         writeproductionreport = fopen([filepath '\' prfilename],letter);
         D=[timelevel;time+dt; Sright];
@@ -333,7 +322,7 @@ while stopcriteria < 100
     end
     
     %Dimentional (s, h, day, etc)
-    
+    disp('>> Time evolution:');
     time = time + dt
     concluded = time*100/finaltime;
     %It is used for restart activation
@@ -344,9 +333,6 @@ while stopcriteria < 100
     concluded = num2str(concluded);
     status = [concluded '% concluded']
     
-    
-    
-    
     %----------------------------------------------------------------------
     %Call the "postprocessor" (plot results in each time step)
     
@@ -354,12 +340,11 @@ while stopcriteria < 100
     %if flagtoplot >= 1
     %This function create the "*.vtk" file used in VISIT to posprocessing
     %the results
-    if numcase==247
-        postprocessor(pressure,flowrateadvec,Con,contiterplot,overedgecoord,'i',1,log(kmap(:,2)));
-    else
-        postprocessor(pressure,flowrateadvec,Con,contiterplot,overedgecoord,'i',1,normk);
-        %Update "flagtoplot"
-    end
+    
+    auxkmap=logical(numcase==247)*log(kmap(:,2))+logical(numcase~=247)*normk;
+    
+    postprocessor(pressure,flowrateadvec,Con,contiterplot,overedgecoord,'i',1,auxkmap);
+    
     flagtoplot = 0;
     %Update "contiterplot"
     contiterplot = contiterplot + 1;
@@ -370,7 +355,7 @@ while stopcriteria < 100
     disp('>> Concentration extrema values [Con_max con_min]:');
     %Show extrema values
     C_extrema = [max(Con); min(Con)]
-        
+    
     %Increment the parameters "timelevel" and "countstore"
     timelevel = timelevel + 1;
     
