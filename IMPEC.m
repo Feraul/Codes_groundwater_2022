@@ -298,18 +298,11 @@ while stopcriteria < 100
         
         A=[timelevel;time+dt; Con];
         fprintf(writeproductionreport,'%26.16E \r\n',A);
-        %end  %End of IF
+       
         %------------------------------------------------------------------
-        % pressure report
+        % Pressure field storage
         %Create the file name
         prfilename = [resfolder '_' 'PresReport.dat'];
-        
-        %Select the "letter" for "fopen"
-        if timelevel == 1
-            letter = 'w';
-        else
-            letter = 'w';
-        end  %End of IF
         
         %Open the file
         writeproductionreport = fopen([filepath '\' prfilename],letter);
@@ -318,13 +311,9 @@ while stopcriteria < 100
         %Close the file "writeproductionreport.dat"
         fclose(writeproductionreport);
         %------------------------------------------------------------------
+        % Concentration storage in the cell left
         prfilename = [resfolder '_' 'SleftReport.dat'];
-        if timelevel == 1
-            letter = 'w';
-        else
-            letter = 'w';
-        end  %End of IF
-        
+               
         %Open the file
         writeproductionreport = fopen([filepath '\' prfilename],letter);
         CC=[timelevel;time+dt; Sleft];
@@ -332,13 +321,9 @@ while stopcriteria < 100
         %Close the file "writeproductionreport.dat"
         fclose(writeproductionreport);
         %-----------------------------------------------------------------------
-         prfilename = [resfolder '_' 'RightReport.dat'];
-        if timelevel == 1
-            letter = 'w';
-        else
-            letter = 'w';
-        end  %End of IF
-        
+        % Concentration storage in the cell right
+        prfilename = [resfolder '_' 'RightReport.dat'];
+                
         %Open the file
         writeproductionreport = fopen([filepath '\' prfilename],letter);
         D=[timelevel;time+dt; Sright];
