@@ -18,7 +18,7 @@
 function setmethod(kmap,wells,keywrite,invh,limiterflag,klb,elemsize,...
     bedgesize,inedgesize,auxpar,wellsc)
 %Define global parameters:
-global phasekey pmethod elem numcase;
+global phasekey pmethod elem numcase filepath;;
 
 %Get a preprocessment of pressure scheme (used in One-phase and Two-Phase).
 if phasekey ~= 0
@@ -141,6 +141,17 @@ switch phasekey
             
             weightDMPc=0;
             if lastimeval~=0
+                %Open the restart.dat file:
+                command = [char(filepath) '\' 'Results_teste_PresReport.dat'];
+                readfile = fopen(command);
+                
+                %"getgeodata" reads each row of *.geo and store it as a string array.
+                getdata = textscan(readfile,'%f');
+                %Attribute the data to "getgeodata"
+                getvecdata = cell2mat(getdata);
+                %Fill the variables:
+                lastimelevelp = getvecdata(1);
+                lastimevalp = getvecdata(2);
                 % adequação dos flags de contorno
                 nflag = ferncodes_calflag(lastimeval);
             end
@@ -256,7 +267,7 @@ global filepath benchkey
 lastimelevel = 0;
 lastimeval = 0;
 %Verify if there exists a restart condition
-command = [char(filepath) '\' 'Results_teste_Report.dat'];
+command = [char(filepath) '\' 'Results_teste_ConReport.dat'];
 restartkey = exist(command,'file');
 
 %There exists a restart condition
@@ -266,7 +277,7 @@ if restartkey ~= 0 && strcmp(benchkey,'r')
     %There exists a restart condition, BUT the user does NOT set this option.
 elseif restartkey ~= 0 && strcmp(benchkey,'r') == 0
     %It deletes the "restart.dat" file
-    command = ['del ' char(filepath) '\' 'Results_teste_Report.dat'];
+    command = ['del ' char(filepath) '\' 'Results_teste_ConReport.dat'];
     %It calls system
     system(command);
     %Attribute INITIAL CONDITION

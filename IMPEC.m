@@ -56,8 +56,34 @@ contiterplot = 1;
 earlysw = 0;
 oilaccum = 0;
 
-Sleft = 0;
-Sright = 0;
+if lastimelevel~=0
+    %Open the restart.dat file:
+    command = [char(filepath) '\' 'Results_teste_SleftReport.dat'];
+    readfile = fopen(command);
+    
+    %"getgeodata" reads each row of *.geo and store it as a string array.
+    getdata = textscan(readfile,'%f');
+    %Attribute the data to "getgeodata"
+    getvecdata = cell2mat(getdata);
+    %Fill the variables:
+    
+    Sleft = getvecdata(3:length(getvecdata));
+    
+    %Open the restart.dat file:
+    command = [char(filepath) '\' 'Results_teste_RightReport.dat'];
+    readfile = fopen(command);
+    
+    %"getgeodata" reads each row of *.geo and store it as a string array.
+    getdata = textscan(readfile,'%f');
+    %Attribute the data to "getgeodata"
+    getvecdata = cell2mat(getdata);
+    %Fill the variables:
+    
+    Sright = getvecdata(3:length(getvecdata));
+else
+    Sleft = 0;
+    Sright = 0;
+end
 %Parameters to plot
 %It is an auxiliary counter. When it get "10", the production parameters
 %and saturation field are stored in a file *.dat
@@ -255,7 +281,7 @@ while stopcriteria < 100
     Con = newC;
     
     %----------------------------------------------------------------------
-    if numcase==248
+    if numcase==248 
         %Write table (Time , conecntration)
         %Create the file name
         prfilename = [resfolder '_' 'ConReport.dat'];
@@ -289,6 +315,34 @@ while stopcriteria < 100
         writeproductionreport = fopen([filepath '\' prfilename],letter);
         B=[timelevel;time+dt; pressure];
         fprintf(writeproductionreport,'%26.16E \r\n',B);
+        %Close the file "writeproductionreport.dat"
+        fclose(writeproductionreport);
+        %------------------------------------------------------------------
+        prfilename = [resfolder '_' 'SleftReport.dat'];
+        if timelevel == 1
+            letter = 'w';
+        else
+            letter = 'w';
+        end  %End of IF
+        
+        %Open the file
+        writeproductionreport = fopen([filepath '\' prfilename],letter);
+        CC=[timelevel;time+dt; Sleft];
+        fprintf(writeproductionreport,'%26.16E \r\n',CC);
+        %Close the file "writeproductionreport.dat"
+        fclose(writeproductionreport);
+        %-----------------------------------------------------------------------
+         prfilename = [resfolder '_' 'RightReport.dat'];
+        if timelevel == 1
+            letter = 'w';
+        else
+            letter = 'w';
+        end  %End of IF
+        
+        %Open the file
+        writeproductionreport = fopen([filepath '\' prfilename],letter);
+        D=[timelevel;time+dt; Sright];
+        fprintf(writeproductionreport,'%26.16E \r\n',D);
         %Close the file "writeproductionreport.dat"
         fclose(writeproductionreport);
     end

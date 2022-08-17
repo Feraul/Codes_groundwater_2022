@@ -19,14 +19,14 @@
 //Do you want to run a benchmark case? [y] ==> "yes"; [n] ==> "no";
 // [r]==> "restart"  
 
-y
+r
 
 //If [y], write below the path where where you want to store the
 //results (vtk, images, tables):
 //***OBS.: Even if you chose [n], write below both the path and 
 //folder's name where you want to store your results:
 
-C:\Users\flc59\Documents\GitHub\Benchmark_Cases\BenchContaminant218
+C:\Users\flc59\Documents\Benchmark_Cases\BenchContaminant218
 
 //Write below either a number or any other key word to feature the 
 //folder where the results will be stored:
@@ -323,7 +323,7 @@ y
 
 //If [y], write below the path where the mesh file is:
  
-C:\Users\flc59\Documents\GitHub\Malhas2
+C:\Users\flc59\Documents\Malhas2
 
 //Write below the name of the mesh file. Use the extension *.msh:
 

@@ -24,7 +24,7 @@ function [Sw,lastimelevel,lastimeval] = setrestartinicond
 global filepath;
 
 %Open the restart.dat file:
-command = [char(filepath) '\' 'Results_teste_Report.dat'];
+command = [char(filepath) '\' 'Results_teste_ConReport.dat'];
 readfile = fopen(command);
 
 %"getgeodata" reads each row of *.geo and store it as a string array. 

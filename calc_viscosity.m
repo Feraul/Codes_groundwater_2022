@@ -17,13 +17,8 @@ global bedge inedge visc elemarea numcase benchkey
                     
                     concen=0;
                 else
-                    if strcmp(benchkey,'r') && timelevel-1==timelevelold
-                        concen=Con(bedge(i,3));
-                        
-                    else
                         concen=Sleft(i);
                         %concen=earlysw(i);
-                    end
                 end
                 
             end
@@ -41,14 +36,9 @@ global bedge inedge visc elemarea numcase benchkey
                 concenrel=0;
                 %concen=0;
             else
-                if strcmp(benchkey,'r') && timelevel-1==timelevelold
-                    concenlef=Con(lef);
-                    concenrel=Con(rel);
-                else
                     concenlef=Sleft(i);
                     concenrel=Sright(i-size(bedge,1));
                     %concen=earlysw(i);
-                end
             end
             if numcase==251
                 expolef=((1-concenlef)*visc(2)^-0.25+(visc(1)^(-0.25))*concenlef)^4;
