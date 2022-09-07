@@ -16,9 +16,9 @@
 %--------------------------------------------------------------------------
 
 function setmethod(kmap,wells,keywrite,invh,limiterflag,klb,elemsize,...
-    bedgesize,inedgesize,auxpar,wellsc)
+    bedgesize,inedgesize,auxpar,wellsc,velmedio)
 %Define global parameters:
-global phasekey pmethod elem numcase filepath;;
+global phasekey pmethod numcase
 
 %Get a preprocessment of pressure scheme (used in One-phase and Two-Phase).
 if phasekey ~= 0
@@ -27,7 +27,7 @@ if phasekey ~= 0
     [transmvecleft,transmvecright,knownvecleft,knownvecright,storeinv,...
         Bleft,Bright,overedgecoord,normk,Fg,mapinv,maptransm,mapknownvec,...
         pointedge,bodyterm,Hesq,Kde,Kn,Kt,Ded,V,N,kmap,nflag,parameter,weightDMP,...
-        nflagface,p_old,contnorm] = preMPFA(kmap,klb);
+        nflagface,p_old,contnorm,weight,s] = preMPFA(kmap,klb);
     
 end  %End of IF (execute "preMPFA")
 
@@ -132,6 +132,7 @@ switch phasekey
         Ktc=0; Dedc=0;
         transmvecleftc=0;
         knownvecleftc=0;
+        
         if strcmp(pmethod,'nlfvpp')
             %temos usado para muitos estes o seguinte rutina
             [dparameter,]=ferncodes_coefficient(dmap);
@@ -204,7 +205,7 @@ switch phasekey
             isonbound,elemsize,bedgesize,inedgesize,parameter,...
             weightDMP,nflagface,p_old,contnorm,dparameter,nflagnoc,...
             gamma,Dmedio,Kdec,Knc,Ktc,Dedc,wightc,sc,nflagfacec,...
-            weightDMPc,wellsc,transmvecleftc,knownvecleftc);
+            weightDMPc,wellsc,transmvecleftc,knownvecleftc,weight,s,velmedio);
         
     case 4 % hidrological simulation
         % ainda falta implementar

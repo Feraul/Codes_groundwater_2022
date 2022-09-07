@@ -28,7 +28,7 @@ function IMPEC(Con,injecelem,producelem,satinbound,wells,klb,satonvertices,...
     rtmd_storeright,isonbound,elemsize,bedgesize,inedgesize,parameter,...
     weightDMP,nflagface,p_old,contnorm,dparameter,nflagc,gamma,...
     Dmedio,Kdec,Knc,Ktc,Dedc,wightc,sc,nflagfacec,weightDMPc,wellsc,...
-    transmvecleftc,knownvecleftc)
+    transmvecleftc,knownvecleftc,weight,s,velmedio)
 %Define global parameters:
 global timew elemarea totaltime timelevel pormap numcase pmethod smethod ...
     filepath benchkey resfolder order bcflagc bedge inedge elem interptype ;
@@ -94,102 +94,15 @@ end
 auxkmap=logical(numcase==247)*log(kmap(:,2))+logical(numcase~=247)*normk;
     postprocessor(ones(elemsize,1),0,Con,contiterplot - 1,...
         order*ones(elemsize,1),'i',1,auxkmap);
-% 
-if numcase~=246 & numcase~=246 & numcase~=247 & numcase~=248 & numcase~=249 & numcase~=250 & numcase~=251
-    if strcmp(pmethod,'tpfa') && numcase~=31.1
-        
-        %Get "pressure" and "flowrate"
-        [pressure,flowrateadvec,flowresult] = solvePressure_TPFA(Kde, Kn, nflag, Hesq,wells);
-        
-        %MPFA-D (Gao and Wu, 2010)
-    elseif strcmp(pmethod,'mpfad') &&  numcase~=31.1
-        %It switches according to "interptype"
-        switch char(interptype)
-            %LPEW 1
-            case 'lpew1'
-                % calculo dos pesos que correspondem ao LPEW1
-                [weight,s] = ferncodes_Pre_LPEW_1(kmap,1,V,Sw,N);
-                %LPEW 2
-            case 'lpew2'
-                % calculo dos pesos que correspondem ao LPEW2
-                [weight,s] = ferncodes_Pre_LPEW_2(kmap,N);
-                
-        end  %End of SWITCH
-        %Calculate "pressure", "flowrate" and "flowresult"
-        [pressure,flowrateadvec,flowresult,flowratedif] = ferncodes_solverpressure(...
-            1,wells,Hesq,Kde,Kn,Kt,Ded,nflag,weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc);
-        
-    elseif strcmp(pmethod,'mpfaql')
-        [pressure,flowrateadvec,flowresult]=ferncodes_solverpressureMPFAQL(nflag,...
-            parameter,kmap,weightDMP,wells,1,V,Con,N);
-        
-    elseif strcmp(pmethod,'mpfah')
-        
-        [pressure,flowrateadvec,flowresult]=ferncodes_solverpressureMPFAH(nflagface,...
-            parameter,weightDMP,wells);
-        
-    elseif strcmp(pmethod,'nlfvpp')
-        %It switches according to "interptype"
-        switch char(interptype)
-            %LPEW 1
-            case 'lpew1'
-                % calculo dos pesos que correspondem ao LPEW1
-                [weight,s] = ferncodes_Pre_LPEW_1(kmap,1,V,Sw,N);
-                %LPEW 2
-            case 'lpew2'
-                % calculo dos pesos que correspondem ao LPEW2
-                [weight,s] = ferncodes_Pre_LPEW_2(kmap,N);
-                
-        end  %End of SWITCH
-        [pressure,flowrateadvec,flowresult,flowratedif]=ferncodes_solverpressureNLFVPP(nflag,...
-            parameter,kmap,wells,1,V,Con,N,p_old,contnorm,weight,s,Con,nflagc,wightc,sc,dparameter);
-        
-        %Any other type of scheme to solve the Pressure Equation
-    elseif strcmp(pmethod,'nlfvh')&& numcase~=31.1 % revisar com cuidado
-        
-        [pressure,flowrate,flowresult]=ferncodes_solverpressureNLFVH(nflagface,...
-            parameter,wells,1,weightDMP,p_old,0,0,0,contnorm);
-    elseif strcmp(pmethod,'nlfvdmp')&& numcase~=31.1
-        
-        [pressure,flowrate,flowresult]=ferncodes_solverpressureDMP(nflagface,...
-            parameter,wells,1,weightDMP,p_old,0,0,0,contnorm);
-    elseif numcase~=31.1
-        
-        %Calculate the PRESSURE field (Two-Phase context):
-        [pressure,flowrate,flowresult] = solvePressure(transmvecleft,...
+    
+% we calculate the pressure, flow rate advective and dispersive terms
+[pressure,flowrateadvec,flowresult,flowratedif]=auxiliarysolverpressure(nflag,...
+            kmap,V,N,contnorm,weight,s,Con,nflagc,wightc,sc,dparameter,...
+            nflagface,parameter,weightDMP,p_old,transmvecleft,...
             transmvecright,knownvecleft,knownvecright,storeinv,Bleft,...
             Bright,wells,mapinv,maptransm,mapknownvec,pointedge,mobility,...
             bodyterm);
-    end  %End of IF (type of pressure solver)
-end
-
-% velocidades medias
-if numcase==233
-    velmedio=0.5; % quando a pessão no contorno é 5
-elseif numcase==235
-    velmedio=2;    % quando a pressão no contorno é 15
-elseif numcase==231 || numcase==232 || numcase==243 || ...
-        numcase==236 || numcase==237 || numcase==238 ||...
-        numcase==239 || numcase==241 || numcase==242 ||...
-        numcase==244  || numcase==234|| numcase==233 ||...
-        numcase==248 || numcase==251
-    velmedio=1;
-end
-if (numcase==248 || numcase==251) && (strcmp(pmethod,'nlfvpp') || strcmp(pmethod,'mpfad'))
-    %It switches according to "interptype"
-    switch char(interptype)
-        %LPEW 1
-        case 'lpew1'
-            % calculo dos pesos que correspondem ao LPEW1
-            [weight,s] = ferncodes_Pre_LPEW_1(kmap,1,V,Sw,N);
-            %LPEW 2
-        case 'lpew2'
-            % calculo dos pesos que correspondem ao LPEW2
-            [weight,s] = ferncodes_Pre_LPEW_2(kmap,N);
-            
-    end  %End of SWITCH
-end
-q=zeros(size(elem,1),1);
+% 
 while stopcriteria < 100
     
     % while time< finaltime
@@ -200,6 +113,7 @@ while stopcriteria < 100
     disp('>> Show timelevel:')
     timelevel
     
+        
     if numcase==246 || numcase==245 || numcase==247 || numcase==248 ||...
             numcase==249 || numcase==250 || numcase==251
         % [viscosity] = ferncodes_getviscosity(satinbound,injecelem,Con,earlysw,...
@@ -424,3 +338,65 @@ command = ['del ' char(filepath) '\' 'restart.dat'];
 
 
 system(command);
+end
+%--------------------------------------------------------------------------
+% we calculate the pressure, flow rate advective and dispersive
+function [pressure,flowrateadvec,flowresult,flowratedif]=auxiliarysolverpressure(nflag,...
+            kmap,V,N,contnorm,weight,s,Con,...
+            nflagc,wightc,sc,dparameter,nflagface,...
+            parameter,weightDMP,p_old,transmvecleft,...
+            transmvecright,knownvecleft,knownvecright,storeinv,Bleft,...
+            Bright,wells,mapinv,maptransm,mapknownvec,pointedge,mobility,...
+            bodyterm)
+
+global numcase pmethod
+pressure=0;
+flowrateadvec=0;
+flowresult=0;
+flowratedif=0;
+if numcase~=246 & numcase~=246 & numcase~=247 & numcase~=248 & numcase~=249 & numcase~=250 & numcase~=251
+    if strcmp(pmethod,'tpfa') && numcase~=31.1
+        
+        %Get "pressure" and "flowrate"
+        [pressure,flowrateadvec,flowresult] = solvePressure_TPFA(Kde, Kn, nflag, Hesq,wells);
+        
+        %MPFA-D (Gao and Wu, 2010)
+    elseif strcmp(pmethod,'mpfad') &&  numcase~=31.1
+        
+        %Calculate "pressure", "flowrate" and "flowresult"
+        [pressure,flowrateadvec,flowresult,flowratedif] = ferncodes_solverpressure(...
+            1,wells,Hesq,Kde,Kn,Kt,Ded,nflag,weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc);
+        
+    elseif strcmp(pmethod,'mpfaql')
+        [pressure,flowrateadvec,flowresult]=ferncodes_solverpressureMPFAQL(nflag,...
+            parameter,kmap,weightDMP,wells,mobility,V,Con,N,weight,s);
+        
+    elseif strcmp(pmethod,'mpfah')
+        
+        [pressure,flowrateadvec,flowresult]=ferncodes_solverpressureMPFAH(nflagface,...
+            parameter,weightDMP,wells);
+        
+    elseif strcmp(pmethod,'nlfvpp')
+        
+        [pressure,flowrateadvec,flowresult,flowratedif]=ferncodes_solverpressureNLFVPP(nflag,...
+            parameter,kmap,wells,mobility,V,Con,N,p_old,contnorm,weight,s,Con,nflagc,wightc,sc,dparameter);
+        
+        %Any other type of scheme to solve the Pressure Equation
+    elseif strcmp(pmethod,'nlfvh')&& numcase~=31.1 % revisar com cuidado
+        
+        [pressure,flowrate,flowresult]=ferncodes_solverpressureNLFVH(nflagface,...
+            parameter,wells,mobility,weightDMP,p_old,0,0,0,contnorm);
+    elseif strcmp(pmethod,'nlfvdmp')&& numcase~=31.1
+        
+        [pressure,flowrate,flowresult]=ferncodes_solverpressureDMP(nflagface,...
+            parameter,wells,mobility,weightDMP,p_old,0,0,0,contnorm);
+    elseif numcase~=31.1
+        
+        %Calculate the PRESSURE field (Two-Phase context):
+        [pressure,flowrate,flowresult] = solvePressure(transmvecleft,...
+            transmvecright,knownvecleft,knownvecright,storeinv,Bleft,...
+            Bright,wells,mapinv,maptransm,mapknownvec,pointedge,mobility,...
+            bodyterm);
+    end  %End of IF (type of pressure solver)
+end
+end

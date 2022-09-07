@@ -50,15 +50,16 @@ global coord centelem elem esurn1 esurn2 nsurn1 nsurn2 bedge inedge ...
     lsexp,keygravity,g,keycapil,ncaplcorey,filepath,resfolder,benchkey,...
     kmap,wells,klb,limiterflag,rowposit,nltol,maxiter,acel] = preprocessor;
 % utilize Tipo1Malha4.msh, Tipo1Malha5.msh, Tipo1Malha6.msh
-x=bedge(:,1);
-y=bedge(:,2);
-bedge(:,1)=y;
-bedge(:,2)=x;
+
+% x=bedge(:,1);
+% y=bedge(:,2);
+% bedge(:,1)=y;
+% bedge(:,2)=x;
 
 % necesitamos ajeitar para o campo de pressao quando tem "restart"
 if numcase >200
     % Flags adequation for contamination and groundwater problem
-     [bedge,bcflagc,wellsc,auxpar]=preconcentration(bedge,wells);
+     [bedge,bcflagc,wellsc,auxpar,velmedio]=preconcentration(bedge,wells);
     
     if numcase==247 || numcase==249 || numcase==250 
         % permeability field obtained by: Nicolaides, Cueto-Filgueroso, 
@@ -92,5 +93,6 @@ bedgesize = size(bedge,1);
 inedgesize = size(inedge,1);
 
 %It preprocess the schemes and set a One-phase or Two-phase simulation.
-setmethod(kmap,wells,'i',8,limiterflag,klb,elemsize,bedgesize,inedgesize,auxpar, wellsc);
+setmethod(kmap,wells,'i',8,limiterflag,klb,elemsize,bedgesize,...
+    inedgesize,auxpar, wellsc,velmedio);
 

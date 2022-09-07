@@ -2,11 +2,23 @@
 %Modified: Fernando Contreras, 2021
 
 
-function [bedge,bcflagc,wellsc,auxpar]= preconcentration(bedge,wells)
+function [bedge,bcflagc,wellsc,auxpar,velmedio]= preconcentration(bedge,wells)
 global numcase
 
 auxpar=0;
 wellsc=zeros(2,6);
+% velocidades medias
+        if numcase==233
+            velmedio=0.5; % quando a pessão no contorno é 5
+        elseif numcase==235
+            velmedio=2;    % quando a pressão no contorno é 15
+        elseif numcase==231 || numcase==232 || numcase==243 || ...
+                numcase==236 || numcase==237 || numcase==238 ||...
+                numcase==239 || numcase==241 || numcase==242 ||...
+                numcase==244  || numcase==234|| numcase==233 ||...
+                numcase==248 || numcase==251
+            velmedio=1;
+        end
 %% flags adicionais para o problema 5.3.1-5.3.2
 switch numcase
     case 231

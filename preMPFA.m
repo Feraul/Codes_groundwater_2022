@@ -22,9 +22,9 @@
 function [transmvecleft,transmvecright,knownvecleft,knownvecright,storeinv,...
     Bleft,Bright,overedgecoord,normk,Fg,mapinv,maptransm,mapknownvec,...
     pointedge,bodyterm,Hesq,Kde,Kn,Kt,Ded,V,N,kmap,nflag,parameter,weightDMP,...
-    nflagface,p_old,contnorm] = preMPFA(kmap,klb)
+    nflagface,p_old,contnorm,weight,s] = preMPFA(kmap,klb)
 %Define global parameters:
-global pmethod elem
+global pmethod elem interptype
 
 %Obtain the coordinate of both CENTER and AUXILARY nodes of elements which
 %constitute the mash. The AREA of each element is also calculated.
@@ -39,7 +39,7 @@ transmvecleft = 0; transmvecright = 0; knownvecleft = 0; knownvecright = 0;
 storeinv = 0; Bleft = 0; Bright = 0; Fg = 0; mapinv = 0; maptransm = 0;
 mapknownvec = 0; pointedge = 0; bodyterm = 0; Hesq = 0; Kde = 0; Kn = 0;
 Kt = 0; Ded = 0; V = 0; N = 0; nflag = 0; parameter=0; weightDMP=0;
-nflagface=0;p_old=0;contnorm=0;
+nflagface=0;p_old=0;contnorm=0;weight=0;s=0;
 %Define parametric variables:
 %Parameter Used in Full Pressure Support (FPS)
 %"p" quadrature point to flux in the auxilary sub interaction region
@@ -57,6 +57,23 @@ overedgecoord = overedge;
 %Get the length of the edge with non-null Neumann Boundary Condition.
 knownboundlength = getknownboundlength(klb);
 
+% calculate the weight 
+if strcmp(pmethod,'mpfad')|| strcmp(pmethod,'nlfvpp')|| strcmp(pmethod,'mpfaql')
+    %Call another parameters that I don't know.
+        [V,N,] = ferncodes_elementface(nflag);
+%It switches according to "interptype"
+        switch char(interptype)
+            %LPEW 1
+            case 'lpew1'
+                % calculo dos pesos que correspondem ao LPEW1
+                [weight,s] = ferncodes_Pre_LPEW_1(kmap,1,V,Sw,N);
+                %LPEW 2
+            case 'lpew2'
+                % calculo dos pesos que correspondem ao LPEW2
+                [weight,s] = ferncodes_Pre_LPEW_2(kmap,N);
+                
+        end  %End of SWITCH
+end      
 %--------------------------------------------------------------------------
 %Calculate the TRANSMISSIBILITY parameters:
 
