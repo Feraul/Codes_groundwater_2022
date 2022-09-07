@@ -16,7 +16,7 @@
 %--------------------------------------------------------------------------
 
 function setmethod(kmap,wells,keywrite,invh,limiterflag,klb,elemsize,...
-    bedgesize,inedgesize,auxpar,wellsc,velmedio)
+    bedgesize,inedgesize,auxpar,wellsc,velmedio,dmap,Dmedio,gamma)
 %Define global parameters:
 global phasekey pmethod numcase
 
@@ -118,81 +118,38 @@ switch phasekey
             weightDMP,nflagface,p_old,contnorm);
     case 3 % contaminant simulation
         
-        %Get the initial condition for the hyperbolic equation
+        %Get the initial condition 
         [Con,lastimelevel,lastimeval] = applyinicialcond;
         
-        [dmap,Dmedio,gamma] = PLUG_dfunction;
         %          if numcase==243 || numcase==245 || numcase==247
         %              elem(:,5)=1;
         %          end
-        dparameter=0;
-        Hesq=0;
-        Kdec=0;
-        Knc=0;
-        Ktc=0; Dedc=0;
+        
         transmvecleftc=0;
         knownvecleftc=0;
+        % calculate the auxiliary parameters
+        [Hesq,Kdec,Knc,Ktc,Dedc,wightc,sc,weightDMPc,nflag,dparameter ]=...
+            parametersauxiliary(dmap,N,lastimeval);
         
-        if strcmp(pmethod,'nlfvpp')
-            %temos usado para muitos estes o seguinte rutina
-            [dparameter,]=ferncodes_coefficient(dmap);
-            % calculate inpertolation weigts
-            
-            [wightc,sc] = ferncodes_Pre_LPEW_2_con(dmap,N);
-            
-            weightDMPc=0;
-            
-            % adequação dos flags de contorno
-            nflag = logical(lastimeval~=0)*ferncodes_calflag(lastimeval)+...
-                logical(lastimeval==0)*nflag;
-        elseif strcmp(pmethod,'mpfaql')
-            %temos usado para muitos estes o seguinte rutina
-            [dparameter,]=ferncodes_coefficient(dmap);
-            [weightDMPc]=ferncodes_weightnlfvDMP(dmap);
-            % calculate inpertolation weigts
-            
-            [wightc,sc] = ferncodes_Pre_LPEW_2_con(dmap,N);
-        elseif strcmp(pmethod,'mpfah')
-            %temos usado para muitos estes o seguinte rutina
-            [dparameter,]=ferncodes_coefficient(dmap);
-            [weightDMPc]=ferncodes_weightnlfvDMP(dmap);
-            wightc=0;sc=0;
-        elseif strcmp(pmethod,'mpfad')
-            %Get preprocessed terms:
-            [Hesq,Kdec,Knc,Ktc,Dedc] = ferncodes_Kde_Ded_Kt_Kn(dmap);
-            % calculate inpertolation weigts
-            weightDMPc=0;
-            [wightc,sc] = ferncodes_Pre_LPEW_2_con(dmap,N);
-            
-            % adequação dos flags de contorno
-            nflag = logical(lastimeval~=0)*ferncodes_calflag(lastimeval)+...
-                logical(lastimeval==0)*nflag;
-        elseif strcmp(pmethod,'tpfa')
-            %[transmvecleftc,knownvecleftc,] = transmTPFA(dmap,0);
-            [Hesq,Kdec,Knc,Ktc,Dedc] = ferncodes_Kde_Ded_Kt_Kn(dmap);
-            wightc=0;sc=0;weightDMPc=0;
-        end
-        
-        %Initialize and preprocess the parameters:
-        
+        % flags boundary conditions
         [nflagnoc,nflagfacec] = ferncodes_calflag_con(lastimeval);
         
         %Define elements associated to INJECTOR and PRODUCER wells.
         [injecelem,producelem,satinbound,Con,wellsc] = wellsparameter(wellsc,...
             Con,klb);
         
-        %Define flags and known saturation on the vertices and edges.
+        %Define flags and known concentration or saturation on the vertices and edges.
         [satonvertices,satonedges,flagknownvert,flagknownedge] = ...
             getsatandflag(satinbound,injecelem,Con,nflagnoc,nflagfacec,0);
         
-        %"preSaturation" - Preprocessor of the Saturation Equation
+        %"preSaturation" - Preprocessor of the concentration or saturation equation
         [wvector,wmap,constraint,massweigmap,othervertexmap,lsw,swsequence,...
             ntriang,areatriang,prodwellbedg,prodwellinedg,mwmaprodelem,...
             vtxmaprodelem,coordmaprodelem,amountofneigvec,rtmd_storepos,...
             rtmd_storeleft,rtmd_storeright,isonbound] = ...
             preSaturation(flagknownedge,injecelem,producelem);
         
-        %"IMPES" function. There, PRESSURE and CONCENTRATION are solved.
+        %"IMPEC" function. There, PRESSURE and CONCENTRATION are solved.
         IMPEC(Con,injecelem,producelem,satinbound,wells,klb,satonvertices,...
             satonedges,flagknownvert,flagknownedge,wvector,wmap,constraint,...
             lsw,transmvecleft,transmvecright,knownvecleft,knownvecright,...
@@ -207,7 +164,7 @@ switch phasekey
             gamma,Dmedio,Kdec,Knc,Ktc,Dedc,wightc,sc,nflagfacec,...
             weightDMPc,wellsc,transmvecleftc,knownvecleftc,weight,s,velmedio);
         
-    case 4 % hidrological simulation
+    case 4 % hydrological simulation
         % ainda falta implementar
         
         %It Souves only the HYPERBOLIC Equation:
@@ -237,12 +194,64 @@ switch phasekey
         
 end  %End of SWITCH
 
+
+end
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
 %FUNCTION
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
 
+% Function "parametersauxiliary"
+function[Hesq,Kdec,Knc,Ktc,Dedc,wightc,sc,weightDMPc,nflag,dparameter ]=...
+    parametersauxiliary(dmap,N,lastimeval)
+global pmethod
+dparameter=0;
+Hesq=0;
+Kdec=0;
+Knc=0;
+Ktc=0; Dedc=0;
+% calculate the parameters for the dispersive flux
+if strcmp(pmethod,'nlfvpp')
+    %temos usado para muitos estes o seguinte rutina
+    [dparameter,]=ferncodes_coefficient(dmap);
+    % calculate inpertolation weigts
+    
+    [wightc,sc] = ferncodes_Pre_LPEW_2_con(dmap,N);
+    
+    weightDMPc=0;
+    
+    % adequação dos flags de contorno
+    nflag = logical(lastimeval~=0)*ferncodes_calflag(lastimeval)+...
+        logical(lastimeval==0)*nflag;
+elseif strcmp(pmethod,'mpfaql')
+    %temos usado para muitos estes o seguinte rutina
+    [dparameter,]=ferncodes_coefficient(dmap);
+    [weightDMPc]=ferncodes_weightnlfvDMP(dmap);
+    % calculate inpertolation weigts
+    
+    [wightc,sc] = ferncodes_Pre_LPEW_2_con(dmap,N);
+elseif strcmp(pmethod,'mpfah')
+    %temos usado para muitos estes o seguinte rutina
+    [dparameter,]=ferncodes_coefficient(dmap);
+    [weightDMPc]=ferncodes_weightnlfvDMP(dmap);
+    wightc=0;sc=0;
+elseif strcmp(pmethod,'mpfad')
+    %Get preprocessed terms:
+    [Hesq,Kdec,Knc,Ktc,Dedc] = ferncodes_Kde_Ded_Kt_Kn(dmap);
+    % calculate inpertolation weigts
+    weightDMPc=0;
+    [wightc,sc] = ferncodes_Pre_LPEW_2_con(dmap,N);
+    
+    % adequação dos flags de contorno
+    nflag = logical(lastimeval~=0)*ferncodes_calflag(lastimeval)+...
+        logical(lastimeval==0)*nflag;
+elseif strcmp(pmethod,'tpfa')
+    %[transmvecleftc,knownvecleftc,] = transmTPFA(dmap,0);
+    [Hesq,Kdec,Knc,Ktc,Dedc] = ferncodes_Kde_Ded_Kt_Kn(dmap);
+    wightc=0;sc=0;weightDMPc=0;
+end
+end
 %--------------------------------------------------------------------------
 %Function "applyinicialcond"
 %--------------------------------------------------------------------------
@@ -274,4 +283,5 @@ elseif restartkey ~= 0 && strcmp(benchkey,'r') == 0
 else
     %Attribute INITIAL CONDITION
     [Sw,] = attribinitialcond;
-end  %End of IF (restart condition)
+end%End of IF (restart condition)
+end

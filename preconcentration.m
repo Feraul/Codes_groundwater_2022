@@ -1,24 +1,49 @@
- 
+
 %Modified: Fernando Contreras, 2021
 
 
-function [bedge,bcflagc,wellsc,auxpar,velmedio]= preconcentration(bedge,wells)
+function [bedge,bcflagc,wellsc,auxpar,velmedio,dmap,Dmedio,gamma,kmap]= ...
+    preconcentration(bedge,wells)
 global numcase
 
 auxpar=0;
 wellsc=zeros(2,6);
-% velocidades medias
-        if numcase==233
-            velmedio=0.5; % quando a pessão no contorno é 5
-        elseif numcase==235
-            velmedio=2;    % quando a pressão no contorno é 15
-        elseif numcase==231 || numcase==232 || numcase==243 || ...
-                numcase==236 || numcase==237 || numcase==238 ||...
-                numcase==239 || numcase==241 || numcase==242 ||...
-                numcase==244  || numcase==234|| numcase==233 ||...
-                numcase==248 || numcase==251
-            velmedio=1;
+% media velocities
+if numcase==233
+    velmedio=0.5; % quando a pessão no contorno é 5
+elseif numcase==235
+    velmedio=2;    % quando a pressão no contorno é 15
+elseif numcase==231 || numcase==232 || numcase==243 || ...
+        numcase==236 || numcase==237 || numcase==238 ||...
+        numcase==239 || numcase==241 || numcase==242 ||...
+        numcase==244  || numcase==234|| numcase==233 ||...
+        numcase==248 || numcase==251
+    velmedio=1;
+end
+% calculate diffusion tensor
+[dmap,Dmedio,gamma] = PLUG_dfunction;
+% calculate permeability tensor
+if numcase==247 || numcase==249 || numcase==250
+    % permeability field obtained by: Nicolaides, Cueto-Filgueroso,
+    % Juanes 2015.
+    % reorganização da matriz de permeabilidade
+    load('Perm_Var0p1.mat')
+    %==================================================================
+    perm=flipud(perm);
+    auxperm2=perm(1:125,1:125);
+    m=1;
+    for i=1:125
+        for j=1:125
+            auxperm3(m,1)=auxperm2(j,i);
+            m=m+1;
         end
+    end
+    kmap=auxperm3;
+elseif numcase==251
+    kmap=kmap;
+    %adeSPE; % para um campo de permeabilidade da SPE active descomente.
+    %==================================================================
+end
 %% flags adicionais para o problema 5.3.1-5.3.2
 switch numcase
     case 231
@@ -234,12 +259,12 @@ switch numcase
     case 239
         bcflagc(1,1)=50;% dicichlet concen
         bcflagc(1,2)=0;% valor dirich
-        bcflagc(2,1)=51; % dicichlet concen 
+        bcflagc(2,1)=51; % dicichlet concen
         bcflagc(2,2)=1; % valor dirich
         bcflagc(3,1)=250; % neumann boundary
-        bcflagc(3,2)=0;  % valor 
+        bcflagc(3,2)=0;  % valor
         bcflagc(4,1)=251;  % neumann boundary
-        bcflagc(4,2)=0; % valor 
+        bcflagc(4,2)=0; % valor
         
         c=logical(bedge(:,4)==101);
         bedge([c],6)=50;
@@ -262,12 +287,12 @@ switch numcase
     case 241
         bcflagc(1,1)=50;% dicichlet concen
         bcflagc(1,2)=0;% valor dirich
-        bcflagc(2,1)=51; % dicichlet concen 
+        bcflagc(2,1)=51; % dicichlet concen
         bcflagc(2,2)=1; % valor dirich
         bcflagc(3,1)=250; % neumann boundary
-        bcflagc(3,2)=0;  % valor 
+        bcflagc(3,2)=0;  % valor
         bcflagc(4,1)=251;  % neumann boundary
-        bcflagc(4,2)=0; % valor 
+        bcflagc(4,2)=0; % valor
         
         c=logical(bedge(:,4)==101);
         bedge([c],6)=50;
@@ -290,12 +315,12 @@ switch numcase
     case 242
         bcflagc(1,1)=50;% dicichlet concen
         bcflagc(1,2)=0;% valor dirich
-        bcflagc(2,1)=51; % dicichlet concen 
+        bcflagc(2,1)=51; % dicichlet concen
         bcflagc(2,2)=1; % valor dirich
         bcflagc(3,1)=250; % neumann boundary
-        bcflagc(3,2)=0;  % valor 
+        bcflagc(3,2)=0;  % valor
         bcflagc(4,1)=251;  % neumann boundary
-        bcflagc(4,2)=0; % valor 
+        bcflagc(4,2)=0; % valor
         
         c=logical(bedge(:,4)==101);
         bedge([c],6)=50;
@@ -318,12 +343,12 @@ switch numcase
     case 243
         bcflagc(1,1)=50;% dicichlet concen
         bcflagc(1,2)=0;% valor dirich
-        bcflagc(2,1)=51; % dicichlet concen 
+        bcflagc(2,1)=51; % dicichlet concen
         bcflagc(2,2)=1; % valor dirich
         bcflagc(3,1)=250; % neumann boundary
-        bcflagc(3,2)=0;  % valor 
+        bcflagc(3,2)=0;  % valor
         bcflagc(4,1)=251;  % neumann boundary
-        bcflagc(4,2)=0; % valor 
+        bcflagc(4,2)=0; % valor
         
         c=logical(bedge(:,4)==101);
         bedge([c],6)=50;
@@ -342,26 +367,26 @@ switch numcase
         bedge([e1],7)=250;
         f1=logical(bedge(:,5)==201);
         bedge([f1],7)=251;
-%         bcflagc(1,1)=251;
-%         bcflagc(1,2)=0;
-%         bcflagc(2,1)=50;  % dicichlet concen
-%         bcflagc(2,2)=10; % valor dirich
-%         bcflagc(3,1)=250; % dirich neumann
-%         bcflagc(3,2)=0;  % valor concent
-%         
-%         c=logical(bedge(:,4)==201);
-%         bedge([c],6)=251;
-%         d=logical(bedge(:,4)==101);
-%         bedge([d],6)=50;
-%         e=logical(bedge(:,4)==102);
-%         bedge([e],6)=250;
-%         
-%         c1=logical(bedge(:,5)==201);
-%         bedge([c1],7)=251;
-%         d1=logical(bedge(:,5)==101);
-%         bedge([d1],7)=50;
-%         e1=logical(bedge(:,5)==102);
-%         bedge([e1],7)=250;
+        %         bcflagc(1,1)=251;
+        %         bcflagc(1,2)=0;
+        %         bcflagc(2,1)=50;  % dicichlet concen
+        %         bcflagc(2,2)=10; % valor dirich
+        %         bcflagc(3,1)=250; % dirich neumann
+        %         bcflagc(3,2)=0;  % valor concent
+        %
+        %         c=logical(bedge(:,4)==201);
+        %         bedge([c],6)=251;
+        %         d=logical(bedge(:,4)==101);
+        %         bedge([d],6)=50;
+        %         e=logical(bedge(:,4)==102);
+        %         bedge([e],6)=250;
+        %
+        %         c1=logical(bedge(:,5)==201);
+        %         bedge([c1],7)=251;
+        %         d1=logical(bedge(:,5)==101);
+        %         bedge([d1],7)=50;
+        %         e1=logical(bedge(:,5)==102);
+        %         bedge([e1],7)=250;
         wells=0;
     case 244
         bcflagc(1,1)=250;
@@ -376,37 +401,37 @@ switch numcase
     case 245
         bcflagc(1,1)=250;
         bcflagc(1,2)=0;
-         c=logical(bedge(:,4)==201);
+        c=logical(bedge(:,4)==201);
         bedge([c],6)=250;
         c1=logical(bedge(:,5)==201);
         bedge([c1],7)=250;
-   case 247
+    case 247
         bcflagc(1,1)=250;
         bcflagc(1,2)=0;
-         c=logical(bedge(:,4)==201);
+        c=logical(bedge(:,4)==201);
         bedge([c],6)=250;
         c1=logical(bedge(:,5)==201);
         bedge([c1],7)=250;
         auxpar=1;
-%         wellsc(1,1)=1620;
-%         wellsc(1,2)=1;
-%         wellsc(1,3)=301;
-%         wellsc(1,4)=1;
-%         wellsc(1,5)=401;
-%         wellsc(1,6)=14.2146;
+        %         wellsc(1,1)=1620;
+        %         wellsc(1,2)=1;
+        %         wellsc(1,3)=301;
+        %         wellsc(1,4)=1;
+        %         wellsc(1,5)=401;
+        %         wellsc(1,6)=14.2146;
         wellsc(2,:)=wells(2,:);
         wellsc(1,:)=wells(1,:);
         
-   case 248
+    case 248
         bcflagc(1,1)=50;
         bcflagc(1,2)=0;
-         c=logical(bedge(:,4)==101);
+        c=logical(bedge(:,4)==101);
         bedge([c],6)=50;
         c1=logical(bedge(:,5)==101);
         bedge([c1],7)=50;
     case 249
         
-         
+        
         bcflagc(1,1)=251;
         bcflagc(1,2)=0;
         bcflagc(2,1)=50;  % dicichlet concen
@@ -429,35 +454,35 @@ switch numcase
         bedge([e1],7)=250;
         j=1;
         for i=1:size(bedge,1)
-           if bedge(i,7)==250 
-              wells(j,1)=bedge(i,3);
-              wells(j,2)=2;
-              wells(j,3)=0;
-              wells(j,4)=0;
-              wells(j,5)=501;
-              wells(j,6)=0;
-              j=j+1;
-           end            
+            if bedge(i,7)==250
+                wells(j,1)=bedge(i,3);
+                wells(j,2)=2;
+                wells(j,3)=0;
+                wells(j,4)=0;
+                wells(j,5)=501;
+                wells(j,6)=0;
+                j=j+1;
+            end
         end
         auxpar=1;
     case 250
         
         bcflagc(1,1)=250;
         bcflagc(1,2)=0;
-         c=logical(bedge(:,4)==201);
+        c=logical(bedge(:,4)==201);
         bedge([c],6)=250;
         c1=logical(bedge(:,5)==201);
         bedge([c1],7)=250;
         
-   case 246
+    case 246
         bcflagc(1,1)=50;% dicichlet concen
         bcflagc(1,2)=0;% valor dirich
-        bcflagc(2,1)=51; % dicichlet concen 
+        bcflagc(2,1)=51; % dicichlet concen
         bcflagc(2,2)=1; % valor dirich
         bcflagc(3,1)=250; % neumann boundary
-        bcflagc(3,2)=0;  % valor 
+        bcflagc(3,2)=0;  % valor
         bcflagc(4,1)=251;  % neumann boundary
-        bcflagc(4,2)=0; % valor 
+        bcflagc(4,2)=0; % valor
         
         c=logical(bedge(:,4)==101);
         bedge([c],6)=50;
@@ -477,13 +502,13 @@ switch numcase
         f1=logical(bedge(:,5)==201);
         bedge([f1],7)=251;
     case 251
-         bcflagc(1,1)=50;% dicichlet concen
+        bcflagc(1,1)=50;% dicichlet concen
         bcflagc(1,2)=1;% valor dirich
-        bcflagc(2,1)=251; % Neumann 
+        bcflagc(2,1)=251; % Neumann
         bcflagc(2,2)=0; % valor dirich
         bcflagc(3,1)=250; % neumann boundary
-        bcflagc(3,2)=0;  % valor 
-       
+        bcflagc(3,2)=0;  % valor
+        
         
         c=logical(bedge(:,4)==101);
         bedge([c],6)=50;

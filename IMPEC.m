@@ -30,8 +30,8 @@ function IMPEC(Con,injecelem,producelem,satinbound,wells,klb,satonvertices,...
     Dmedio,Kdec,Knc,Ktc,Dedc,wightc,sc,nflagfacec,weightDMPc,wellsc,...
     transmvecleftc,knownvecleftc,weight,s,velmedio)
 %Define global parameters:
-global timew elemarea totaltime timelevel pormap numcase pmethod smethod ...
-    filepath benchkey resfolder order bcflagc bedge inedge elem interptype ;
+global timew  totaltime timelevel numcase pmethod filepath  resfolder ...
+        order bcflagc ;
 
 %--------------------------------------------------------------------------
 %Initialize parameters:
@@ -54,7 +54,6 @@ flagtoplot = 0;
 %"contiterplot" is the number of the vtk created.
 contiterplot = 1;
 earlysw = 0;
-oilaccum = 0;
 %--------------------------------------------------------------------------
 %Verify if there exists a restart
 
@@ -95,7 +94,7 @@ auxkmap=logical(numcase==247)*log(kmap(:,2))+logical(numcase~=247)*normk;
     postprocessor(ones(elemsize,1),0,Con,contiterplot - 1,...
         order*ones(elemsize,1),'i',1,auxkmap);
     
-% we calculate the pressure, flow rate advective and dispersive terms
+% calculate the pressure, flow rate advective and dispersive terms
 [pressure,flowrateadvec,flowresult,flowratedif]=auxiliarysolverpressure(nflag,...
             kmap,V,N,contnorm,weight,s,Con,nflagc,wightc,sc,dparameter,...
             nflagface,parameter,weightDMP,p_old,transmvecleft,...
@@ -137,22 +136,22 @@ while stopcriteria < 100
     elseif numcase==241 || numcase==242 || numcase==231 || numcase==232
         viscosity=1;
         if strcmp(pmethod,'nlfvpp')
-            % interpolando as pressoes e concentracoes
+            % pressure and concentration interpolation
             [pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(pressure,nflag,...
                 weight,s,Con,nflagc,wightc,sc);
-            % calculo do fluxo difusivo
+            % calculate dispersive flux
             [flowrate,flowresult,flowratedif]=ferncodes_flowrateNLFVPP(pressure,...
                 pinterp, parameter,viscosity,Con,nflagc,wightc,sc,dparameter,cinterp);
         elseif strcmp(pmethod,'mpfad')
-            % interpolando as pressoes e concentracoes
+            % pressure and concentration interpolation
             [pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(pressure,nflag,...
                 weight,s,Con,nflagc,wightc,sc);
-            % calculo do fluxo diffusivo
+            % calculate dispersive flux
             [flowrate,flowresult,flowratedif] = ferncodes_flowrate(pressure,...
-                pinterp,cinterp,Kde,...
-                Ded,Kn,Kt,Hesq,viscosity,nflag,Con,Kdec,Knc,Ktc,Dedc,nflagc);
+                pinterp,cinterp,Kde,Ded,Kn,Kt,Hesq,viscosity,nflag,Con,...
+                Kdec,Knc,Ktc,Dedc,nflagc);
         else
-            % calculo do fluxo difusivo
+            % calculate dispersive flux
             [flowrate,flowresult,flowratedif] = calcflowrateTPFA(transmvecleft,...
                 pressure,Con,transmvecleftc,time);
         end
@@ -197,10 +196,10 @@ while stopcriteria < 100
         end  %End of IF
         
         %Open the file
-        writeproductionreport = fopen([filepath '\' prfilename],letter);
+        writereport = fopen([filepath '\' prfilename],letter);
         
         A=[timelevel;time+dt; Con];
-        fprintf(writeproductionreport,'%26.16E \r\n',A);
+        fprintf(writereport,'%26.16E \r\n',A);
         
         %------------------------------------------------------------------
         % Pressure field storage
@@ -208,31 +207,31 @@ while stopcriteria < 100
         prfilename = [resfolder '_' 'PresReport.dat'];
         
         %Open the file
-        writeproductionreport = fopen([filepath '\' prfilename],letter);
+        writereport = fopen([filepath '\' prfilename],letter);
         B=[timelevel;time+dt; pressure];
-        fprintf(writeproductionreport,'%26.16E \r\n',B);
+        fprintf(writereport,'%26.16E \r\n',B);
         %Close the file "writeproductionreport.dat"
-        fclose(writeproductionreport);
+        fclose(writereport);
         %------------------------------------------------------------------
         % Concentration storage in the cell left
         prfilename = [resfolder '_' 'SleftReport.dat'];
         
         %Open the file
-        writeproductionreport = fopen([filepath '\' prfilename],letter);
+        writereport = fopen([filepath '\' prfilename],letter);
         CC=[timelevel;time+dt; Sleft];
-        fprintf(writeproductionreport,'%26.16E \r\n',CC);
+        fprintf(writereport,'%26.16E \r\n',CC);
         %Close the file "writeproductionreport.dat"
-        fclose(writeproductionreport);
+        fclose(writereport);
         %-----------------------------------------------------------------------
         % Concentration storage in the cell right
         prfilename = [resfolder '_' 'RightReport.dat'];
         
         %Open the file
-        writeproductionreport = fopen([filepath '\' prfilename],letter);
+        writereport = fopen([filepath '\' prfilename],letter);
         D=[timelevel;time+dt; Sright];
-        fprintf(writeproductionreport,'%26.16E \r\n',D);
+        fprintf(writereport,'%26.16E \r\n',D);
         %Close the file "writeproductionreport.dat"
-        fclose(writeproductionreport);
+        fclose(writereport);
     end
     
     %Dimentional (s, h, day, etc)
@@ -292,7 +291,7 @@ while stopcriteria < 100
                 getsatandflag(satinbound,injecelem,Conaux,nflagc,nflagfacec,1);
             
         else
-            bcflagc(2,2)=0; % valor dirich
+            bcflagc(2,2)=0; % Dirichlet value
             %Initialize and preprocess the parameters:
             [nflagc,nflagfacec] = ferncodes_calflag_con(0);
             %Define elements associated to INJECTOR and PRODUCER wells.
@@ -355,6 +354,8 @@ flowrateadvec=0;
 flowresult=0;
 flowratedif=0;
 if numcase~=246 & numcase~=246 & numcase~=247 & numcase~=248 & numcase~=249 & numcase~=250 & numcase~=251
+    
+     
     if strcmp(pmethod,'tpfa') && numcase~=31.1
         
         %Get "pressure" and "flowrate"
