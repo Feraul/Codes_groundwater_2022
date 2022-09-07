@@ -46,8 +46,8 @@ flowresult = zeros(size(elem,1),1);
 %One-phase aplications or Two-phase aplications with non-waveoriented
 %schemes (calculate the "flowrate" on whole edges).
 
-if phasekey == 1 || (phasekey == 2 && strcmp(smethod,'stdr')) || ...
-        (phasekey == 2 && strcmp(smethod,'goef')) 
+if phasekey == 1 || (phasekey == 3 && strcmp(smethod,'stdr')) || ...
+        (phasekey == 3 && strcmp(smethod,'goef')) 
     %Initialize "flowrate"
     flowrate = zeros(bedgesize + inedgesize,1);
 

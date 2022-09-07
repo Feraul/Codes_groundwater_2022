@@ -19,14 +19,14 @@
 //Do you want to run a benchmark case? [y] ==> "yes"; [n] ==> "no";
 // [r]==> "restart"  
 
-r
+y
 
 //If [y], write below the path where where you want to store the
 //results (vtk, images, tables):
 //***OBS.: Even if you chose [n], write below both the path and 
 //folder's name where you want to store your results:
 
-C:\Users\flc59\Documents\Benchmark_Cases\BenchContaminant218
+C:\Users\flc59\Documents\Benchmark_Cases\BenchContaminant211
 
 //Write below either a number or any other key word to feature the 
 //folder where the results will be stored:
@@ -97,7 +97,7 @@ n
 //[nlfvpp]==> "Non-Linear Finite Volume" using lpew
 //[nlfvh]==> "Non-Linear Finite Volume" using harmonic point
 
-nlfvpp
+mpfao
 
 //If you chose [fps] or [mpfae], write below the auxiliary control
 //volume factor. It defines the auxiliary control volume size.
@@ -327,7 +327,7 @@ C:\Users\flc59\Documents\GitHub\Malhas2
 
 //Write below the name of the mesh file. Use the extension *.msh:
 
-Tipo1Malha4.msh
+malha2_problema521_Chivata2016_Frontal_Delaunay.msh
 
 //If [n], write below the path where the geometry file is:  
 
@@ -623,8 +623,11 @@ n
 //(Dirichlet, Neumann or Periodic);
 //3. In the same row, put the algebric value of this BC.  
 
-1
-101 0    
+4
+101 0
+102 1
+103 0
+201 0     
 
 //--------------------------------------------------------------------
 //Treatment of Boundary Points
@@ -635,8 +638,8 @@ n
 //2. In another row, the sequence of codes to be associated with 
 //each point group. 
 
-1
-101     
+4
+101 102 103 201    
 
 //--------------------------------------------------------------------
 //----------------------- Convergence Criteria -----------------------
@@ -671,7 +674,7 @@ s
 //state simulation (parameter of stop). Write below the amount of 
 //days or the PVI's value instead:
 
-0.2
+0.1
 
 //--------------------------------------------------------------------
 //------------------------------- Wells ------------------------------

@@ -27,7 +27,11 @@ if phasekey ~= 0
     [transmvecleft,transmvecright,knownvecleft,knownvecright,storeinv,...
         Bleft,Bright,overedgecoord,normk,Fg,mapinv,maptransm,mapknownvec,...
         pointedge,bodyterm,Hesq,Kde,Kn,Kt,Ded,V,N,kmap,nflag,parameter,weightDMP,...
-        nflagface,p_old,contnorm,weight,s] = preMPFA(kmap,klb);
+        nflagface,p_old,contnorm,weight,s,transmvecleftcon,transmvecrightcon,...
+        knownvecleftcon,knownvecrightcon,storeinvcon,...
+            Bleftcon,Brightcon,Fgcon,mapinvcon,maptransmcon,mapknownveccon,...
+            pointedgecon, bodytermcon,Kdec,Knc,Ktc,Dedc,wightc,sc,weightDMPc,dparameter,...
+    nflagnoc,nflagfacec,Con,lastimelevel,lastimeval] = preMPFA(kmap,klb,dmap);
     
 end  %End of IF (execute "preMPFA")
 
@@ -118,21 +122,11 @@ switch phasekey
             weightDMP,nflagface,p_old,contnorm);
     case 3 % contaminant simulation
         
-        %Get the initial condition 
-        [Con,lastimelevel,lastimeval] = applyinicialcond;
+       
         
         %          if numcase==243 || numcase==245 || numcase==247
         %              elem(:,5)=1;
         %          end
-        
-        transmvecleftc=0;
-        knownvecleftc=0;
-        % calculate the auxiliary parameters
-        [Hesq,Kdec,Knc,Ktc,Dedc,wightc,sc,weightDMPc,nflag,dparameter ]=...
-            parametersauxiliary(dmap,N,lastimeval);
-        
-        % flags boundary conditions
-        [nflagnoc,nflagfacec] = ferncodes_calflag_con(lastimeval);
         
         %Define elements associated to INJECTOR and PRODUCER wells.
         [injecelem,producelem,satinbound,Con,wellsc] = wellsparameter(wellsc,...
@@ -162,7 +156,10 @@ switch phasekey
             isonbound,elemsize,bedgesize,inedgesize,parameter,...
             weightDMP,nflagface,p_old,contnorm,dparameter,nflagnoc,...
             gamma,Dmedio,Kdec,Knc,Ktc,Dedc,wightc,sc,nflagfacec,...
-            weightDMPc,wellsc,transmvecleftc,knownvecleftc,weight,s,velmedio);
+            weightDMPc,wellsc,weight,s,velmedio,transmvecleftcon,transmvecrightcon,...
+        knownvecleftcon,knownvecrightcon,storeinvcon,...
+            Bleftcon,Brightcon,Fgcon,mapinvcon,maptransmcon,mapknownveccon,...
+            pointedgecon, bodytermcon);
         
     case 4 % hydrological simulation
         % ainda falta implementar
@@ -252,36 +249,4 @@ elseif strcmp(pmethod,'tpfa')
     wightc=0;sc=0;weightDMPc=0;
 end
 end
-%--------------------------------------------------------------------------
-%Function "applyinicialcond"
-%--------------------------------------------------------------------------
 
-function [Sw,lastimelevel,lastimeval] = applyinicialcond
-%Define global parameters
-global filepath benchkey
-
-%Attribute "zero" for "lasttimelevel" and "lastimeval"
-lastimelevel = 0;
-lastimeval = 0;
-%Verify if there exists a restart condition
-command = [char(filepath) '\' 'Results_teste_ConReport.dat'];
-restartkey = exist(command,'file');
-
-%There exists a restart condition
-if restartkey ~= 0 && strcmp(benchkey,'r')
-    %Get a initial condition based in a last saturation field.
-    [Sw,lastimelevel,lastimeval] = setrestartinicond;
-    %There exists a restart condition, BUT the user does NOT set this option.
-elseif restartkey ~= 0 && strcmp(benchkey,'r') == 0
-    %It deletes the "restart.dat" file
-    command = ['del ' char(filepath) '\' 'Results_teste_ConReport.dat'];
-    %It calls system
-    system(command);
-    %Attribute INITIAL CONDITION
-    [Sw,] = attribinitialcond;
-    %There is NO a restart condition.
-else
-    %Attribute INITIAL CONDITION
-    [Sw,] = attribinitialcond;
-end%End of IF (restart condition)
-end

@@ -27,7 +27,11 @@ if phasekey ~= 0
     [transmvecleft,transmvecright,knownvecleft,knownvecright,storeinv,...
         Bleft,Bright,overedgecoord,normk,Fg,mapinv,maptransm,mapknownvec,...
         pointedge,bodyterm,Hesq,Kde,Kn,Kt,Ded,V,N,kmap,nflag,parameter,weightDMP,...
-        nflagface,p_old,contnorm,weight,s] = preMPFA(kmap,klb);
+        nflagface,p_old,contnorm,weight,s,transmvecleftcon,transmvecrightcon,...
+        knownvecleftcon,knownvecrightcon,storeinvcon,...
+            Bleftcon,Brightcon,Fgcon,mapinvcon,maptransmcon,mapknownveccon,...
+            pointedgecon,...
+            bodytermcon] = preMPFA(kmap,klb,dmap);
     
 end  %End of IF (execute "preMPFA")
 
@@ -118,7 +122,7 @@ switch phasekey
             weightDMP,nflagface,p_old,contnorm);
     case 3 % contaminant simulation
         
-        %Get the initial condition for the hyperbolic equation
+        %Get the initial condition 
         [Con,lastimelevel,lastimeval] = applyinicialcond;
         
         %          if numcase==243 || numcase==245 || numcase==247
@@ -130,26 +134,26 @@ switch phasekey
         % calculate the auxiliary parameters
         [Hesq,Kdec,Knc,Ktc,Dedc,wightc,sc,weightDMPc,nflag,dparameter ]=...
             parametersauxiliary(dmap,N,lastimeval);
-        %Initialize and preprocess the parameters:
         
+        % flags boundary conditions
         [nflagnoc,nflagfacec] = ferncodes_calflag_con(lastimeval);
         
         %Define elements associated to INJECTOR and PRODUCER wells.
         [injecelem,producelem,satinbound,Con,wellsc] = wellsparameter(wellsc,...
             Con,klb);
         
-        %Define flags and known saturation on the vertices and edges.
+        %Define flags and known concentration or saturation on the vertices and edges.
         [satonvertices,satonedges,flagknownvert,flagknownedge] = ...
             getsatandflag(satinbound,injecelem,Con,nflagnoc,nflagfacec,0);
         
-        %"preSaturation" - Preprocessor of the Saturation Equation
+        %"preSaturation" - Preprocessor of the concentration or saturation equation
         [wvector,wmap,constraint,massweigmap,othervertexmap,lsw,swsequence,...
             ntriang,areatriang,prodwellbedg,prodwellinedg,mwmaprodelem,...
             vtxmaprodelem,coordmaprodelem,amountofneigvec,rtmd_storepos,...
             rtmd_storeleft,rtmd_storeright,isonbound] = ...
             preSaturation(flagknownedge,injecelem,producelem);
         
-        %"IMPES" function. There, PRESSURE and CONCENTRATION are solved.
+        %"IMPEC" function. There, PRESSURE and CONCENTRATION are solved.
         IMPEC(Con,injecelem,producelem,satinbound,wells,klb,satonvertices,...
             satonedges,flagknownvert,flagknownedge,wvector,wmap,constraint,...
             lsw,transmvecleft,transmvecright,knownvecleft,knownvecright,...
@@ -164,7 +168,7 @@ switch phasekey
             gamma,Dmedio,Kdec,Knc,Ktc,Dedc,wightc,sc,nflagfacec,...
             weightDMPc,wellsc,transmvecleftc,knownvecleftc,weight,s,velmedio);
         
-    case 4 % hidrological simulation
+    case 4 % hydrological simulation
         % ainda falta implementar
         
         %It Souves only the HYPERBOLIC Equation:

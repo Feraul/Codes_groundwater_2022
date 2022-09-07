@@ -26,8 +26,7 @@ function [mtxcoeff,vecoeff,esurn] = gettransmcoeff(transmvecleft,...
     pointedge,bodyterm,vrtx1,vrtx2,phasekey,row,posvertex,mobility,...
     bedgesize,inedgesize)
 %Get the mobility through edge
-totalmobility = getotalmobility(mobility,phasekey,row,posvertex,bedgesize,...
-    inedgesize);
+totalmobility=1;
 %Get the terms of matrix [A] + [B][G]-1[H] (left)
 mtxleft = transmvecleft(maptransm(vrtx1) + 1:maptransm(vrtx1 + 1));
     

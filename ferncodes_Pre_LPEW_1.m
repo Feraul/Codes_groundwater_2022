@@ -1,6 +1,6 @@
 %It is called by "ferncodes_solverpressure.m"
 
-function [w,s] = ferncodes_Pre_LPEW_1(kmap,mobility,V,Sw,N)
+function [w,s] = ferncodes_Pre_LPEW_1(kmap,N)
 %Retorna todos os parâmetros necessários às expressões dos fluxos.
 %Define global parameters:
 global coord nsurn1 nsurn2 bcflag bedge inedge
@@ -19,8 +19,7 @@ for y = 1:size(coord,1),
     [neta] = netas_Interp_LPEW(O,P,T,Qo,No);
     
     % calculo dos Ks
-    [Kt1,Kt2,Kn1,Kn2] = ferncodes_Ks_Interp_LPEW1(O,T,Qo,kmap,No,mobility,...
-        Sw,V);
+    [Kt1,Kt2,Kn1,Kn2] = ferncodes_Ks_Interp_LPEW1(O,T,Qo,kmap,No);
     
     % calculo dos lamdas
     [lambda,r] = Lamdas_Weights_LPEW1(Kt1,Kt2,Kn1,Kn2,theta1,theta2,fi1,...

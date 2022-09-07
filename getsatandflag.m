@@ -28,35 +28,44 @@
 function [satonvertices,satonedges,flagknownvert,flagknownedge] = ...
     getsatandflag(satinbound,injecelem,Sw,nflagc,nflagfacec,m)
 %Define global parameters:
-global coord bcflagc bedge inedge  visc numcase elemarea;
+global coord bcflagc bedge inedge  visc numcase elemarea pmethod;
 
 %Initialize "bedgesize" and "inedgesize"
 bedgesize = size(bedge,1);
 inedgesize = size(inedge,1);
 coordsize = size(coord,1);
-if (numcase==249 || numcase==247)&& m==1
-    M = visc(2)/visc(1);
-    R=log(M);
-    % R<0 indicates that the contaminant is more viscous than the
-    % aquifer water
-    % R>0 indicates that the contaminant is less viscous than the
-    % aquifer water
-    satonvertices=exp(R.*nflagc(:,2));
-elseif numcase==251 && m==1
-    M=visc(2)/visc(1);
-    MM=1/M;
-    cc=nflagc(:,2);
-    satonvertices=((1-cc).*(visc(2)^-0.25)+(visc(1)^-0.25).*cc).^4;
-else
+if strcmp(pmethod,'mpfao')
     %Initialize the vectors "satonvertices" and "satonedges"
-    satonvertices = nflagc(:,2);
+    satonvertices = zeros(coordsize,1);
+    satonedges = zeros(bedgesize + inedgesize,1);
+    %Initialize "knownvalinvert" and "knownvalinedge". It indicate if there is
+    %or not a prescribed value.
+    knownvalinvert = satonvertices;
+    knownvalinedge = zeros(bedgesize,1);
+else
+    if (numcase==249 || numcase==247)&& m==1
+        M = visc(2)/visc(1);
+        R=log(M);
+        % R<0 indicates that the contaminant is more viscous than the
+        % aquifer water
+        % R>0 indicates that the contaminant is less viscous than the
+        % aquifer water
+        satonvertices=exp(R.*nflagc(:,2));
+    elseif numcase==251 && m==1
+        M=visc(2)/visc(1);
+        MM=1/M;
+        cc=nflagc(:,2);
+        satonvertices=((1-cc).*(visc(2)^-0.25)+(visc(1)^-0.25).*cc).^4;
+    else
+        %Initialize the vectors "satonvertices" and "satonedges"
+        satonvertices = nflagc(:,2);
+    end
+    satonedges = zeros(bedgesize + inedgesize,1);
+    %Initialize "knownvalinvert" and "knownvalinedge". It indicate if there is
+    %or not a prescribed value.
+    knownvalinvert =  nflagc(:,3);
+    knownvalinedge = zeros(bedgesize,1);
 end
-satonedges = zeros(bedgesize + inedgesize,1);
-%Initialize "knownvalinvert" and "knownvalinedge". It indicate if there is
-%or not a prescribed value.
-knownvalinvert =  nflagc(:,3);
-knownvalinedge = zeros(bedgesize,1);
-
 %Evaluate if there is non-null Neumann boundary condition (non-null Neumann
 %flux, in pressure indicate saturation, by Dirichlet boundary condition
 %prescribed).
@@ -124,16 +133,23 @@ end  %End of FOR (swept the vertices)
 %Swept "bedge"
 for i = 1:length(unknownedge)
     %Calculate the saturation into each unknown edge ("bedge")
-    if numcase==248
-        satonedges(unknownedge(i)) = nflagfacec(i,2);
+    if strcmp(pmethod,'mpfad')|| strcmp(pmethod,'nlfvpp')
+        if numcase==248
+            satonedges(unknownedge(i)) = nflagfacec(i,2);
+        else
+            satonedges(unknownedge(i))= 0.5*(satonvertices(bedge(i,1)) + satonvertices(bedge(i,2)));
+        end
     else
         satonedges(unknownedge(i))= 0.5*(satonvertices(bedge(i,1)) + satonvertices(bedge(i,2)));
     end
     %It is an indication there is a known value over edge
-    if nflagfacec(i,1)<100
-        knownvalinedge(i)=1;
-    else
-        knownvalinedge(i)=0;
+    if strcmp(pmethod,'mpfad')|| strcmp(pmethod,'nlfvpp')
+        
+        if nflagfacec(i,1)<100
+            knownvalinedge(i)=1;
+        else
+            knownvalinedge(i)=0;
+        end
     end
 end  %End of FOR (swept the edges from "bedge")
 

@@ -3,7 +3,7 @@
 
 
 function [bedge,bcflagc,wellsc,auxpar,velmedio,dmap,Dmedio,gamma,kmap]= ...
-    preconcentration(bedge,wells)
+    preconcentration(bedge,wells,kmap)
 global numcase
 
 auxpar=0;
@@ -43,6 +43,8 @@ elseif numcase==251
     kmap=kmap;
     %adeSPE; % para um campo de permeabilidade da SPE active descomente.
     %==================================================================
+else
+    kmap=kmap;
 end
 %% flags adicionais para o problema 5.3.1-5.3.2
 switch numcase
