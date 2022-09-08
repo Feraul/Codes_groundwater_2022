@@ -34,7 +34,7 @@ global coord bcflagc bedge inedge  visc numcase elemarea pmethod;
 bedgesize = size(bedge,1);
 inedgesize = size(inedge,1);
 coordsize = size(coord,1);
-if strcmp(pmethod,'mpfao')
+if strcmp(pmethod,'mpfao') || strcmp(pmethod,'fps')
     %Initialize the vectors "satonvertices" and "satonedges"
     satonvertices = zeros(coordsize,1);
     satonedges = zeros(bedgesize + inedgesize,1);

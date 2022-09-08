@@ -59,8 +59,31 @@ global coord centelem elem esurn1 esurn2 nsurn1 nsurn2 bedge inedge ...
 % necesitamos ajeitar para o campo de pressao quando tem "restart"
 if numcase >200
     % Flags adequation for contamination and groundwater problem
-     [bedge,bcflagc,wellsc,auxpar,velmedio,dmap,Dmedio,gamma,kmap]=...
-         preconcentration(bedge,wells,kmap);
+    [bedge,bcflagc,wellsc,auxpar,velmedio,dmap,Dmedio,gamma]=...
+        preconcentration(bedge,wells);
+    % calculate permeability tensor
+    if numcase==247 || numcase==249 || numcase==250
+        % permeability field obtained by: Nicolaides, Cueto-Filgueroso,
+        % Juanes 2015.
+        % reorganização da matriz de permeabilidade
+        load('Perm_Var0p1.mat')
+        %==================================================================
+        perm=flipud(perm);
+        auxperm2=perm(1:125,1:125);
+        m=1;
+        for i=1:125
+            for j=1:125
+                auxperm3(m,1)=auxperm2(j,i);
+                m=m+1;
+            end
+        end
+        kmap=auxperm3;
+        %adeSPE; % para um campo de permeabilidade da SPE active descomente.
+        %=================================================================
+    elseif numcase==251
+        kmap=kmap;
+        %adeSPE; % para um campo de permeabilidade da SPE active descomente.
+    end
 end
 %adeSPE; % para um campo de permeabilidade da SPE active descomente.
 %--------------------------------------------------------------------------

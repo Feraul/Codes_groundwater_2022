@@ -115,14 +115,26 @@ switch char(pmethod)
         end
         %Calculate the little matrices for MPFA-FPS (Edwards and Zheng, 2008)
     case 'fps'
+        %Get the initial condition
+        [Con,lastimelevel,lastimeval] = applyinicialcond;
         [transmvecleft,transmvecright,knownvecleft,knownvecright,storeinv,...
             Bleft,Bright,Fg,mapinv,maptransm,mapknownvec,pointedge,...
             bodyterm] = transmFPS(kmap,q,p,knownboundlength);
+
+         %-------------------------------------------------------------------
+        if phasekey==3
+            %Get the length of the edge with non-null Neumann Boundary Condition.
+            knownboundlengthcon = getknownboundlengthcon(klb);
+            [transmvecleftcon,transmvecrightcon,knownvecleftcon,knownvecrightcon,storeinvcon,...
+                Bleftcon,Brightcon,Fgcon,mapinvcon,maptransmcon,mapknownveccon,pointedgecon,...
+                bodytermcon] = transmFPScon(dmap,q,p,knownboundlengthcon);
+        end
         %Calculate the little matrices for MPFA-Enriched (Chen et al., 2008)
     case 'empfa'
         [transmvecleft,transmvecright,knownvecleft,knownvecright,storeinv,...
             Bleft,Bright,Fg,mapinv,maptransm,mapknownvec,pointedge,...
             bodyterm] = transmEnriched(kmap,knownboundlength);
+
         %Calculate geometrical and physical terms to be used in MPFA-Diamond
         %(Gao and Wu, 2010).
     case 'mpfad'

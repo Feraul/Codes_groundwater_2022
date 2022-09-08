@@ -612,10 +612,12 @@ switch numcase
         end
         kmap=K;
   
+    case 241
+       K(1,1:5) = [1 10 0 0 10]; % see Nilson's dissertation, when r=1
+       % K(1,1:5) = [1 10 0 0 0.01];% see Nilson's dissertation, when r=100
+
+        kmap=K;
         
-        %----------------------------------------------------------------------
-        %Example 43: Two-Phase Flow case. Adapted from Nikitin et al., 2012
-        %Case 1, four litologies:
     case 245
         for i=1:size(centelem,1)
                     x=centelem(i,1);
@@ -632,6 +634,7 @@ switch numcase
         end
         kmap=K;
     case 247
+        
         for i=1:size(centelem,1)
             
             K(i,1:5) = [i kmap(i,1) 0 0 kmap(i,1)];
@@ -639,6 +642,8 @@ switch numcase
             elem(i,5)=i;
         end
         kmap=K;
+
+        
     case 249
         for i=1:size(centelem,1)
             
@@ -657,7 +662,9 @@ switch numcase
         kmap=K;
     case 248
         kmap=kmap;
-      
+        %----------------------------------------------------------------------
+        %Example 43: Two-Phase Flow case. Adapted from Nikitin et al., 2012
+        %Case 1, four litologies  
     case 43
         %Get the permeability field
         kmap = getnikitinperm(centelem);

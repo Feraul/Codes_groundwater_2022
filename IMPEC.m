@@ -155,7 +155,7 @@ while stopcriteria < 100
             [flowrate,flowresult,flowratedif] = ferncodes_flowrate(pressure,...
                 pinterp,cinterp,Kde,Ded,Kn,Kt,Hesq,viscosity,nflag,Con,...
                 Kdec,Knc,Ktc,Dedc,nflagc);
-        elseif strcmp(pmethod,'mpfao')
+        elseif strcmp(pmethod,'mpfao') || strcmp(pmethod,'fps')
             % precisa investir
             
             [flowrate,flowresult,flowratedif] = calcflowrateMPFAcon(pressure,...
@@ -375,7 +375,7 @@ if numcase~=246 & numcase~=246 & numcase~=247 & numcase~=248 & numcase~=249 & nu
         
         %Get "pressure" and "flowrate"
         [pressure,flowrateadvec,flowresult] = solvePressure_TPFA(Kde, Kn, nflag, Hesq,wells);
-    elseif strcmp(pmethod,'mpfao') &&  numcase~=31.1
+    elseif (strcmp(pmethod,'mpfao') || strcmp(pmethod,'fps')) &&  numcase~=31.1
         %Calculate the PRESSURE field (Two-Phase context):
         [pressure,flowrateadvec,flowresult] = solvePressure(transmvecleft,...
             transmvecright,knownvecleft,knownvecright,storeinv,Bleft,...

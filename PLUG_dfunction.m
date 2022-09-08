@@ -71,9 +71,9 @@ switch numcase
         dmedio=4;
         gamma=0;
     case 241
-        %dmap(1,:) = [1 4 0 0 4]; % r=1, pe=0.05, dx=0.2
+        dmap(1,:) = [1 4 0 0 4]; % r=1, pe=0.05, dx=0.2
         %dmap(1,:) = [1 4 0 0 0.4]; % r=10
-        dmap(1,:) = [1 4 0 0 0.04]; % r=100
+        %dmap(1,:) = [1 4 0 0 0.04]; % r=100
         %dmap(1,:) = [1 4 0 0 0.004]; % r=10000
         dmedio=norm(dmap(1,2:4),inf);
         gamma=0;

@@ -141,9 +141,7 @@ if phasekey == 1 || (phasekey == 3 && strcmp(smethod,'stdr')) || ...
         %Attribute to "flowresult" the darcy velocity
         flowresultdisp(elemleft) = flowresultdisp(elemleft) + getflowratecon;  
         
-        %Update the counters:
-        countmtrx = countmtrx + length(esurn);
-        countvec = countvec + 1;
+        
         
         %------------------------------------------------------------------
         %Vertex 2:
@@ -165,11 +163,7 @@ if phasekey == 1 || (phasekey == 3 && strcmp(smethod,'stdr')) || ...
         %Attribute to "flowresult" the darcy velocity
         flowresultdisp(elemleft) = flowresultdisp(elemleft) + getflowratecon;  
         
-        %------------------------------------------------------------------
         
-        %Update the counters:
-        countmtrx = countmtrx + length(esurn);
-        countvec = countvec + 1;
         
     end  %End of FOR (Swept boundary edges)
     

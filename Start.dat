@@ -33,7 +33,7 @@ C:\Users\flc59\Documents\Benchmark_Cases\BenchContaminant211
 //***OBS.: If you set "0", the folder "Results" and other will be 
 //created into folder set above:
 
-teste
+teste3
 
 //--------------------------------------------------------------------
 //------------------------ Solver Properties -------------------------
@@ -97,7 +97,7 @@ n
 //[nlfvpp]==> "Non-Linear Finite Volume" using lpew
 //[nlfvh]==> "Non-Linear Finite Volume" using harmonic point
 
-mpfao
+fps
 
 //If you chose [fps] or [mpfae], write below the auxiliary control
 //volume factor. It defines the auxiliary control volume size.
@@ -624,7 +624,7 @@ n
 //3. In the same row, put the algebric value of this BC.  
 
 4
-101 0
+101 1
 102 1
 103 0
 201 0     
@@ -674,7 +674,7 @@ s
 //state simulation (parameter of stop). Write below the amount of 
 //days or the PVI's value instead:
 
-0.1
+2
 
 //--------------------------------------------------------------------
 //------------------------------- Wells ------------------------------
