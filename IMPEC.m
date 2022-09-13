@@ -346,12 +346,18 @@ disp('------------------------------------------------');
 disp('>> Global Concentration extrema values [Con_max Con_min]:');
 max_conval = max(Con)
 min_conval = min(Con)
+auxCon=Con(Con<0);
+percentCon=(length(auxCon)/length(Con))*100;
+%Mesage for the user:
+disp('------------------------------------------------');
+sprintf('>> Percentagem negative values for the concentratio: %s', num2str(percentCon))
+
 %It deletes the "restart.dat" file
-command = ['del ' char(filepath) '\' 'restart.dat'];
+%command = ['del ' char(filepath) '\' 'restart.dat'];
 %It calls system
 
 
-system(command);
+%system(command);
 end
 %--------------------------------------------------------------------------
 % we calculate the pressure, flow rate advective and dispersive

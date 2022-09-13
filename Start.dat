@@ -33,7 +33,7 @@ C:\Users\flc59\Documents\Benchmark_Cases\BenchContaminant211
 //***OBS.: If you set "0", the folder "Results" and other will be 
 //created into folder set above:
 
-teste3
+teste
 
 //--------------------------------------------------------------------
 //------------------------ Solver Properties -------------------------
@@ -174,7 +174,7 @@ stdr
 //Write below the Order for the Hyperbolic Operator approximation.
 //It must be up to 6th order: 
 
-1
+2
 
 //Write below the type of approximation for the time term: 
 //[1] ==> "Forward Euler"; 
@@ -674,7 +674,7 @@ s
 //state simulation (parameter of stop). Write below the amount of 
 //days or the PVI's value instead:
 
-2
+0.1
 
 //--------------------------------------------------------------------
 //------------------------------- Wells ------------------------------
