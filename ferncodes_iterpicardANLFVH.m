@@ -1,5 +1,5 @@
-function [p,flowrate,flowresult]=ferncodes_iterpicardANLFVH(M_old,RHS_old,...
-    parameter,p_old,nflagface,wells,mobility,weightDMP,w,s,nflagno,contnorm)
+function [p,flowrate,flowresult,flowratedif,flowresultc]=ferncodes_iterpicardANLFVH(M_old,RHS_old,...
+    parameter,p_old,nflagface,wells,viscosity,weightDMP,w,s,nflagno,contnorm,weightDMPc,Con,nflagfacec,dparameter)
 %% calculo do residuo Inicial
 R0=norm(M_old*p_old-RHS_old);
 
@@ -19,8 +19,9 @@ R0=norm(M_old*p_old-RHS_old);
 fprintf('\n Iteration number, iterations = %d \n',iter)
 fprintf('\n Residual error, error = %d \n',erro)
 disp('>> The Pressure field was calculated with success!');
-[pinterp]=ferncodes_pressureinterpHP(p,nflagface,parameter,weightDMP,mobility);
-[flowrate,flowresult]=ferncodes_flowrateNLFVH(p, pinterp, parameter,mobility);
+[pinterp,cinterp]=ferncodes_pressureinterpHP(p,nflagface,parameter,weightDMP,weightDMPc,Con,nflagfacec,dparameter);
+[flowrate,flowresult,flowratedif,flowresultc]=ferncodes_flowrateNLFVH(p,...
+    pinterp, parameter,viscosity,Con,cinterp,dparameter);
 
 %Message to user:
 disp('>> The Flow Rate field was calculated with success!');

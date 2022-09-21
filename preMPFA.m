@@ -209,7 +209,7 @@ switch char(pmethod)
         % # iterações de Picard
         % faces alrededor de um elemento
         [facelement]=ferncodes_elementfacempfaH;
-        %% calculoa dos pontos armonicos
+        % calculoa dos pontos armonicos
         [pointarmonic]=ferncodes_harmonicopoint(kmap);
         % calculo dos parametros ou constantes (ksi)
         % temos usado este parametro durante muito tempo em muitos testes
@@ -220,9 +220,22 @@ switch char(pmethod)
         % adequação dos nos flags de contorno
         % adequação dos flags de contorno
         nflag = ferncodes_calflag(0);
-        %% calculo dos pesos DMP
+        % calculo dos pesos DMP
         [weightDMP]=ferncodes_weightnlfvDMP(kmap);
         % contreras et al, 2016
+        %==================================================================
+        % variables relativos a concentracao
+        %Get the initial condition
+        [Con,lastimelevel,lastimeval] = applyinicialcond;
+        % calculoa dos pontos armonicos
+        [conpointarmonic]=ferncodes_harmonicopoint(dmap);
+        %temos usado para muitos estes o seguinte rutina
+        [dparameter,]=ferncodes_coefficientmpfaH(facelement, conpointarmonic,dmap);
+         % calculo dos pesos DMP
+        [weightDMPc]=ferncodes_weightnlfvDMP(dmap);
+        
+        % flags boundary conditions
+        [nflagnoc,nflagfacec] = ferncodes_calflag_con(lastimeval);
     case 'nlfvdmp'
         p_old=1e1*ones(size(elem,1),1); % inicializando a pressão
         

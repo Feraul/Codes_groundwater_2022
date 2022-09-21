@@ -1,6 +1,6 @@
 function [p,flowrate,flowresult]=ferncodes_solverpressureNLFVH(nflagface,...
     parameter,wells,mobility,weightDMP,...
-    p_old,w,s,nflagno,contnorm)
+    p_old,w,s,nflagno,contnorm,weightDMPc,Con,nflagfacec,dparameter)
 global acel
 
 % interpolação nos nós ou faces
@@ -19,6 +19,6 @@ if strcmp(acel,'FPI')
     % Iteração de Picard com acelerador de Anderson
 elseif strcmp(acel,'AA')
     [p,flowrate,flowresult]=ferncodes_iterpicardANLFVH(M_old,RHS_old,...
-        parameter,p_old,nflagface,wells,mobility,weightDMP,w,s,nflagno,contnorm);
+        parameter,p_old,nflagface,wells,mobility,weightDMP,w,s,nflagno,contnorm,weightDMPc,Con,nflagfacec,dparameter);
 end
 end

@@ -1,5 +1,6 @@
-function [flowrate,flowresult]=ferncodes_flowrateNLFVH(p, pinterp, parameter,mobility)
-global inedge coord bedge bcflag phasekey centelem
+function [flowrate,flowresult,flowratec,flowresultc]=ferncodes_flowrateNLFVH(p,...
+    pinterp, parameter,viscosity,Con,cinterp,dparameter)
+global inedge coord bedge bcflag phasekey centelem bcflagc numcase
 %Initialize "bedgesize" and "inedgesize"
 bedgesize = size(bedge,1);
 inedgesize = size(inedge,1);
@@ -9,15 +10,13 @@ flowrate = zeros(bedgesize + inedgesize,1);
 flowresult = zeros(size(centelem,1),1);
 
 for ifacont=1:bedgesize
-    %Define "mobonface" (for "bedge")
-    %It is a One-phase flow. In this case, "mobility" is "1"
-    if phasekey == 1
-        mobonface = mobility;
+    if numcase == 246 || numcase == 245|| numcase==247 || ...
+            numcase==248 || numcase==249 || numcase==251
+        % vicosity on the boundary edge
+        visonface = viscosity(ifacont,:);
         %It is a Two-phase flow
     else
-        %"mobonface" receivees the summation of water and oil
-        %mobilities (came from "IMPES" - Marcio's code modification)
-        mobonface = sum(mobility(ifacont,:));
+        visonface = 1;
     end  %End of IF
     lef=bedge(ifacont,3);
     
@@ -30,26 +29,40 @@ for ifacont=1:bedgesize
         flowrate(ifacont,1)= -normcont*bcflag(r,2); % problema de buckley leverett Bastian
     else
 
-        flowrate(ifacont,1)=mobonface*normcont*(parameter(1,1,ifacont)*(p(lef)-pinterp(parameter(1,3,ifacont)))+...
+        flowrate(ifacont,1)=visonface*normcont*(parameter(1,1,ifacont)*(p(lef)-pinterp(parameter(1,3,ifacont)))+...
                                                     parameter(1,2,ifacont)*(p(lef)-pinterp(parameter(1,4,ifacont))));        
     end
     %Attribute the flow rate to "flowresult"
     %On the left:
     flowresult(lef) = flowresult(lef) + flowrate(ifacont);  
+    %======================================================================
+    % calculo dos fluxos dispersivos
     
+   if bedge(ifacont,7)>200
+        x=bcflagc(:,1)==bedge(ifacont,7);
+        r=find(x==1);
+        %flowrate(ifacont,1)= normcont*bcflag(r,2);% testes feitos em todos os
+        %problemas monofásico
+        flowratec(ifacont,1)= -normcont*bcflagc(r,2);% problema de buckley leverett Bastian
+    else
+        
+       flowratec(ifacont,1)= visonface*normcont*(dparameter(1,1,ifacont)*(Con(lef)-cinterp(parameter(1,3,ifacont)))+...
+                                                    dparameter(1,2,ifacont)*(Con(lef)-cinterp(parameter(1,4,ifacont))));        
+    end
+    %Attribute the flow rate to "flowresult"
+    %On the left:
+    flowresultc(lef) = flowresultc(lef) + flowratec(ifacont); 
 end
 
 for iface=1:inedgesize
     
-    %Define "mobonface" (for "inedge")
-    %It is a One-phase flow
-    if phasekey == 1
-        mobonface = mobility;
+   if numcase == 246 || numcase == 245|| numcase==247 ||...
+            numcase==248 || numcase==249 || numcase==251
+        % vicosity on the boundary edge
+        visonface = viscosity(bedgesize + iface,:);
         %It is a Two-phase flow
     else
-        %"mobonface" receivees the summation of water and oil
-        %mobilities (came from "IMPES" - Marcio's code modification)
-        mobonface = sum(mobility(bedgesize + iface,:));
+        visonface = 1;
     end  %End of IF
     
     lef=inedge(iface,3);
@@ -86,6 +99,37 @@ for iface=1:inedgesize
     flowresult(lef) = flowresult(lef) + flowrate(bedgesize + iface);  
     %On the right:
     flowresult(rel) = flowresult(rel) - flowrate(bedgesize + iface);  
+    %======================================================================
+    % para concentracao
     
+     
+    % calculo do fluxo para o campo de concentracoes
+    % calculo do a Eq. 2.7 (resp. eq. 16) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
+    % esquerda
+    alef=norma*(dparameter(1,1,ifactual)*cinterp(dparameter(1,3,ifactual))+...
+        dparameter(1,2,ifactual)*cinterp(dparameter(1,4,ifactual)));
+    % direita
+    
+    arel= norma*(dparameter(2,1,ifactual)*cinterp(dparameter(2,3,ifactual))+...
+        dparameter(2,2,ifactual)*cinterp(dparameter(2,4,ifactual)));
+    % calculo dos "mu", Eq. 2.8 (resp. eq. 18) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
+    if alef==0 && arel==0
+        mulef= 0.5;
+        murel=1-mulef;
+    else
+        mulef=abs(arel)/(abs(alef)+abs(arel));
+        murel=1-mulef;
+    end
+    % calculo da contribuição, Eq. 2.12 (resp. Eq. 21) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
+    ALLc=norma*mulef*(dparameter(1,1,ifactual)+dparameter(1,2,ifactual));
+    ALRc=norma*murel*(dparameter(2,1,ifactual)+dparameter(2,2,ifactual));
+    
+   flowratec(iface+size(bedge,1),1)=(ALLc*Con(lef)-ALRc*Con(rel)); 
+   
+   %Attribute the flow rate to "flowresult"
+    %On the left:
+    flowresultc(lef) = flowresultc(lef) + flowratec(bedgesize + iface);  
+    %On the right:
+    flowresultc(rel) = flowresultc(rel) - flowratec(bedgesize + iface);
 end
 end
