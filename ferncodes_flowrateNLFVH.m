@@ -9,6 +9,9 @@ inedgesize = size(inedge,1);
 flowrate = zeros(bedgesize + inedgesize,1);
 flowresult = zeros(size(centelem,1),1);
 
+flowratec = zeros(bedgesize + inedgesize,1);
+flowresultc = zeros(size(centelem,1),1);
+
 for ifacont=1:bedgesize
     if numcase == 246 || numcase == 245|| numcase==247 || ...
             numcase==248 || numcase==249 || numcase==251
@@ -92,7 +95,7 @@ for iface=1:inedgesize
     ALL=norma*mulef*(parameter(1,1,ifactual)+parameter(1,2,ifactual));
     ALR=norma*murel*(parameter(2,1,ifactual)+parameter(2,2,ifactual));
     
-   flowrate(iface+size(bedge,1),1)=mobonface*(ALL*p(lef)-ALR*p(rel)); 
+   flowrate(iface+size(bedge,1),1)=visonface*(ALL*p(lef)-ALR*p(rel)); 
    
    %Attribute the flow rate to "flowresult"
     %On the left:

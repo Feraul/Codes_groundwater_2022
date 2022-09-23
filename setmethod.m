@@ -18,7 +18,7 @@
 function setmethod(kmap,wells,keywrite,invh,limiterflag,klb,elemsize,...
     bedgesize,inedgesize,auxpar,wellsc,velmedio,dmap,Dmedio,gamma)
 %Define global parameters:
-global phasekey pmethod numcase
+global phasekey pmethod 
 
 %Get a preprocessment of pressure scheme (used in One-phase and Two-Phase).
 if phasekey ~= 0
