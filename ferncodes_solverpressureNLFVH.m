@@ -1,10 +1,13 @@
-function [p,flowrate,flowresult]=ferncodes_solverpressureNLFVH(nflagface,...
+function [p,flowrate,flowresult,flowratedif,flowresultc]=ferncodes_solverpressureNLFVH(nflagface,...
     parameter,wells,mobility,weightDMP,...
-    p_old,w,s,nflagno,contnorm,weightDMPc,Con,nflagfacec,dparameter)
+    p_old,w,s,nflagno,contnorm,weightDMPc,Con,nflagfacec,dparameter,wightc,sc)
+
+
 global acel
 
 % interpolação nos nós ou faces
-[pinterp]=ferncodes_pressureinterpHP(p_old,nflagface,parameter,weightDMP,mobility);
+[pinterp,]=ferncodes_pressureinterpHP(p_old,nflagface,parameter,weightDMP,...
+                      weightDMPc,Con,nflagfacec,dparameter);
 
 [M,I]=ferncodes_assemblematrixNLFVH(pinterp,parameter,mobility);
 %--------------------------------------------------------------------------
@@ -18,7 +21,7 @@ if strcmp(acel,'FPI')
         nitpicard,tolpicard,parameter,p_old,nflagface,wells,mobility,weightDMP);
     % Iteração de Picard com acelerador de Anderson
 elseif strcmp(acel,'AA')
-    [p,flowrate,flowresult]=ferncodes_iterpicardANLFVH(M_old,RHS_old,...
-        parameter,p_old,nflagface,wells,mobility,weightDMP,w,s,nflagno,contnorm,weightDMPc,Con,nflagfacec,dparameter);
+    [p,flowrate,flowresult,flowratedif,flowresultc]=ferncodes_iterpicardANLFVH(M_old,RHS_old,...
+        parameter,p_old,nflagface,wells,mobility,weightDMP,w,s,nflagno,contnorm,weightDMPc,Con,nflagfacec,dparameter,wightc,sc);
 end
 end

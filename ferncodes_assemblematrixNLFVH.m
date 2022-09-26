@@ -1,6 +1,6 @@
-function [M,I]=ferncodes_assemblematrixNLFVH(pinterp,parameter,mobility)
+function [M,I]=ferncodes_assemblematrixNLFVH(pinterp,parameter,viscosity)
 
-global inedge coord bedge bcflag elem phasekey
+global inedge coord bedge bcflag elem phasekey numcase
 %Initialize "bedgesize" and "inedgesize"
 bedgesize = size(bedge,1);
 inedgesize = size(inedge,1);
@@ -11,15 +11,13 @@ I = zeros(size(elem,1),1);
 
 for ifacont=1:bedgesize
     
-    %Define "mobonface" (for "bedge")
-    %It is a One-phase flow. In this case, "mobility" is "1"
-    if phasekey == 1
-        mobonface = mobility;
+    if numcase == 246 || numcase == 245 || numcase==247 || ...
+            numcase==248 || numcase==249 || numcase==251
+        % vicosity on the boundary edge
+        visonface = viscosity(ifacont,:);
         %It is a Two-phase flow
     else
-        %"mobonface" receivees the summation of water and oil
-        %mobilities (came from "IMPES" - Marcio's code modification)
-        mobonface = sum(mobility(ifacont,:));
+        visonface = 1;
     end  %End of IF
     
     lef=bedge(ifacont,3);
@@ -35,10 +33,10 @@ for ifacont=1:bedgesize
     else
         %% calculo da contribuição do contorno, veja Eq. 2.17 (resp. eq. 24) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
         
-        alef= mobonface*normcont*(parameter(1,1,ifacont)*pinterp(parameter(1,3,ifacont))+...
+        alef= visonface*normcont*(parameter(1,1,ifacont)*pinterp(parameter(1,3,ifacont))+...
             parameter(1,2,ifacont)*pinterp(parameter(1,4,ifacont)));
         
-        Alef=mobonface*normcont*(parameter(1,1,ifacont)+parameter(1,2,ifacont));
+        Alef=visonface*normcont*(parameter(1,1,ifacont)+parameter(1,2,ifacont));
         
         %% implementação da matriz global no contorno
         M(lef,lef)=M(lef,lef)+ Alef;
@@ -52,13 +50,13 @@ for iface=1:inedgesize
     
     %Define "mobonface" (for "inedge")
     %It is a One-phase flow
-    if phasekey == 1
-        mobonface = mobility;
+    if numcase == 246 || numcase == 245 || numcase==247 ||...
+            numcase==248 || numcase==249 || numcase==251
+        % vicosity on the boundary edge
+        visonface = viscosity(bedgesize + iface,:);
         %It is a Two-phase flow
     else
-        %"mobonface" receivees the summation of water and oil
-        %mobilities (came from "IMPES" - Marcio's code modification)
-        mobonface = sum(mobility(bedgesize + iface,:));
+        visonface = 1;
     end  %End of IF
     
     lef=inedge(iface,3);
@@ -86,11 +84,11 @@ for iface=1:inedgesize
     ARR=norma*murel*(parameter(2,1,ifactual)+parameter(2,2,ifactual));
     % implementação da matriz global
     % contribuição da transmisibilidade no elemento esquerda
-    M(lef,lef)=M(lef,lef)+ mobonface*ALL;
-    M(lef,rel)=M(lef,rel)- mobonface*ARR;
+    M(lef,lef)=M(lef,lef)+ visonface*ALL;
+    M(lef,rel)=M(lef,rel)- visonface*ARR;
     % contribuição da transmisibilidade no elemento direita
-    M(rel,rel)=M(rel,rel)+ mobonface*ARR;
-    M(rel,lef)=M(rel,lef)- mobonface*ALL;
+    M(rel,rel)=M(rel,rel)+ visonface*ARR;
+    M(rel,lef)=M(rel,lef)- visonface*ALL;
 end
 
 end

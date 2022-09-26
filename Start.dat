@@ -97,7 +97,7 @@ n
 //[nlfvpp]==> "Non-Linear Finite Volume" using lpew
 //[nlfvh]==> "Non-Linear Finite Volume" using harmonic point
 
-fps
+mpfao
 
 //If you chose [fps] or [mpfae], write below the auxiliary control
 //volume factor. It defines the auxiliary control volume size.
@@ -144,7 +144,7 @@ AA
 //[mwic] ==> "Mass Weighted with Implicit Coefficient" (Kozdon); 
 //[goef] ==> "Goe Free Scheme" (Eymard et al., 2011). 
 
-stdr
+mwec
 
 //--------------------------------------------------------------------
 //Truly MultiDimensional Parameters

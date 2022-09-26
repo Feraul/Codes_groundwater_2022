@@ -1,5 +1,6 @@
 function [x,erro,iter] = ferncodes_andersonacc2(x,auxtol,parameter,w,s,nflag,...
-    weightDMP,wells,mobility,R0,contnorm,Con,nflagc,wightc,sc)
+    weightDMP,wells,mobility,R0,contnorm,Con,wightc,sc,...
+    weightDMPc,nflagfacec,dparameter)
 global pmethod nltol
 % This performs fixed-point iteration with or without Anderson
 % acceleration for a given fixed-point map g and initial
@@ -86,7 +87,10 @@ if strcmp(pmethod,'nlfvpp')
     [M_new,RHS_new] = addsource(sparse(M),I,wells);
     
 elseif  strcmp(pmethod,'nlfvh')
-    [pinterp_new]=ferncodes_pressureinterpHP(x,nflag,parameter,weightDMP,mobility);
+    
+              
+    [pinterp_new,]=ferncodes_pressureinterpHP(x,nflag,parameter,weightDMP,...
+        weightDMPc,Con,nflagfacec,dparameter);
     
     [M,I]=ferncodes_assemblematrixNLFVH(pinterp_new,parameter,mobility);
     %Often it may change the global matrix "M"
@@ -251,7 +255,8 @@ for iter = 0:itmax
         [M_new,RHS_new] = addsource(sparse(M),I,wells);
         
     elseif  strcmp(pmethod,'nlfvh')
-        [pinterp_new]=ferncodes_pressureinterpHP(x,nflag,parameter,weightDMP,mobility);
+        [pinterp_new,]=ferncodes_pressureinterpHP(x,nflag,parameter,...
+            weightDMP,weightDMPc,Con,nflagfacec,dparameter);
         
         [M,I]=ferncodes_assemblematrixNLFVH(pinterp_new,parameter,mobility);
         %Often it may change the global matrix "M"

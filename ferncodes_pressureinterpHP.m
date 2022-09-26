@@ -1,8 +1,10 @@
-function [pressurinterp,cinterp]=ferncodes_pressureinterpHP(p,nflagface,parameter,weightDMP,weightDMPc,Con,nflagfacec,dparameter)
+function [pressurinterp,cinterp]=ferncodes_pressureinterpHP(p,nflagface,...
+                  parameter,weightDMP,weightDMPc,Con,nflagfacec,dparameter)
 global inedge coord bedge bcflag bcflagc
 
 
 pressurinterp=zeros(size(inedge,1)+size(bedge,1),1);
+cinterp=zeros(size(inedge,1)+size(bedge,1),1);
 % interpolação das pressões no pontos armonicos internos
 pressurinterp(size(bedge,1)+1:size(bedge,1)+size(inedge,1),1)=weightDMP(:,1).*p(weightDMP(:,3))+ weightDMP(:,2).*p(weightDMP(:,4));
 
