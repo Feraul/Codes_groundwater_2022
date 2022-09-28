@@ -25,9 +25,9 @@ function [transmvecleft,transmvecright,knownvecleft,knownvecright,storeinv,...
     nflagface,p_old,contnorm,weight,s,transmvecleftcon,transmvecrightcon,knownvecleftcon,knownvecrightcon,storeinvcon,...
     Bleftcon,Brightcon,Fgcon,mapinvcon,maptransmcon,mapknownveccon,pointedgecon,...
     bodytermcon,Kdec,Knc,Ktc,Dedc,wightc,sc,weightDMPc,dparameter,...
-    nflagnoc,nflagfacec,Con,lastimelevel,lastimeval] = preMPFA(kmap,klb,dmap)
+    nflagnoc,nflagfacec,Con,lastimelevel,lastimeval,gravresult,gravrate] = preMPFA(kmap,klb,dmap)
 %Define global parameters:
-global pmethod elem interptype phasekey
+global pmethod elem interptype phasekey keygravity
 
 %Obtain the coordinate of both CENTER and AUXILARY nodes of elements which
 %constitute the mash. The AREA of each element is also calculated.
@@ -50,6 +50,7 @@ Brightcon=0; Fgcon=0; mapinvcon=0; maptransmcon=0; mapknownveccon=0;
 pointedgecon=0; bodytermcon=0;
 Kdec=0;Knc=0;Ktc=0;Dedc=0;wightc=0;sc=0;weightDMPc=0;nflag=0;dparameter=0;
 nflagnoc=0;nflagfacec=0;Con=0;
+gravresult=0; gravrate=0;
 %Define parametric variables:
 %Parameter Used in Full Pressure Support (FPS)
 %"p" quadrature point to flux in the auxilary sub interaction region
@@ -85,6 +86,12 @@ if strcmp(pmethod,'mpfad')|| strcmp(pmethod,'nlfvpp')|| strcmp(pmethod,'mpfaql')
             [weight,s] = ferncodes_Pre_LPEW_2(kmap,N);
             
     end  %End of SWITCH
+end
+
+if strcmp(keygravity,'y')
+    [vec_gravelem,vec_gravface,vec_gravpoint,gravelem,gravpoint,...
+        gravface]=PLUG_Gfunction;
+   [gravresult,gravrate]=gravitation(kmap,gravelem,gravface);
 end
 %--------------------------------------------------------------------------
 %Calculate the TRANSMISSIBILITY parameters:

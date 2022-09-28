@@ -323,7 +323,7 @@ y
 
 //If [y], write below the path where the mesh file is:
  
-C:\Users\flc59\Documents\GitHub\Malhas2
+C:\Users\flc59\Documents\Malhas2
 
 //Write below the name of the mesh file. Use the extension *.msh:
 
@@ -590,11 +590,11 @@ porosity.dat
 //Do you want turn GRAVITY on in your Mathematic Model?
 //[y] ==> "yes"; [n] ==> "no".
 
-n
+y
 
 //If [y], write below the gravity vector (in the same row: gx gy gz):
 
-0 0 0
+0 9.8 0
 
 //Do you want turn CAPILARITY on in your Mathematic Model?
 //[y] ==> "yes"; [n] ==> "no".
