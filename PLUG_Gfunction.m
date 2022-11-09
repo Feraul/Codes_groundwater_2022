@@ -323,6 +323,13 @@ switch numcase
                 gravface(j)= -h2*y2 + 100*sin(x2)*cos(y2) - cte;
             end
         end
+    case 425
+       for i=1: size(elem,1)
+                grav(i,1)= g(1,1);
+                grav(i,2)= g(2,1);
+                grav(i,3)= g(3,1);
+        end 
+
 end
         
 

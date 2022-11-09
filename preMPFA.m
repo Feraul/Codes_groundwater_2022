@@ -91,7 +91,13 @@ end
 if strcmp(keygravity,'y')
     [vec_gravelem,vec_gravface,vec_gravpoint,gravelem,gravpoint,...
         gravface]=PLUG_Gfunction;
-   [gravresult,gravrate]=gravitation(kmap,gravelem,gravface);
+    if phasekey==1
+        [gravresult,gravrate]=gravitation(kmap,gravelem,gravface);
+    elseif phasekey==2
+        [gravrate]=gravitationff(kmap,gravelem);
+    else
+        [gravrate]=gravitationf(kmap,gravelem);  
+    end
 end
 %--------------------------------------------------------------------------
 %Calculate the TRANSMISSIBILITY parameters:
