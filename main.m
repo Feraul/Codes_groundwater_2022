@@ -57,7 +57,7 @@ global coord centelem elem esurn1 esurn2 nsurn1 nsurn2 bedge inedge ...
 % bedge(:,2)=x;
 
 % necesitamos ajeitar para o campo de pressao quando tem "restart"
-if numcase >200
+if 200<numcase && numcase <300
     % Flags adequation for contamination and groundwater problem
     [bedge,bcflagc,wellsc,auxpar,velmedio,dmap,Dmedio,gamma]=...
         preconcentration(bedge,wells);

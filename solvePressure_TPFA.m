@@ -63,7 +63,7 @@ for iinedg = 1:inedgesize
     leftelem = inedge(iinedg,3);
     rightelem = inedge(iinedg,4);
     %viscosidade
-    if numcase == 246 || numcase == 245 || numcase==247 || numcase==248 || numcase==249
+    if numcase == 246 || numcase == 245 || numcase==247 || numcase==248 || numcase==249 
         % vicosity on the boundary edge
         visonface = viscosity(bedgesize + iinedg,1);
         %It is a Two-phase flow
