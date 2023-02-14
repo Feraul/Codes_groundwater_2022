@@ -370,13 +370,13 @@ y
 //and two geometric tag)
 
 1
-17 1 1 3
+3 1 1 3
 
 //Direction "y" (number of statments, number of points, growth rate 
 //and two geometric tag)
 
 1
-17 1 2 4
+3 1 2 4
 
 //------------------
 //UNSTRUCTURED MESH:
@@ -591,7 +591,7 @@ porosity.dat
 //Do you want turn GRAVITY on in your Mathematic Model?
 //[y] ==> "yes"; [n] ==> "no".
 
-n
+y
 
 //If [y], write below the gravity vector (in the same row: gx gy gz):
 
@@ -673,7 +673,7 @@ s
 //state simulation (parameter of stop). Write below the amount of 
 //days or the PVI's value instead:
 
-20
+0.1
 
 //--------------------------------------------------------------------
 //------------------------------- Wells ------------------------------
@@ -700,7 +700,7 @@ s
 //For injector well, the flag must vary between [401 and 500]; 
 //For producer well, the flag must vary between [501 and 600];
 //8. The value of pressure in the well (injector or producer).
-//IMPORTANT: if "0" is written in the last pressure flag, the value 
+//IMPORTANT: if "0" is written in yhe last pressure flag, the value 
 //written in this column is associated with FLOW RATE in the well;
 //9. The type of well: 
 //[0] ==> "point well" (unstructured mesh);
@@ -714,4 +714,4 @@ s
 //necessary to erase the numbers below. Keep it to reference.  
 
 1
-1 500   500  0.008 301 1 401  100000   1
+1 500   500  0.008 301 1 501      0   1

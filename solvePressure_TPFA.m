@@ -4,7 +4,7 @@
 %PROGRAMA DE POS GRADUACAO EM ENGENHARIA CIVIL
 %TOPICOS ESPECIAIS EM DINAMICA DOS FLUIDOS COMPUTACIONAL
 %--------------------------------------------------------------------------
-%Subject: numerical routine to solve a two phase flow in porous media 
+%Subject: numerical routine to solve a two phase flow in porous media
 %Type of file: FUNCTION
 %Criate date: 16/04/2015 (My wife is a PHD since yesterday)
 %Modify data:   /  /2015
@@ -19,7 +19,7 @@
 %--------------------------------------------------------------------------
 
 function [pressure,flowrate,flowresult,flowratedif] = solvePressure_TPFA(transmvecleft,...
-    knownvecleft,viscosity,wells,Fg,bodyterm,Con,transmvecleftc,aa)
+    knownvecleft,viscosity,wells,Fg,bodyterm,Con,transmvecleftc,aa,SS,dt,h,MM)
 %Define global parameters:
 global elem bedge inedge phasekey numcase;
 
@@ -27,12 +27,12 @@ global elem bedge inedge phasekey numcase;
 bedgesize = size(bedge,1);
 inedgesize = size(inedge,1);
 
-%Initialize the global matrix which have order equal to parameter 
+%Initialize the global matrix which have order equal to parameter
 %"size(elem)".
 M = zeros(size(elem,1));
 %Initialize "mvector" which is the independent vector of algebric system.
 mvector = zeros(size(elem,1),1);
-
+coeficiente=dt^-1*MM*SS;
 %Swept "bedge"
 for ibedg = 1:bedgesize
     %Get "leftelem"
@@ -48,14 +48,17 @@ for ibedg = 1:bedgesize
     
     %Fill the global matrix "M" and known vector "mvector"
     M(leftelem,leftelem) = M(leftelem,leftelem) + ...
-       visonface*transmvecleft(ibedg);
+        visonface*transmvecleft(ibedg);
     %Update "transmvecleft"
     transmvecleft(ibedg) = visonface*transmvecleft(ibedg);
-
+     if numcase==330
+        % Letf
+        transmvecleft(ibedg) = transmvecleft(ibedg)+coeficiente*h(leftelem);
+    end
     %Fill "mvector"
     mvector(leftelem) = ...
         mvector(leftelem) + visonface*knownvecleft(ibedg);
-end  %End of FOR ("bedge") 
+end  %End of FOR ("bedge")
 
 %Swept "inedge"
 for iinedg = 1:inedgesize
@@ -63,7 +66,7 @@ for iinedg = 1:inedgesize
     leftelem = inedge(iinedg,3);
     rightelem = inedge(iinedg,4);
     %viscosidade
-    if numcase == 246 || numcase == 245 || numcase==247 || numcase==248 || numcase==249 
+    if numcase == 246 || numcase == 245 || numcase==247 || numcase==248 || numcase==249
         % vicosity on the boundary edge
         visonface = viscosity(bedgesize + iinedg,1);
         %It is a Two-phase flow
@@ -86,14 +89,21 @@ for iinedg = 1:inedgesize
     %Right
     M(rightelem,leftelem) = M(rightelem,leftelem) - ...
         visonface*transmvecleft(bedgesize + iinedg);
-    
+    if numcase==330
+        % Letf
+        M(leftelem,leftelem) = M(leftelem,leftelem) + ...
+            coeficiente;
+        %Right
+        M(rightelem,rightelem) = M(rightelem,rightelem) + ...
+            coeficiente;
+    end
     %Update "transmvecleft"
     transmvecleft(bedgesize + iinedg) = ...
         visonface*transmvecleft(bedgesize + iinedg);
 end  %End of FOR ("inedge")
 
 %--------------------------------------------------------------------------
-%Add a source therm to independent vector "mvector" 
+%Add a source therm to independent vector "mvector"
 
 %Often it may change the global matrix "M"
 [M,mvector] = addsource(M,mvector,wells);
@@ -101,8 +111,8 @@ end  %End of FOR ("inedge")
 %--------------------------------------------------------------------------
 %Solver the algebric system
 
-%When this is assembled, that is solved using the function "solver". 
-%This function returns the pressure field with value put in each colocation 
+%When this is assembled, that is solved using the function "solver".
+%This function returns the pressure field with value put in each colocation
 %point.
 [pressure] = solver(M,mvector);
 
@@ -115,6 +125,6 @@ disp('>> The Pressure field was calculated with success!');
 %Calculate flow rate through edge. "satkey" equal to "1" means one-phase
 %flow (the flow rate is calculated throgh whole edge)
 [flowrate,flowresult,flowratedif] = calcflowrateTPFA(transmvecleft,pressure,Con,transmvecleftc,aa);
-    
+
 %Message to user:
 disp('>> The Flow Rate field was calculated with success!');

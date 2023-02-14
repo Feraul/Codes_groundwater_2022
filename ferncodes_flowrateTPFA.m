@@ -11,6 +11,7 @@ bedgeamount = 1:bedgesize;
 %Initialize "flowrate" and "flowresult"
 flowrate = zeros(bedgesize + inedgesize,1);
 flowresult = zeros(size(centelem,1),1);
+flowratedif=0;
 for ifacont=1:size(bedge,1);
     lef=bedge(ifacont,3);
     if numcase == 246 || numcase == 245 || numcase==247 || numcase==248 || numcase==249
@@ -36,7 +37,7 @@ for ifacont=1:size(bedge,1);
     %Attribute the flow rate to "flowresult"
     %On the left:
     flowresult(lef) = flowresult(lef) + flowrate(ifacont);
-    
+    if 200<numcase && numcase<300 
     %% ====================================================================
     if bedge(ifacont,7)<200 % se os nós esteverem na fronteira de DIRICHLET
         c1aux=nflagc(bedge(ifacont,1),2);
@@ -46,6 +47,7 @@ for ifacont=1:size(bedge,1);
         x=bcflagc(:,1)==bedge(ifacont,7);
         r=find(x==1);
         flowratedif(ifacont)= nor*bcflagc(r,2);
+    end
     end
 end
 
@@ -67,9 +69,10 @@ for iface=1:size(inedge,1)
     flowresult(lef) = flowresult(lef) + flowrate(bedgesize + iface);
     %On the right:
     flowresult(rel) = flowresult(rel) - flowrate(bedgesize + iface);
-    
+    if 200<numcase && numcase<300 
     %% ====================================================================
     flowratedif(iface+size(bedge,1))=Kdec(iface)*(Con(rel)-Con(lef));
+    end
 end
 
 end
