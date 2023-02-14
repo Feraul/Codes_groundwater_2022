@@ -1,5 +1,5 @@
 function [p,flowrate,flowresult,flowratedif,flowresultc]=ferncodes_iterpicardANLFVPP2(M_old,RHS_old,...
-    parameter,w,s,p_old,nflag,wells,mobility,weightDMP,contnorm,Con,nflagc,wightc,sc,dparameter)
+    parameter,w,s,p_old,nflag,wells,mobility,weightDMP,contnorm,Con,nflagc,wightc,sc,dparameter,SS,dt,h,MM)
 
 %% calculo do residuo Inicial
 R0=norm(M_old*p_old-RHS_old);
@@ -8,7 +8,7 @@ R0=norm(M_old*p_old-RHS_old);
        
   [p_oldold,fl1,rr1,it1,rv1]=gmres(M_old,RHS_old,10,1e-9,1000,L,U);
   [p,erro,iter]=ferncodes_andersonacc2(p_oldold,1e-6,parameter,w,s,...
-    nflag,weightDMP,wells,mobility,R0,contnorm,Con,nflagc,wightc,sc);
+    nflag,weightDMP,wells,mobility,R0,contnorm,Con,nflagc,wightc,sc,SS,dt,h,MM);
 %Message to user:
 fprintf('\n Iteration number, iterations = %d \n',iter)
 fprintf('\n Residual error, error = %d \n',erro)

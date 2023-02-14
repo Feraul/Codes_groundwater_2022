@@ -27,7 +27,7 @@ function [transmvecleft,transmvecright,knownvecleft,knownvecright,storeinv,...
     bodytermcon,Kdec,Knc,Ktc,Dedc,wightc,sc,weightDMPc,dparameter,...
     nflagnoc,nflagfacec,Con,lastimelevel,lastimeval,gravresult,gravrate] = preMPFA(kmap,klb,dmap)
 %Define global parameters:
-global pmethod elem interptype phasekey keygravity
+global pmethod elem interptype phasekey keygravity numcase
 
 %Obtain the coordinate of both CENTER and AUXILARY nodes of elements which
 %constitute the mash. The AREA of each element is also calculated.
@@ -71,7 +71,7 @@ knownboundlength = getknownboundlength(klb);
 % calculate the weight
 if strcmp(pmethod,'mpfad')|| strcmp(pmethod,'nlfvpp')|| strcmp(pmethod,'mpfaql')
     % adequação dos flags de contorno
-        nflag = ferncodes_calflag(0);
+    nflag = ferncodes_calflag(0);
     %Call another parameters that I don't know.
     [V,N,] = ferncodes_elementface(nflag);
     %It switches according to "interptype"
@@ -84,7 +84,6 @@ if strcmp(pmethod,'mpfad')|| strcmp(pmethod,'nlfvpp')|| strcmp(pmethod,'mpfaql')
         case 'lpew2'
             % calculo dos pesos que correspondem ao LPEW2
             [weight,s] = ferncodes_Pre_LPEW_2(kmap,N);
-            
     end  %End of SWITCH
 end
 
@@ -96,7 +95,7 @@ if strcmp(keygravity,'y')
     elseif phasekey==2
         [gravrate]=gravitationff(kmap,gravelem);
     else
-        [gravrate]=gravitationf(kmap,gravelem);  
+        [gravrate]=gravitationf(kmap,gravelem);
     end
 end
 %--------------------------------------------------------------------------
@@ -133,8 +132,8 @@ switch char(pmethod)
         [transmvecleft,transmvecright,knownvecleft,knownvecright,storeinv,...
             Bleft,Bright,Fg,mapinv,maptransm,mapknownvec,pointedge,...
             bodyterm] = transmFPS(kmap,q,p,knownboundlength);
-
-         %-------------------------------------------------------------------
+        
+        %-------------------------------------------------------------------
         if phasekey==3
             %Get the length of the edge with non-null Neumann Boundary Condition.
             knownboundlengthcon = getknownboundlengthcon(klb);
@@ -147,7 +146,7 @@ switch char(pmethod)
         [transmvecleft,transmvecright,knownvecleft,knownvecright,storeinv,...
             Bleft,Bright,Fg,mapinv,maptransm,mapknownvec,pointedge,...
             bodyterm] = transmEnriched(kmap,knownboundlength);
-
+        
         %Calculate geometrical and physical terms to be used in MPFA-Diamond
         %(Gao and Wu, 2010).
     case 'mpfad'
@@ -158,20 +157,24 @@ switch char(pmethod)
         [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap);
         %Call another parameters that I don't know.
         [V,N,] = ferncodes_elementface(nflag);
-        %
-        %Get the initial condition
-        [Con,lastimelevel,lastimeval] = applyinicialcond;
-        % calculate the auxiliary parameters
-        [Hesq,Kdec,Knc,Ktc,Dedc,wightc,sc,weightDMPc,dparameter ]=...
-            parametersauxiliary(dmap,N);
         
-        % flags boundary conditions
-        [nflagnoc,nflagfacec] = ferncodes_calflag_con(lastimeval);
+        % for the concentration transport
+        if 200<numcase && numcase<300
+            %Get the initial condition
+            [Con,lastimelevel,lastimeval] = applyinicialcond;
+            % calculate the auxiliary parameters
+            
+            [Hesq,Kdec,Knc,Ktc,Dedc,wightc,sc,weightDMPc,dparameter ]=...
+                parametersauxiliary(dmap,N);
+            
+            % flags boundary conditions
+            [nflagnoc,nflagfacec] = ferncodes_calflag_con(lastimeval);
+        end
         % Contreras et al, 2019
     case 'mpfaql'
         % calculo dos parametros ou constantes (ksi)
         [parameter]=ferncodes_coefficient(kmap);
-       
+        
         % calculo dos pesos DMP
         [weightDMP]=ferncodes_weightnlfvDMP(kmap);
         %Call another parameters that I don't know.
@@ -186,15 +189,18 @@ switch char(pmethod)
         % # iterações de Picard
         %temos usado para muitos estes o seguinte rutina
         [parameter,contnorm]=ferncodes_coefficient(kmap);
-        %
-        %Get the initial condition
-        [Con,lastimelevel,lastimeval] = applyinicialcond;
-        % calculate the auxiliary parameters
-        [Hesq,Kdec,Knc,Ktc,Dedc,wightc,sc,weightDMPc,dparameter ]=...
-            parametersauxiliary(dmap,N);
         
-        % flags boundary conditions
-        [nflagnoc,nflagfacec] = ferncodes_calflag_con(lastimeval);
+        if 200<numcase && numcase<300
+            %
+            %Get the initial condition
+            [Con,lastimelevel,lastimeval] = applyinicialcond;
+            % calculate the auxiliary parameters
+            [Hesq,Kdec,Knc,Ktc,Dedc,wightc,sc,weightDMPc,dparameter ]=...
+                parametersauxiliary(dmap,N);
+            
+            % flags boundary conditions
+            [nflagnoc,nflagfacec] = ferncodes_calflag_con(lastimeval);
+        end
         % contreras et al, 2016
     case 'mpfah'
         
@@ -244,7 +250,7 @@ switch char(pmethod)
         [conpointarmonic]=ferncodes_harmonicopoint(dmap);
         %temos usado para muitos estes o seguinte rutina
         [dparameter,]=ferncodes_coefficientmpfaH(facelement, conpointarmonic,dmap);
-         % calculo dos pesos DMP
+        % calculo dos pesos DMP
         [weightDMPc]=ferncodes_weightnlfvDMP(dmap);
         
         % flags boundary conditions
@@ -284,26 +290,29 @@ end
 %--------------------------------------------------------------------------
 % calculate the auxiliary parameters
 function       [Hesq,Kdec,Knc,Ktc,Dedc,weightc,sc,weightDMPc,dparameter ]=...
-            parametersauxiliary(dmap,N)
-  global interptype
-        %Get preprocessed terms:
-        [Hesq,Kdec,Knc,Ktc,Dedc] = ferncodes_Kde_Ded_Kt_Kn(dmap);
-        %temos usado para muitos estes o seguinte rutina
-        [dparameter,]=ferncodes_coefficient(dmap);
-     % calculo dos pesos DMP
-        [weightDMPc]=ferncodes_weightnlfvDMP(dmap);
-    %It switches according to "interptype"
-    switch char(interptype)
-        %LPEW 1
-        case 'lpew1'
-            % calculo dos pesos que correspondem ao LPEW1
-            [weightc,sc] = ferncodes_Pre_LPEW_1(dmap,N);
-            %LPEW 2
-        case 'lpew2'
-            % calculo dos pesos que correspondem ao LPEW2
-            [weightc,sc] = ferncodes_Pre_LPEW_2(dmap,N);
-            
-    end  %End of SWITCH 
+    parametersauxiliary(dmap,N)
+global interptype
+
+
+%Get preprocessed terms:
+[Hesq,Kdec,Knc,Ktc,Dedc] = ferncodes_Kde_Ded_Kt_Kn(dmap);
+%temos usado para muitos estes o seguinte rutina
+[dparameter,]=ferncodes_coefficient(dmap);
+% calculo dos pesos DMP
+[weightDMPc]=ferncodes_weightnlfvDMP(dmap);
+
+%It switches according to "interptype"
+switch char(interptype)
+    %LPEW 1
+    case 'lpew1'
+        % calculo dos pesos que correspondem ao LPEW1
+        [weightc,sc] = ferncodes_Pre_LPEW_1(dmap,N);
+        %LPEW 2
+    case 'lpew2'
+        % calculo dos pesos que correspondem ao LPEW2
+        [weightc,sc] = ferncodes_Pre_LPEW_2(dmap,N);
+        
+end  %End of SWITCH
 end
 %--------------------------------------------------------------------------
 %FUNCTION "overedgesection"

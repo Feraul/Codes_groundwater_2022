@@ -34,30 +34,30 @@ for ifacont=1:bedgesize
         %problemas monofásico
         flowrate(ifacont,1)= -normcont*bcflag(r,2);% problema de buckley leverett Bastian
     else
-
-        flowrate(ifacont,1)=visonface*normcont*(parameter(1,1,ifacont)*(p(lef)-pinterp(parameter(1,3,ifacont)))+...
-                                                    parameter(1,2,ifacont)*(p(lef)-pinterp(parameter(1,4,ifacont))));        
-    end
-    %Attribute the flow rate to "flowresult"
-    %On the left:
-    flowresult(lef) = flowresult(lef) + flowrate(ifacont); 
- %================================================================
- 
-   if bedge(ifacont,7)>200
-        x=bcflagc(:,1)==bedge(ifacont,7);
-        r=find(x==1);
-        %flowrate(ifacont,1)= normcont*bcflag(r,2);% testes feitos em todos os
-        %problemas monofásico
-        flowratec(ifacont,1)= -normcont*bcflagc(r,2);% problema de buckley leverett Bastian
-    else
         
-        flowratec(ifacont,1)=normcont*(dparameter(1,1,ifacont)*(Con(lef)-cinterp(dparameter(1,3,ifacont)))+...
-                                                    dparameter(1,2,ifacont)*(Con(lef)-cinterp(dparameter(1,4,ifacont))));        
+        flowrate(ifacont,1)=visonface*normcont*(parameter(1,1,ifacont)*(p(lef)-pinterp(parameter(1,3,ifacont)))+...
+            parameter(1,2,ifacont)*(p(lef)-pinterp(parameter(1,4,ifacont))));
     end
     %Attribute the flow rate to "flowresult"
     %On the left:
-    flowresultc(lef) = flowresultc(lef) + flowratec(ifacont); 
-    
+    flowresult(lef) = flowresult(lef) + flowrate(ifacont);
+    %% ================================================================
+    if 200<numcase && numcase<300
+        if bedge(ifacont,7)>200
+            x=bcflagc(:,1)==bedge(ifacont,7);
+            r=find(x==1);
+            %flowrate(ifacont,1)= normcont*bcflag(r,2);% testes feitos em todos os
+            %problemas monofásico
+            flowratec(ifacont,1)= -normcont*bcflagc(r,2);% problema de buckley leverett Bastian
+        else
+            
+            flowratec(ifacont,1)=normcont*(dparameter(1,1,ifacont)*(Con(lef)-cinterp(dparameter(1,3,ifacont)))+...
+                dparameter(1,2,ifacont)*(Con(lef)-cinterp(dparameter(1,4,ifacont))));
+        end
+        %Attribute the flow rate to "flowresult"
+        %On the left:
+        flowresultc(lef) = flowresultc(lef) + flowratec(ifacont);
+    end
 end
 
 for iface=1:inedgesize
@@ -97,44 +97,45 @@ for iface=1:inedgesize
     ALL=norma*mulef*(parameter(1,1,ifactual)+parameter(1,2,ifactual));
     ALR=norma*murel*(parameter(2,1,ifactual)+parameter(2,2,ifactual));
     
-   flowrate(iface+size(bedge,1),1)=visonface*(ALL*p(lef)-ALR*p(rel)); 
-   
-   %Attribute the flow rate to "flowresult"
+    flowrate(iface+size(bedge,1),1)=visonface*(ALL*p(lef)-ALR*p(rel));
+    
+    %Attribute the flow rate to "flowresult"
     %On the left:
-    flowresult(lef) = flowresult(lef) + flowrate(bedgesize + iface);  
+    flowresult(lef) = flowresult(lef) + flowrate(bedgesize + iface);
     %On the right:
-    flowresult(rel) = flowresult(rel) - flowrate(bedgesize + iface);  
+    flowresult(rel) = flowresult(rel) - flowrate(bedgesize + iface);
     
     %% ===================================================================
-    
-    % calculo do fluxo para o campo de concentracoes
-    % calculo do a Eq. 2.7 (resp. eq. 16) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
-    % esquerda
-    alef=norma*(dparameter(1,1,ifactual)*cinterp(dparameter(1,3,ifactual))+...
-        dparameter(1,2,ifactual)*cinterp(dparameter(1,4,ifactual)));
-    % direita
-    
-    arel= norma*(dparameter(2,1,ifactual)*cinterp(dparameter(2,3,ifactual))+...
-        dparameter(2,2,ifactual)*cinterp(dparameter(2,4,ifactual)));
-    % calculo dos "mu", Eq. 2.8 (resp. eq. 18) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
-    if alef==0 && arel==0
-        mulef= 0.5;
-        murel=1-mulef;
-    else
-        mulef=abs(arel)/(abs(alef)+abs(arel));
-        murel=1-mulef;
+    if 200<numcase && numcase<300
+        % calculo do fluxo para o campo de concentracoes
+        % calculo do a Eq. 2.7 (resp. eq. 16) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
+        % esquerda
+        alef=norma*(dparameter(1,1,ifactual)*cinterp(dparameter(1,3,ifactual))+...
+            dparameter(1,2,ifactual)*cinterp(dparameter(1,4,ifactual)));
+        % direita
+        
+        arel= norma*(dparameter(2,1,ifactual)*cinterp(dparameter(2,3,ifactual))+...
+            dparameter(2,2,ifactual)*cinterp(dparameter(2,4,ifactual)));
+        % calculo dos "mu", Eq. 2.8 (resp. eq. 18) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
+        if alef==0 && arel==0
+            mulef= 0.5;
+            murel=1-mulef;
+        else
+            mulef=abs(arel)/(abs(alef)+abs(arel));
+            murel=1-mulef;
+        end
+        % calculo da contribuição, Eq. 2.12 (resp. Eq. 21) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
+        ALLc=norma*mulef*(dparameter(1,1,ifactual)+dparameter(1,2,ifactual));
+        ALRc=norma*murel*(dparameter(2,1,ifactual)+dparameter(2,2,ifactual));
+        
+        flowratec(iface+size(bedge,1),1)=(ALLc*Con(lef)-ALRc*Con(rel));
+        
+        %Attribute the flow rate to "flowresult"
+        %On the left:
+        flowresultc(lef) = flowresultc(lef) + flowratec(bedgesize + iface);
+        %On the right:
+        flowresultc(rel) = flowresultc(rel) - flowratec(bedgesize + iface);
     end
-    % calculo da contribuição, Eq. 2.12 (resp. Eq. 21) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
-    ALLc=norma*mulef*(dparameter(1,1,ifactual)+dparameter(1,2,ifactual));
-    ALRc=norma*murel*(dparameter(2,1,ifactual)+dparameter(2,2,ifactual));
-    
-   flowratec(iface+size(bedge,1),1)=(ALLc*Con(lef)-ALRc*Con(rel)); 
-   
-   %Attribute the flow rate to "flowresult"
-    %On the left:
-    flowresultc(lef) = flowresultc(lef) + flowratec(bedgesize + iface);  
-    %On the right:
-    flowresultc(rel) = flowresultc(rel) - flowratec(bedgesize + iface);  
 end
 
 end

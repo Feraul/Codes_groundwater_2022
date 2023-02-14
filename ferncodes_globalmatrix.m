@@ -1,7 +1,7 @@
 %It is called by "ferncodes_solvepressure.m"
 
 function [M,I] = ferncodes_globalmatrix(w,s,Kde,Ded,Kn,Kt,Hesq,viscosity,...
-    nflag)
+    nflag,SS,dt,h,MM)
 %Define global variables:
 global coord elem esurn1 esurn2 bedge inedge centelem bcflag ...
     phasekey numcase;
@@ -16,7 +16,7 @@ inedgesize = size(inedge,1);
 %Initialize "M" (global matrix) and "I" (known vector)
 M = sparse(size(elem,1),size(elem,1)); %Prealocação de M.
 I = zeros(size(elem,1),1);
-
+coeficiente=dt^-1*MM*SS;
 %Evaluate "bedge"
 for ifacont = 1:bedgesize
     %Define "mobonface" (for "bedge")
@@ -29,7 +29,7 @@ for ifacont = 1:bedgesize
     else
         visonface = 1;
     end  %End of IF
-        
+    
     %Get element on the left:
     lef = bedge(ifacont,3);
     %Get another parameters:
@@ -39,31 +39,35 @@ for ifacont = 1:bedgesize
     
     %Calculate the nom of the edge
     nor = norm(coord(bedge(ifacont,1),:) - coord(bedge(ifacont,2),:));
-
+    
     % Tratamento do nó nos vértices 2 e 4%
-        
+    
     %Dirichlet Boundary
     if bedge(ifacont,5) < 200
         c1 = nflag(bedge(ifacont,1),2);
         c2 = nflag(bedge(ifacont,2),2);
         
         A = -Kn(ifacont)/(Hesq(ifacont)*norm(v0));
-            
+        
         %Preenchimento
         
         M(bedge(ifacont,3),bedge(ifacont,3)) = M(bedge(ifacont,3),...
             bedge(ifacont,3)) - visonface*A*(norm(v0)^2);
-            
+        
         %!!!!!!!!!!!!!!!!!!!!Vericar no monofásico o sinal
         I(bedge(ifacont,3)) = I(bedge(ifacont,3)) - ...
             visonface*(dot(v2,-v0)*c1 + dot(v1,v0)*c2)*A + ...
-            visonface*(c2 - c1)*Kt(ifacont); 
-            
-    %Neumann boundary
+            visonface*(c2 - c1)*Kt(ifacont);
+        
+        %Neumann boundary
     else
         x = logical(bcflag(:,1) == bedge(ifacont,5));
         I(lef) = I(lef) + nor*bcflag(x,2);
     end  %End of IF
+    
+    if numcase==330
+        I(lef)=I(lef)+ coeficiente*h(lef);
+    end
 end  %End of FOR
 
 % end  %End of IF
@@ -78,7 +82,7 @@ for iface = 1:inedgesize
     else
         visonface = 1;
     end  %End of IF
-
+    
     % pressão prescrita no elemento do poço injetor
     %Contabiliza as contribuições do fluxo numa aresta para os elementos %
     %a direita e a esquerda dela.                                        %
@@ -151,55 +155,64 @@ for iface = 1:inedgesize
                 esurn1(post_cont)) + visonface*Kde(iface)*Ded(iface)*w(post_cont);
         end
     end
-   
-end  %End of FOR ("inedge")    
     
+    if numcase==330
+        % Letf
+        M(inedge(iface,3), inedge(iface,3)) = M(inedge(iface,3), inedge(iface,3)) + ...
+            coeficiente;
+        %Right
+        M(inedge(iface,4), inedge(iface,4)) = M(inedge(iface,4), inedge(iface,4)) + ...
+            coeficiente;
+    end
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+end  %End of FOR ("inedge")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 %     %----------------------------------------------------------------------
 %     %Boundary treatment (faces)
-%     
-%     %The face is inside the domain, however one or both the node(s) may be 
+%
+%     %The face is inside the domain, however one or both the node(s) may be
 %     %over the boundary.
-%     
+%
 %     %-----------------------------------------
 %     %Verify if some vertex is on the boundary:
-%     
+%
 %     %Get "vertices"
 %     vertices = inedge(iface,1:2);
-% 
+%
 %     %Se os nós das arestas estiverem em fronteiras de Dirichlet, suas
 %     %contribuições serão contabilizadas logo abaixo.
-%     
+%
 %     %--------------------------------------
 %     %The vertex 1 has a Dirichlet boundary:
-% 
-%     %It points if the vertex belong to boundary: 
+%
+%     %It points if the vertex belong to boundary:
 %     pointvtxonbound = logical(vertices(1) == bedge(:,1));
-% 
+%
 %     %Verify if the vertex is on the boundary
 %     if any(pointvtxonbound)
 %         %Get the row in "bedge" where this occurs
 %         bedgrow = bedgeamount(pointvtxonbound);
-% 
-%         %There exists a vertex on the boundary and it is a 
+%
+%         %There exists a vertex on the boundary and it is a
 %         %Dirichlet boundary:
 %         if bedge(bedgrow(1),4) < 200
 %             %Define "flagpointer"
 %             flagpointer = logical(bcflag(:,1) == bedge(bedgrow(1),4));
-%             
+%
 %             %################################################
 %             %Adapted to generalized Marcio's code
 %             knownval = PLUG_bcfunction(vertices(1),flagpointer);  %nflag(bedge(ifacont,1),2);
@@ -211,10 +224,10 @@ end  %End of FOR ("inedge")
 %             I(inedge(iface,4)) = I(inedge(iface,4)) + mobonface*Kde(iface)*...
 %                 Ded(iface)*knownval;  %It was modified (Márcio)
 %         end  %End of IF
-% 
+%
 %         %---------------------------------------------
 %         %The vertex 1 has a Neumann boundary:
-% 
+%
 %         % quando o nó pertece ao contorno de Neumann
 %         if bedge(bedgrow(1),4) > 200
 %             %Define "flagpointer"
@@ -224,7 +237,7 @@ end  %End of FOR ("inedge")
 %             if bcflag(flagpointer,2) ~= 0
 %                 I(inedge(iface,3)) = I(inedge(iface,3)) - ...
 %                     mobonface*Kde(iface)*Ded(iface)*s(inedge(iface,1)); %ok
-%         
+%
 %                 I(inedge(iface,4)) = I(inedge(iface,4)) + ...
 %                     mobonface*Kde(iface)*Ded(iface)*s(inedge(iface,1)); %ok
 %             %NULL value (== 0)
@@ -232,11 +245,11 @@ end  %End of FOR ("inedge")
 %                 for j = 1:(esurn2(inedge(iface,1) + 1) - ...
 %                         esurn2(inedge(iface,1)))
 %                     post_cont = esurn2(inedge(iface,1)) + j;
-%             
+%
 %                     M(inedge(iface,3),esurn1(post_cont)) = ...
 %                         M(inedge(iface,3),esurn1(post_cont)) + ...
 %                         mobonface*Kde(iface)*Ded(iface)*w(post_cont);
-%             
+%
 %                     M(inedge(iface,4),esurn1(post_cont)) = ...
 %                         M(inedge(iface,4),esurn1(post_cont)) - ...
 %                         mobonface*Kde(iface)*Ded(iface)*w(post_cont);
@@ -244,22 +257,22 @@ end  %End of FOR ("inedge")
 %             end  %End of IF
 %         end  %End of IF
 %     end  %End of IF (the vertex belongs to boundary)
-%     
+%
 %     %--------------------------------------
 %     %The vertex 2 has a Dirichlet boundary:
-% 
-%     %It points if the vertex belong to boundary: 
+%
+%     %It points if the vertex belong to boundary:
 %     pointvtxonbound = logical(vertices(2) == bedge(:,1));
 %     %The vertex belongs to boundary
 %     if any(pointvtxonbound)
 %         %Get the row in "bedge" where this occurs
 %         bedgrow = bedgeamount(pointvtxonbound);
-%     
+%
 %         %There exists a vertex on the boundary and it is a Dirichlet boundary:
 %         if bedge(bedgrow(1),4) < 200
 %             %Define "flagpointer"
 %             flagpointer = logical(bcflag(:,1) == bedge(bedgrow(1),4));
-%             
+%
 %             %################################################
 %             %Adapted to generalized Marcio's code
 %             knownval = PLUG_bcfunction(vertices(2),flagpointer);  %nflag(bedge(ifacont,1),2);
@@ -270,11 +283,11 @@ end  %End of FOR ("inedge")
 %                 Ded(iface)*knownval;
 %             I(inedge(iface,4)) = I(inedge(iface,4)) - mobonface*Kde(iface)*...
 %                 Ded(iface)*knownval;
-%         end  %End of IF 
-%     
+%         end  %End of IF
+%
 %         %------------------------------------
 %         %The vertex 2 has a Neumann boundary:
-%     
+%
 %         % quando o nó pertece ao contorno de Neumann
 %         if bedge(bedgrow(1),4) > 200
 %             %Define "flagpointer"
@@ -293,11 +306,11 @@ end  %End of FOR ("inedge")
 %                 for j = 1:(esurn2(inedge(iface,2) + 1) - ...
 %                         esurn2(inedge(iface,2))),
 %                     post_cont = esurn2(inedge(iface,2)) + j;
-%             
+%
 %                     M(inedge(iface,3),esurn1(post_cont)) = ...
 %                         M(inedge(iface,3),esurn1(post_cont)) - ...
 %                         mobonface*Kde(iface)*Ded(iface)*w(post_cont);
-%             
+%
 %                     M(inedge(iface,4),esurn1(post_cont)) = ...
 %                         M(inedge(iface,4),esurn1(post_cont)) + ...
 %                         mobonface*Kde(iface)*Ded(iface)*w(post_cont);
@@ -308,7 +321,7 @@ end  %End of FOR ("inedge")
 %  end  %End of FOR ("inedge" faces)
 
 
-% 
+%
 % % adequação da matriz nos poços produtores
 % if max(wells)~=0
 %     for iw = 1:size(wells,1)

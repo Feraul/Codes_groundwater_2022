@@ -1,4 +1,4 @@
-function [M,I]=ferncodes_assemblematrixNLFVPP(pinterp,parameter,viscosity,contnorm)
+function [M,I]=ferncodes_assemblematrixNLFVPP(pinterp,parameter,viscosity,contnorm,SS,dt,h,MM)
 global inedge coord bedge bcflag elem numcase
 %-----------------------inicio da rOtina ----------------------------------%
 %Constrói a matriz global.
@@ -6,7 +6,7 @@ global inedge coord bedge bcflag elem numcase
 %Initialize "bedgesize" and "inedgesize"
 bedgesize = size(bedge,1);
 inedgesize = size(inedge,1);
-
+coeficiente=dt^-1*MM*SS;
 %Initialize "M" (global matrix) and "I" (known vector)
 M = sparse(size(elem,1),size(elem,1)); %Prealocação de M.
 I = zeros(size(elem,1),1);
@@ -43,6 +43,9 @@ for ifacont=1:bedgesize
         %% implementação da matriz global no contorno
         M(lef,lef)=M(lef,lef)+ Alef;
         I(lef,1)=I(lef,1)+alef;
+    end
+    if 200<numcase && numcase<300
+       I(lef,1)=I(lef,1)+coeficiente*h(lef); 
     end
 end
 
@@ -96,5 +99,10 @@ for iface=1:inedgesize
     % contribuição da transmisibilidade no elemento direita
     M(rel,rel)=M(rel,rel)+ visonface*ARR;
     M(rel,lef)=M(rel,lef)- visonface*ALL;
+    
+    if 200<numcase && numcase<300
+     M(lef,lef)=M(lef,lef)+ coeficiente;   
+     M(rel,rel)=M(rel,rel)+ coeficiente;   
+    end
 end
 end

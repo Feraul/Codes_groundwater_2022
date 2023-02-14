@@ -48,7 +48,7 @@ timew = 0;
 
 satonvertices=0;
 producelem=0;
-dt=1;
+dt=0.01;
 h=h_old;
 
 Con=0;
@@ -59,7 +59,7 @@ viscosity=1;
 contiterplot=0;
 auxkmap=0;
 mobility=1;
-Ktc=0;Dedc=0;nflagc=0;wightc=0;sc=0;dparameter=0;
+Ktc=0;Dedc=0;nflagc=0;wightc=0;sc=0;
 tic
 while stopcriteria < 100
     if strcmp(pmethod,'tpfa')
@@ -71,12 +71,7 @@ while stopcriteria < 100
     %Calculate "pressure", "flowrate" and "flowresult"
         [h_new,flowrate,] = ferncodes_solverpressure(...
             mobility,wells,Hesq,Kde,Kn,Kt,Ded,nflag,...
-            weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc,SS,dt,h,MM);
-    elseif strcmp(pmethod,'nlfvpp')
-         [h_new,flowrate,]=...
-            ferncodes_solverpressureNLFVPP(nflag,parameter,kmap,wells,...
-            mobility,V,Con,N,p_old,contnorm,weight,s,Con,nflagc,wightc,...
-            sc,dparameter,SS,dt,h,MM);
+            weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc);
     end
         %% caculo do passo de tempo
     

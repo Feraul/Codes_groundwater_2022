@@ -14,13 +14,14 @@
 %Modified: Fernando Contreras,
 function [p,flowrate,flowresult,flowratedif,flowresultc]=ferncodes_solverpressureNLFVPP(nflag,...
                                   parameter,kmap,wells,viscosity,V,Sw,N,...
-                                  p_old,contnorm,wight,s,Con,nflagc,wightc,sc,dparameter)
+                                  p_old,contnorm,wight,s,Con,nflagc,...
+                                  wightc,sc,dparameter,SS,dt,h,MM)
 %Define global parameters
 global acel;
 
 % interpolação nos nós ou faces
 [pinterp,]=ferncodes_pressureinterpNLFVPP(p_old,nflag,wight,s,Con,nflagc,wightc,sc);
-[M,I]=ferncodes_assemblematrixNLFVPP(pinterp,parameter,viscosity,contnorm);
+[M,I]=ferncodes_assemblematrixNLFVPP(pinterp,parameter,viscosity,contnorm,SS,dt,h,MM);
 %--------------------------------------------------------------------------
 %Add a source therm to independent vector "mvector" 
 
@@ -33,6 +34,6 @@ if strcmp(acel,'FPI')
 elseif strcmp(acel,'AA')
     %% Picard-Anderson Acceleration
     [p,flowrate,flowresult,flowratedif,flowresultc]=ferncodes_iterpicardANLFVPP2(M_old,RHS_old,...
-        parameter,wight,s,p_old,nflag,wells,viscosity,0,contnorm,Con,nflagc,wightc,sc,dparameter);
+        parameter,wight,s,p_old,nflag,wells,viscosity,0,contnorm,Con,nflagc,wightc,sc,dparameter,SS,dt,h,MM);
 end
 end

@@ -165,7 +165,7 @@ switch phasekey
         % ainda falta implementar
         
         % initially hydraulic charge
-        h_old=70*ones(size(elem,1),1);
+        h_old=100*ones(size(elem,1),1);
         % coeficiente de armazenamento
         SS=0.001;
         % topo 
@@ -176,7 +176,7 @@ switch phasekey
             Fg,overedgecoord,bodyterm,normk,limiterflag,...
             V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,lastimelevel,lastimeval,...
             elemsize,bedgesize,inedgesize,parameter,...
-            weightDMP,nflagface,h_old,contnorm,SS,MM);
+            weightDMP,nflagface,h_old,contnorm,SS,MM,weight,s);
         %It Souves only the HYPERBOLIC Equation:
     otherwise
         %Get the initial condition for the hyperbolic equation
