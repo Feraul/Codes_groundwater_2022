@@ -84,20 +84,15 @@ if 200<numcase && numcase <300
         kmap=kmap;
         %adeSPE; % para um campo de permeabilidade da SPE active descomente.
     end
-elseif numcase==330
+elseif numcase>300
     auxpar=0;
     dmap=0;
     Dmedio=0;
     gamma=0;
     velmedio=0;
     wellsc=0;
-    b=find(abs(centelem(:,1)-500)<1e-9 & abs(centelem(:,2)-500)<1e-9);
-   wells(1,1)=b;
-   wells(1,2)=2;
-   wells(1,3)=1;
-   wells(1,4)=0;
-   wells(1,5)=0;
-   wells(1,6)=-10000;
+   % Flags adequation for hydrological head problem
+   [SS,h_old,MM,wells]=prehydrological;
 end
 %adeSPE; % para um campo de permeabilidade da SPE active descomente.
 %--------------------------------------------------------------------------
@@ -110,5 +105,5 @@ inedgesize = size(inedge,1);
 
 %It preprocess the schemes and set a One-phase or Two-phase simulation.
 setmethod(kmap,wells,'i',8,limiterflag,klb,elemsize,bedgesize,...
-    inedgesize,auxpar, wellsc,velmedio,dmap,Dmedio,gamma);
+    inedgesize,auxpar, wellsc,velmedio,dmap,Dmedio,gamma,SS,h_old,MM);
 

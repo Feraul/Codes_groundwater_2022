@@ -16,7 +16,7 @@
 %--------------------------------------------------------------------------
 
 function setmethod(kmap,wells,keywrite,invh,limiterflag,klb,elemsize,...
-    bedgesize,inedgesize,auxpar,wellsc,velmedio,dmap,Dmedio,gamma)
+    bedgesize,inedgesize,auxpar,wellsc,velmedio,dmap,Dmedio,gamma,SS,h_old,MM)
 %Define global parameters:
 global phasekey pmethod elem
 
@@ -161,16 +161,8 @@ switch phasekey
             Bleftcon,Brightcon,Fgcon,mapinvcon,maptransmcon,mapknownveccon,...
             pointedgecon, bodytermcon);
         
-    case 4 % hydrological simulation
-        % ainda falta implementar
-        
-        % initially hydraulic charge
-        h_old=100*ones(size(elem,1),1);
-        % coeficiente de armazenamento
-        SS=0.001;
-        % topo 
-        MM=1;
-        
+    case 4 % hydrological head simulation
+
         IMPEH(wells,klb,transmvecleft,transmvecright,knownvecleft,knownvecright,...
             mapinv,maptransm,mapknownvec,pointedge,storeinv,Bleft,Bright,...
             Fg,overedgecoord,bodyterm,normk,limiterflag,...

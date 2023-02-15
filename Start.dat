@@ -98,7 +98,7 @@ n
 //[nlfvpp]==> "Non-Linear Finite Volume" using lpew
 //[nlfvh]==> "Non-Linear Finite Volume" using harmonic point
 
-nlfvpp
+mpfad
 
 //If you chose [fps] or [mpfae], write below the auxiliary control
 //volume factor. It defines the auxiliary control volume size.
@@ -332,7 +332,7 @@ malha2_problema521_Chivata2016_Frontal_Delaunay.msh
 
 //If [n], write below the path where the geometry file is:  
 
-C:\Users\flc59\Documents\Benchmark_GeometryFiles
+C:\Users\flc59\Documents\GitHub\Benchmark_GeometryFiles
 
 //Write below the name of the geometry file. Use the extension *.geo.
 
