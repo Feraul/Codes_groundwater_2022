@@ -23,32 +23,24 @@
 
 %--------------------------------------------------------------------------
 
-function IMPEH(wells,klb,transmvecleft,transmvecright,knownvecleft,knownvecright,...
-            mapinv,maptransm,mapknownvec,pointedge,storeinv,Bleft,Bright,...
-            Fg,overedgecoord,bodyterm,normk,limiterflag,...
-            V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,lastimelevel,lastimeval,...
-            elemsize,bedgesize,inedgesize,parameter,...
-            weightDMP,nflagface,h_old,contnorm,SS,MM,weight,s)
+function hydraulic(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
+               parameter,h_old,contnorm,SS,MM,weight,s,dt)
 %Define global parameters:
-global timew elemarea totaltime timelevel pormap numcase pmethod smethod ...
-    filepath benchkey resfolder order inedge bedge;
+global timew  totaltime  pmethod filepath ;
 
 %--------------------------------------------------------------------------
 %Initialize parameters:
 
 %"time" is a parameter which add "dt" in each looping (dimentional or adm.)
-time = lastimeval;
+time = 0;
 stopcriteria = 0;
-%"timelevel" is a parameter used to plot each time step result. Image
-%1,2,...,n. This parameter is incremented and sent to "postprocessor"
-timelevel = lastimelevel + 1;
+
 %Attribute to time limit ("finaltime") the value put in "Start.dat".
 finaltime = totaltime(2);
 timew = 0;
 
 satonvertices=0;
 producelem=0;
-dt=0.01;
 h=h_old;
 
 Con=0;
@@ -59,7 +51,7 @@ viscosity=1;
 contiterplot=0;
 auxkmap=0;
 mobility=1;
-Ktc=0;Dedc=0;nflagc=0;wightc=0;sc=0;
+Ktc=0;Dedc=0;wightc=0;sc=0;dparameter=0;
 tic
 while stopcriteria < 100
     if strcmp(pmethod,'tpfa')
@@ -71,7 +63,12 @@ while stopcriteria < 100
     %Calculate "pressure", "flowrate" and "flowresult"
         [h_new,flowrate,] = ferncodes_solverpressure(...
             mobility,wells,Hesq,Kde,Kn,Kt,Ded,nflag,...
-            weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc);
+            weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc,SS,dt,h,MM);
+    elseif strcmp(pmethod,'nlfvpp')
+         [h_new,flowrate,]=...
+            ferncodes_solverpressureNLFVPP(nflag,parameter,kmap,wells,...
+            mobility,V,Con,N,p_old,contnorm,weight,s,Con,nflagc,wightc,...
+            sc,dparameter,SS,dt,h,MM);
     end
         %% caculo do passo de tempo
     
@@ -81,7 +78,7 @@ while stopcriteria < 100
     stopcriteria = concluded;
     contiterplot=contiterplot+1
     h=h_new;
-   postprocessor(h,flowrate,Con,contiterplot,overedgecoord,'i',1,auxkmap);
+    postprocessor(h,flowrate,Con,contiterplot,overedgecoord,'i',1,auxkmap);
 end
 
 toc

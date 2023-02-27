@@ -1,0 +1,92 @@
+
+% Esta funcao determina os parametros iniciais, adequacao dos pocos
+% injetores e produtores, e condicao inicial hydrologica
+function [SS,h_old,MM,wells,dt]=prehydraulic
+
+global numcase elem centelem
+
+switch numcase
+    case 330
+        % Case 1: single pumping well in a confined aquifer (Y. Qian et al)
+        
+        % initially hydraulic charge
+        h_old=100*ones(size(elem,1),1);
+        % coeficiente de armazenamento especifico
+        SS=0.001;
+        % espesura do aquifero
+        MM=3;
+        % step time
+        dt=0.01;
+        % find the well element
+        b=find(abs(centelem(:,1)-500)<1e-9 & abs(centelem(:,2)-500)<1e-9);
+        wells(1,1)=b;
+        wells(1,2)=2;
+        wells(1,3)=1;
+        wells(1,4)=0;
+        wells(1,5)=0;
+        wells(1,6)=-10000;
+    case 331
+       % Case 2: single pumping well in a unconfined aquifer (Y. Qian et al)
+        
+        % initially hydraulic charge
+        h_old=90*ones(size(elem,1),1);
+        % coeficiente de armazenamento especifico
+        SS=0.1;
+        % espesura do aquifero
+        MM=100;
+        % step time
+        dt=0.01;
+        % find the well element
+        b=find(abs(centelem(:,1)-500)<1e-9 & abs(centelem(:,2)-500)<1e-9);
+        wells(1,1)=b;
+        wells(1,2)=2;
+        wells(1,3)=1;
+        wells(1,4)=0;
+        wells(1,5)=0;
+        wells(1,6)=-40000;
+    case 332
+        % Case 3: multiple pumping wells in a confined aquifer (Y. Qian et al)
+        
+        % initially hydraulic charge
+        h_old=100*ones(size(elem,1),1);
+        % coeficiente de armazenamento especifico
+        SS=0.001;
+        % espesura do aquifero
+        MM=3;
+        % step time
+        dt=0.01;
+        % find the well element
+        b1=find(abs(centelem(:,1)-250)<1e-9 & abs(centelem(:,2)-250)<1e-9);
+        wells(1,1)=b1;
+        wells(1,2)=2;
+        wells(1,3)=1;
+        wells(1,4)=0;
+        wells(1,5)=0;
+        wells(1,6)=-2500;
+        %-----------------------------------------------------------------
+        b2=find(abs(centelem(:,1)-750)<1e-9 & abs(centelem(:,2)-250)<1e-9);
+        wells(2,1)=b2;
+        wells(2,2)=2;
+        wells(2,3)=1;
+        wells(2,4)=0;
+        wells(2,5)=0;
+        wells(2,6)=-2500;
+        %------------------------------------------------------------------
+        b3=find(abs(centelem(:,1)-750)<1e-9 & abs(centelem(:,2)-750)<1e-9);
+        wells(3,1)=b3;
+        wells(3,2)=2;
+        wells(3,3)=1;
+        wells(3,4)=0;
+        wells(3,5)=0;
+        wells(3,6)=-2500;
+        %------------------------------------------------------------------
+        b4=find(abs(centelem(:,1)-250)<1e-9 & abs(centelem(:,2)-750)<1e-9);
+        wells(4,1)=b4;
+        wells(4,2)=2;
+        wells(4,3)=1;
+        wells(4,4)=0;
+        wells(4,5)=0;
+        wells(4,6)=-2500;
+end
+
+end

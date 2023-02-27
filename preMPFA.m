@@ -25,7 +25,7 @@ function [transmvecleft,transmvecright,knownvecleft,knownvecright,storeinv,...
     nflagface,p_old,contnorm,weight,s,transmvecleftcon,transmvecrightcon,knownvecleftcon,knownvecrightcon,storeinvcon,...
     Bleftcon,Brightcon,Fgcon,mapinvcon,maptransmcon,mapknownveccon,pointedgecon,...
     bodytermcon,Kdec,Knc,Ktc,Dedc,wightc,sc,weightDMPc,dparameter,...
-    nflagnoc,nflagfacec,Con,lastimelevel,lastimeval,gravresult,gravrate] = preMPFA(kmap,klb,dmap)
+    nflagnoc,nflagfacec,Con,lastimelevel,lastimeval,gravresult,gravrate] = preMPFA(kmap,klb,dmap,MM)
 %Define global parameters:
 global pmethod elem interptype phasekey keygravity numcase
 
@@ -63,7 +63,7 @@ q = 1;
 %Fill the matrix "overedgecoord"
 overedgecoord = overedge;
 %Define the norm of permeability tensor ("normk")
-[normk,kmap] = calcnormk(kmap);
+[normk,kmap] = calcnormk(kmap,MM);
 
 %Get the length of the edge with non-null Neumann Boundary Condition.
 knownboundlength = getknownboundlength(klb);
@@ -358,9 +358,9 @@ overedgecoord(size(bedge,1) + 1:size(overedgecoord,1),:) = ...
 %Function "calcnormk"
 %--------------------------------------------------------------------------
 end
-function [normk,kmap] = calcnormk(kmap)
+function [normk,kmap] = calcnormk(kmap,MM)
 %Define global parameters:
-global elem centelem;
+global elem centelem numcase;
 
 %Initialize "normk" (it is a vector)
 normk = zeros(size(centelem,1),1);
@@ -376,5 +376,8 @@ for ik = 1:length(normk)
         kmap(pointer,4) kmap(pointer,5)];
     %Calculate the norm of tensor
     normk(ik) = norm(permcompon);
+end
+if numcase>300
+    kmap(:,2:5)=MM*kmap(:,2:5);
 end
 end%End of FOR

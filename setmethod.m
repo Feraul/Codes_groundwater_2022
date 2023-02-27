@@ -16,9 +16,9 @@
 %--------------------------------------------------------------------------
 
 function setmethod(kmap,wells,keywrite,invh,limiterflag,klb,elemsize,...
-    bedgesize,inedgesize,auxpar,wellsc,velmedio,dmap,Dmedio,gamma,SS,h_old,MM)
+    bedgesize,inedgesize,auxpar,wellsc,velmedio,dmap,Dmedio,gamma,SS,h_old,MM,dt)
 %Define global parameters:
-global phasekey pmethod elem
+global phasekey pmethod 
 
 %Get a preprocessment of pressure scheme (used in One-phase and Two-Phase).
 if phasekey ~= 0
@@ -31,7 +31,7 @@ if phasekey ~= 0
         knownvecleftcon,knownvecrightcon,storeinvcon,...
         Bleftcon,Brightcon,Fgcon,mapinvcon,maptransmcon,mapknownveccon,...
         pointedgecon, bodytermcon,Kdec,Knc,Ktc,Dedc,wightc,sc,weightDMPc,dparameter,...
-    nflagnoc,nflagfacec,Con,lastimelevel,lastimeval,gravresult,gravrate] = preMPFA(kmap,klb,dmap);
+    nflagnoc,nflagfacec,Con,lastimelevel,lastimeval,gravresult,gravrate] = preMPFA(kmap,klb,dmap,MM);
     
 end  %End of IF (execute "preMPFA")
 
@@ -163,12 +163,9 @@ switch phasekey
         
     case 4 % hydrological head simulation
 
-        IMPEH(wells,klb,transmvecleft,transmvecright,knownvecleft,knownvecright,...
-            mapinv,maptransm,mapknownvec,pointedge,storeinv,Bleft,Bright,...
-            Fg,overedgecoord,bodyterm,normk,limiterflag,...
-            V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,lastimelevel,lastimeval,...
-            elemsize,bedgesize,inedgesize,parameter,...
-            weightDMP,nflagface,h_old,contnorm,SS,MM,weight,s);
+        hydraulic(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
+            parameter,h_old,contnorm,SS,MM,weight,s,dt);
+
         %It Souves only the HYPERBOLIC Equation:
     otherwise
         %Get the initial condition for the hyperbolic equation

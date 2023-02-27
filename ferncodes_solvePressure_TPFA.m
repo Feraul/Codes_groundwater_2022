@@ -23,7 +23,7 @@ function [pressure,flowrate,flowresult,flowratedif] = ...
     ferncodes_solvePressure_TPFA(Kde, Kn, nflag, Hesq,wells,viscosity, Kdec, Knc,nflagc,Con,SS,dt,h,MM)
 %Define global parameters:
 
-global inedge bedge elem coord centelem bcflag numcase
+global inedge bedge elem coord bcflag numcase methodhydro
 
 % Constrói a matriz global.
 % prealocação da matriz global e do vetor termo de fonte
@@ -62,9 +62,7 @@ for ifacont=1:size(bedge,1)
         
         
     end
-    if numcase==330
-    mvector(bedge(ifacont,3))=mvector(bedge(ifacont,3))+ coeficiente*h(bedge(ifacont,3));
-    end
+    
 end
 
 for iface=1:size(inedge,1),
@@ -81,18 +79,20 @@ for iface=1:size(inedge,1),
     M(inedge(iface,3), inedge(iface,4))=M(inedge(iface,3), inedge(iface,4))+visonface*Kde(iface,1);
     M(inedge(iface,4), inedge(iface,4))=M(inedge(iface,4), inedge(iface,4))-visonface*Kde(iface,1);
     M(inedge(iface,4), inedge(iface,3))=M(inedge(iface,4), inedge(iface,3))+visonface*Kde(iface,1);
-     if numcase==330
-        % Letf
-        M(inedge(iface,3), inedge(iface,3)) = M(inedge(iface,3), inedge(iface,3)) + ...
-            coeficiente;
-        %Right
-        M(inedge(iface,4), inedge(iface,4)) = M(inedge(iface,4), inedge(iface,4)) + ...
-            coeficiente;
-    end
+     
 end
-% if numcase==330
-% M=-M;
-% end
+if numcase>300
+    if strcmp(methodhydro,'backward')
+        M=M+coeficiente*eye(size(elem,1));
+        mvector=mvector+coeficiente*eye(size(elem,1))*h;
+    else
+        mvector=mvector+coeficiente*eye(size(elem,1))*h-0.5*M*h; 
+        
+        M=0.5*M+coeficiente*eye(size(elem,1));
+        
+    end
+    
+end
 
 
 %--------------------------------------------------------------------------

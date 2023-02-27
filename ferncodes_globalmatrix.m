@@ -4,7 +4,7 @@ function [M,I] = ferncodes_globalmatrix(w,s,Kde,Ded,Kn,Kt,Hesq,viscosity,...
     nflag,SS,dt,h,MM)
 %Define global variables:
 global coord elem esurn1 esurn2 bedge inedge centelem bcflag ...
-    phasekey numcase;
+       numcase methodhydro;
 
 %-----------------------inicio da rOtina ----------------------------------%
 %Constrói a matriz global.
@@ -64,10 +64,6 @@ for ifacont = 1:bedgesize
         x = logical(bcflag(:,1) == bedge(ifacont,5));
         I(lef) = I(lef) + nor*bcflag(x,2);
     end  %End of IF
-    
-    if numcase==330
-        I(lef)=I(lef)+ coeficiente*h(lef);
-    end
 end  %End of FOR
 
 % end  %End of IF
@@ -156,19 +152,19 @@ for iface = 1:inedgesize
         end
     end
     
-    if numcase==330
-        % Letf
-        M(inedge(iface,3), inedge(iface,3)) = M(inedge(iface,3), inedge(iface,3)) + ...
-            coeficiente;
-        %Right
-        M(inedge(iface,4), inedge(iface,4)) = M(inedge(iface,4), inedge(iface,4)) + ...
-            coeficiente;
+end  %End of FOR ("inedge")
+if numcase>300
+    if strcmp(methodhydro,'backward')
+        M=M+coeficiente*eye(size(elem,1));
+        I=I+coeficiente*eye(size(elem,1))*h;
+    else
+        I=I+coeficiente*eye(size(elem,1))*h-0.5*M*h; 
+        
+        M=0.5*M+coeficiente*eye(size(elem,1));
+        
     end
     
-end  %End of FOR ("inedge")
-
-
-
+end
 
 
 

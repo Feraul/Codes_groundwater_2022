@@ -36,7 +36,7 @@ global coord centelem elem esurn1 esurn2 nsurn1 nsurn2 bedge inedge ...
     visc satlimit pormap bcflag courant totaltime filepath resfolder ...
     numcase pmethod smethod phasekey order timeorder auxcvfactor ...
     interptype multdopt goefreeopt lsneightype lsexp ...
-    recovtype keygravity g benchkey rowposit nltol maxiter acel bcflagc;
+    recovtype keygravity g benchkey rowposit nltol maxiter acel bcflagc methodhydro;
 
 %--------------------------------------------------------------------------
 %Call the "preprocessor" function
@@ -92,7 +92,10 @@ elseif numcase>300
     velmedio=0;
     wellsc=0;
    % Flags adequation for hydrological head problem
-   [SS,h_old,MM,wells]=prehydrological;
+   [SS,h_old,MM,wells,dt]=prehydraulic;
+   % Choose Backward method or Crank-Nicolson
+   methodhydro='backward';
+   %methodhydro='cranknicolson';
 end
 %adeSPE; % para um campo de permeabilidade da SPE active descomente.
 %--------------------------------------------------------------------------
@@ -105,5 +108,5 @@ inedgesize = size(inedge,1);
 
 %It preprocess the schemes and set a One-phase or Two-phase simulation.
 setmethod(kmap,wells,'i',8,limiterflag,klb,elemsize,bedgesize,...
-    inedgesize,auxpar, wellsc,velmedio,dmap,Dmedio,gamma,SS,h_old,MM);
+    inedgesize,auxpar, wellsc,velmedio,dmap,Dmedio,gamma,SS,h_old,MM,dt);
 
