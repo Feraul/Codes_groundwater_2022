@@ -16,6 +16,7 @@ function [p,flowrate,flowresult,flowratedif,flowresultc]=ferncodes_solverpressur
                                   parameter,kmap,wells,viscosity,V,Sw,N,...
                                   p_old,contnorm,wight,s,Con,nflagc,...
                                   wightc,sc,dparameter,SS,dt,h,MM,gravrate)
+                             
 %Define global parameters
 global acel;
 

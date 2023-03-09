@@ -1,6 +1,6 @@
 function [M,I]=ferncodes_assemblematrixNLFVPP(pinterp,parameter,viscosity,...
     contnorm,SS,dt,h,MM,gravrate)
-global inedge coord bedge bcflag elem numcase keygravity
+global inedge coord bedge bcflag elem numcase keygravity methodhydro
 %-----------------------inicio da rOtina ----------------------------------%
 %Constrói a matriz global.
 
@@ -14,14 +14,22 @@ I = zeros(size(elem,1),1);
 
 for ifacont=1:bedgesize
     
-    if numcase == 246 || numcase == 245 || numcase==247 || ...
-            numcase==248 || numcase==249 || numcase==251
-        % vicosity on the boundary edge
-        visonface = viscosity(ifacont,:);
-        %It is a Two-phase flow
+    if 200<numcase && numcase<300
+        % equacao de concentracao
+        if numcase == 246 || numcase == 245 || numcase==247 || ...
+                numcase==248 || numcase==249 ||numcase==251
+            % vicosity on the boundary edge
+            visonface = viscosity(ifacont,:);
+            %It is a Two-phase flow
+        else
+            visonface = 1;
+        end  %End of IF
+    elseif numcase<200
+        % equacao de saturacao "viscosity=mobility"
+        visonface=sum(viscosity(ifacont,:));
     else
-        visonface = 1;
-    end  %End of IF
+        visonface=1;
+    end
     
     lef=bedge(ifacont,3);
     
@@ -51,22 +59,27 @@ for ifacont=1:bedgesize
         M(lef,lef)=M(lef,lef)+ Alef;
         I(lef,1)=I(lef,1)+alef+ visonface*m;
     end
-    if 200<numcase && numcase<300
-        I(lef,1)=I(lef,1)+coeficiente*h(lef);
-    end
 end
 
 %% Montagem da matriz global
 
 for iface=1:inedgesize
-    if numcase == 246 || numcase == 245 || numcase==247 ||...
-            numcase==248 || numcase==249 || numcase==251
-        % vicosity on the boundary edge
-        visonface = viscosity(bedgesize + iface,:);
-        %It is a Two-phase flow
+    if 200<numcase && numcase<300
+        % equacao de concentracao
+        if numcase == 246 || numcase == 245 || numcase==247 ||...
+                numcase==248 || numcase==249 || numcase==251
+            % vicosity on the boundary edge
+            visonface = viscosity(bedgesize + iface,:);
+            %It is a Two-phase flow
+        else
+            visonface = 1;
+        end  %End of IF
+    elseif numcase<200
+        % equacao de saturacao "viscosity=mobility"
+        visonface=sum(viscosity(bedgesize + iface,:));
     else
-        visonface = 1;
-    end  %End of IF
+        visonface=1;
+    end
     
     lef=inedge(iface,3);
     rel=inedge(iface,4);
@@ -107,10 +120,6 @@ for iface=1:inedgesize
     M(rel,rel)=M(rel,rel)+ visonface*ARR;
     M(rel,lef)=M(rel,lef)- visonface*ALL;
     
-    if 200<numcase && numcase<300
-        M(lef,lef)=M(lef,lef)+ coeficiente;
-        M(rel,rel)=M(rel,rel)+ coeficiente;
-    end
     % contribuicao do termo gravitacional
     if strcmp(keygravity,'y')
         
@@ -121,6 +130,20 @@ for iface=1:inedgesize
         m=0;
         I(lef)=I(lef)+visonface*m;
         I(rel)=I(rel)-visonface*m;
+    end
+end
+%==========================================================================
+% para calcular a carga hidraulica
+if numcase>300
+    if strcmp(methodhydro,'backward')
+        % Euler backward
+        M=M+coeficiente*eye(size(elem,1));
+        I=I+coeficiente*eye(size(elem,1))*h;
+    else
+        % Crank-Nicolson
+        I=I+coeficiente*eye(size(elem,1))*h-0.5*M*h;
+        
+        M=0.5*M+coeficiente*eye(size(elem,1));  
     end
 end
 end

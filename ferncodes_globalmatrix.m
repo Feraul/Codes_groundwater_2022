@@ -19,16 +19,23 @@ I = zeros(size(elem,1),1);
 coeficiente=dt^-1*MM*SS;
 %Evaluate "bedge"
 for ifacont = 1:bedgesize
-    %Define "mobonface" (for "bedge")
-    %It is a One-phase flow. In this case, "mobility" is "1"
-    if numcase == 246 || numcase == 245 || numcase==247 || ...
-            numcase==248 || numcase==249 ||numcase==251
-        % vicosity on the boundary edge
-        visonface = viscosity(ifacont,:);
-        %It is a Two-phase flow
+    
+    if 200<numcase && numcase<300
+        % equacao de concentracao
+        if numcase == 246 || numcase == 245 || numcase==247 || ...
+                numcase==248 || numcase==249 ||numcase==251
+            % vicosity on the boundary edge
+            visonface = viscosity(ifacont,:);
+            %It is a Two-phase flow
+        else
+            visonface = 1;
+        end  %End of IF
+    elseif numcase<200
+        % equacao de saturacao "viscosity=mobility"
+        visonface=sum(viscosity(ifacont,:));
     else
-        visonface = 1;
-    end  %End of IF
+        visonface=1;
+    end
     
     %Get element on the left:
     lef = bedge(ifacont,3);
@@ -58,7 +65,7 @@ for ifacont = 1:bedgesize
         %------------------------------------------------------------------
         % ambos os nos pertenecem ao contorno de Dirichlet
         if nflagno(bedge(ifacont,2),1)<200 && nflagno(bedge(ifacont,1),1)<200
-            %montagem da matriz global 
+            %montagem da matriz global
             M(lef,lef)=M(lef,lef)-visonface*A*(norm(v0)^2);
             % termo de fonte
             I(lef)=I(lef)-visonface*A*(dot(v2,-v0)*c1+dot(v1,v0)*c2)+visonface*(c2-c1)*Kt(ifacont)+visonface*m;
@@ -79,14 +86,14 @@ for ifacont = 1:bedgesize
         end
         %------------------------------------------------------------------
         %Preenchimento
-%         
-%         M(bedge(ifacont,3),bedge(ifacont,3)) = M(bedge(ifacont,3),...
-%             bedge(ifacont,3)) - visonface*A*(norm(v0)^2);
-%         
-%         %!!!!!!!!!!!!!!!!!!!!Vericar no monofásico o sinal
-%         I(bedge(ifacont,3)) = I(bedge(ifacont,3)) - ...
-%             visonface*(dot(v2,-v0)*c1 + dot(v1,v0)*c2)*A + ...
-%             visonface*(c2 - c1)*Kt(ifacont);
+        %
+        %         M(bedge(ifacont,3),bedge(ifacont,3)) = M(bedge(ifacont,3),...
+        %             bedge(ifacont,3)) - visonface*A*(norm(v0)^2);
+        %
+        %         %!!!!!!!!!!!!!!!!!!!!Vericar no monofásico o sinal
+        %         I(bedge(ifacont,3)) = I(bedge(ifacont,3)) - ...
+        %             visonface*(dot(v2,-v0)*c1 + dot(v1,v0)*c2)*A + ...
+        %             visonface*(c2 - c1)*Kt(ifacont);
         
         %Neumann boundary
     else
@@ -99,14 +106,22 @@ end  %End of FOR
 
 % contribuição nas faces internas
 for iface = 1:inedgesize
-    if numcase == 246 || numcase == 245 || numcase==247 ||...
-            numcase==248 || numcase==249 || numcase==251
-        % vicosity on the boundary edge
-        visonface = viscosity(bedgesize + iface,:);
-        %It is a Two-phase flow
+    if 200<numcase && numcase<300
+        % equacao de concentracao
+        if numcase == 246 || numcase == 245 || numcase==247 ||...
+                numcase==248 || numcase==249 || numcase==251
+            % vicosity on the boundary edge
+            visonface = viscosity(bedgesize + iface,:);
+            %It is a Two-phase flow
+        else
+            visonface = 1;
+        end  %End of IF
+    elseif numcase<200
+        % equacao de saturacao "viscosity=mobility"
+        visonface=sum(viscosity(bedgesize + iface,:));
     else
-        visonface = 1;
-    end  %End of IF
+        visonface=1;
+    end
     
     % pressão prescrita no elemento do poço injetor
     %Contabiliza as contribuições do fluxo numa aresta para os elementos %
@@ -180,24 +195,26 @@ for iface = 1:inedgesize
                 esurn1(post_cont)) + visonface*Kde(iface)*Ded(iface)*w(post_cont);
         end
     end
-    % termo gravitacional
+    % contribuicao do termo gravitacional
     if strcmp(keygravity,'y')
-        
         m=gravrate(bedgesize + iface,1);
-        I(lef)=I(lef)+m;
-        I(rel)=I(rel)-m;
+        I(lef)=I(lef)+visonface*m;
+        I(rel)=I(rel)-visonface*m;
     else
         m=0;
-        
-        I(lef)=I(lef)+m;
-        I(rel)=I(rel)-m;
+        I(lef)=I(lef)+visonface*m;
+        I(rel)=I(rel)-visonface*m;
     end
 end  %End of FOR ("inedge")
+%==========================================================================
+% para calcular a carga hidraulica
 if numcase>300
+   % Euler backward
     if strcmp(methodhydro,'backward')
         M=M+coeficiente*eye(size(elem,1));
         I=I+coeficiente*eye(size(elem,1))*h;
     else
+        % Crank-Nicolson
         I=I+coeficiente*eye(size(elem,1))*h-0.5*M*h;
         
         M=0.5*M+coeficiente*eye(size(elem,1));

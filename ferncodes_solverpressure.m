@@ -17,6 +17,8 @@ function [p,flowrate,flowresult,flowratedif] = ferncodes_solverpressure(viscosit
     wells,Hesq,Kde,Kn,Kt,Ded,nflag,weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,...
     wc,sc,SS,dt,h,MM,gravrate)
 
+
+
 % Montagem da matriz global
 [M,I] = ferncodes_globalmatrix(weight,s,Kde,Ded,Kn,Kt,Hesq,viscosity,nflag,...
     SS,dt,h,MM,gravrate);
