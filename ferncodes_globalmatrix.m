@@ -1,10 +1,10 @@
 %It is called by "ferncodes_solvepressure.m"
 
 function [M,I] = ferncodes_globalmatrix(w,s,Kde,Ded,Kn,Kt,Hesq,viscosity,...
-    nflag,SS,dt,h,MM)
+    nflag,SS,dt,h,MM,gravrate)
 %Define global variables:
 global coord elem esurn1 esurn2 bedge inedge centelem bcflag ...
-       numcase methodhydro;
+    numcase methodhydro keygravity;
 
 %-----------------------inicio da rOtina ----------------------------------%
 %Constrói a matriz global.
@@ -44,20 +44,49 @@ for ifacont = 1:bedgesize
     
     %Dirichlet Boundary
     if bedge(ifacont,5) < 200
+        % valor da pressao no contorno
         c1 = nflag(bedge(ifacont,1),2);
         c2 = nflag(bedge(ifacont,2),2);
         
         A = -Kn(ifacont)/(Hesq(ifacont)*norm(v0));
-        
+        % contribuicao do termo gravitacional
+        if strcmp(keygravity,'y')
+            m=gravrate(ifacont);
+        else
+            m=0;
+        end
+        %------------------------------------------------------------------
+        % ambos os nos pertenecem ao contorno de Dirichlet
+        if nflagno(bedge(ifacont,2),1)<200 && nflagno(bedge(ifacont,1),1)<200
+            %montagem da matriz global 
+            M(lef,lef)=M(lef,lef)-visonface*A*(norm(v0)^2);
+            % termo de fonte
+            I(lef)=I(lef)-visonface*A*(dot(v2,-v0)*c1+dot(v1,v0)*c2)+visonface*(c2-c1)*Kt(ifacont)+visonface*m;
+        else
+            % quando um dos nos da quina da malha computacional
+            % pertence ao contorno de Neumann
+            if nflagno(bedge(ifacont,1),1)>200
+                %montagem da matriz global
+                M(lef,lef)=M(lef,lef)-visonface*A*(norm(v0)^2)+visonface*Kt(ifacont)+visonface*A*dot(v2,-v0);
+                % termo de fonte
+                I(lef)=I(lef)-visonface*A*(dot(v1,v0)*c2)+visonface*(c2)*Kt(ifacont)+visonface*m;
+            elseif nflagno(bedge(ifacont,2),1)>200
+                %montagem da matriz global
+                M(lef,lef)=M(lef,lef)-visonface*A*(norm(v0)^2)-visonface*Kt(ifacont)+visonface*A*dot(v1,v0);
+                % termo de fonte
+                I(lef)=I(lef)-visonface*A*(dot(v2,-v0)*c1)+visonface*(-c1)*Kt(ifacont)+visonface*m;
+            end
+        end
+        %------------------------------------------------------------------
         %Preenchimento
-        
-        M(bedge(ifacont,3),bedge(ifacont,3)) = M(bedge(ifacont,3),...
-            bedge(ifacont,3)) - visonface*A*(norm(v0)^2);
-        
-        %!!!!!!!!!!!!!!!!!!!!Vericar no monofásico o sinal
-        I(bedge(ifacont,3)) = I(bedge(ifacont,3)) - ...
-            visonface*(dot(v2,-v0)*c1 + dot(v1,v0)*c2)*A + ...
-            visonface*(c2 - c1)*Kt(ifacont);
+%         
+%         M(bedge(ifacont,3),bedge(ifacont,3)) = M(bedge(ifacont,3),...
+%             bedge(ifacont,3)) - visonface*A*(norm(v0)^2);
+%         
+%         %!!!!!!!!!!!!!!!!!!!!Vericar no monofásico o sinal
+%         I(bedge(ifacont,3)) = I(bedge(ifacont,3)) - ...
+%             visonface*(dot(v2,-v0)*c1 + dot(v1,v0)*c2)*A + ...
+%             visonface*(c2 - c1)*Kt(ifacont);
         
         %Neumann boundary
     else
@@ -151,22 +180,32 @@ for iface = 1:inedgesize
                 esurn1(post_cont)) + visonface*Kde(iface)*Ded(iface)*w(post_cont);
         end
     end
-    
+    % termo gravitacional
+    if strcmp(keygravity,'y')
+        
+        m=gravrate(bedgesize + iface,1);
+        I(lef)=I(lef)+m;
+        I(rel)=I(rel)-m;
+    else
+        m=0;
+        
+        I(lef)=I(lef)+m;
+        I(rel)=I(rel)-m;
+    end
 end  %End of FOR ("inedge")
 if numcase>300
     if strcmp(methodhydro,'backward')
         M=M+coeficiente*eye(size(elem,1));
         I=I+coeficiente*eye(size(elem,1))*h;
     else
-        I=I+coeficiente*eye(size(elem,1))*h-0.5*M*h; 
+        I=I+coeficiente*eye(size(elem,1))*h-0.5*M*h;
         
         M=0.5*M+coeficiente*eye(size(elem,1));
         
     end
-    
 end
 
-
+end
 
 
 

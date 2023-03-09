@@ -1,5 +1,6 @@
 function [p,flowrate,flowresult,flowratedif]=ferncodes_iterpicard(M_old,RHS_old,...
-    parameter,w,s,p_old,nflagno,wells,mobility,Con,nflagc,wightc,sc,dparameter)
+    parameter,w,s,p_old,nflagno,wells,viscosity,Con,nflagc,wightc,sc,...
+    dparameter,contnorm,SS,dt,h,MM,gravrate)
 global nltol maxiter
 %% calculo do residuo Inicial
 R0=norm(M_old*p_old-RHS_old);
@@ -21,9 +22,12 @@ while (nltol<er || nltol==er) && (step<maxiter)
     %% plotagem no visit
     %S=ones(size(p_new,1),1);
     %ferncodes_postprocessor(p_new,S,step)
-    [pinterp_new,]=ferncodes_pressureinterpNLFVPP(p_new,nflagno,w,s,Con,nflagc,wightc,sc);
+    [pinterp_new,]=ferncodes_pressureinterpNLFVPP(p_new,nflagno,w,s,Con,...
+        nflagc,wightc,sc);
     %% Calculo da matriz global
-    [M,I]=ferncodes_assemblematrixNLFVPP(pinterp_new,parameter,mobility);
+    
+    [M,I]=ferncodes_assemblematrixNLFVPP(pinterp_new,parameter,viscosity,...
+        contnorm,SS,dt,h,MM,gravrate);
     %--------------------------------------------------------------------------
     %Add a source therm to independent vector "mvector"
     
@@ -57,7 +61,8 @@ fprintf('\n Residual error, error = %d \n',er)
 disp('>> The Pressure field was calculated with success!');
 [pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(p,nflagno,w,s,Con,nflagc,wightc,sc);
 %Get the flow rate (Diamond)
-[flowrate,flowresult,flowratedif]=ferncodes_flowrateNLFVPP(p, pinterp, parameter,mobility,Con,nflagc,wightc,sc,dparameter,cinterp);
+[flowrate,flowresult,flowratedif]=ferncodes_flowrateNLFVPP(p, pinterp,...
+    parameter,mobility,Con,nflagc,wightc,sc,dparameter,cinterp,gravrate);
 
 %Message to user:
 disp('>> The Flow Rate field was calculated with success!');

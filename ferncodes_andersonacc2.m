@@ -1,6 +1,6 @@
 function [x,erro,iter] = ferncodes_andersonacc2(x,auxtol,parameter,w,s,nflag,...
     weightDMP,wells,mobility,R0,contnorm,Con,wightc,sc,...
-    weightDMPc,nflagfacec,dparameter,SS,dt,h,MM)
+    weightDMPc,nflagfacec,dparameter,SS,dt,h,MM,gravrate)
 global pmethod nltol
 % This performs fixed-point iteration with or without Anderson
 % acceleration for a given fixed-point map g and initial
@@ -82,7 +82,7 @@ mAA = 0; % é o "m_{k}" no artigo
 %% Interpolação das pressões na arestas (faces)
 if strcmp(pmethod,'nlfvpp')
     [pinterp_new,]=ferncodes_pressureinterpNLFVPP(x,nflag,w,s,Con,nflagc,wightc,sc);
-    [M,I]=ferncodes_assemblematrixNLFVPP(pinterp_new,parameter,mobility,contnorm,SS,dt,h,MM);
+    [M,I]=ferncodes_assemblematrixNLFVPP(pinterp_new,parameter,mobility,contnorm,SS,dt,h,MM,gravrate);
     %Often it may change the global matrix "M"
     [M_new,RHS_new] = addsource(sparse(M),I,wells);
     
@@ -250,7 +250,7 @@ for iter = 0:itmax
     %% Interpolação das pressões na arestas (faces)
     if strcmp(pmethod,'nlfvpp')
         [pinterp_new,]=ferncodes_pressureinterpNLFVPP(x,nflag,w,s,Con,nflagc,wightc,sc);
-        [M,I]=ferncodes_assemblematrixNLFVPP(pinterp_new,parameter,mobility,contnorm,SS,dt,h,MM);
+        [M,I]=ferncodes_assemblematrixNLFVPP(pinterp_new,parameter,mobility,contnorm,SS,dt,h,MM,gravrate);
         %Often it may change the global matrix "M"
         [M_new,RHS_new] = addsource(sparse(M),I,wells);
         

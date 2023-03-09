@@ -1,5 +1,6 @@
-function [flowrate,flowresult,flowratec,flowresultc]=ferncodes_flowrateNLFVPP(p, pinterp, parameter,viscosity,Con,nflagc,wightc,sc,dparameter,cinterp)
-global inedge coord bedge bcflag centelem numcase bcflagc
+function [flowrate,flowresult,flowratec,flowresultc]=ferncodes_flowrateNLFVPP(p, ...
+    pinterp, parameter,viscosity,Con,nflagc,wightc,sc,dparameter,cinterp,gravrate)
+global inedge coord bedge bcflag centelem numcase bcflagc keygravity
 
 %Initialize "bedgesize" and "inedgesize"
 bedgesize = size(bedge,1);
@@ -34,23 +35,31 @@ for ifacont=1:bedgesize
         %problemas monofásico
         flowrate(ifacont,1)= -normcont*bcflag(r,2);% problema de buckley leverett Bastian
     else
-        
+        % contribuicao do termo gravitacional
+        if strcmp(keygravity,'y')        
+                m=gravrate(ifacont);
+            else
+                m=0; 
+        end
         flowrate(ifacont,1)=visonface*normcont*(parameter(1,1,ifacont)*(p(lef)-pinterp(parameter(1,3,ifacont)))+...
-            parameter(1,2,ifacont)*(p(lef)-pinterp(parameter(1,4,ifacont))));
+            parameter(1,2,ifacont)*(p(lef)-pinterp(parameter(1,4,ifacont))))-visonface*m;
     end
     %Attribute the flow rate to "flowresult"
     %On the left:
+    
+            
     flowresult(lef) = flowresult(lef) + flowrate(ifacont);
     %% ================================================================
     if 200<numcase && numcase<300
         if bedge(ifacont,7)>200
+            % condicao de contorno de Neumann
             x=bcflagc(:,1)==bedge(ifacont,7);
             r=find(x==1);
             %flowrate(ifacont,1)= normcont*bcflag(r,2);% testes feitos em todos os
             %problemas monofásico
             flowratec(ifacont,1)= -normcont*bcflagc(r,2);% problema de buckley leverett Bastian
         else
-            
+            % condicao de contorno de Dirichlet
             flowratec(ifacont,1)=normcont*(dparameter(1,1,ifacont)*(Con(lef)-cinterp(dparameter(1,3,ifacont)))+...
                 dparameter(1,2,ifacont)*(Con(lef)-cinterp(dparameter(1,4,ifacont))));
         end
@@ -96,8 +105,16 @@ for iface=1:inedgesize
     %% calculo da contribuição, Eq. 2.12 (resp. Eq. 21) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
     ALL=norma*mulef*(parameter(1,1,ifactual)+parameter(1,2,ifactual));
     ALR=norma*murel*(parameter(2,1,ifactual)+parameter(2,2,ifactual));
-    
-    flowrate(iface+size(bedge,1),1)=visonface*(ALL*p(lef)-ALR*p(rel));
+     
+        % contribuicao do termo gravitacional
+        if strcmp(keygravity,'y')
+            
+            m=gravrate(iface+size(bedge,1));
+        else
+            m=0;
+            
+        end
+    flowrate(iface+size(bedge,1),1)=visonface*(ALL*p(lef)-ALR*p(rel))-visonface*m;
     
     %Attribute the flow rate to "flowresult"
     %On the left:
@@ -127,7 +144,7 @@ for iface=1:inedgesize
         % calculo da contribuição, Eq. 2.12 (resp. Eq. 21) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
         ALLc=norma*mulef*(dparameter(1,1,ifactual)+dparameter(1,2,ifactual));
         ALRc=norma*murel*(dparameter(2,1,ifactual)+dparameter(2,2,ifactual));
-        
+       
         flowratec(iface+size(bedge,1),1)=(ALLc*Con(lef)-ALRc*Con(rel));
         
         %Attribute the flow rate to "flowresult"

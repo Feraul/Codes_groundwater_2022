@@ -14,10 +14,12 @@
 
 %Modified: Fernando Contreras, 2021
 function [p,flowrate,flowresult,flowratedif] = ferncodes_solverpressure(viscosity,...
-    wells,Hesq,Kde,Kn,Kt,Ded,nflag,weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wc,sc,SS,dt,h,MM)
+    wells,Hesq,Kde,Kn,Kt,Ded,nflag,weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,...
+    wc,sc,SS,dt,h,MM,gravrate)
 
 % Montagem da matriz global
-[M,I] = ferncodes_globalmatrix(weight,s,Kde,Ded,Kn,Kt,Hesq,viscosity,nflag,SS,dt,h,MM);
+[M,I] = ferncodes_globalmatrix(weight,s,Kde,Ded,Kn,Kt,Hesq,viscosity,nflag,...
+    SS,dt,h,MM,gravrate);
 %--------------------------------------------------------------------------
 %Add a source therm to independent vector "mvector" 
 
@@ -36,7 +38,7 @@ disp('>> The Pressure field was calculated with success!');
 %Get the flow rate (Diamond)
 [pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(p,nflag,weight,s,Con,nflagc,wc,sc);
 [flowrate,flowresult,flowratedif] = ferncodes_flowrate(p,pinterp,cinterp,Kde,...
-    Ded,Kn,Kt,Hesq,viscosity,nflag,Con,Kdec,Knc,Ktc,Dedc,nflagc);
+    Ded,Kn,Kt,Hesq,viscosity,nflag,Con,Kdec,Knc,Ktc,Dedc,nflagc,gravrate);
 
 
 %Message to user:

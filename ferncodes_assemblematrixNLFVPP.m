@@ -1,5 +1,6 @@
-function [M,I]=ferncodes_assemblematrixNLFVPP(pinterp,parameter,viscosity,contnorm,SS,dt,h,MM)
-global inedge coord bedge bcflag elem numcase
+function [M,I]=ferncodes_assemblematrixNLFVPP(pinterp,parameter,viscosity,...
+    contnorm,SS,dt,h,MM,gravrate)
+global inedge coord bedge bcflag elem numcase keygravity
 %-----------------------inicio da rOtina ----------------------------------%
 %Constrói a matriz global.
 
@@ -34,6 +35,12 @@ for ifacont=1:bedgesize
         I(lef)=I(lef)+ normcont*bcflag(r,2); % problema de buckley leverett Bastian
     else
         %% calculo da contribuição do contorno, veja Eq. 2.17 (resp. eq. 24) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
+        % contribuicao do termo gravitacional
+        if strcmp(keygravity,'y')
+            m=gravrate(ifacont);
+        else
+            m=0;
+        end
         
         alef= visonface*normcont*(parameter(1,1,ifacont)*pinterp(parameter(1,3,ifacont))+...
             parameter(1,2,ifacont)*pinterp(parameter(1,4,ifacont)));
@@ -42,10 +49,10 @@ for ifacont=1:bedgesize
         
         %% implementação da matriz global no contorno
         M(lef,lef)=M(lef,lef)+ Alef;
-        I(lef,1)=I(lef,1)+alef;
+        I(lef,1)=I(lef,1)+alef+ visonface*m;
     end
     if 200<numcase && numcase<300
-       I(lef,1)=I(lef,1)+coeficiente*h(lef); 
+        I(lef,1)=I(lef,1)+coeficiente*h(lef);
     end
 end
 
@@ -60,7 +67,7 @@ for iface=1:inedgesize
     else
         visonface = 1;
     end  %End of IF
-        
+    
     lef=inedge(iface,3);
     rel=inedge(iface,4);
     %Determinação dos centróides dos elementos à direita e à esquerda.%
@@ -81,13 +88,13 @@ for iface=1:inedgesize
     arel= parameter(2,1,ifactual)*pinterp(parameter(2,3,ifactual))+...
         parameter(2,2,ifactual)*pinterp(parameter(2,4,ifactual));
     
-     mulef=(abs(arel)+1e-16)/(abs(alef)+abs(arel)+2*1e-16);
-     
-     murel=(abs(alef)+1e-16)/(abs(alef)+abs(arel)+2*1e-16);
-%      mulef=(abs(arel)+contnorm^2)/(abs(alef)+abs(arel)+2*contnorm^2);
-     
-%      murel=(abs(alef)+contnorm^2)/(abs(alef)+abs(arel)+2*contnorm^2);
-
+    mulef=(abs(arel)+1e-16)/(abs(alef)+abs(arel)+2*1e-16);
+    
+    murel=(abs(alef)+1e-16)/(abs(alef)+abs(arel)+2*1e-16);
+    %      mulef=(abs(arel)+contnorm^2)/(abs(alef)+abs(arel)+2*contnorm^2);
+    
+    %      murel=(abs(alef)+contnorm^2)/(abs(alef)+abs(arel)+2*contnorm^2);
+    
     % calculo da contribuição, Eq. 2.12 (resp. Eq. 21) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
     ALL=norma*mulef*(parameter(1,1,ifactual)+parameter(1,2,ifactual));
     
@@ -101,8 +108,19 @@ for iface=1:inedgesize
     M(rel,lef)=M(rel,lef)- visonface*ALL;
     
     if 200<numcase && numcase<300
-     M(lef,lef)=M(lef,lef)+ coeficiente;   
-     M(rel,rel)=M(rel,rel)+ coeficiente;   
+        M(lef,lef)=M(lef,lef)+ coeficiente;
+        M(rel,rel)=M(rel,rel)+ coeficiente;
+    end
+    % contribuicao do termo gravitacional
+    if strcmp(keygravity,'y')
+        
+        m=gravrate(ifactual);
+        I(lef)=I(lef)+visonface*m;
+        I(rel)=I(rel)-visonface*m;
+    else
+        m=0;
+        I(lef)=I(lef)+visonface*m;
+        I(rel)=I(rel)-visonface*m;
     end
 end
 end

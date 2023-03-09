@@ -88,15 +88,9 @@ if strcmp(pmethod,'mpfad')|| strcmp(pmethod,'nlfvpp')|| strcmp(pmethod,'mpfaql')
 end
 
 if strcmp(keygravity,'y')
-    [vec_gravelem,vec_gravface,vec_gravpoint,gravelem,gravpoint,...
-        gravface]=PLUG_Gfunction;
-    if phasekey==1
-        [gravresult,gravrate]=gravitation(kmap,gravelem,gravface);
-    elseif phasekey==2
-        [gravrate]=gravitationff(kmap,gravelem);
-    else
-        [gravrate]=gravitationf(kmap,gravelem);
-    end
+    [vec_gravelem,vec_gravface,]=PLUG_Gfunction;
+    
+   [gravrate,gravresult]=gravitation(kmap,vec_gravelem,vec_gravface);
 end
 %--------------------------------------------------------------------------
 %Calculate the TRANSMISSIBILITY parameters:
