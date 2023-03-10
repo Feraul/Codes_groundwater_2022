@@ -144,8 +144,7 @@ for i = 1:length(pointinedg)
     
     %There is gravity
     if size(Fg,2) > 1
-        dotvg = dot(Fg(leftelem,:),normals(bedgesize + inedg,1:2))*...
-            (dens(1) - dens(2))/lenginjface;
+        dotvg = Fg(bedgesize + inedg,1)*(dens(1) - dens(2))/lenginjface;
         %There is NO gravity
     else
         dotvg = 0;

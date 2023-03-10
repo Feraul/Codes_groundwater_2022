@@ -217,7 +217,8 @@ while (dmp ~= 0 || convwell == 0)
     if strcmp(smethod,'stdr')
         %Chose the numerical flux according benchmark number
         %Petroleum application (IMPES procedure)
-        if numcase < 100 || numcase >200
+        if 200<numcase && numcase<300
+             % calculate the numerical flux for concentration field
             %Initialize "earlysw"
             earlysw = zeros(bedgesize + inedgesize,1);
             
@@ -244,7 +245,7 @@ while (dmp ~= 0 || convwell == 0)
             end  %End of IF
             
         %Solve only the hyperb. equation (teste for higher order accuracy)
-        else
+        elseif 500<numcase 
             %Call a Standard strategy to calculate the Numerical Flux
             advecterm = hyperb_numflux(Sw,flowrate,taylorterms,limiterflag,...
                 flagknownvert,satonvertices,satonboundedges,pointbndedg,...
@@ -252,6 +253,35 @@ while (dmp ~= 0 || convwell == 0)
                 mlplimiter);
             %Set "earlysw" null
             earlysw = 0;
+        else
+            
+            % calculate the numerical flux for saturation field
+            %Initialize "earlysw"
+            earlysw = zeros(bedgesize + inedgesize,1);
+            
+            %#########################
+            if setvar == 1
+                %Call a Standard strategy to calculate the Numerical Flux
+                %Call a Standard strategy to calculate the Numerical Flux
+                [advecterm,entrineqterm,earlysw,Sleft,Sright] = ...
+                    calcnumfluxtwophaseflow(Sw,Fg,flowrateadvec,flowratedif,...
+                    taylorterms,limiterflag,flagknownvert,satonvertices,...
+                    flagknownedge,satonboundedges,pointbndedg,pointinedg,...
+                    orderbedgdist,orderinedgdist,constraint,mlplimiter,...
+                    earlysw,countinter); 
+
+                
+            else
+                [advecterm,entrineqterm,earlysw] = calcnumflux_fw(Sw,fw,Fg,...
+                    flowrate,taylorterms,taylorterms_fw,limiterflag,...
+                    flagknownvert,satonvertices,fwonvertices,flagknownedge,...
+                    satonboundedges,fwonboundedges,pointbndedg,pointinedg,...
+                    orderbedgdist,orderinedgdist,constraint,mlplimiter,...
+                    earlysw,countinter);
+                
+                
+            end  %End of IF
+            
             
         end  %End of IF
     
@@ -459,17 +489,35 @@ while (dmp ~= 0 || convwell == 0)
                 (any(satinbound) == 0 && any(ielem == producelem) == 0 && ...
                 any(ielem == injecelem) == 0))
             %Calculate new saturation field
-            if numcase==248
-                x=centelem(i,1);
-                y=centelem(i,2);
-                
-                % termo de fonte (0.01*(pi^2)/8)*sin(0.25*pi*(x+y+2*time)) 
-                % tem dimensao s^{-1}, pag.32 EL HOUSSINE QUENJEL
-               
-                Swaux(i) = Sw(ielem) - (dt*advecterm(ielem)/(elemarea(ielem)*pormap))+dt*(0.01*(pi^2)/8)*sin(0.25*pi*(x+y+2*time));
-                %Swaux(i) = Sw(ielem) - (dt*advecterm(ielem)/(elemarea(ielem)*pormap))+dt*(2*0.01*(pi^2))*sin(pi*(x+y-2*time));
+            if numcase<200
+                %Calculate new saturation field
+                Swaux(i) = Sw(ielem) - ...
+                    (dt*advecterm(ielem)/(elemarea(ielem)*pormap));
+                % problema senoidal, teste de convergencia.
+                if numcase~=103 && numcase~=107 && numcase~=108
+                    
+                    if Swaux(i)-1>1e-5
+                        Swaux(i)=1;
+                    end
+                    
+                    if Swaux(i)<-1e-5
+                        Swaux(i)=0;
+                    end
+                end
             else
-                Swaux(i) = Sw(ielem) - (dt*advecterm(ielem)/(elemarea(ielem)*pormap))-gamma*Sw(ielem)*dt;
+                % calculate new concentration field
+                if numcase==248
+                    x=centelem(i,1);
+                    y=centelem(i,2);
+                    
+                    % termo de fonte (0.01*(pi^2)/8)*sin(0.25*pi*(x+y+2*time))
+                    % tem dimensao s^{-1}, pag.32 EL HOUSSINE QUENJEL
+                    
+                    Swaux(i) = Sw(ielem) - (dt*advecterm(ielem)/(elemarea(ielem)*pormap))+dt*(0.01*(pi^2)/8)*sin(0.25*pi*(x+y+2*time));
+                    %Swaux(i) = Sw(ielem) - (dt*advecterm(ielem)/(elemarea(ielem)*pormap))+dt*(2*0.01*(pi^2))*sin(pi*(x+y-2*time));
+                else
+                    Swaux(i) = Sw(ielem) - (dt*advecterm(ielem)/(elemarea(ielem)*pormap))-gamma*Sw(ielem)*dt;
+                end
             end
         %The element evaluated belongs to producer well. The water ARRIVES
         %in the producer well

@@ -1,16 +1,10 @@
 function [gravrate,gravresult]=gravitation(kmap,gravelem,gravface)
-global inedge bedge elem centelem coord dens numcase
+global inedge bedge elem centelem coord 
 Klef=zeros(2,2);
 Krel=zeros(2,2);
 gravresult=zeros(size(elem,1),1);
 R=[0 1 ;-1 0 ];
-if 200<numcase && numcase <300
-    density=dens(1,1);
-elseif numcase<200
-    density=dens(1,1)-dens(2,1);
-else
-    density=1;
-end
+
 for ifacont=1:size(bedge,1)
     % elemento a esquerda 
     lef=bedge(ifacont,3);
@@ -25,9 +19,9 @@ for ifacont=1:size(bedge,1)
     
     Keq=Klef;
     if bedge(ifacont,5)>200
-        gravrate(ifacont,1)=density*dot((R*ve1')'*Keq,(gravface(ifacont,1:2)));
+        gravrate(ifacont,1)=dot((R*ve1')'*Keq,(gravface(ifacont,1:2)));
      else
-         gravrate(ifacont,1)=density*dot((R*ve1')'*Keq,(gravelem(lef,1:2)));
+         gravrate(ifacont,1)=dot((R*ve1')'*Keq,(gravelem(lef,1:2)));
      end
     gravresult(lef,1)=gravresult(lef,1)-gravrate(ifacont,1);
 
@@ -61,7 +55,7 @@ for iface=1:size(inedge,1)
          
          Keq=inv((dj1*inv(Klef)+dj2*inv(Krel))); % equation 21
          graveq=((dj1*gravelem(lef,:)+dj2*gravelem(rel,:))'); % equation 22
-         gravrate(iface+size(bedge,1),1)=density*dot(((R*vd1')')*Keq, graveq);% equation 20
+         gravrate(iface+size(bedge,1),1)=dot(((R*vd1')')*Keq, graveq);% equation 20
         
          gravresult(lef,1)=gravresult(lef,1)-gravrate(iface+size(bedge,1),1);
          gravresult(rel,1)=gravresult(rel,1)+gravrate(iface+size(bedge,1),1);

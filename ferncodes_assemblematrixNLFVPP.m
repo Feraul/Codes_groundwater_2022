@@ -1,6 +1,6 @@
 function [M,I]=ferncodes_assemblematrixNLFVPP(pinterp,parameter,viscosity,...
     contnorm,SS,dt,h,MM,gravrate)
-global inedge coord bedge bcflag elem numcase keygravity methodhydro
+global inedge coord bedge bcflag elem numcase keygravity methodhydro dens
 %-----------------------inicio da rOtina ----------------------------------%
 %Constrói a matriz global.
 
@@ -45,7 +45,14 @@ for ifacont=1:bedgesize
         %% calculo da contribuição do contorno, veja Eq. 2.17 (resp. eq. 24) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
         % contribuicao do termo gravitacional
         if strcmp(keygravity,'y')
-            m=gravrate(ifacont);
+            if numcase<200
+                % escoamento bifasico oleo-agua
+                averagedensity=(viscosity(ifacont,:)*dens')/visonface;
+                m=averagedensity*gravrate(ifacont);
+            else
+                % concentracao soluto-solvente
+                m=dens(1,1)*gravrate(ifacont)/visonface;
+            end
         else
             m=0;
         end
@@ -122,8 +129,15 @@ for iface=1:inedgesize
     
     % contribuicao do termo gravitacional
     if strcmp(keygravity,'y')
+         if numcase<200
+            % escoamento bifasico oleo-agua
+            averagedensity=(viscosity(bedgesize + iface,:)*dens')/visonface;
+            m=averagedensity*gravrate(bedgesize + iface,1);
+        else
+            % concentracao soluto-solvente
+            m=dens(1,1)*gravrate(bedgesize + iface,1)/visonface;
+        end
         
-        m=gravrate(ifactual);
         I(lef)=I(lef)+visonface*m;
         I(rel)=I(rel)-visonface*m;
     else
