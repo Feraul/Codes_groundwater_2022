@@ -263,7 +263,7 @@ mlp
 0.2
 
 //------------
-// MUSCL traditional
+// traditional MUSCL method 
 //do you wnat to turn the MUSCL? [y]==> "yes"; [n]==> "no"
 
 y
@@ -289,13 +289,13 @@ n
 1
 
 //------------
-// MUSCL post limit
+// MUSCL post limit method
 //do you wnat to turn the PL? [y]==> "yes"; [n]==> "no"
 
 n
 
 //------------
-//MOOD stratgey with MUSCL post limit
+//MOOD stratgey with MUSCL post limit method
 //do you wnat to turn the MOOD - PL? [y]==> "yes"; [n]==> "no"
 
 n
