@@ -63,8 +63,7 @@ if any(pointbndedg)
         
         %There is gravity
         if size(Fg,2) > 1
-            dotvg = dot(Fg(leftelem,:),normals(ibedg,1:2))*(dens(1) - ...
-                dens(2))/lenginjface;
+            dotvg = Fg(ibedg,1:2)*(dens(1) - dens(2))/lenginjface;
             %There is NO gravity
         else
             dotvg = 0;
@@ -181,8 +180,7 @@ for i = 1:length(pointinedg)
     
     %There is gravity
     if size(Fg,2) > 1
-        dotvg = dot(Fg(leftelem,:),normals(bedgesize + inedg,1:2))*...
-            (dens(1) - dens(2))/lenginjface;
+        dotvg = Fg(bedgesize + inedg,1)*(dens(1) - dens(2))/lenginjface;
         %There is NO gravity
     else
         dotvg = 0;
@@ -299,7 +297,8 @@ for i = 1:length(pointinedg)
     %Get the analitical derivative:
     
     [dfwdS,dgamadS] = calcdfunctiondS(0,0,Sranglr,1);
-    method='serna';
+    
+    method=limiterflag{14};
    
     [numflux, earlysw]=riemannsolvertwophaseflow(signder_left,signder_right,sign2der_left,...
     sign2der_right,Sright,Sleft,method,bedgesize, inedg,fw,dotvn,dotvg,...

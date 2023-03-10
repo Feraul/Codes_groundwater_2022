@@ -2033,9 +2033,14 @@ else
     UMUSCL = 'off';
 end  %End of IF
 
+%32. Reimann solver
+getdata = textscan(readfile,'%s',1,'CommentStyle',{'//'});
+%Attribute the data to "multdopt"
+reimsolver(1) = getdata{1};
+
 %Construct "limiterflag" according options above:
 limiterflag = {eblimkey char(eblimtype) cvblimkey char(cvblimtype) delta ...
-    MUSCL gckey kint mood moodtype PL MOODPL UMUSCL};
+    MUSCL gckey kint mood moodtype PL MOODPL UMUSCL reimsolver};
 
 %==========================================================================
 %--------------------------------------------------------------------------

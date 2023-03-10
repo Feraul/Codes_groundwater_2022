@@ -198,7 +198,7 @@ for i = 1:length(pointinedg)
     %Define the Rankine-Hugoniout velocity
     charvel_rh = dotvn;
     
-    method='upwind';
+    method=limiterflag{14};
     
     [numflux, Saproxima]=riemannsolver(Sright,Sleft,method,bedgesize, inedg,dotvn,dotvg,charvel_rh,dotdif);
     earlysw(bedgesize + inedg) = Saproxima;

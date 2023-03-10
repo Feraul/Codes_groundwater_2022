@@ -26,7 +26,7 @@ y
 //***OBS.: Even if you chose [n], write below both the path and 
 //folder's name where you want to store your results:
 
-C:\Users\flc59\Documents\Benchmark_Cases\BenchHydraulic302
+C:\Users\MPFAD\Documents\Benchmark_Cases\BenchHydraulic302
 
 //Write below either a number or any other key word to feature the 
 //folder where the results will be stored:
@@ -199,6 +199,7 @@ tse
 
 //-------------------------
 //Least Squares Parameters:
+
 //If you chose [tse], define the type of vicinity for the Least 
 //Squares reconstruction:
 //[1] ==> "Face Neighboring"; 
@@ -222,6 +223,7 @@ tse
 
 //-------------------
 //Edge-based Limiter:
+
 //Is there an Edge-based Limiter? [y] ==> "yes"; [n] ==> "no".
 
 n
@@ -246,6 +248,7 @@ va2
 
 //--------------------
 //Patch-based Limiter:
+
 //Is there a Patch-based Limiter? [y] ==> "yes"; [n] ==> "no"
 
 y
@@ -263,12 +266,14 @@ mlp
 
 //------------
 // MUSCL tradiconal
+
 //do you wnat to turn the MUSCL? [y]==> "yes"; [n]==> "no"
 
 y
 
 //-----------------
 //Greek Correction:
+
 //Do you want to turn the Greek Correction on? (Delis and Nikolos,
 //2012) [y] ==> "yes"; [n] ==> "no"
 
@@ -276,6 +281,7 @@ n
 
 //--------------
 //MOOD Strategy:
+
 //Do you want to turn the MOOD on? [y] ==> "yes"; [n] ==> "no".
 
 n
@@ -289,33 +295,36 @@ n
 
 //------------
 // MUSCL post limit
+
 //do you wnat to turn the PL? [y]==> "yes"; [n]==> "no"
 
 n
 
 //------------
 //MOOD stratgey with MUSCL post limit
+
 //do you wnat to turn the MOOD - PL? [y]==> "yes"; [n]==> "no"
 
 n
 
 //------------
 // LP-MUSCL strategy
+
 //do you wnat to turn the U-MUSCL? [y]==> "yes"; [n]==> "no"
 
 n
-
 //--------------------------------------------------------------------
-//Type of Reimann solver
-//Write below the type of Reimann solver: 
-//[srn] ==> "Serna Method"; 
-//[enfix] ==> "entropyfix method";
-//[llf] ==> "Local Lax Friedrich method"; 
-//[llfm] ==> "Modified Local Lax Friedrich method"; 
-//[upwd] ==> "upwind method"; 
-//[hll] ==> " Harten-Lax-van Leer method"; 
+//Type of Solver for the Eliptic Equation (Pressure Equation)
 
-srn
+//Write below the type of Solver for the Eliptic Equation: 
+//[srn] ==> "Serna; 
+//[enfix] ==> "entropyfix;
+//[llf] ==> "LLF; 
+//[llfm] ==> "LLFM; 
+//[upd] ==> "upwind; 
+//[nlfv] ==> "HLL; 
+
+mpfad
 
 //--------------------------------------------------------------------
 //------------------- Geometry and Mesh Properties -------------------
@@ -335,7 +344,7 @@ malha2_problema521_Chivata2016_Frontal_Delaunay.msh
 
 //If [n], write below the path where the geometry file is:  
 
-C:\Users\flc59\Documents\GitHub\Benchmark_GeometryFiles
+C:\Users\MPFAD\Documents\GitHub\Benchmark_GeometryFiles
 
 //Write below the name of the geometry file. Use the extension *.geo.
 
