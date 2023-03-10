@@ -121,9 +121,8 @@ switch phasekey
             isonbound,elemsize,bedgesize,inedgesize,parameter,...
             weightDMP,nflagface,p_old,contnorm,Kdec,Knc,Ktc,Dedc,wight,s,...
             Con,nflagc,wightc,sc,dparameter,SS,dt,h,MM,gravrate);
-    case 3 % contaminant simulation
-        
-       
+    case 3 % contaminant transport
+    
         
         %          if numcase==243 || numcase==245 || numcase==247
         %              elem(:,5)=1;
@@ -168,6 +167,10 @@ switch phasekey
             parameter,h_old,contnorm,SS,MM,weight,s,dt);
 
         %It Souves only the HYPERBOLIC Equation:
+    case 5
+        % unsatured flow
+        
+        
     otherwise
         %Get the initial condition for the hyperbolic equation
         [Sw,lastimelevel,lastimeval] = applyinicialcond;

@@ -46,8 +46,9 @@ teste
 //[0] ==> "Only Hyperbolic Equation"; 
 //[1] ==> "One Phase-Flow";
 //[2] ==> "Two Phase-Flow".
-//[3] ==> "Contaminants"
+//[3] ==> "Contaminant transport"
 //[4] ==> "Water-flow"
+//[5] ==> "Unsatured-flow"
 
 4
 
@@ -262,7 +263,7 @@ mlp
 0.2
 
 //------------
-// MUSCL tradiconal
+// MUSCL traditional
 //do you wnat to turn the MUSCL? [y]==> "yes"; [n]==> "no"
 
 y
