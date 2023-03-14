@@ -247,7 +247,7 @@ while stopcriteria < 100
     
     auxkmap=logical(numcase==247)*log(kmap(:,2))+logical(numcase~=247)*normk;
     
-    postprocessor(pressure,flowrateadvec,Con,contiterplot,overedgecoord,'i',1,auxkmap);
+    postprocessor(pressure,flowrateadvec,Con,0,contiterplot,overedgecoord,0,'i',1,auxkmap);
     
     flagtoplot = 0;
     %Update "contiterplot"

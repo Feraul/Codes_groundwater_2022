@@ -54,7 +54,7 @@ for iface=1:size(inedge,1)
          Krel(2,2)=kmap(elem(rel,5),5);
          
          Keq=inv((dj1*inv(Klef)+dj2*inv(Krel))); % equation 21
-         graveq=((dj1*gravelem(lef,:)+dj2*gravelem(rel,:))'); % equation 22
+         graveq=((dj1*gravelem(lef,1:2)+dj2*gravelem(rel,1:2))'); % equation 22
          gravrate(iface+size(bedge,1),1)=dot(((R*vd1')')*Keq, graveq);% equation 20
         
          gravresult(lef,1)=gravresult(lef,1)-gravrate(iface+size(bedge,1),1);

@@ -3,7 +3,7 @@ function [vec_gravelem,vec_gravface,vec_gravpoint,gravelem,gravpoint,gravface]=P
 global  numcase g elem centelem centface bedge inedge coord u0
 
 vec_gravelem=zeros(size(elem,1),3);
-vec_gravface=zeros(size(bedge,1)+size(inedge,1),1);
+vec_gravface=zeros(size(bedge,1)+size(inedge,1),3);
 vec_gravpoint=zeros(size(coord,1),1);
 gravelem=zeros(size(elem,1),1);
 gravpoint=zeros(size(coord,1),1);

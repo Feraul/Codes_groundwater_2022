@@ -20,7 +20,7 @@
 
 %--------------------------------------------------------------------------
 
-function [expo,fw,fo,gama,kro,nw,no,kwmax,komax] = twophasevar(Sw,...
+function [expo,fw,fo,gama,krw,kro,nw,no,kwmax,komax] = twophasevar(Sw,...
   overedgecoord,injecelem)
 %Define global parameters:
 global centelem satlimit visc numcase;
@@ -30,6 +30,7 @@ krw = zeros(length(Sw),1);
 kro = krw;
 fw = krw;
 fo = krw;
+expo=0;
 
 %"gama" is equal to "fw*kro/visc(2)"
 gama = krw;

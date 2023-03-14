@@ -328,8 +328,8 @@ switch interpmobility
         
         %Get the relative permeability for water and oil (It uses the sat. 
         %on the Cell-center)
-        [~,~,~,krw,kro,] = twophasevar(Sw,benchkey);
-        
+        [~,~,~,~,krw,kro,] = twophasevar(Sw,benchkey,injecelem);
+                
         %Fill "mobilityoncentroid"
         i = 1:length(Sw);
         %Attribute WATER mobility

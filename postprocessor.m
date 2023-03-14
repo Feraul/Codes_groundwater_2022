@@ -18,8 +18,9 @@
 %This FUNCTION  
 %--------------------------------------------------------------------------
 
-function postprocessor(pressure,flowrate,Concentration,...
-    step,overedgecoord,keywrite,invh,normk)
+function postprocessor(pressure,flowrate,watersaturation,oilsaturation,...
+    step,overedgecoord,orderintimestep,keywrite,invh,normk)
+
 %Define Global parameters:
 global coord elem filepath resfolder numcase;
 
@@ -152,13 +153,20 @@ fprintf(fid,'%26.16E \r\n',full(pressure));
 fprintf(fid,'\r\n');
 
 %If the case is a two-phase flow, the oil saturation field is produced
-if numcase > 30
+if 200<numcase && numcase<300
     %Write data related to WaterSATURATION
     fprintf(fid,'SCALARS Concentration float 1 \r\n');
     fprintf(fid,'LOOKUP_TABLE default \r\n\r\n');
-    fprintf(fid,'%26.16E \r\n',Concentration);
+    fprintf(fid,'%26.16E \r\n',watersaturation);
     %Jump a line
     fprintf(fid,'\r\n');
+else
+    %Write data related to WaterSATURATION
+    fprintf(fid,'SCALARS Saturation float 1 \r\n');
+    fprintf(fid,'LOOKUP_TABLE default \r\n\r\n');
+    fprintf(fid,'%26.16E \r\n',watersaturation);
+    %Jump a line
+    fprintf(fid,'\r\n'); 
 
 end  %End of IF (two-phase flow)
 

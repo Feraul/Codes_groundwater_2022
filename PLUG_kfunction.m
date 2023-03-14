@@ -611,6 +611,23 @@ switch numcase
                     u=0;
         end
         kmap=K;
+    case 36
+        for ii=1:size(centelem,1)
+                    yy=centelem(ii,2);
+                   if yy<0.25
+                       K(ii,1:5) = [ii 1 0 0 1]; 
+                   elseif 0.25<yy && yy<0.5
+                        K(ii,1:5) = [ii 2 0 0 2];
+                       
+                   elseif 0.5<yy && yy<0.75
+                        K(ii,1:5) = [ii 5 0 0 5];
+                   else
+                       K(ii,1:5) = [ii 10 0 0 10]; 
+                   end
+                   
+                    u=0;
+        end
+        kmap=K;
   
     case 241
        K(1,1:5) = [1 10 0 0 10]; % see Nilson's dissertation, when r=1

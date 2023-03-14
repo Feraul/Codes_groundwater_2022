@@ -213,12 +213,12 @@ for iface = 1:inedgesize
             % concentracao soluto-solvente
             m=dens(1,1)*gravrate(bedgesize + iface,1)/visonface;
         end
-        I(lef)=I(lef)+visonface*m;
-        I(rel)=I(rel)-visonface*m;
+        I(inedge(iface,3))=I(inedge(iface,3))+visonface*m;
+        I(inedge(iface,4))=I(inedge(iface,4))-visonface*m;
     else
         m=0;
-        I(lef)=I(lef)+visonface*m;
-        I(rel)=I(rel)-visonface*m;
+        I(inedge(iface,3))=I(inedge(iface,3))+visonface*m;
+        I(inedge(iface,4))=I(inedge(iface,4))-visonface*m;
     end
 end  %End of FOR ("inedge")
 %==========================================================================

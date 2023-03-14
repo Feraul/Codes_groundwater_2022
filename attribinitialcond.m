@@ -84,6 +84,22 @@ switch numcase
                 Sw(i) = 1;
             end  %End of IF
         end  %End of FOR
+    case 36
+        %Swept all elements:
+        for i = 1:elemsize
+            %Attribute the saturation according the position in "y"
+            %direction.
+            %Define "y":
+            ypos = centelem(i,2);
+            %Choose according "xpos"
+            if ypos <= 0.5
+                %Attribute oil saturation (95%)
+                Sw(i) = 0;
+            else
+                %Attribute water saturation
+                Sw(i) = 1;
+            end  %End of IF
+        end  %End of FOR
     case 106
         %Swept all elements:
         for i = 1:elemsize

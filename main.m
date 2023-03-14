@@ -96,6 +96,14 @@ elseif numcase>300
    % Choose Backward method or Crank-Nicolson
    methodhydro='backward';
    %methodhydro='cranknicolson';
+else
+  auxpar=0;
+    dmap=0;
+    Dmedio=0;
+    gamma=0;
+    velmedio=0;
+    wellsc=0;
+   SS=0; h_old=0; MM=0; dt=0;  
 end
 %adeSPE; % para um campo de permeabilidade da SPE active descomente.
 %--------------------------------------------------------------------------
