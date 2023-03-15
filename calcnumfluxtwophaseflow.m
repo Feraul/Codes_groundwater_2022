@@ -25,6 +25,8 @@ function [advecterm,entrineqterm,earlysw,vectorSleft,vectorSright] = calcnumflux
     taylorterms,limiterflag,flagknownvert,satonvertices,flagknownedge,...
     satonboundedges,pointbndedg,pointinedg,orderbedgdist,orderinedgdist,...
     constraint,mlplimiter,earlysw,countinter)
+
+                
 %Define global parameters:
 global coord elem bedge inedge normals dens numcase centelem ;
 
@@ -62,8 +64,8 @@ if any(pointbndedg)
         %Define velocity due gravity
         
         %There is gravity
-        if size(Fg,2) > 1
-            dotvg = Fg(ibedg,1:2)*(dens(1) - dens(2))/lenginjface;
+        if size(Fg,1) > 1
+            dotvg = Fg(ibedg,1)*(dens(1) - dens(2))/lenginjface;
             %There is NO gravity
         else
             dotvg = 0;
@@ -93,7 +95,8 @@ if any(pointbndedg)
             %Get the saturation value recovered
             [Sleftlim,Sleftnonlim] = getsatonedge(elemeval,vertices,verticescoord,...
                 taylorterms,Sw,limiterflag,faceorder,constraint,flagknownvert,...
-                satonvertices,mlpbyelem,centelem(leftelem,1:2),0);
+                satonvertices,mlpbyelem,centelem(leftelem,1:2));
+            
             if Sleftlim>1
                 %Sleftlim=Sw(leftelem);
                 Sleftlim=1;
@@ -179,7 +182,7 @@ for i = 1:length(pointinedg)
     %Calculate the velocity due to GRAVITY effect
     
     %There is gravity
-    if size(Fg,2) > 1
+    if size(Fg,1) > 1
         dotvg = Fg(bedgesize + inedg,1)*(dens(1) - dens(2))/lenginjface;
         %There is NO gravity
     else
@@ -191,11 +194,11 @@ for i = 1:length(pointinedg)
     %Get the statment regarding to mlp limiter:
     boolmlp = (length(mlplimiter) == 1);
     mlpbyelem = mlplimiter(boolmlp + (1 - boolmlp)*elemeval(1),:);
-    mlpbyelem2=mlplimiter(boolmlp + (1 - boolmlp)*elemeval(2),:);
+    %mlpbyelem2=mlplimiter(boolmlp + (1 - boolmlp)*elemeval(2),:);
     %Left Contribution:
      [Sleftlim,Sleftnonlim] = getsatonedge(elemeval,vertices,verticescoord,taylorterms,Sw,...
         limiterflag,faceorder,constraint,flagknownvert,satonvertices,...
-        mlpbyelem,centelem(elemeval,1:2),mlpbyelem2);
+        mlpbyelem,centelem(elemeval,1:2));
     
     %Right Contribution:
     %Define the order for this edge.
@@ -204,11 +207,11 @@ for i = 1:length(pointinedg)
     elemeval = [rightelem leftelem];
     %Get the statment regarding to mlp limiter:
     mlpbyelem = mlplimiter(boolmlp + (1 - boolmlp)*elemeval(1),:);
-    mlpbyelem2=mlplimiter(boolmlp + (1 - boolmlp)*elemeval(2),:);
+    %mlpbyelem2=mlplimiter(boolmlp + (1 - boolmlp)*elemeval(2),:);
     %Get the saturation value recovered on each quadrature point ("on_q")
     [Srightlim,Srightnonlim]= getsatonedge(elemeval,vertices,verticescoord,taylorterms,Sw,...
         limiterflag,faceorder,constraint,flagknownvert,satonvertices,...
-        mlpbyelem,centelem(elemeval,1:2),mlpbyelem2);
+        mlpbyelem,centelem(elemeval,1:2));
    if Sleftlim>1
         %Sleftlim=Sw(leftelem);
         Sleftlim=1;
@@ -243,7 +246,8 @@ for i = 1:length(pointinedg)
     vectorSright(i,1)=Sright;
     %Discrete:
     %"fw" has three values: fw(Sleft) is fw(1), fw(Sright) is fw(3)
-    [fw,~,gama,] = twophasevar([Sleft 0.5*(Sleft+Sright) Sright],numcase);
+    [~,fw,~,gama,] = twophasevar([Sleft 0.5*(Sleft+Sright) Sright],numcase);
+    
     % fw(1) ---> fluxo fracional no elemento fw(Sleft)
     % fw(2) ---> fluxo fracional no elemento fw(Smid)
     % fw(3) ---> fluxo fracional no elemento fw(Sright)
@@ -298,11 +302,11 @@ for i = 1:length(pointinedg)
     
     [dfwdS,dgamadS] = calcdfunctiondS(0,0,Sranglr,1);
     
-    method=limiterflag{14};
+    
    
     [numflux, earlysw]=riemannsolvertwophaseflow(signder_left,signder_right,sign2der_left,...
-    sign2der_right,Sright,Sleft,method,bedgesize, inedg,fw,dotvn,dotvg,...
-     gama,charvel_rh,dfwdS,dfwdS_rh,dgamadS,mLLF);
+    sign2der_right,Sright,Sleft,bedgesize, inedg,fw,dotvn,dotvg,...
+     gama,charvel_rh,dfwdS,dfwdS_rh,dgamadS,mLLF,limiterflag);
     
     %Obtain the contribution of interface over element to LEFT
     advecterm(leftelem) = advecterm(leftelem) + numflux;

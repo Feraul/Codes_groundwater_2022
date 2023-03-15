@@ -25,7 +25,7 @@
 
 %--------------------------------------------------------------------------
 
-function [newSw,cflowrate,earlysw,Sleft,Sright] = ...
+function [newSw,orderintimestep,waterflowrate,oilflowrate,earlysw,Sleft,Sright] = ...
     solveSaturation(Sw,flowrateadvec,flowratedif,dt,injecelem,producelem,satinbound,...
     Fg,flagknownvert,satonvertices,flagknownedge,satonedges,flowresult,...
     wvector,wmap,constraint,lsw,limiterflag,mobility,massweigmap,...
@@ -35,12 +35,15 @@ function [newSw,cflowrate,earlysw,Sleft,Sright] = ...
     isonbound,elemsize,bedgesize,inedgesize,gamma,time) 
 
 
+
 %Define global parameters:
 global timeorder ;
 
 %Initialize "waterflowrate" and "oilflowrate"
 
-cflowrate = 0;
+waterflowrate = 0;
+oilflowrate = 0;
+
 
 %According "rungekuttakey" the order of time approach changes.
 switch timeorder
@@ -193,12 +196,16 @@ if any(producelem)
         %Get a relative area
 %         relatarea = elemarea(producelem(iprod))/totalprodarea;
         %Catch the oil flow rate in producer well
-        cflowrate = cflowrate + newSw(producelem(iprod))*flowresult(producelem(iprod));
+        oilflowrate = oilflowrate + newSw(producelem(iprod))*flowresult(producelem(iprod));
+        %Catch the water flow rate in producer well
+        waterflowrate = waterflowrate + fw(iprod)*flowresult(producelem(iprod));
     end  %End of FOR (producer wells)
 end  %End of IF
 
 %It ensures that the flow rate is a positive quantity
 %For Oil:
-cflowrate = abs(cflowrate);
+oilflowrate = abs(oilflowrate);
+%For Water:
+waterflowrate = abs(waterflowrate);
 
 
