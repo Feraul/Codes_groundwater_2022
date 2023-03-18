@@ -36,7 +36,7 @@ function IMPES(Sw,injecelem,producelem,satinbound,wells,klb,satonvertices,...
                                   weightc,sc,dparameter,SS,dth,h,MM,gravrate)
 %Define global parameters:
 global timew elemarea totaltime timelevel pormap numcase pmethod smethod ...
-    filepath benchkey resfolder order;
+    filepath benchkey resfolder order inedge;
 
 %--------------------------------------------------------------------------
 %Initialize parameters:

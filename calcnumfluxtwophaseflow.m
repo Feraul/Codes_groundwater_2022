@@ -65,7 +65,8 @@ if any(pointbndedg)
         
         %There is gravity
         if size(Fg,1) > 1
-            dotvg = Fg(ibedg,1)*(dens(1) - dens(2))/lenginjface;
+            %dotvg = Fg(ibedg,1)*(dens(1) - dens(2))/lenginjface;
+             dotvg = Fg(ibedg,1)*(dens(1) - dens(2));
             %There is NO gravity
         else
             dotvg = 0;
@@ -130,7 +131,7 @@ if any(pointbndedg)
         earlysw(ibedg) = Sleft;
         
         %Calculate the fractional flow in boundary ("fwbound")
-        [fw,~,gama,] = twophasevar(Sleft,numcase);
+        [~,fw,~,gama,] = twophasevar(Sleft,numcase);
         
         %Define the normal velocity into face
         dotvn = flowrate(ibedg);
@@ -183,7 +184,8 @@ for i = 1:length(pointinedg)
     
     %There is gravity
     if size(Fg,1) > 1
-        dotvg = Fg(bedgesize + inedg,1)*(dens(1) - dens(2))/lenginjface;
+        %dotvg = Fg(bedgesize + inedg,1)*(dens(1) - dens(2))/lenginjface;
+        dotvg = Fg(bedgesize + inedg,1)*(dens(1) - dens(2));
         %There is NO gravity
     else
         dotvg = 0;
@@ -247,7 +249,7 @@ for i = 1:length(pointinedg)
     %Discrete:
     %"fw" has three values: fw(Sleft) is fw(1), fw(Sright) is fw(3)
     [~,fw,~,gama,] = twophasevar([Sleft 0.5*(Sleft+Sright) Sright],numcase);
-    
+   
     % fw(1) ---> fluxo fracional no elemento fw(Sleft)
     % fw(2) ---> fluxo fracional no elemento fw(Smid)
     % fw(3) ---> fluxo fracional no elemento fw(Sright)

@@ -581,7 +581,7 @@ y
 //(each one must be associated to its layer).
 
 1
-1    
+0.2    
 
 //If [n], each control volume will have a different value of porosity 
 //Get it from an external file. Write below both the path and name of 
@@ -599,7 +599,7 @@ y
 
 //If [y], write below the gravity vector (in the same row: gx gy gz):
 
-0 9.8 0
+0 10 0
 
 //Do you want turn CAPILARITY on in your Mathematic Model?
 //[y] ==> "yes"; [n] ==> "no".
@@ -657,7 +657,7 @@ n
 //The Courant number will be used as a stability parameter of the 
 //hyperbolic saturation equation. Write below the Courant number:
 
-0.6
+0.9
 
 //--------------------------------------------------------------------
 //Unity for Time (only for Two-Phase Simulation): 
@@ -676,7 +676,7 @@ s
 //state simulation (parameter of stop). Write below the amount of 
 //days or the PVI's value instead:
 
-20
+2000
 
 //--------------------------------------------------------------------
 //------------------------------- Wells ------------------------------

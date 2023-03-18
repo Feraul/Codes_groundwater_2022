@@ -215,10 +215,6 @@ for iface = 1:inedgesize
         end
         I(inedge(iface,3))=I(inedge(iface,3))+visonface*m;
         I(inedge(iface,4))=I(inedge(iface,4))-visonface*m;
-    else
-        m=0;
-        I(inedge(iface,3))=I(inedge(iface,3))+visonface*m;
-        I(inedge(iface,4))=I(inedge(iface,4))-visonface*m;
     end
 end  %End of FOR ("inedge")
 %==========================================================================
