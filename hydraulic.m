@@ -24,9 +24,9 @@
 %--------------------------------------------------------------------------
 
 function hydraulic(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
-               parameter,h_old,contnorm,SS,MM,weight,s,dt)
+               parameter,h_old,contnorm,SS,MM,weight,s,dt,gravrate)
 %Define global parameters:
-global timew  totaltime  pmethod filepath ;
+global timew  totaltime  pmethod filepath elem ;
 
 %--------------------------------------------------------------------------
 %Initialize parameters:
@@ -34,7 +34,7 @@ global timew  totaltime  pmethod filepath ;
 %"time" is a parameter which add "dt" in each looping (dimentional or adm.)
 time = 0;
 stopcriteria = 0;
-
+orderintimestep = ones(size(elem,1),1)*0;
 %Attribute to time limit ("finaltime") the value put in "Start.dat".
 finaltime = totaltime(2);
 timew = 0;
@@ -63,7 +63,7 @@ while stopcriteria < 100
     %Calculate "pressure", "flowrate" and "flowresult"
         [h_new,flowrate,] = ferncodes_solverpressure(...
             mobility,wells,Hesq,Kde,Kn,Kt,Ded,nflag,...
-            weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc,SS,dt,h,MM);
+            weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc,SS,dt,h,MM,gravrate);
     elseif strcmp(pmethod,'nlfvpp')
          [h_new,flowrate,]=...
             ferncodes_solverpressureNLFVPP(nflag,parameter,kmap,wells,...
@@ -78,7 +78,8 @@ while stopcriteria < 100
     stopcriteria = concluded;
     contiterplot=contiterplot+1
     h=h_new;
-    postprocessor(h,flowrate,Con,contiterplot,overedgecoord,'i',1,auxkmap);
+    postprocessor(h,flowrate,Con,1-Con,contiterplot,overedgecoord,orderintimestep,'i',1,auxkmap);
+     
 end
 
 toc

@@ -72,7 +72,7 @@ for ifacont = 1:bedgesize
         end
         %------------------------------------------------------------------
         % ambos os nos pertenecem ao contorno de Dirichlet
-        if nflagno(bedge(ifacont,2),1)<200 && nflagno(bedge(ifacont,1),1)<200
+        if nflag(bedge(ifacont,2),1)<200 && nflag(bedge(ifacont,1),1)<200
             %montagem da matriz global
             M(lef,lef)=M(lef,lef)-visonface*A*(norm(v0)^2);
             % termo de fonte
@@ -80,12 +80,12 @@ for ifacont = 1:bedgesize
         else
             % quando um dos nos da quina da malha computacional
             % pertence ao contorno de Neumann
-            if nflagno(bedge(ifacont,1),1)>200
+            if nflag(bedge(ifacont,1),1)>200
                 %montagem da matriz global
                 M(lef,lef)=M(lef,lef)-visonface*A*(norm(v0)^2)+visonface*Kt(ifacont)+visonface*A*dot(v2,-v0);
                 % termo de fonte
                 I(lef)=I(lef)-visonface*A*(dot(v1,v0)*c2)+visonface*(c2)*Kt(ifacont)+visonface*m;
-            elseif nflagno(bedge(ifacont,2),1)>200
+            elseif nflag(bedge(ifacont,2),1)>200
                 %montagem da matriz global
                 M(lef,lef)=M(lef,lef)-visonface*A*(norm(v0)^2)-visonface*Kt(ifacont)+visonface*A*dot(v1,v0);
                 % termo de fonte
