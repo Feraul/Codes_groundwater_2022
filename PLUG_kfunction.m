@@ -679,6 +679,25 @@ switch numcase
         kmap=K;
     case 248
         kmap=kmap;
+    case 330
+        % Permeability tensor for the case I, article 2023:
+        % A Local Grid-Refined Numerical Groundwater Model 
+        % Based on the Vertex-centred Finite-Volume Method 
+        kmap(1,1:5) = [1 33.33 0 0 33.33];
+        elem(:,5)=1;
+        
+    case 331
+        % Permeability tensor for the case II, article 2023:
+        % A Local Grid-Refined Numerical Groundwater Model 
+        % Based on the Vertex-centred Finite-Volume Method 
+        kmap(1,1:5) = [1 33.33 0 0 33.33];
+        elem(:,5)=1;
+     case 332
+         % Permeability tensor for the case III, article 2023:
+        % A Local Grid-Refined Numerical Groundwater Model 
+        % Based on the Vertex-centred Finite-Volume Method 
+        kmap(1,1:5) = [1 33.33 0 0 33.33];
+        elem(:,5)=1;
         %----------------------------------------------------------------------
         %Example 43: Two-Phase Flow case. Adapted from Nikitin et al., 2012
         %Case 1, four litologies  

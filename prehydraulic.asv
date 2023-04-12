@@ -1,7 +1,6 @@
 
 % Esta funcao determina os parametros iniciais como adequacao dos pocos
-% injetores e produtores, condicao inicial hydrologica alguns outros
-% parametro fisicos necessarios para rodar os problemas
+% injetores e produtores, e condicao inicial hydrologica
 function [SS,h_old,MM,wells,dt]=prehydraulic
 
 global numcase elem centelem

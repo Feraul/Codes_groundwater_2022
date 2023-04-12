@@ -57,7 +57,6 @@ global coord centelem elem esurn1 esurn2 nsurn1 nsurn2 bedge inedge ...
 % bedge(:,2)=x;
 
 % necesitamos ajeitar para o campo de pressao quando tem "restart"
-% this numcase is used to simulate concentration solute in aquifers
 if 200<numcase && numcase <300
     % Flags adequation for contamination and groundwater problem
     [bedge,bcflagc,wellsc,auxpar,velmedio,dmap,Dmedio,gamma]=...
@@ -85,9 +84,8 @@ if 200<numcase && numcase <300
         kmap=kmap;
         %adeSPE; % para um campo de permeabilidade da SPE active descomente.
     end
-    % This numcase is used to simulate head hydraulic in aquifers
+    % This numcase is used t
 elseif numcase>300
-    
     auxpar=0;
     dmap=0;
     Dmedio=0;
@@ -99,7 +97,6 @@ elseif numcase>300
    % Choose Backward method or Crank-Nicolson
    methodhydro='backward';
    %methodhydro='cranknicolson';
-   % This numcase is used for two-phase (water-oil) flow problems  
 else
     auxpar=0;
     dmap=0;

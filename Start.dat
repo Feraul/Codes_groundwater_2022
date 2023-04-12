@@ -523,7 +523,7 @@ viscositytable.dat
 //[y] ==> "yes" (each control volume has a permeability value); 
 //[n] ==> "no" (the permeability value is attributed to layer(s)).
 
-r
+n
 
 //If [r], the matlab generates a randomic distribution with the 
 //component values variating between the minimum and maximum values. 
