@@ -24,9 +24,10 @@
 %--------------------------------------------------------------------------
 
 function hydraulic(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
-               parameter,h_old,contnorm,SS,MM,weight,s,dt,gravrate)
+               parameter,h_old,contnorm,SS,MM,weight,s,dt,gravrate,...
+               nflagface,weightDMP)
 %Define global parameters:
-global timew  totaltime  pmethod filepath elem ;
+global timew  totaltime  pmethod filepath elem numcase ;
 
 %--------------------------------------------------------------------------
 %Initialize parameters:
@@ -52,6 +53,7 @@ contiterplot=0;
 auxkmap=0;
 mobility=1;
 Ktc=0;Dedc=0;wightc=0;sc=0;dparameter=0;
+kmap1=kmap;
 tic
 while stopcriteria < 100
     if strcmp(pmethod,'tpfa')
@@ -64,6 +66,17 @@ while stopcriteria < 100
         [h_new,flowrate,] = ferncodes_solverpressure(...
             mobility,wells,Hesq,Kde,Kn,Kt,Ded,nflag,...
             weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc,SS,dt,h,MM,gravrate);
+     elseif strcmp(pmethod,'mpfah')
+        if numcase==331 % case unconfined aquifer
+            % faces alrededor de um elemento
+            [facelement]=ferncodes_elementfacempfaH;
+            % calculate the harmonic points
+            [pointarmonic]=ferncodes_harmonicopoint(kmap1);
+            kmap(:,2:5)=kmap(:,2:5)*90;
+            [parameter,auxface]=ferncodes_coefficientmpfaH(facelement,pointarmonic,kmap);
+        end
+        [h_new,flowrate,]=ferncodes_solverpressureMPFAH(nflagface,...
+            parameter,weightDMP,wells,SS,dt,h,MM,gravrate,viscosity);
     elseif strcmp(pmethod,'nlfvpp')
          [h_new,flowrate,]=...
             ferncodes_solverpressureNLFVPP(nflag,parameter,kmap,wells,...

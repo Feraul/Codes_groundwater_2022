@@ -164,7 +164,8 @@ switch phasekey
     case 4 % hydrological head simulation
 
         hydraulic(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
-            parameter,h_old,contnorm,SS,MM,weight,s,dt,gravrate);
+            parameter,h_old,contnorm,SS,MM,weight,s,dt,gravrate,nflagface,...
+            weightDMP);
 
         %It Souves only the HYPERBOLIC Equation:
     case 5

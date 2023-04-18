@@ -1,7 +1,9 @@
-function [p,flowrate,flowresult]=ferncodes_solverpressureMPFAH(nflagface,parameter,weightDMP,wells)
+function [p,flowrate,flowresult]=ferncodes_solverpressureMPFAH(nflagface,...
+             parameter,weightDMP,wells,SS,dt,h,MM,gravrate,viscosity)
 
 
-[M,I]=ferncodes_assemblematrixMPFAH(parameter,nflagface,weightDMP);
+[M,I]=ferncodes_assemblematrixMPFAH(parameter,nflagface,weightDMP,SS,dt,h,...
+    MM,gravrate,viscosity);
 %--------------------------------------------------------------------------
 %Add a source therm to independent vector "mvector" 
 

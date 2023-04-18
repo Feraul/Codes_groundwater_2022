@@ -26,7 +26,7 @@ y
 //***OBS.: Even if you chose [n], write below both the path and 
 //folder's name where you want to store your results:
 
-C:\Users\flc59\Documents\Benchmark_Cases\BenchHydraulic300
+C:\Users\flc59\Documents\Benchmark_Cases\BenchHydraulic301
 
 //Write below either a number or any other key word to feature the 
 //folder where the results will be stored:
@@ -99,7 +99,7 @@ n
 //[nlfvpp]==> "Non-Linear Finite Volume" using lpew
 //[nlfvh]==> "Non-Linear Finite Volume" using harmonic point
 
-mpfad
+mpfah
 
 //If you chose [fps] or [mpfae], write below the auxiliary control
 //volume factor. It defines the auxiliary control volume size.
@@ -523,7 +523,7 @@ viscositytable.dat
 //[y] ==> "yes" (each control volume has a permeability value); 
 //[n] ==> "no" (the permeability value is attributed to layer(s)).
 
-r
+n
 
 //If [r], the matlab generates a randomic distribution with the 
 //component values variating between the minimum and maximum values. 
@@ -629,7 +629,7 @@ n
 //3. In the same row, put the algebric value of this BC.  
 
 2
-101 100
+101 90
 201 0      
 
 //--------------------------------------------------------------------

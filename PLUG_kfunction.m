@@ -687,11 +687,16 @@ switch numcase
         elem(:,5)=1;
         
     case 331
+        for i=1:size(centelem,1)
+            
+            K(i,1:5) = [i kmap(1,2) 0 0 kmap(1,2)];
+            
+            elem(i,5)=i;
+        end
         % Permeability tensor for the case II, article 2023:
         % A Local Grid-Refined Numerical Groundwater Model 
         % Based on the Vertex-centred Finite-Volume Method 
-        kmap(1,1:5) = [1 33.33 0 0 33.33];
-        elem(:,5)=1;
+       kmap=K;
      case 332
          % Permeability tensor for the case III, article 2023:
         % A Local Grid-Refined Numerical Groundwater Model 

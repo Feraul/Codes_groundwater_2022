@@ -208,6 +208,7 @@ switch char(pmethod)
         [pointarmonic]=ferncodes_harmonicopoint(kmap);
         % calculo dos parametros ou constantes (ksi)
         % temos usado este parametro durante muito tempo em muitos testes
+        
         [parameter,auxface]=ferncodes_coefficientmpfaH(facelement,pointarmonic,kmap);
         
         % adequação dos flag de face de contorno
@@ -376,6 +377,10 @@ for ik = 1:length(normk)
     normk(ik) = norm(permcompon);
 end
 if numcase>300
+    if numcase==330 || numcase==332
     kmap(:,2:5)=MM*kmap(:,2:5);
+    elseif numcase==331
+       kmap=kmap; 
+    end
 end
 end%End of FOR

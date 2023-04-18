@@ -1,5 +1,6 @@
-function [M,I]=ferncodes_assemblematrixMPFAH(parameter,nflagface,weightDMP)
-global inedge coord bedge bcflag elem 
+function [M,I]=ferncodes_assemblematrixMPFAH(parameter,nflagface,...
+                            weightDMP,SS,dt,h,MM,gravrate,viscosity)
+global inedge coord bedge bcflag elem numcase methodhydro keygravity dens
 %Initialize "bedgesize" and "inedgesize"
 bedgesize = size(bedge,1);
 inedgesize = size(inedge,1);
@@ -7,9 +8,25 @@ inedgesize = size(inedge,1);
 %Initialize "M" (global matrix) and "I" (known vector)
 M = zeros(size(elem,1)); %Prealocação de M.
 I = zeros(size(elem,1),1);
-
+coeficiente=dt^-1*MM*SS;
 for ifacont=1:bedgesize
     
+     if 200<numcase && numcase<300
+        % equacao de concentracao
+        if numcase == 246 || numcase == 245 || numcase==247 || ...
+                numcase==248 || numcase==249 ||numcase==251
+            % vicosity on the boundary edge
+            visonface = viscosity(ifacont,:);
+            %It is a Two-phase flow
+        else
+            visonface = 1;
+        end  %End of IF
+    elseif numcase<200
+        % equacao de saturacao "viscosity=mobility"
+        visonface=sum(viscosity(ifacont,:));
+    else
+        visonface=1;
+    end
         
     lef=bedge(ifacont,3);
     
@@ -43,7 +60,22 @@ end
 % Montagem da matriz global
 
 for iface=1:inedgesize
-    %Define "mobonface" (for "inedge")
+    if 200<numcase && numcase<300
+        % equacao de concentracao
+        if numcase == 246 || numcase == 245 || numcase==247 ||...
+                numcase==248 || numcase==249 || numcase==251
+            % vicosity on the boundary edge
+            visonface = viscosity(bedgesize + iface,:);
+            %It is a Two-phase flow
+        else
+            visonface = 1;
+        end  %End of IF
+    elseif numcase<200
+        % equacao de saturacao "viscosity=mobility"
+        visonface=sum(viscosity(bedgesize + iface,:));
+    else
+        visonface=1;
+    end
     %It is a One-phase flow
       
     
@@ -763,6 +795,34 @@ for iface=1:inedgesize
         M(rel,[auxlef,auxrel])=  M(rel,[auxlef,auxrel])- termo0*[auxweightrel1,auxweightrel2];
         
     end
-    
+     % contribuicao do termo gravitacional
+    if strcmp(keygravity,'y')
+        if numcase<200
+            % escoamento bifasico oleo-agua
+            averagedensity=(viscosity(bedgesize + iface,:)*dens')/visonface;
+            m=averagedensity*gravrate(bedgesize + iface,1);
+        else
+            % concentracao soluto-solvente
+            m=dens(1,1)*gravrate(bedgesize + iface,1)/visonface;
+        end
+        I(inedge(iface,3))=I(inedge(iface,3))+visonface*m;
+        I(inedge(iface,4))=I(inedge(iface,4))-visonface*m;
+    end
 end
+
+% para calcular a carga hidraulica
+if numcase>300
+    % Euler backward method
+    if strcmp(methodhydro,'backward')
+        M=M+coeficiente*eye(size(elem,1));
+        I=I+coeficiente*eye(size(elem,1))*h;
+    else
+        % Crank-Nicolson method
+        I=I+coeficiente*eye(size(elem,1))*h-0.5*M*h;
+        
+        M=0.5*M+coeficiente*eye(size(elem,1));
+        
+    end
+end
+
 end
