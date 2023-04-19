@@ -377,10 +377,13 @@ for ik = 1:length(normk)
     normk(ik) = norm(permcompon);
 end
 if numcase>300
+    % see equation (2), of the article -- A local grid-refined
+    % numerical groundwater model based on the vertex centered finite
+    % volume method
     if numcase==330 || numcase==332
-    kmap(:,2:5)=MM*kmap(:,2:5);
+        kmap(:,2:5)=MM*kmap(:,2:5);
     elseif numcase==331
-       kmap=kmap; 
+        kmap=kmap;
     end
 end
 end%End of FOR

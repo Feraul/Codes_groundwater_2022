@@ -7,15 +7,17 @@ function [SS,h_old,MM,wells,dt]=prehydraulic
 global numcase elem centelem
 
 switch numcase
-    
+    % The cases 330-333 were obtained of the article -- A local grid-refined
+    % numerical groundwater model based on the vertex centered finite
+    % volume method
     case 330
         % Case 1: single pumping well in a confined aquifer (Y. Qian et al)
         
         % initially hydraulic charge
         h_old=100*ones(size(elem,1),1);
-        % coeficiente de armazenamento especifico
+        % the espeficied storage
         SS=0.001;
-        % espesura do aquifero
+        % aquifer thickness
         MM=3;
         % step time
         dt=0.01;
@@ -32,9 +34,9 @@ switch numcase
         
         % initially hydraulic charge
         h_old=90*ones(size(elem,1),1);
-        % coeficiente de armazenamento especifico
+        % the specified yield 
         SS=0.1;
-        % espesura do aquifero
+        % aquifer thickness
         MM=100;
         % step time
         dt=0.01;

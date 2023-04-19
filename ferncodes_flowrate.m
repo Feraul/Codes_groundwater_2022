@@ -42,6 +42,13 @@ for ifacont = 1:bedgesize
     end
     
     lef = bedge(ifacont,3);
+    % average hydraulic head 
+     % unconfined aquifer
+    if numcase==301
+           h_avg=p(lef);
+        else
+           h_avg=1; 
+    end
     O=centelem(lef,:); % baricentro do elemento a esuqerda
     B1=bedge(ifacont,1);
     B2=bedge(ifacont,2);
@@ -67,7 +74,7 @@ for ifacont = 1:bedgesize
         flowrate(ifacont) =-A*(((O-coord(B2,:)))*(coord(B1,:)-coord(B2,:))'*c1+...
             (O-coord(B1,:))*(coord(B2,:)-coord(B1,:))'*c2-(nor^2)*p(lef))-(c2-c1)*Kt(ifacont);
         
-        flowrate(ifacont) = visonface*flowrate(ifacont)-visonface*m;
+        flowrate(ifacont) = h_avg*visonface*flowrate(ifacont)-visonface*m;
         
     else
         x = logical(bcflag(:,1) == bedge(ifacont,5));
@@ -133,13 +140,20 @@ for iface = 1:inedgesize
     
     lef = inedge(iface,3); %indice do elemento a direita da aresta i
     rel = inedge(iface,4); %indice do elemento a esquerda da aresta i
+    % average hydraulic head 
+     % unconfined aquifer
+    if numcase==301
+           h_avg=(p(lef)+p(rel))/2;
+        else
+           h_avg=1; 
+    end
     
     p1=pinterp(inedge(iface,1),1);
     p2=pinterp(inedge(iface,2),1);
     
     %calculo das vazões
     
-    flowrate(bedgesize + iface) =visonface*Kde(iface)*(p(rel)-p(lef)-Ded(iface)*(p2 - p1))-visonface*m;
+    flowrate(bedgesize + iface) =h_avg*visonface*Kde(iface)*(p(rel)-p(lef)-Ded(iface)*(p2 - p1))-visonface*m;
     
     %Attribute the flow rate to "flowresult"
     %On the left:

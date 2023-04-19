@@ -27,9 +27,9 @@ for ifacont=1:bedgesize
     else
         visonface=1;
     end
-        
+    % element flag 
     lef=bedge(ifacont,3);
-    
+    % length of face
     normcont=norm(coord(bedge(ifacont,1),:)-coord(bedge(ifacont,2),:));
     
     if bedge(ifacont,5)>200
@@ -39,17 +39,23 @@ for ifacont=1:bedgesize
         %problemas monofásico
         I(lef)=I(lef)+ normcont*bcflag(r,2); % problema de buckley leverett Bastian
     else
-        
+        % average hydraulic head 
+        % unconfined aquifer
+        if numcase==331
+            h_avg=h(lef);
+        else
+           h_avg=1; 
+        end
         %-------------------------------------------------------------%
         % somando 1
         ifacelef1=parameter(1,3,ifacont);
-        auxparameter1=parameter(1,1,ifacont);
+        auxparameter1=h_avg*parameter(1,1,ifacont);
         [M,I]=ferncodes_tratmentcontourlfvHP(ifacelef1,parameter,nflagface,...
             normcont,auxparameter1,lef,weightDMP,M,I);
         %-------------------------------------------------------------%
         % somando 2
         ifacelef2=parameter(1,4,ifacont);
-        auxparameter2=parameter(1,2,ifacont);
+        auxparameter2=h_avg*parameter(1,2,ifacont);
         [M,I]=ferncodes_tratmentcontourlfvHP(ifacelef2,parameter,nflagface,...
             normcont,auxparameter2,lef,weightDMP,M,I);
         
@@ -76,11 +82,17 @@ for iface=1:inedgesize
     else
         visonface=1;
     end
-    %It is a One-phase flow
-      
-    
+    % element flags
     lef=inedge(iface,3);
     rel=inedge(iface,4);
+    % average hydraulic head 
+    % unconfined aquifer 
+    if numcase==331
+           h_avg=(h(lef)+h(rel))/2;
+        else
+           h_avg=1; 
+    end
+    
     %Determinação dos centróides dos elementos à direita e à esquerda.%
     vd1=coord(inedge(iface,2),:)-coord(inedge(iface,1),:);
     % calculo da norma do vetor "vd1"
@@ -108,16 +120,16 @@ for iface=1:inedgesize
     ARR=norma*mulef*(parameter(2,1,ifactual)+parameter(2,2,ifactual));
     % implementação da matriz global
     % contribuição da transmisibilidade no elemento esquerda
-    M(lef,lef)=M(lef,lef)+ ALL;
-    M(lef,rel)=M(lef,rel)- ARR;
+    M(lef,lef)=M(lef,lef)+ h_avg*ALL;
+    M(lef,rel)=M(lef,rel)- h_avg*ARR;
     % contribuição da transmisibilidade no elemento direita
-    M(rel,rel)=M(rel,rel)+ ARR;
-    M(rel,lef)=M(rel,lef)- ALL;
+    M(rel,rel)=M(rel,rel)+ h_avg*ARR;
+    M(rel,lef)=M(rel,lef)- h_avg*ALL;
     
     
     % contribuições do elemento a esquerda
     %------------------------ somando 1 ----------------------------------%
-    termo0=norma*murel*parameter(1,1,ifactual);
+    termo0=h_avg*norma*murel*parameter(1,1,ifactual);
     if ifacelef1<size(bedge,1) || ifacelef1==size(bedge,1)
         if nflagface(ifacelef1,1)<200
             % neste caso automaticamente introduzimos o valor dada no
@@ -283,7 +295,7 @@ for iface=1:inedgesize
     end
     
     %--------------------------- somando 2 -------------------------------%
-    termo0=norma*murel*parameter(1,2,ifactual);
+    termo0=h_avg*norma*murel*parameter(1,2,ifactual);
     if ifacelef2<size(bedge,1) || ifacelef2==size(bedge,1)
         if nflagface(ifacelef2,1)<200
             % neste caso automaticamente introduzimos o valor dada no
@@ -447,7 +459,7 @@ for iface=1:inedgesize
     %%
     % contribuições do elemento a direita
     % somando 1
-    termo0=norma*mulef*parameter(2,1,ifactual);
+    termo0=h_avg*norma*mulef*parameter(2,1,ifactual);
     if ifacerel1<size(bedge,1) || ifacerel1==size(bedge,1)
         if nflagface(ifacerel1,1)<200
             % neste caso automaticamente introduzimos o valor dada no
@@ -624,7 +636,7 @@ for iface=1:inedgesize
         
     end
     % somando 2
-    termo0=norma*mulef*parameter(2,2,ifactual);
+    termo0=h_avg*norma*mulef*parameter(2,2,ifactual);
     if ifacerel2<size(bedge,1) || ifacerel2==size(bedge,1)
         if nflagface(ifacerel2,1)<200
             % neste caso automaticamente introduzimos o valor dada no
