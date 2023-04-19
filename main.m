@@ -17,7 +17,10 @@
 %For example: the saturation and pressure fields are calculated by IMPES,
 %but it may be calculated also by a fully implicit scheme. This change is
 %done in the present rountine just call each function.
-%--------------------------------------------------------------------------
+
+%|--------------------------------------|
+%|  leia com muita atencao as indicacoes|
+%|--------------------------------------|
 
 %Clear the screem 
 clc;
@@ -97,8 +100,10 @@ elseif numcase>300
    % Flags adequation for hydrological head problem
    [SS,h_old,MM,wells,dt]=prehydraulic;
    % Choose Backward method or Crank-Nicolson
+    % use oara caso aquifero confinado
    methodhydro='backward';
-   %methodhydro='cranknicolson';
+   % use para o caso aquifero nao confinado
+   %methodhydro='cranknicolson'; 
    % This numcase is used for two-phase (water-oil) flow problems  
 else
     auxpar=0;
