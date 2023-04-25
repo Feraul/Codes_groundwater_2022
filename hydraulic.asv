@@ -54,11 +54,10 @@ auxkmap=0;
 mobility=1;
 Ktc=0;Dedc=0;wightc=0;sc=0;dparameter=0;
 tic
- %Get "hydraulic head" and "flowrate"
 while stopcriteria < 100
     if strcmp(pmethod,'tpfa')
    
-    
+     %Get "hydraulic head" and "flowrate"
     [h_new,flowrate,] = ferncodes_solvePressure_TPFA(Kde, Kn,...
         nflag, Hesq,wells,viscosity, Kdec, Knc,nflagc,Con,SS,dt,h,MM);
     elseif strcmp(pmethod,'mpfad')
@@ -78,7 +77,7 @@ while stopcriteria < 100
             mobility,V,Con,N,p_old,contnorm,weight,s,Con,nflagc,wightc,...
             sc,dparameter,SS,dt,h,MM);
     end
-        %% time step calculation
+        %% caculo do passo de tempo
     
     time = time + dt;
     
