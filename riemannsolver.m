@@ -1,8 +1,8 @@
 function [numflux, Saproxima]=riemannsolver(Sright,Sleft,method,bedgesize, inedg,dotvn,dotvg,charvel_rh,dotdif)
 
-switch method
+if strcmp(method,'upwd')
    
-    case 'upwind'
+    
         
 %         ve_mais = max([charvel_rh; 0],[],1);
 %         ve_menos= min([charvel_rh; 0],[],1);

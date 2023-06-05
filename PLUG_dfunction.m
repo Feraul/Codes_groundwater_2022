@@ -18,7 +18,7 @@
 function [dmap,dmedio,gamma] = PLUG_dfunction
 %Define global parameters:
 global  numcase elem;
-
+% gamma: termo reativo
 %Choose the benchmark to attribute permeability.
 switch numcase
     %----------------------------------------------------------------------
@@ -32,8 +32,8 @@ switch numcase
         
     case 232
         %Build "dmap"
-        dmap(1,:) = [1 0.075 0 0 0.075];
-        dmedio=0.075;
+        dmap(1,:) = [1 0.05 0 0 0.05];
+        dmedio=0.05;
         gamma=0;
     case 233
         %Build "dmap"

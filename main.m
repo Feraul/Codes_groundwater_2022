@@ -88,6 +88,7 @@ if 200<numcase && numcase <300
         kmap=kmap;
         %adeSPE; % para um campo de permeabilidade da SPE active descomente.
     end
+    SS=0; h_old=0; MM=0;wells=0; dt=0;
     % This numcase is used to simulate head hydraulic in aquifers
 elseif numcase>300
     

@@ -13,10 +13,10 @@
 %Programer: Márcio Souza
 %Modified: Fernando Contreras,
 function [p,flowrate,flowresult,flowratedif,flowresultc]=ferncodes_solverpressureNLFVPP(nflag,...
-                                  parameter,kmap,wells,viscosity,V,Sw,N,...
+                                  parameter,kmap,wells,viscosity,V,N,...
                                   p_old,contnorm,wight,s,Con,nflagc,...
-                                  wightc,sc,dparameter,SS,dt,h,MM,gravrate)
-                             
+                                  wightc,sc,weightDMPc,nflagfacec,dparameter,SS,dt,h,MM,gravrate)
+                            
 %Define global parameters
 global acel;
 
@@ -38,6 +38,6 @@ elseif strcmp(acel,'AA')
     %% Picard-Anderson Acceleration
     [p,flowrate,flowresult,flowratedif,flowresultc]=ferncodes_iterpicardANLFVPP2(M_old,RHS_old,...
         parameter,wight,s,p_old,nflag,wells,viscosity,0,contnorm,Con,nflagc,...
-        wightc,sc,dparameter,SS,dt,h,MM,gravrate);
+        wightc,sc,weightDMPc,nflagfacec,dparameter,SS,dt,h,MM,gravrate);
 end
 end

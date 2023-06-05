@@ -94,8 +94,8 @@ end
 
 %Call the postprocessor:
 auxkmap=logical(numcase==247)*log(kmap(:,2))+logical(numcase~=247)*normk;
-postprocessor(ones(elemsize,1),0,Con,contiterplot - 1,...
-    order*ones(elemsize,1),'i',1,auxkmap);
+postprocessor_con(ones(elemsize,1),Con,contiterplot - 1,auxkmap);
+
 % mobility
 mobility=1;
 % calculate the pressure, flow rate advective and dispersive terms
@@ -247,8 +247,8 @@ while stopcriteria < 100
     
     auxkmap=logical(numcase==247)*log(kmap(:,2))+logical(numcase~=247)*normk;
     
-    postprocessor(pressure,flowrateadvec,Con,0,contiterplot,overedgecoord,0,'i',1,auxkmap);
-    
+    postprocessor_con(pressure,Con,contiterplot,auxkmap);
+       
     flagtoplot = 0;
     %Update "contiterplot"
     contiterplot = contiterplot + 1;
@@ -385,8 +385,8 @@ if numcase~=246 & numcase~=246 & numcase~=247 & numcase~=248 & ...
     elseif strcmp(pmethod,'nlfvpp')
         [pressure,flowrateadvec,flowresult,flowratedif]=...
             ferncodes_solverpressureNLFVPP(nflag,parameter,kmap,wells,...
-            mobility,V,Con,N,p_old,contnorm,weight,s,Con,nflagc,wightc,...
-            sc,dparameter,SS,dt,h,MM,gravrate);
+            mobility,V,N,p_old,contnorm,weight,s,Con,nflagc,wightc,...
+            sc,weightDMPc,nflagfacec,dparameter,SS,dt,h,MM,gravrate);
         
         %Any other type of scheme to solve the Pressure Equation
     elseif strcmp(pmethod,'nlfvh') % revisar com cuidado

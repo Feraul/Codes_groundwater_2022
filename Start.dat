@@ -26,7 +26,7 @@ y
 //***OBS.: Even if you chose [n], write below both the path and 
 //folder's name where you want to store your results:
 
-C:\Users\flc59\Documents\Benchmark_Cases\BenchHydraulic300
+C:\Users\flc59\Documents\Benchmark_Cases\Bench202
 
 //Write below either a number or any other key word to feature the 
 //folder where the results will be stored:
@@ -50,7 +50,7 @@ teste
 //[4] ==> "Water-flow"
 //[5] ==> "Unsatured-flow"
 
-4
+3
 
 //--------------------------------------------------------------------
 //Coordinate System (only 2D application)
@@ -99,7 +99,7 @@ n
 //[nlfvpp]==> "Non-Linear Finite Volume" using lpew
 //[nlfvh]==> "Non-Linear Finite Volume" using harmonic point
 
-mpfad
+nlfvpp
 
 //If you chose [fps] or [mpfae], write below the auxiliary control
 //volume factor. It defines the auxiliary control volume size.
@@ -122,7 +122,7 @@ lpew2
 
 //Write below the Tolerance for the non-linear system solution: 
 
-1e-12 
+1e-8
 
 //Write below the Maximum Number of Iteraction allowed for the
 //non-linear system solution:
@@ -176,7 +176,7 @@ stdr
 //Write below the Order for the Hyperbolic Operator approximation.
 //It must be up to 6th order: 
 
-1
+2
 
 //Write below the type of approximation for the time term: 
 //[1] ==> "Forward Euler"; 
@@ -243,13 +243,13 @@ va2
 //Write below the type of Gradient Interpolation (Blasek, 2001):
 //[-1] ==> "Higher Order Upwind"; [0] ==> "Centered Scheme".
 
-0.3333333
+-1
 
 //--------------------
 //Patch-based Limiter:
 //Is there a Patch-based Limiter? [y] ==> "yes"; [n] ==> "no"
 
-y
+n
 
 //If [y], choose among the Patch-Based limiters below:
 //[wf] ==> "Woodfield Strategy";
@@ -324,7 +324,7 @@ upwd
 
 //Do you have a mesh file? [y] ==> "yes"; [n] ==> "no".
 
-n
+y
 
 //If [y], write below the path where the mesh file is:
  
@@ -332,7 +332,7 @@ C:\Users\flc59\Documents\GitHub\Malhas2
 
 //Write below the name of the mesh file. Use the extension *.msh:
 
-Becnhmarkgrav.msh
+malha11.msh
 
 //If [n], write below the path where the geometry file is:  
 
@@ -561,8 +561,8 @@ n
 //used to "draw" the surfaces during CAD building. (*.geo).  
 
 1
-33.33 0 
-0 33.33
+12 0 
+0 12
 
 //--------------------------------------------------------------------
 //Distribution of porosity:
@@ -581,7 +581,7 @@ y
 //(each one must be associated to its layer).
 
 1
-0.2    
+1    
 
 //If [n], each control volume will have a different value of porosity 
 //Get it from an external file. Write below both the path and name of 
@@ -628,8 +628,9 @@ n
 //(Dirichlet, Neumann or Periodic);
 //3. In the same row, put the algebric value of this BC.  
 
-2
-101 90
+3
+101 10
+102 0
 201 0      
 
 //--------------------------------------------------------------------
@@ -641,8 +642,8 @@ n
 //2. In another row, the sequence of codes to be associated with 
 //each point group. 
 
-1
-101    
+3
+101 102 201    
 
 //--------------------------------------------------------------------
 //----------------------- Convergence Criteria -----------------------
@@ -658,7 +659,7 @@ n
 //The Courant number will be used as a stability parameter of the 
 //hyperbolic saturation equation. Write below the Courant number:
 
-0.9
+0.6
 
 //--------------------------------------------------------------------
 //Unity for Time (only for Two-Phase Simulation): 
@@ -667,7 +668,7 @@ n
 //[s] ==> "to dimentional time" (seconds, days, etc); 
 //[pvi] ==> "to non-dmentional time" (Pore Volume Injected). 
 
-s
+d
 
 //--------------------------------------------------------------------
 //Total time of simulation (days) or PVI's value (adm)
@@ -677,7 +678,7 @@ s
 //state simulation (parameter of stop). Write below the amount of 
 //days or the PVI's value instead:
 
-20
+30
 
 //--------------------------------------------------------------------
 //------------------------------- Wells ------------------------------
@@ -717,5 +718,5 @@ s
 //if you write "0" replacing the number of wells, it will be not 
 //necessary to erase the numbers below. Keep it to reference.  
 
-1
+0
 1 500   500  0.008 301 1 401  100000   1

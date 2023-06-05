@@ -240,11 +240,11 @@ elseif numcase > 200
             hold on
             
             %Plot the results (Analitical Solution)
-            %plot (positaux,analsolutionaux,'k','LineWidth',2)
+            plot (positaux,analsolutionaux,'k','LineWidth',2)
             %Plot the results (Actual Numerical Solution)
             %hold on;
             
-            plot(positaux,confieldaux,'-gs','LineWidth',1.5);
+            plot(positaux,confieldaux,'-ms','LineWidth',1.5);
            
             hold on;
             
@@ -286,10 +286,10 @@ elseif numcase > 200
             hold on
             
             %Plot the results (Analitical Solution)
-            %plot (positaux,analsolutionaux,'k','LineWidth',2)
+            plot (positaux,analsolutionaux,'b','LineWidth',2)
             %Plot the results (Actual Numerical Solution)
             %hold on;
-            plot(positaux,confieldaux,'-ms','LineWidth',1.5);
+            plot(positaux,confieldaux,'-gs','LineWidth',1.5);
             %View "analytical curve"
             %     plot(xanal,blcurve(xanal),'-r','LineWidth',2)
             hold on;
