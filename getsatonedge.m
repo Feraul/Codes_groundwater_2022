@@ -314,9 +314,7 @@ else
             %Calculate the gradient limited according "k" value.
             gradslimited = mlpbyelem*0.5*((1 - k)*gradupwd + (1 + k)*gradcent);
             swonedgelim = Sw(elemeval(1)) + 0.5*gradslimited;
-           if mlpbyelem ~=1
-               jkjkjkj
-           end
+           
             if strcmp(limiterflag{11},'on')
                 dlr = pointr - pointl;
                 gradcent = Sw(elemeval(pos)) - Sw(elemeval(1));
