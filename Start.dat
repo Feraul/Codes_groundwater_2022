@@ -176,7 +176,7 @@ stdr
 //Write below the Order for the Hyperbolic Operator approximation.
 //It must be up to 6th order: 
 
-2
+1
 
 //Write below the type of approximation for the time term: 
 //[1] ==> "Forward Euler"; 
