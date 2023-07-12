@@ -33,7 +33,7 @@ C:\Users\flc59\Documents\Benchmark_Cases\Bench202
 //***OBS.: If you set "0", the folder "Results" and other will be 
 //created into folder set above:
 
-teste_NLFVPP_VA_TRI_16
+teste_NLFVPP_VA__QUA_16_MLP_CAS_II
 
 //--------------------------------------------------------------------
 //------------------------ Solver Properties -------------------------
@@ -225,7 +225,7 @@ tse
 //Edge-based Limiter:
 //Is there an Edge-based Limiter? [y] ==> "yes"; [n] ==> "no".
 
-y
+n
 
 //If [y], choose among the Edge-Based limiters below:
 //[mm] ==> "MinMod";
@@ -249,7 +249,7 @@ va2
 //Patch-based Limiter:
 //Is there a Patch-based Limiter? [y] ==> "yes"; [n] ==> "no"
 
-n
+y
 
 //If [y], choose among the Patch-Based limiters below:
 //[wf] ==> "Woodfield Strategy";
@@ -336,7 +336,7 @@ malha11.msh
 
 //If [n], write below the path where the geometry file is:  
 
-C:\Users\flc59\Documents\GitHub\Codes_groundwater_2022
+C:\Users\flc59\Documents\Codes_groundwater_2022
 
 //Write below the name of the geometry file. Use the extension *.geo.
 
@@ -409,7 +409,7 @@ y
 //[1] ==> "Quadrangles"; 
 //[2] ==> "Both".
 
-0
+1
 
 //OBS.: 
 //The option "Both" does not work when the mesh is structured. 
@@ -659,7 +659,7 @@ n
 //The Courant number will be used as a stability parameter of the 
 //hyperbolic saturation equation. Write below the Courant number:
 
-0.6
+0.5
 
 //--------------------------------------------------------------------
 //Unity for Time (only for Two-Phase Simulation): 

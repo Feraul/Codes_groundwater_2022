@@ -244,7 +244,7 @@ elseif numcase > 200
             %Plot the results (Actual Numerical Solution)
             %hold on;
             
-            plot(positaux,confieldaux,'-ms','LineWidth',1.5);
+            plot(positaux,confieldaux,'-b','LineWidth',1.5);
            
             hold on;
             
@@ -289,8 +289,8 @@ elseif numcase > 200
             plot (positaux,analsolutionaux,'k','LineWidth',2)
             %Plot the results (Actual Numerical Solution)
             %hold on;
-            %plot(positaux,confieldaux,'--b','LineWidth',1.5);
-            plot(positaux,confieldaux,'Color',[0,0.7,0.9],'LineWidth',1.5);
+            plot(positaux,confieldaux,'-r','LineWidth',1.5);
+            %plot(positaux,confieldaux,'Color',[0,0.7,0.9],'LineWidth',1.5);
             %plot(positaux,confieldaux,'Color', [0.9290 0.6940 0.1250],'LineWidth',1.5);
             
             %View "analytical curve"
