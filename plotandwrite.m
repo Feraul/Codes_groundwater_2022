@@ -286,12 +286,12 @@ elseif numcase > 200
             hold on
             
             %Plot the results (Analitical Solution)
-            %plot (positaux,analsolutionaux,'k','LineWidth',2)
+            plot (positaux,analsolutionaux,'k','LineWidth',2)
             %Plot the results (Actual Numerical Solution)
             %hold on;
             %plot(positaux,confieldaux,'--b','LineWidth',1.5);
-            %plot(positaux,confieldaux,'Color',[0,0.7,0.9],'LineWidth',1.5);
-            plot(positaux,confieldaux,'Color', [0.9290 0.6940 0.1250],'LineWidth',1.5);
+            plot(positaux,confieldaux,'Color',[0,0.7,0.9],'LineWidth',1.5);
+            %plot(positaux,confieldaux,'Color', [0.9290 0.6940 0.1250],'LineWidth',1.5);
             
             %View "analytical curve"
             %     plot(xanal,blcurve(xanal),'-r','LineWidth',2)
@@ -623,8 +623,8 @@ for i = 1:size(centelem,1)
         % malha11
         ymax=max(coord(:,2));
         %ymax=10;
-        ymin=ymax/2;
-        
+        %ymin=ymax/2;
+        ymin=0;
     end
     if (ymin<=centelem(i,2)) && (centelem(i,2) <= ymax)
         %if (2.2<=centelem(i,2)) && (centelem(i,2) <= 2.4)

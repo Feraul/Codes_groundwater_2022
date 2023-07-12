@@ -49,7 +49,7 @@ for i = 1:inedgesize
     %Define delta t:
     vel=flowrate(bedgesize+ i)/A;
     dtbyedge(i)= ((courant/((2*n) + 1))*dx^2)/((Dmedio+(abs(vel)*dx)/pormap(1) +gamma*dx^2));
-    
+    %dtbyedge(i)= (courant*dx^2)/((Dmedio+(abs(vel)*dx)/pormap(1) +gamma*dx^2));
 end  %End of FOR
 
 %--------------------------------------------------------------------------
@@ -73,7 +73,7 @@ for i = 1:bedgesize
     %There is gravity effects
     vel=flowrate(i)/A;
     dtbyboundedge(i)= ((courant/((2*n) + 1))*dx^2)/((Dmedio+(abs(vel)*dx)/pormap(1) +gamma*dx^2));
-    
+    %dtbyboundedge(i)= ((courant)*dx^2)/((Dmedio+(abs(vel)*dx)/pormap(1) +gamma*dx^2));
 end  %End of FOR
 
 %Do the union between "dtbyedge" and "dtbyboundedge".

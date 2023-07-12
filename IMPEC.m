@@ -157,7 +157,7 @@ while stopcriteria < 100
     %explicit concentration formulation.
     
     dt = calctimestep(flowrateadvec,satinbound,gamma,Dmedio)
-    
+    %dt=0.001;
     %----------------------------------------------------------------------
     
     %Calculate the CONCENTRATION field (choose concentration method):
@@ -420,7 +420,7 @@ function [flowrate,flowresult,flowratedif]=auxiliarysolverflux(pressure,...
     weight,s,nflagc,wightc,sc,nflagface,weightDMPc,nflagfacec,...
     dparameter,Kde,Ded,Kn,Kt,Hesq,Kdec,Knc,Ktc,Dedc,time,viscosity,...
     parameter,weightDMP)
-global  pmethod
+global  pmethod 
 if strcmp(pmethod,'nlfvpp')
     % pressure and concentration interpolation
     [pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(pressure,nflag,...
@@ -428,6 +428,7 @@ if strcmp(pmethod,'nlfvpp')
     % calculate dispersive flux
     [flowrate,flowresult,flowratedif]=ferncodes_flowrateNLFVPP(pressure,...
         pinterp, parameter,viscosity,Con,nflagc,wightc,sc,dparameter,cinterp);
+  
 elseif strcmp(pmethod,'nlfvh')
     % pressure and concentration interpoltion on the harmonic points
     [pinterp,cinterp]=ferncodes_pressureinterpHP(pressure,nflagface,parameter,...

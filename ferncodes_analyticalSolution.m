@@ -8,6 +8,7 @@ switch numcase
     case 232
         t=totaltime(2);
        analsolution=(max(satonvertices)/2)*(erfc((x - velmedio*t)/(2*sqrt(Dmedio*t)))); 
+       
     case 233 
         t=totaltime(2);
         analsolution=(max(satonvertices)./2).*(erfc((x-velmedio.*t)./(2.*sqrt(Dmedio.*t)))+exp((velmedio.*x)./Dmedio).*erfc((x+velmedio.*t)./(2.*sqrt(Dmedio.*t))));

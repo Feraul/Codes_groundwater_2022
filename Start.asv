@@ -33,7 +33,7 @@ C:\Users\flc59\Documents\Benchmark_Cases\Bench202
 //***OBS.: If you set "0", the folder "Results" and other will be 
 //created into folder set above:
 
-teste_NLFVPP_VA_TRI_16
+teste_NLFVPP_16
 
 //--------------------------------------------------------------------
 //------------------------ Solver Properties -------------------------
@@ -256,7 +256,7 @@ n
 //[mlp] ==> "Multidimensional Limiting Process";
 //[mlp_vk] ==> "MLP, type Venkathakrishnen (see Park and Kim, 2012).
 
-mlp
+wf
 
 //If you chose [wf], write below the additional parameter ("delta"):
 
@@ -409,7 +409,7 @@ y
 //[1] ==> "Quadrangles"; 
 //[2] ==> "Both".
 
-0
+1
 
 //OBS.: 
 //The option "Both" does not work when the mesh is structured. 
