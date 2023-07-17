@@ -74,7 +74,9 @@ else
         knownvalinvert= satonvertices;
     end
     satonedges = zeros(bedgesize + inedgesize,1);
+    
     knownvalinedge = zeros(bedgesize,1);
+    
 end
 %Evaluate if there is non-null Neumann boundary condition (non-null Neumann
 %flux, in pressure indicate saturation, by Dirichlet boundary condition
@@ -181,6 +183,7 @@ for i = 1:length(unknownedge)
                 satonedges(unknownedge(i)) = nflagfacec(i,2);
             else
                 satonedges(unknownedge(i))= 0.5*(satonvertices(bedge(i,1)) + satonvertices(bedge(i,2)));
+                
             end
         else
             satonedges(unknownedge(i))= 0.5*(satonvertices(bedge(i,1)) + satonvertices(bedge(i,2)));

@@ -1,4 +1,4 @@
-function[analsolution,analpressure]=ferncodes_analyticalSolution(satonvertices,Dmedio,velmedio,x,gamma,time)
+function[analsolution,analpressure]=ferncodes_analyticalSolution(satonvertices,Dmedio,velmedio,x,gamma)
 global totaltime numcase elem centelem
 switch numcase
     
@@ -7,6 +7,7 @@ switch numcase
         analsolution=(max(satonvertices)./2).*(erfc((x-velmedio.*t)./(2.*sqrt(Dmedio.*t)))+exp((velmedio.*x)./Dmedio).*erfc((x+velmedio.*t)./(2.*sqrt(Dmedio.*t))));
     case 232
         t=totaltime(2);
+        
        analsolution=(max(satonvertices)/2)*(erfc((x - velmedio*t)/(2*sqrt(Dmedio*t)))); 
        
     case 233 
