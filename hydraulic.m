@@ -27,7 +27,7 @@ function hydraulic(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
                parameter,h_old,contnorm,SS,MM,weight,s,dt,gravrate,...
                nflagface,weightDMP)
 %Define global parameters:
-global timew  totaltime  pmethod filepath elem numcase ;
+global timew  totaltime  pmethod filepath elem  ;
 
 %--------------------------------------------------------------------------
 %Initialize parameters:
@@ -79,11 +79,14 @@ while stopcriteria < 100
             sc,dparameter,SS,dt,h,MM);
     end
         %% time step calculation
-    
-    time = time + dt;
+    disp('>> Time evolution:');
+    time = time + dt
     
     concluded = time*100/finaltime;
-    stopcriteria = concluded;
+     stopcriteria = concluded;
+    concluded = num2str(concluded);
+    status = [concluded '% concluded']
+   
     contiterplot=contiterplot+1
     h=h_new;
     postprocessor(h,flowrate,Con,1-Con,contiterplot,overedgecoord,orderintimestep,'i',1,auxkmap);

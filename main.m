@@ -101,9 +101,9 @@ elseif numcase>300
    [SS,h_old,MM,wells,dt]=prehydraulic;
    % Choose Backward method or Crank-Nicolson
    % use oara caso aquifero confinado
-   %methodhydro='backward';
+   methodhydro='backward';
    % use para o caso aquifero nao confinado
-   methodhydro='cranknicolson'; 
+   %methodhydro='cranknicolson'; 
    % This numcase is used for two-phase (water-oil) flow problems  
 else
     auxpar=0;
