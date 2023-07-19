@@ -10,8 +10,8 @@ M = zeros(size(elem,1)); %Prealocação de M.
 I = zeros(size(elem,1),1);
 coeficiente=dt^-1*MM*SS;
 for ifacont=1:bedgesize
-    
-     if 200<numcase && numcase<300
+    % when 200<numcase<300, is groundwater transport model 
+     if 200<numcase && numcase<300 
         % equacao de concentracao
         if numcase == 246 || numcase == 245 || numcase==247 || ...
                 numcase==248 || numcase==249 ||numcase==251
@@ -21,10 +21,12 @@ for ifacont=1:bedgesize
         else
             visonface = 1;
         end  %End of IF
+        % when numcase<200, is two-phase model
     elseif numcase<200
         % equacao de saturacao "viscosity=mobility"
         visonface=sum(viscosity(ifacont,:));
-    else
+     else
+        % otherwise, the model is groundwater flow model 
         visonface=1;
     end
     % element flag 
@@ -66,8 +68,9 @@ end
 % Montagem da matriz global
 
 for iface=1:inedgesize
+    % when 200<numcase<300, is groundwater transport model 
     if 200<numcase && numcase<300
-        % equacao de concentracao
+        % concentration equation
         if numcase == 246 || numcase == 245 || numcase==247 ||...
                 numcase==248 || numcase==249 || numcase==251
             % vicosity on the boundary edge
@@ -77,9 +80,10 @@ for iface=1:inedgesize
             visonface = 1;
         end  %End of IF
     elseif numcase<200
-        % equacao de saturacao "viscosity=mobility"
+        % saturation equation "viscosity=mobility"
         visonface=sum(viscosity(bedgesize + iface,:));
     else
+        % single-phase or groundwater flow model
         visonface=1;
     end
     % element flags
