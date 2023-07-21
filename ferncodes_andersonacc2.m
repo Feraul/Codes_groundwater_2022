@@ -82,8 +82,10 @@ mAA = 0; % é o "m_{k}" no artigo
 % Top of the iteration loop.
 %% Interpolação das pressões na arestas (faces)
 if strcmp(pmethod,'nlfvpp')
-    [pinterp_new,]=ferncodes_pressureinterpNLFVPP(x,nflag,w,s,Con,nflagc,wightc,sc);
-    [M,I]=ferncodes_assemblematrixNLFVPP(pinterp_new,parameter,mobility,contnorm,SS,dt,h,MM,gravrate);
+    [pinterp_new,]=ferncodes_pressureinterpNLFVPP(x,nflag,w,s,Con,...
+        nflagc,wightc,sc);
+    [M,I]=ferncodes_assemblematrixNLFVPP(pinterp_new,parameter,mobility,...
+        contnorm,SS,dt,h,MM,gravrate);
     %Often it may change the global matrix "M"
     [M_new,RHS_new] = addsource(sparse(M),I,wells);
     
@@ -92,6 +94,7 @@ elseif  strcmp(pmethod,'nlfvh')
               
     [pinterp_new,]=ferncodes_pressureinterpHP(x,nflag,parameter,weightDMP,...
         weightDMPc,Con,nflagfacec,dparameter);
+    
     
     [M,I]=ferncodes_assemblematrixNLFVH(pinterp_new,parameter,mobility);
     %Often it may change the global matrix "M"
@@ -250,8 +253,10 @@ for iter = 0:itmax
     x=x-min(x,0);
     %% Interpolação das pressões na arestas (faces)
     if strcmp(pmethod,'nlfvpp')
-        [pinterp_new,]=ferncodes_pressureinterpNLFVPP(x,nflag,w,s,Con,nflagc,wightc,sc);
-        [M,I]=ferncodes_assemblematrixNLFVPP(pinterp_new,parameter,mobility,contnorm,SS,dt,h,MM,gravrate);
+        [pinterp_new,]=ferncodes_pressureinterpNLFVPP(x,nflag,w,s,...
+            Con,nflagc,wightc,sc);
+        [M,I]=ferncodes_assemblematrixNLFVPP(pinterp_new,parameter,...
+            mobility,contnorm,SS,dt,h,MM,gravrate);
         %Often it may change the global matrix "M"
         [M_new,RHS_new] = addsource(sparse(M),I,wells);
         

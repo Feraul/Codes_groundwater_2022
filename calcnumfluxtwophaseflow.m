@@ -131,7 +131,7 @@ if any(pointbndedg)
         earlysw(ibedg) = Sleft;
         
         %Calculate the fractional flow in boundary ("fwbound")
-        [~,fw,~,gama,] = twophasevar(Sleft,numcase);
+        [~,fw,~,gama,] = twophasevar(Sleft);
         
         %Define the normal velocity into face
         dotvn = flowrate(ibedg);
@@ -248,7 +248,7 @@ for i = 1:length(pointinedg)
     vectorSright(i,1)=Sright;
     %Discrete:
     %"fw" has three values: fw(Sleft) is fw(1), fw(Sright) is fw(3)
-    [~,fw,~,gama,] = twophasevar([Sleft 0.5*(Sleft+Sright) Sright],numcase);
+    [~,fw,~,gama,] = twophasevar([Sleft 0.5*(Sleft+Sright) Sright]);
    
     % fw(1) ---> fluxo fracional no elemento fw(Sleft)
     % fw(2) ---> fluxo fracional no elemento fw(Smid)
@@ -303,7 +303,7 @@ for i = 1:length(pointinedg)
     %Get the analitical derivative:
     
     [dfwdS,dgamadS] = calcdfunctiondS(0,0,Sranglr,1);
-    
+   
     
    
     [numflux, earlysw]=riemannsolvertwophaseflow(signder_left,signder_right,sign2der_left,...

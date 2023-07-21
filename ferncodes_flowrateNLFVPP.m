@@ -16,14 +16,22 @@ flowresultc = zeros(size(centelem,1),1);
 for ifacont=1:bedgesize
     
     
-    if numcase == 246 || numcase == 245|| numcase==247 || ...
-            numcase==248 || numcase==249 || numcase==251
-        % vicosity on the boundary edge
-        visonface = viscosity(ifacont,:);
-        %It is a Two-phase flow
+    if 200<numcase && numcase<300
+        % equacao de concentracao
+        if numcase == 246 || numcase == 245 || numcase==247 || ...
+                numcase==248 || numcase==249 ||numcase==251
+            % vicosity on the boundary edge
+            visonface = viscosity(ifacont,:);
+            %It is a Two-phase flow
+        else
+            visonface = 1;
+        end  %End of IF
+    elseif numcase<200
+        % equacao de saturacao "viscosity=mobility"
+        visonface=sum(viscosity(ifacont,:));
     else
-        visonface = 1;
-    end  %End of IF
+        visonface=1;
+    end
     
     lef=bedge(ifacont,3);
     
@@ -70,14 +78,22 @@ for ifacont=1:bedgesize
 end
 
 for iface=1:inedgesize
-    if numcase == 246 || numcase == 245|| numcase==247 ||...
-            numcase==248 || numcase==249 || numcase==251
-        % vicosity on the boundary edge
-        visonface = viscosity(bedgesize + iface,:);
-        %It is a Two-phase flow
+    if 200<numcase && numcase<300
+        % equacao de concentracao
+        if numcase == 246 || numcase == 245 || numcase==247 ||...
+                numcase==248 || numcase==249 || numcase==251
+            % vicosity on the boundary edge
+            visonface = viscosity(bedgesize + iface,:);
+            %It is a Two-phase flow
+        else
+            visonface = 1;
+        end  %End of IF
+    elseif numcase<200
+        % equacao de saturacao "viscosity=mobility"
+        visonface=sum(viscosity(bedgesize + iface,:));
     else
-        visonface = 1;
-    end  %End of IF
+        visonface=1;
+    end
     
     lef=inedge(iface,3);
     rel=inedge(iface,4);

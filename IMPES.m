@@ -33,7 +33,7 @@ function IMPES(Sw,injecelem,producelem,satinbound,wells,klb,satonvertices,...
     coordmaprodelem,amountofneigvec,rtmd_storepos,rtmd_storeleft,...
     rtmd_storeright,isonbound,elemsize,bedgesize,inedgesize,parameter,...
     weightDMP,nflagface,p_old,contnorm,Kdec,Knc,Ktc,Dedc,weight,s,Con,nflagc,...
-                                  weightc,sc,dparameter,SS,dth,h,MM,gravrate)
+    weightc,sc,dparameter,SS,dth,h,MM,gravrate,Dmedio,velmedio,nflagfacec,weightDMPc)
 %Define global parameters:
 global timew elemarea totaltime timelevel pormap numcase pmethod smethod ...
     filepath benchkey resfolder order inedge;
@@ -119,17 +119,21 @@ while stopcriteria < 100
     elseif strcmp(pmethod,'mpfah') && numcase~=31.1% Revisar com cuidado
         
         [pressure,flowrate,flowresult]=ferncodes_solverpressureMPFAH(nflagface,...
-            parameter,weightDMP,wells,mobility);
+            parameter,weightDMP,wells,SS,dth,h,MM,gravrate,mobility);
+        
     elseif strcmp(pmethod,'nlfvpp')&& numcase~=31.1
         
-        [pressure,flowrate,flowresult,]=ferncodes_solverpressureNLFVPP(nflag,...
-            parameter,kmap,wells,mobility,V,Sw,N,p_old,contnorm,weight,s,Con,nflagc,...
-                                  weightc,sc,dparameter,SS,dth,h,MM,gravrate);
+    [pressure,flowrate,flowresult,]=ferncodes_solverpressureNLFVPP(nflag,...
+    parameter,kmap,wells,mobility,V,Sw,N,p_old,contnorm,weight,s,Con,nflagc,...
+                           weightc,sc,0,0,dparameter,SS,dth,h,MM,gravrate);
+                                            
         %Any other type of scheme to solve the Pressure Equation
     elseif strcmp(pmethod,'nlfvh')&& numcase~=31.1 % revisar com cuidado
         
         [pressure,flowrate,flowresult]=ferncodes_solverpressureNLFVH(nflagface,...
-            parameter,wells,mobility,weightDMP,p_old,0,0,0,contnorm);
+            parameter,wells,mobility,weightDMP,p_old,0,0,0,contnorm,...
+            weightDMPc,Con,nflagfacec,dparameter,weightc,sc,SS,dth,h,MM,gravrate);
+
     elseif strcmp(pmethod,'nlfvdmp')&& numcase~=31.1
        
         [pressure,flowrate,flowresult]=ferncodes_solverpressureDMP(nflagface,...
@@ -317,12 +321,12 @@ while stopcriteria < 100
     countstore = countstore + percentdt;
     c=c+1;
     %It gives the time spent per "timelevel"
-    
+ 
 end  %End of While
 toc
 %Write data file ("ProdutionReport.dat" and others)
 
-plotandwrite(producelem,Sw,pressure,overedgecoord(:,1),injecelem);
+plotandwrite(producelem,Sw,pressure,overedgecoord(:,1),injecelem,Dmedio,velmedio,time);
 
 %--------------------------------------------------------------------------
 %Write data file ("ProdutionReport.dat" and others)

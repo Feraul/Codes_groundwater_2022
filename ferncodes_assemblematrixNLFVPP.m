@@ -140,10 +140,6 @@ for iface=1:inedgesize
         
         I(lef)=I(lef)+visonface*m;
         I(rel)=I(rel)-visonface*m;
-    else
-        m=0;
-        I(lef)=I(lef)+visonface*m;
-        I(rel)=I(rel)-visonface*m;
     end
 end
 %==========================================================================

@@ -4,6 +4,7 @@ function [p,flowrate,flowresult]=ferncodes_solverpressureMPFAH(nflagface,...
 
 [M,I]=ferncodes_assemblematrixMPFAH(parameter,nflagface,weightDMP,SS,dt,h,...
     MM,gravrate,viscosity);
+
 %--------------------------------------------------------------------------
 %Add a source therm to independent vector "mvector" 
 
@@ -20,7 +21,7 @@ p = solver(M,I);
 disp('>> The Pressure field was calculated with success!');
 [pinterp]=ferncodes_pressureinterpHP(p,nflagface,parameter,weightDMP);
 %Get the flow rate 
-[flowrate,flowresult]=ferncodes_flowratelfvHP(parameter,weightDMP,pinterp,p);
+[flowrate,flowresult]=ferncodes_flowratelfvHP(parameter,weightDMP,pinterp,p,viscosity);
 
 %Message to user:
 disp('>> The Flow Rate field was calculated with success!');

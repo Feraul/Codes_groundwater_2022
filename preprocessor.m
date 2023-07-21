@@ -1577,12 +1577,17 @@ if numwell > 0 && any(well(:,9) == 2)
     %Verify if there exists producer well
     pointproduc = logical(well(:,7) > 500 & well(:,9) == 2);
     %It exists:
+    
     if any(pointproduc)
         %Count the number of wells
         countwell = countwell + 1;
         %Get the elements associated to Producer well (in the face)
         %Verify "bcflag"
-        getflag = logical(bcflag(:,1) > 200 & bcflag(:,1) < 300 );
+        if numcase<100
+            getflag = logical(bcflag(:,1) > 100 & bcflag(:,1) < 200);
+        else
+            getflag = logical(bcflag(:,1) > 200 & bcflag(:,1) < 300 );
+        end
         %Define the flag for producer face
         injecflag = bcflag(getflag,1);
         %It points to "bedge" rows with "injecflag"

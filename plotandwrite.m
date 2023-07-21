@@ -26,10 +26,11 @@ global filepath satlimit resfolder bcflag bcflagc numcase totaltime  elemarea;
 %Get the data according to "producelem" size
 %There is one producer well
 %Create the file name
+prfilename = [resfolder '_' 'ProdutionReport.dat'];
+%Open the file
+readfile = fopen([filepath '\' prfilename]);
+
 if numcase==245 || numcase==247
-    prfilename = [resfolder '_' 'ProdutionReport.dat'];
-    %Open the file
-    readfile = fopen([filepath '\' prfilename]);
     
     %"getgeodata" reads each row of *.geo and store it as a string array.
     %Get the data according to "producelem" size
@@ -50,9 +51,31 @@ if numcase==245 || numcase==247
     %Initialize prodution parameters:
     contime = getmatxdata(:,1);
     oilflowratevec = getmatxdata(:,2);
-%    oilaccumvec = getmatxdata(:,3);
+    %    oilaccumvec = getmatxdata(:,3);
     %Attribute watercut column
-%    watercutvec = getmatxdata(:,colnum);
+    %    watercutvec = getmatxdata(:,colnum);
+elseif 30<numcase && numcase<100
+    %"getgeodata" reads each row of *.geo and store it as a string array.
+    %Get the data according to "producelem" size
+    %There is one producer well
+    if length(producelem) == 1
+        getdata = textscan(readfile,'%f%f%f%f');
+        %Stabilishes number of columns
+        colnum = 4;
+        %There are more than one producer wells (but we just write two)
+    else
+        getdata = textscan(readfile,'%f%f%f%f%f');
+        %Stabilishes number of columns
+        colnum = 4:5;
+    end  %End of IF
+    %Attribute the data to "getgeodata"
+    getmatxdata = cell2mat(getdata);
+    %Initialize prodution parameters:
+    contime = getmatxdata(:,1);
+    oilflowratevec = getmatxdata(:,2);
+    oilaccumvec = getmatxdata(:,3);
+    %Attribute watercut column
+    watercutvec = getmatxdata(:,colnum);
 end
 %--------------------------------------------------------------------------
 %PLOT RESULTS
@@ -63,7 +86,8 @@ if numcase >= 31 && numcase <= 31.9
     %Define the flowrate value (to semi-analitical solution)
     Qvalue = bcflag(logical(bcflag(:,1) > 200 & bcflag(:,2) ~= 0),2);
     %Get saturation and position to plot
-    [posit,satfield,elemonline] = getlineresult(Sw,producelem,numcase);
+    
+    [posit,satfield,elemonline] = getlineresult(Sw,satonvertices,producelem);
     %Calculate semi-analitical saturation field.
     
     [x,Swanal] = solanalBL(Qvalue,totaltime(2),elemonline,Sw);
@@ -236,7 +260,7 @@ elseif numcase > 200
             analsolutionaux(2:length(analsolution)+1,1)=analsolution;
             confieldaux(2:length(confield)+1,1)=confield;
             positaux(2:length(posit)+1,1)=posit;
-
+            
             hold on
             
             %Plot the results (Analitical Solution)
@@ -245,7 +269,7 @@ elseif numcase > 200
             %hold on;
             
             plot(positaux,confieldaux,'-b','LineWidth',1.5);
-           
+            
             hold on;
             
             grid on;
@@ -254,9 +278,9 @@ elseif numcase > 200
             ylabel ('Concentration (C)');
             % Calculo dos erros
             
-             %Calculate the relative error of "el2" ("relerrorL2")
+            %Calculate the relative error of "el2" ("relerrorL2")
             relerrorL2 = (abs(confield - analsolution).^2).*elemarea(elemonline,:);
-           
+            
             relerrorL1=  (abs(confield - analsolution).^1).*elemarea(elemonline,:);
             abserrorMAX = abs(analsolution - confield);
             
@@ -266,12 +290,12 @@ elseif numcase > 200
             el1c = sum(relerrorL1)/sum(elemarea(elemonline,:))
             %Calculate "el2"
             el2c = sqrt(sum(relerrorL2)/sum(elemarea(elemonline,:)))
-           
+            
             
         case 232
             [posit,confield,elemonline] = getlineresult(Sw,satonvertices);
             [analsolution]=ferncodes_analyticalSolution(satonvertices,Dmedio,velmedio,posit,gamma);
-           % readequacao
+            % readequacao
             analsolutionaux=length(analsolution)+1;
             confieldaux= length(analsolution)+1;
             positaux= length(posit)+1;
@@ -282,7 +306,7 @@ elseif numcase > 200
             analsolutionaux(2:length(analsolution)+1,1)=analsolution;
             confieldaux(2:length(confield)+1,1)=confield;
             positaux(2:length(posit)+1,1)=posit;
-
+            
             hold on
             
             %Plot the results (Analitical Solution)
@@ -303,9 +327,9 @@ elseif numcase > 200
             ylabel ('Concentration (C)');
             % Calculo dos erros
             
-             %Calculate the relative error of "el2" ("relerrorL2")
+            %Calculate the relative error of "el2" ("relerrorL2")
             relerrorL2 = (abs(confield - analsolution).^2).*elemarea(elemonline,:);
-           
+            
             relerrorL1=  (abs(confield - analsolution).^1).*elemarea(elemonline,:);
             abserrorMAX = abs(analsolution - confield);
             
@@ -315,8 +339,8 @@ elseif numcase > 200
             el1c = sum(relerrorL1)/sum(elemarea(elemonline,:))
             %Calculate "el2"
             el2c = sqrt(sum(relerrorL2)/sum(elemarea(elemonline,:)))
-
-
+            
+            
         case 233
             [posit,confield,elemonline] = getlineresult(Sw,satonvertices);
             [analsolution]=ferncodes_analyticalSolution(satonvertices,Dmedio,velmedio,posit,gamma);
@@ -433,9 +457,9 @@ elseif numcase > 200
             analsolutionaux(2:length(analsolution)+1,1)=analsolution;
             confieldaux(2:length(confield)+1,1)=confield;
             positaux(2:length(posit)+1,1)=posit;
-           % hold on
+            % hold on
             %Plot the results (Analitical Solution)
-             plot (positaux,analsolutionaux,'k','LineWidth',2)
+            plot (positaux,analsolutionaux,'k','LineWidth',2)
             %Plot the results (Actual Numerical Solution)
             hold on;
             plot(positaux,confieldaux,'b','LineWidth',1.5);
@@ -462,12 +486,12 @@ elseif numcase > 200
             
             confieldaux(2:length(confield)+1,1)=confield;
             positaux(2:length(posit)+1,1)=posit;
-
+            
             confield=confieldaux;
             posit=positaux;
-           % hold on
+            % hold on
             %Plot the results (Analitical Solution)
-           %  plot (posit,analsolution,'k','LineWidth',2)
+            %  plot (posit,analsolution,'k','LineWidth',2)
             %Plot the results (Actual Numerical Solution)
             hold on;
             plot(posit,confield,'b','LineWidth',1.5);
@@ -593,20 +617,19 @@ end  %End of IF
 %Function "getlineresult"
 %--------------------------------------------------------------------------
 
-function [posit,satfield,elemonline] = getlineresult(Sw,satonvertices)
+function [posit,satfield,elemonline] = getlineresult(Sw,satonvertices,producelem)
 %Define global parameters:
-global centelem numcase coord;
+global centelem numcase coord satlimit;
 
 
-%Catch the "y" value in "centelem"
 
-y_value=(max(centelem(:,2))+min(centelem(:,2)))/2;
 %Initialize "pos" and "satfield"
 %getxvalue(1) = 0;
 getsatfield(1) = max(satonvertices);
 getelemonline(1) = 0;
 %Initialize "j"
 j = 1;
+jj=2;
 %Swept "centelem"
 for i = 1:size(centelem,1)
     if numcase==242 || numcase==241
@@ -626,7 +649,7 @@ for i = 1:size(centelem,1)
         %ymin=ymax/2;
         ymin=0;
     end
-    if (ymin<=centelem(i,2)) && (centelem(i,2) <= ymax)
+    if 200<numcase && ((ymin<=centelem(i,2)) && (centelem(i,2) <= ymax))
         %if (2.2<=centelem(i,2)) && (centelem(i,2) <= 2.4)
         %Attribute to "pos" the value of "centelem" which match with
         %"y_value"
@@ -638,6 +661,33 @@ for i = 1:size(centelem,1)
         getelemonline(j) = i;
         %Increment "j"
         j = j + 1;
+    elseif 30<numcase && numcase<100
+        %Define "xcolumn" and "ycolumn" according to "numcase" value
+        boolean = (numcase ~= 31.5);
+        xcolumn = boolean + (1 - boolean)*2;
+        ycolumn = 2*boolean + (1 - boolean);
+        %Choose a arbitrary position in "centelem"
+        pointer = ceil(0.5*length(producelem));
+        
+        %Catch the "y" value in "centelem"
+        y_value = centelem(producelem(pointer),ycolumn);
+        %Initialize "pos" and "satfield"
+        getxvalue(1) = 0;
+        getsatfield(1) = 1 - satlimit(2);
+        getelemonline(1) = 0;
+        %Initialize "j"
+        if (centelem(i,ycolumn) >= 0.98*y_value) && ...
+                (centelem(i,ycolumn) <= 1.02*y_value)
+            %Attribute to "pos" the value of "centelem" which match with
+            %"y_value"
+            getxvalue(jj) = centelem(i,xcolumn);
+            %Attribute to "satfield" the value of "Sw".
+            getsatfield(jj) = Sw(i);
+            %Attribute the number of element to "getelemonline"
+            getelemonline(jj) = i;
+            %Increment "jj"
+            jj = jj + 1;
+        end  %End of IF
     end  %End of IF
 end  %End of FOR
 
@@ -655,8 +705,12 @@ for i = 1:length(getxvalue)
 end  %End of FOR
 
 %Update "elemonline" without the first positio (it is on face)
-elemonline = elemonline(1:length(elemonline));
-posit=posit';
+if 30<numcase && numcase<100
+    elemonline = elemonline(2:length(elemonline));
+else
+    elemonline = elemonline(1:length(elemonline));
+    posit=posit';
+end
 
 %--------------------------------------------------------------------------
 %Function "getlineresultEymardProblem"

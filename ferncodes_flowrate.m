@@ -78,7 +78,7 @@ for ifacont = 1:bedgesize
         
     else
         x = logical(bcflag(:,1) == bedge(ifacont,5));
-        flowrate(ifacont)= nor*bcflag(x,2);
+        flowrate(ifacont)= -nor*bcflag(x,2);
     end
     
     %Attribute the flow rate to "flowresult"

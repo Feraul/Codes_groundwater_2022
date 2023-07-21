@@ -1,7 +1,7 @@
 function [M,I]=ferncodes_tratmentcontourlfvHP(ifacelef,parameter,nflagface,...
-    normcont,auxparameter,lef,weightDMP,M,I)
+    normcont,auxparameter,auxmobility,lef,weightDMP,M,I)
  global bedge bcflag coord phasekey
-termo0=normcont*auxparameter;
+termo0=auxmobility*normcont*auxparameter;
 % ifacelef1 por pertencer a face interior, á face Neumann
 % ou pode ser a propria face em questão (a face de Dirichlet)
 if ifacelef<size(bedge,1) || ifacelef==size(bedge,1)

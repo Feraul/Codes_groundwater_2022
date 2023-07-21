@@ -49,7 +49,7 @@ inedgesize = size(inedge,1);
 for i = 1:inedgesize
     %Get the fractional flux
     [~,fw,fo,gama,] = ...
-        twophasevar([Sw(inedge(i,3)) Sw(inedge(i,4))],numcase);
+        twophasevar([Sw(inedge(i,3)) Sw(inedge(i,4))]);
     %Obtain the apropriated deltax:
     %Calculate middle volume: the mean between volume shared by edge 
     vol = (elemarea(inedge(i,3)) + elemarea(inedge(i,4)))/2;
@@ -89,8 +89,7 @@ if any(klb)
     %Swept edges in "bedge" associated with boundary (injection)
     for i = 1:length(klb)
         %Calculate "fw" and "gama" for boundary condition
-        [~,fw,fo,gama,] = twophasevar([satinbound(i) Sw(injecelem(i))],...
-            numcase);
+        [~,fw,fo,gama,] = twophasevar([satinbound(i) Sw(injecelem(i))]);
         %Calculate middle volume: the mean between volume shared by edge 
         vol = elemarea(injecelem(i));
 

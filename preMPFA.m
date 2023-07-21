@@ -83,7 +83,7 @@ if strcmp(pmethod,'mpfad')|| strcmp(pmethod,'nlfvpp')|| strcmp(pmethod,'mpfaql')
             %LPEW 2
         case 'lpew2'
             % calculo dos pesos que correspondem ao LPEW2
-            [weight,s] = ferncodes_Pre_LPEW_2(kmap,N);
+            [weight,s] = ferncodes_Pre_LPEW_2(kmap,N,zeros(size(elem,1),1));
     end  %End of SWITCH
 end
 
@@ -180,7 +180,7 @@ switch char(pmethod)
         
         % Contreras et al., 2021
     case 'nlfvpp'
-        p_old=0e1*ones(size(elem,1),1); % inicializando a pressão
+        p_old=1e1*ones(size(elem,1),1); % inicializando a pressão
         
         % utilize tolerancia menor que 10^-12 para testes de convergencia
         % Para teste de monotonicidade ou problemas bifásicos utilize 10^-8.
@@ -241,6 +241,7 @@ switch char(pmethod)
         % calculo dos pesos DMP
         [weightDMP]=ferncodes_weightnlfvDMP(kmap);
         % contreras et al, 2016
+        if 200<numcase && numcase<300
         %==================================================================
         % variables relativos a concentracao
         %Get the initial condition
@@ -254,6 +255,8 @@ switch char(pmethod)
         
         % flags boundary conditions
         [nflagnoc,nflagfacec] = ferncodes_calflag_con(lastimeval);
+        
+        end
     case 'nlfvdmp'
         p_old=1e1*ones(size(elem,1),1); % inicializando a pressão
         

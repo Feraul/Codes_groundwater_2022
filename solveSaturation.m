@@ -4,8 +4,8 @@
 %PROGRAMA DE POS GRADUACAO EM ENGENHARIA CIVIL
 %TOPICOS ESPECIAIS EM DINAMICA DOS FLUIDOS COMPUTACIONAL
 %--------------------------------------------------------------------------
-%Subject: numerical routine to solve hyperbolic scalar equation with 
-%high-order resolution 
+%Subject: numerical routine to solve hyperbolic scalar equation with
+%high-order resolution
 %Type of file: FUNCTION
 %Criate date: 18/01/2014
 %Modify data:   /  /2014
@@ -14,13 +14,13 @@
 %Modified: Fernando Contreras,
 %--------------------------------------------------------------------------
 %Goals:
-%Calculate the Saturation Field. It chooses the time approximation 
+%Calculate the Saturation Field. It chooses the time approximation
 %according to user set:
 %1. Progressive Euler;
 %2 - 4. Runge-Kutta (2nd to 4th order).
 
 %--------------------------------------------------------------------------
-%Additional comments: 
+%Additional comments:
 %
 
 %--------------------------------------------------------------------------
@@ -32,12 +32,12 @@ function [newSw,orderintimestep,waterflowrate,oilflowrate,earlysw,Sleft,Sright] 
     othervertexmap,swsequence,ntriang,areatriang,prodwellbedg,...
     prodwellinedg,mwmaprodelem,vtxmaprodelem,coordmaprodelem,...
     amountofneigvec,rtmd_storepos,rtmd_storeleft,rtmd_storeright,...
-    isonbound,elemsize,bedgesize,inedgesize,gamma,time) 
+    isonbound,elemsize,bedgesize,inedgesize,gamma,time)
 
 
 
 %Define global parameters:
-global timeorder ;
+global timeorder numcase ;
 
 %Initialize "waterflowrate" and "oilflowrate"
 
@@ -57,10 +57,10 @@ switch timeorder
             ntriang,areatriang,prodwellbedg,prodwellinedg,mwmaprodelem,...
             vtxmaprodelem,coordmaprodelem,amountofneigvec,...
             rtmd_storepos,rtmd_storeleft,rtmd_storeright,isonbound,...
-            elemsize,bedgesize,inedgesize,gamma,time); 
+            elemsize,bedgesize,inedgesize,gamma,time);
         
         
-    %Use Runge-Kutta Second-Order (two levels)
+        %Use Runge-Kutta Second-Order (two levels)
     case 2
         %First level:
         [Swrk1,orderintimestep,earlysw,Sleft,Sright] = ...
@@ -72,10 +72,10 @@ switch timeorder
             vtxmaprodelem,coordmaprodelem,amountofneigvec,...
             rtmd_storepos,rtmd_storeleft,rtmd_storeright,isonbound,...
             elemsize,bedgesize,inedgesize,gamma,time);
-
-
-
-
+        
+        
+        
+        
         %Second level:
         [Swrk2,orderintimestep,earlysw,Sleft,Sright] = ...
             calcnewsatfield(Swrk1,flowrateadvec,flowratedif,dt,injecelem,producelem,...
@@ -85,12 +85,12 @@ switch timeorder
             areatriang,prodwellbedg,prodwellinedg,mwmaprodelem,...
             vtxmaprodelem,coordmaprodelem,amountofneigvec,...
             rtmd_storepos,rtmd_storeleft,rtmd_storeright,isonbound,...
-            elemsize,bedgesize,inedgesize,gamma,time);    
-
+            elemsize,bedgesize,inedgesize,gamma,time);
+        
         %Calculate the new Saturation Field.
         newSw = (1/2).*(Sw + Swrk2);
-
-    %Use Runge-Kutta Third-Order (three levels)
+        
+        %Use Runge-Kutta Third-Order (three levels)
     case 3
         %First level:
         [Swrk1,orderintimestep,earlysw,Sleft,Sright] = ...
@@ -101,8 +101,8 @@ switch timeorder
             areatriang,prodwellbedg,prodwellinedg,mwmaprodelem,...
             vtxmaprodelem,coordmaprodelem,amountofneigvec,...
             rtmd_storepos,rtmd_storeleft,rtmd_storeright,isonbound,...
-            elemsize,bedgesize,inedgesize,gamma);    
-
+            elemsize,bedgesize,inedgesize,gamma);
+        
         %Second level:
         [Swrk2,orderintimestep,earlysw,Sleft,Sright] = ...
             calcnewsatfield(Swrk1,flowrateadvec,flowratedif,dt,injecelem,producelem,...
@@ -112,11 +112,11 @@ switch timeorder
             areatriang,prodwellbedg,prodwellinedg,mwmaprodelem,...
             vtxmaprodelem,coordmaprodelem,amountofneigvec,...
             rtmd_storepos,rtmd_storeleft,rtmd_storeright,isonbound,...
-            elemsize,bedgesize,inedgesize,gamma);    
+            elemsize,bedgesize,inedgesize,gamma);
         
         %Calculate a resultant Saturation Field
         Swres12 = (3/4).*Sw + (1/4).*Swrk2;
-
+        
         %Third level:
         [Swrk3,oorderintimestep,earlysw,Sleft,Sright] = ...
             calcnewsatfield(Swres12,flowrateadvec,flowratedif,dt,injecelem,producelem,...
@@ -126,13 +126,13 @@ switch timeorder
             areatriang,prodwellbedg,prodwellinedg,mwmaprodelem,...
             vtxmaprodelem,coordmaprodelem,amountofneigvec,...
             rtmd_storepos,rtmd_storeleft,rtmd_storeright,isonbound,...
-            elemsize,bedgesize,inedgesize,gamma);    
-
+            elemsize,bedgesize,inedgesize,gamma);
+        
         %Calculate the new Saturation Field.
         newSw = (1/3).*(Sw + 2.*Swrk3);
-
-    %Use Runge-Kutta Fourth-Order (four levels). It was obtained from
-    %Gottlied, Shu and Tadmor (2001)
+        
+        %Use Runge-Kutta Fourth-Order (four levels). It was obtained from
+        %Gottlied, Shu and Tadmor (2001)
     case 4
         %First level:
         [Swrk1,] = ...
@@ -143,8 +143,8 @@ switch timeorder
             areatriang,prodwellbedg,prodwellinedg,mwmaprodelem,...
             vtxmaprodelem,coordmaprodelem,amountofneigvec,...
             rtmd_storepos,rtmd_storeleft,rtmd_storeright,isonbound,...
-            elemsize,bedgesize,inedgesize);    
-
+            elemsize,bedgesize,inedgesize);
+        
         %Second level:
         [Swrk2,] = ...
             calcnewsatfield(Swrk1,flowrate,dt,injecelem,producelem,...
@@ -154,8 +154,8 @@ switch timeorder
             areatriang,prodwellbedg,prodwellinedg,mwmaprodelem,...
             vtxmaprodelem,coordmaprodelem,amountofneigvec,...
             rtmd_storepos,rtmd_storeleft,rtmd_storeright,isonbound,...
-            elemsize,bedgesize,inedgesize);    
-
+            elemsize,bedgesize,inedgesize);
+        
         %Third level:
         [Swrk3,] = ...
             calcnewsatfield(Swrk2,flowrate,dt,injecelem,producelem,...
@@ -165,8 +165,8 @@ switch timeorder
             areatriang,prodwellbedg,prodwellinedg,mwmaprodelem,...
             vtxmaprodelem,coordmaprodelem,amountofneigvec,...
             rtmd_storepos,rtmd_storeleft,rtmd_storeright,isonbound,...
-            elemsize,bedgesize,inedgesize);    
-
+            elemsize,bedgesize,inedgesize);
+        
         %Fourth level:
         [Swrk4,orderintimestep,earlysw] = ...
             calcnewsatfield(Swrk3,flowrate,dt,injecelem,producelem,...
@@ -176,8 +176,8 @@ switch timeorder
             areatriang,prodwellbedg,prodwellinedg,mwmaprodelem,...
             vtxmaprodelem,coordmaprodelem,amountofneigvec,...
             rtmd_storepos,rtmd_storeleft,rtmd_storeright,isonbound,...
-            elemsize,bedgesize,inedgesize);    
-
+            elemsize,bedgesize,inedgesize);
+        
         %Calculate the new Saturation Field.
         newSw = (3/8)*Sw + (1/3)*Swrk1 + (1/4)*Swrk2 + (1/8)*Swrk4;
 end  %End of SWITCH (time order)
@@ -187,18 +187,28 @@ end  %End of SWITCH (time order)
 %Verify if there is producer wells
 
 if any(producelem)
-    %Get the area of all elements associated to producer wells
-%     totalprodarea = sum(elemarea(producelem));
-    %Calculate the fractional flow for the producer elements
-    
+    if numcase <100% two-phase model
+        %Get the area of all elements associated to producer wells
+        %     totalprodarea = sum(elemarea(producelem));
+        %Calculate the fractional flow for the producer elements
+        
+        [~,fw,fo,~] = twophasevar(newSw(producelem));
+    end
     %Swept all producer elements
     for iprod = 1:length(producelem)
         %Get a relative area
-%         relatarea = elemarea(producelem(iprod))/totalprodarea;
+        %         relatarea = elemarea(producelem(iprod))/totalprodarea;
         %Catch the oil flow rate in producer well
-        oilflowrate = oilflowrate + newSw(producelem(iprod))*flowresult(producelem(iprod));
-        %Catch the water flow rate in producer well
-        waterflowrate = waterflowrate + fw(iprod)*flowresult(producelem(iprod));
+        if numcase <100 % two-phase model
+            %Catch the oil flow rate in producer well
+            oilflowrate = oilflowrate + fo(iprod)*flowresult(producelem(iprod));
+            %Catch the water flow rate in producer well
+            waterflowrate = waterflowrate + fw(iprod)*flowresult(producelem(iprod));
+        else
+            oilflowrate = oilflowrate + newSw(producelem(iprod))*flowresult(producelem(iprod));
+            %Catch the water flow rate in producer well
+            waterflowrate = waterflowrate + fw(iprod)*flowresult(producelem(iprod));
+        end
     end  %End of FOR (producer wells)
 end  %End of IF
 

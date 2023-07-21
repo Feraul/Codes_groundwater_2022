@@ -26,7 +26,7 @@ y
 //***OBS.: Even if you chose [n], write below both the path and 
 //folder's name where you want to store your results:
 
-C:\Users\flc59\Documents\Benchmark_Cases\BenchHydraulic300
+C:\Users\flc59\Documents\Benchmark_Cases\BenchTwophase1_2
 
 //Write below either a number or any other key word to feature the 
 //folder where the results will be stored:
@@ -50,7 +50,7 @@ teste
 //[4] ==> "Water-flow"
 //[5] ==> "Unsatured-flow"
 
-4
+2
 
 //--------------------------------------------------------------------
 //Coordinate System (only 2D application)
@@ -99,7 +99,7 @@ n
 //[nlfvpp]==> "Non-Linear Finite Volume" using lpew
 //[nlfvh]==> "Non-Linear Finite Volume" using harmonic point
 
-mpfah
+nlfvh
 
 //If you chose [fps] or [mpfae], write below the auxiliary control
 //volume factor. It defines the auxiliary control volume size.
@@ -122,7 +122,7 @@ lpew2
 
 //Write below the Tolerance for the non-linear system solution: 
 
-1e-12 
+1e-8
 
 //Write below the Maximum Number of Iteraction allowed for the
 //non-linear system solution:
@@ -336,11 +336,11 @@ Becnhmarkgrav.msh
 
 //If [n], write below the path where the geometry file is:  
 
-C:\Users\flc59\Documents\GitHub\Benchmark_GeometryFiles
+C:\Users\flc59\Documents\Benchmark_GeometryFiles
 
 //Write below the name of the geometry file. Use the extension *.geo.
 
-BenchHydraulic2.geo
+BenchTwophase1.geo
 
 //--------------------------------------------------------------------
 //----------------- General Options (Configure gmsh) -----------------
@@ -374,13 +374,13 @@ y
 //and two geometric tag)
 
 1
-17 1 1 3
+64 1 1 3
 
 //Direction "y" (number of statments, number of points, growth rate 
 //and two geometric tag)
 
 1
-17 1 2 4
+64 1 2 4
 
 //------------------
 //UNSTRUCTURED MESH:
@@ -479,7 +479,7 @@ densitytable.dat
 //the fluid(s) considered. Water and oil must be the order. 
 
 2 
-1000 100        
+1 1        
 
 //--------------------------------------------------------------------
 //Viscosity of fluids considered (cP):
@@ -503,7 +503,7 @@ viscositytable.dat
 //the fluid(s) considered. Water and Concentration must be the order. 
 
 2 
-0.001 0.001     
+1 1     
 
 //--------------------------------------------------------------------
 //Unredutible water sat. (Swr) and residual oil sat. (Sor):
@@ -561,8 +561,8 @@ r
 //used to "draw" the surfaces during CAD building. (*.geo).  
 
 1
-33.33 0 
-0 33.33
+1 0 
+0 1
 
 //--------------------------------------------------------------------
 //Distribution of porosity:
@@ -581,7 +581,7 @@ y
 //(each one must be associated to its layer).
 
 1
-0.2    
+1    
 
 //If [n], each control volume will have a different value of porosity 
 //Get it from an external file. Write below both the path and name of 
@@ -628,9 +628,10 @@ n
 //(Dirichlet, Neumann or Periodic);
 //3. In the same row, put the algebric value of this BC.  
 
-2
-101 100
-201 0      
+3
+201 0
+202 1
+101 0       
 
 //--------------------------------------------------------------------
 //Treatment of Boundary Points
@@ -641,8 +642,8 @@ n
 //2. In another row, the sequence of codes to be associated with 
 //each point group. 
 
-1
-101    
+2
+202 201     
 
 //--------------------------------------------------------------------
 //----------------------- Convergence Criteria -----------------------
@@ -658,7 +659,7 @@ n
 //The Courant number will be used as a stability parameter of the 
 //hyperbolic saturation equation. Write below the Courant number:
 
-0.9
+0.4
 
 //--------------------------------------------------------------------
 //Unity for Time (only for Two-Phase Simulation): 
@@ -667,7 +668,7 @@ n
 //[s] ==> "to dimentional time" (seconds, days, etc); 
 //[pvi] ==> "to non-dmentional time" (Pore Volume Injected). 
 
-s
+pvi
 
 //--------------------------------------------------------------------
 //Total time of simulation (days) or PVI's value (adm)
@@ -677,7 +678,7 @@ s
 //state simulation (parameter of stop). Write below the amount of 
 //days or the PVI's value instead:
 
-20
+0.05
 
 //--------------------------------------------------------------------
 //------------------------------- Wells ------------------------------
@@ -717,5 +718,8 @@ s
 //if you write "0" replacing the number of wells, it will be not 
 //necessary to erase the numbers below. Keep it to reference.  
 
-1
-1 500   500  0.008 301 1 401  100000   1
+4
+1 0 1 0.05 301 1 0 0 2
+1 0 0 0.05 301 1 0 0 2
+1 1 0 0.05 0 0 501 0 2
+1 1 1 0.05 0 0 501 0 2

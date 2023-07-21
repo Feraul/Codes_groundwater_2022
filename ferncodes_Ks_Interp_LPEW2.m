@@ -1,6 +1,6 @@
 %It is called by the function "ferncodes_Pre_LPEW_2.m"
 
-function [Kt1,Kt2,Kn1,Kn2] = ferncodes_Ks_Interp_LPEW2(O,T,Qo,kmap,No)
+function [Kt1,Kt2,Kn1,Kn2] = ferncodes_Ks_Interp_LPEW2(O,T,Qo,kmap,No,Sw)
 %Retorna os K(n ou t) necessários para a obtenção dos weights. kmap é a
 %matriz de permeabilidade; Ex: Kt1->linhaN=Kt1(cellN);
 global bedge inedge esurn2 esurn1 phasekey visc elem numcase;
@@ -51,12 +51,28 @@ for k=1:nec
         end
     end
  
+    %----------------------------------------------------------------------
+    %Verify if it is an One-Phase or Two-Phase case (ELEMENT "mobility")
+ 
+    %Verify if it is an One-Phase or Two-Phase case
+    %One-Phase case:
+    if phasekey ~=2
+        L22 = 1;
+    %Two-Phase case
+     else
+%         %Call "twophasevar.m"
+         [~,~,~,~,krw,kro,~,~,~,~] = twophasevar(Sw(j));
+
+         L22 = (krw/visc(1) + kro/visc(2));  
+        
+     end  %End of IF
+     
     %------------------------- Tensores ----------------------------------%
     
-    K1(1,1)= kmap(elem(j,5),2);
-    K1(1,2)= kmap(elem(j,5),3);
-    K1(2,1)= kmap(elem(j,5),4);
-    K1(2,2)= kmap(elem(j,5),5);
+    K1(1,1)= L22*kmap(elem(j,5),2);
+    K1(1,2)= L22*kmap(elem(j,5),3);
+    K1(2,1)= L22*kmap(elem(j,5),4);
+    K1(2,2)= L22*kmap(elem(j,5),5);
     
     if (size(T,1)==size(O,1))&&(k==nec)
         %------------ Calculo dos K's internos no elemento ---------------%

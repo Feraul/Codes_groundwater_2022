@@ -1,6 +1,6 @@
 %It is called by "ferncodes_solverpressure.m"
 
-function [w,s] = ferncodes_Pre_LPEW_2(kmap,N)
+function [w,s] = ferncodes_Pre_LPEW_2(kmap,N,Sw)
 %Define global parameters
 global coord nsurn1 nsurn2 bcflag bedge inedge
 
@@ -18,7 +18,7 @@ for y = 1:size(coord,1),
     [neta] = netas_Interp_LPEW(O,P,T,Qo,No);
     
     % calculo dos Ks
-    [Kt1,Kt2,Kn1,Kn2] = ferncodes_Ks_Interp_LPEW2(O,T,Qo,kmap,No);
+    [Kt1,Kt2,Kn1,Kn2] = ferncodes_Ks_Interp_LPEW2(O,T,Qo,kmap,No,Sw);
     
     % calculo dos lamdas
     [lambda,r] = Lamdas_Weights_LPEW2(Kt1,Kt2,Kn1,Kn2,theta1,theta2,ve1,...

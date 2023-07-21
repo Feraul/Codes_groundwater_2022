@@ -1,7 +1,9 @@
 function [p,flowrate,flowresult,flowratedif,flowresultc]=...
     ferncodes_iterpicardANLFVH(M_old,RHS_old,parameter,p_old,nflagface,...
     wells,viscosity,weightDMP,w,s,nflagno,contnorm,weightDMPc,Con,...
-    nflagfacec,dparameter,wightc,sc)
+    nflagfacec,dparameter,wightc,sc,SS,dt,h,MM,gravrate)
+
+
 %% calculo do residuo Inicial
 R0=norm(M_old*p_old-RHS_old);
 
@@ -16,7 +18,7 @@ R0=norm(M_old*p_old-RHS_old);
 %    weightDMP,nflagface);
 [p,erro,iter]=ferncodes_andersonacc2(p_old,1e-6,parameter,w,s,...
     nflagface,weightDMP,wells,viscosity,R0,contnorm,Con,wightc,sc,...
-    weightDMPc,nflagfacec,dparameter);
+    weightDMPc,nflagfacec,dparameter,SS,dt,h,MM,gravrate);
 
 % se o campo de ressão é negativo ele coloca zero
 %Message to user:

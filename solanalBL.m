@@ -23,7 +23,7 @@
 
 function [x,Sw] = solanalBL(Q,vpi,elemonline,numsatfield)
 %Define global parameters:
-global pormap satlimit numcase; 
+global pormap satlimit; 
 
 %Attribute the nondimensional time. It divides by "2" when we consider a
 %holf-domain (to long "x" coordinate)
@@ -37,7 +37,7 @@ count = 1:10000;
 Sw = linspace(satlimit(1),(1 - satlimit(2)),length(count));
 
 %Get "dfdS"
-[dfdS,vecpos,] = calcdfdS(Sw,numcase);
+[dfdS,vecpos,] = calcdfdS(Sw);
 %Initialize the vector "x"
 x = zeros(1,length(vecpos));
 
@@ -98,7 +98,7 @@ buckey_levalidation(x(1),elemonline,numsatfield,blcurve);
 %FUNCTIONS
 %--------------------------------------------------------------------------
 
-function [dfdS,vecpos,Sshock] = calcdfdS(Sw,numcase)
+function [dfdS,vecpos,Sshock] = calcdfdS(Sw)
 %Define global parameters:
 global satlimit; 
 
@@ -107,7 +107,7 @@ minval = length(Sw);
 Swi = satlimit(1);
 
 %Get two-phase flow parameters:
-[fw,] = twophasevar(Sw,numcase);
+[~,fw,~] = twophasevar(Sw);
     
 %Calculate the derivate
 [dfdS,] = calcdfunctiondS(0,0,Sw,1);

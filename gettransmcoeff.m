@@ -5,7 +5,7 @@
 %TOPICOS ESPECIAIS EM DINAMICA DOS FLUIDOS COMPUTACIONAL
 %--------------------------------------------------------------------------
 %Subject: numerical routine to load the geometry in gmsh and to create...
-%the mesh parameter 
+%the mesh parameter
 %Type of file: FUNCTION
 %Criate date: 29/11/2013
 %Modify data:   /  /2012
@@ -15,7 +15,7 @@
 %Goals:
 
 %--------------------------------------------------------------------------
-%Additional Comments: "flagside" can receive "1" (gravity contribution on 
+%Additional Comments: "flagside" can receive "1" (gravity contribution on
 %the left) or "2" (gravity contribution on the right). This help to decide
 %which column of "bodyterm" we must take.
 
@@ -29,11 +29,11 @@ function [mtxcoeff,vecoeff,esurn] = gettransmcoeff(transmvecleft,...
 totalmobility=1;
 %Get the terms of matrix [A] + [B][G]-1[H] (left)
 mtxleft = transmvecleft(maptransm(vrtx1) + 1:maptransm(vrtx1 + 1));
-    
+
 %Get terms of known vector:
 %Left
 vecleft = knownvecleft(mapknownvec(vrtx1) + 1:mapknownvec(vrtx1 + 1));
-        
+
 %Get the elements and the nodes surrounding the vertex 1
 [esurn,nsurn] = getsurnode(vrtx1);
 %Find the "vertices(2)" position in "nsurn"
@@ -92,14 +92,14 @@ if any(storeinv)
     initpos = finalpos - length(nsurn) + 1;
     %mob*[Brow]*[invD]*g
     bodycoeff = (totalmobility*recoveryb(initpos:finalpos)')*G;
-
+    
     %Evaluate the side contribution (for left hand side)
     auxcoeff = auxcoeff + localbodyterm(nsurnpos,1)*(flagside == 1);
     %Evaluate the side contribution (for right hand side)
     auxcoeff = auxcoeff + localbodyterm(nsurnpos,2)*(flagside == 2);
-  
+    
     %Update "vecoeff"
-    vecoeff = vecoeff + (bodycoeff + auxcoeff); 
+    vecoeff = vecoeff + (bodycoeff + auxcoeff);
 end  %End of IF (get the average density)
 
 %--------------------------------------------------------------------------
@@ -116,7 +116,7 @@ function [totalmobility] = getotalmobility(mobility,phasekey,row,posvertex,...
     bedgesize,inedgesize)
 %Define global parameters
 global visc;
-                
+
 %Initialize "totalmobility"
 totalmobility = zeros(length(row),1);
 
@@ -124,25 +124,25 @@ totalmobility = zeros(length(row),1);
 %In one-phase case ("phasekey" == 1)
 if phasekey == 1
     totalmobility(:) = 1/visc(1);
-%In two-phase case ("phasekey" == 2) with NO Kozdon Multidimensional Scheme
+    %In two-phase case ("phasekey" == 2) with NO Kozdon Multidimensional Scheme
 elseif phasekey == 2 && size(mobility,1) == bedgesize + inedgesize
     %Define "totalmobility"
-    totalmobility = sum(mobility(row,:));  
-%In two-phase case ("phasekey" == 2) with Kozdon MultiD Scheme
+    totalmobility = sum(mobility(row,:));
+    %In two-phase case ("phasekey" == 2) with Kozdon MultiD Scheme
 elseif phasekey == 2 && size(mobility,1) > bedgesize + inedgesize
     %Define aboolean parameter:
     booleanvtx = (posvertex == 1);
-    %Water mobility when "inode" is lower than "inodesurn" 
-    %("booleanvtx" = 1) or when "inode" is bigger than "inodesurn" 
+    %Water mobility when "inode" is lower than "inodesurn"
+    %("booleanvtx" = 1) or when "inode" is bigger than "inodesurn"
     %("booleanvtx" = 0)
     watermobility = mobility(2*row - 1,1)*booleanvtx + ...
         mobility(2*row,1)*(1 - booleanvtx);
-
+    
     %Oil mobility when "inode" is lower than "inodesurn" (1) or
     %when "inode" is bigger than "inodesurn" (0)
     oilmobility = mobility(2*row - 1,2)*booleanvtx + ...
         mobility(2*row,2)*(1 - booleanvtx);
-
+    
     %Define "totalambda" for half-edge evaluated
     totalmobility = watermobility + oilmobility;
 end  %End of IF
@@ -163,12 +163,12 @@ averdens = zeros(length(row),1);
 %In one-phase case ("phasekey" == 1)
 if phasekey == 1
     averdens(:) = dens(1);
-%In two-phase case ("phasekey" == 2) with NO Kozdon Multidimensional Scheme
+    %In two-phase case ("phasekey" == 2) with NO Kozdon Multidimensional Scheme
 elseif phasekey == 2 && size(mobility,1) == bedgesize + inedgesize
     %Define "mobility"
     averdens = (mobility(row,:)*dens')./localmobvec;
-%In two-phase case ("phasekey" == 2) with Kozdon MultiD Scheme
-%???????????????????????????????????????????????????????????????????????
+    %In two-phase case ("phasekey" == 2) with Kozdon MultiD Scheme
+    %???????????????????????????????????????????????????????????????????????
 elseif phasekey == 2 && size(mobility,1) > bedgesize + inedgesize
     %Initialize phase mobilities
     watermobility = 0;
@@ -179,14 +179,14 @@ elseif phasekey == 2 && size(mobility,1) > bedgesize + inedgesize
     %Water mobility (when "inode" is bigger than "inodesurn")
     watermobility = watermobility + ...
         mobility(2*row,1)*(posvertex == 2);
-
+    
     %Oil mobility (when "inode" is lower than "inodesurn")
     oilmobility = oilmobility + ...
         mobility(2*row - 1,2)*(posvertex == 1);
     %Oil mobility (when "inode" is bigger than "inodesurn")
     oilmobility = oilmobility + ...
         mobility(2*row,2)*(posvertex == 2);
-
+    
     %Define "totalambda" for half-edge evaluated
     averdens = watermobility*dens(1) + oilmobility*dens(2);
 end  %End of IF

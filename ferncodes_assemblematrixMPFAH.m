@@ -1,6 +1,11 @@
 function [M,I]=ferncodes_assemblematrixMPFAH(parameter,nflagface,...
-                            weightDMP,SS,dt,h,MM,gravrate,viscosity)
+    weightDMP,SS,dt,h,MM,gravrate,viscosity)
 global inedge coord bedge bcflag elem numcase methodhydro keygravity dens
+%---------------------------------------------------------
+% viscosity=viscosity when contaminant transport
+% viscosity=mobility when two-phase flow
+%---------------------------------------------------------
+
 %Initialize "bedgesize" and "inedgesize"
 bedgesize = size(bedge,1);
 inedgesize = size(inedge,1);
@@ -8,10 +13,10 @@ inedgesize = size(inedge,1);
 %Initialize "M" (global matrix) and "I" (known vector)
 M = zeros(size(elem,1)); %Prealocação de M.
 I = zeros(size(elem,1),1);
-coeficiente=dt^-1*MM*SS;
+
 for ifacont=1:bedgesize
-    % when 200<numcase<300, is groundwater transport model 
-     if 200<numcase && numcase<300 
+    % when 200<numcase<300, is groundwater transport model
+    if 200<numcase && numcase<300
         % equacao de concentracao
         if numcase == 246 || numcase == 245 || numcase==247 || ...
                 numcase==248 || numcase==249 ||numcase==251
@@ -25,11 +30,11 @@ for ifacont=1:bedgesize
     elseif numcase<200
         % equacao de saturacao "viscosity=mobility"
         visonface=sum(viscosity(ifacont,:));
-     else
-        % otherwise, the model is groundwater flow model 
+    else
+        % otherwise, the model is groundwater flow model
         visonface=1;
     end
-    % element flag 
+    % element flag
     lef=bedge(ifacont,3);
     % length of face
     normcont=norm(coord(bedge(ifacont,1),:)-coord(bedge(ifacont,2),:));
@@ -41,34 +46,34 @@ for ifacont=1:bedgesize
         %problemas monofásico
         I(lef)=I(lef)+ normcont*bcflag(r,2); % problema de buckley leverett Bastian
     else
-        % average hydraulic head 
+        % average hydraulic head
         % unconfined aquifer
         if numcase==331
             h_avg=h(lef);
         else
-           h_avg=1; 
+            h_avg=1;
         end
         %-------------------------------------------------------------%
         % somando 1
         ifacelef1=parameter(1,3,ifacont);
         auxparameter1=h_avg*parameter(1,1,ifacont);
         [M,I]=ferncodes_tratmentcontourlfvHP(ifacelef1,parameter,nflagface,...
-            normcont,auxparameter1,lef,weightDMP,M,I);
+            normcont,auxparameter1,visonface,lef,weightDMP,M,I);
         %-------------------------------------------------------------%
         % somando 2
         ifacelef2=parameter(1,4,ifacont);
         auxparameter2=h_avg*parameter(1,2,ifacont);
         [M,I]=ferncodes_tratmentcontourlfvHP(ifacelef2,parameter,nflagface,...
-            normcont,auxparameter2,lef,weightDMP,M,I);
+            normcont,auxparameter2,visonface,lef,weightDMP,M,I);
         
-        M(lef,lef)=M(lef,lef)+ normcont*(auxparameter1 + auxparameter2);
+        M(lef,lef)=M(lef,lef)+ visonface*normcont*(auxparameter1 + auxparameter2);
         
     end
 end
 % Montagem da matriz global
 
 for iface=1:inedgesize
-    % when 200<numcase<300, is groundwater transport model 
+    % when 200<numcase<300, is groundwater transport model
     if 200<numcase && numcase<300
         % concentration equation
         if numcase == 246 || numcase == 245 || numcase==247 ||...
@@ -89,12 +94,12 @@ for iface=1:inedgesize
     % element flags
     lef=inedge(iface,3);
     rel=inedge(iface,4);
-    % average hydraulic head 
-    % unconfined aquifer 
+    % average hydraulic head
+    % unconfined aquifer
     if numcase==331
-           h_avg=(h(lef)+h(rel))/2;
-        else
-           h_avg=1; 
+        h_avg=(h(lef)+h(rel))/2;
+    else
+        h_avg=1;
     end
     
     %Determinação dos centróides dos elementos à direita e à esquerda.%
@@ -124,16 +129,16 @@ for iface=1:inedgesize
     ARR=norma*mulef*(parameter(2,1,ifactual)+parameter(2,2,ifactual));
     % implementação da matriz global
     % contribuição da transmisibilidade no elemento esquerda
-    M(lef,lef)=M(lef,lef)+ h_avg*ALL;
-    M(lef,rel)=M(lef,rel)- h_avg*ARR;
+    M(lef,lef)=M(lef,lef)+ h_avg*visonface*ALL;
+    M(lef,rel)=M(lef,rel)- h_avg*visonface*ARR;
     % contribuição da transmisibilidade no elemento direita
-    M(rel,rel)=M(rel,rel)+ h_avg*ARR;
-    M(rel,lef)=M(rel,lef)- h_avg*ALL;
+    M(rel,rel)=M(rel,rel)+ h_avg*visonface*ARR;
+    M(rel,lef)=M(rel,lef)- h_avg*visonface*ALL;
     
     
     % contribuições do elemento a esquerda
     %------------------------ somando 1 ----------------------------------%
-    termo0=h_avg*norma*murel*parameter(1,1,ifactual);
+    termo0=h_avg*visonface*norma*murel*parameter(1,1,ifactual);
     if ifacelef1<size(bedge,1) || ifacelef1==size(bedge,1)
         if nflagface(ifacelef1,1)<200
             % neste caso automaticamente introduzimos o valor dada no
@@ -174,7 +179,7 @@ for iface=1:inedgesize
                 opostoksi=ksi1;
             end
             
-                        
+            
             % verifica se a face oposto a "ifacelef1" pertence ao contorno
             if faceoposto<size(bedge,1) || faceoposto==size(bedge,1)
                 if nflagface(faceoposto,1)<200
@@ -198,7 +203,7 @@ for iface=1:inedgesize
                 else
                     %Define "mobonface" (for "bedge")
                     %It is a One-phase flow. In this case, "mobility" is "1"
-                                        
+                    
                     normcontopost=norm(coord(bedge(faceoposto,1),:)-coord(bedge(faceoposto,2),:));
                     
                     x=bcflag(:,1)==bedge(faceoposto,5);
@@ -299,7 +304,7 @@ for iface=1:inedgesize
     end
     
     %--------------------------- somando 2 -------------------------------%
-    termo0=h_avg*norma*murel*parameter(1,2,ifactual);
+    termo0=h_avg*visonface*norma*murel*parameter(1,2,ifactual);
     if ifacelef2<size(bedge,1) || ifacelef2==size(bedge,1)
         if nflagface(ifacelef2,1)<200
             % neste caso automaticamente introduzimos o valor dada no
@@ -361,7 +366,7 @@ for iface=1:inedgesize
                     I(rel)=I(rel)+termo0*termo2;
                     
                 else
-                                        
+                    
                     normcontopost=norm(coord(bedge(faceoposto,1),:)-coord(bedge(faceoposto,2),:));
                     
                     x=bcflag(:,1)==bedge(faceoposto,5);
@@ -463,7 +468,7 @@ for iface=1:inedgesize
     %%
     % contribuições do elemento a direita
     % somando 1
-    termo0=h_avg*norma*mulef*parameter(2,1,ifactual);
+    termo0=h_avg*visonface*norma*mulef*parameter(2,1,ifactual);
     if ifacerel1<size(bedge,1) || ifacerel1==size(bedge,1)
         if nflagface(ifacerel1,1)<200
             % neste caso automaticamente introduzimos o valor dada no
@@ -523,7 +528,7 @@ for iface=1:inedgesize
                     
                     
                 else
-                                                            
+                    
                     normcontopost=norm(coord(bedge(faceoposto,1),:)-coord(bedge(faceoposto,2),:));
                     
                     x=bcflag(:,1)==bedge(faceoposto,5);
@@ -640,7 +645,7 @@ for iface=1:inedgesize
         
     end
     % somando 2
-    termo0=h_avg*norma*mulef*parameter(2,2,ifactual);
+    termo0=h_avg*visonface*norma*mulef*parameter(2,2,ifactual);
     if ifacerel2<size(bedge,1) || ifacerel2==size(bedge,1)
         if nflagface(ifacerel2,1)<200
             % neste caso automaticamente introduzimos o valor dada no
@@ -700,7 +705,7 @@ for iface=1:inedgesize
                     I(lef)=I(lef)+termo0*termo2;
                     
                 else
-                   
+                    
                     normcontopost=norm(coord(bedge(faceoposto,1),:)-coord(bedge(faceoposto,2),:));
                     
                     x=bcflag(:,1)==bedge(faceoposto,5);
@@ -811,7 +816,7 @@ for iface=1:inedgesize
         M(rel,[auxlef,auxrel])=  M(rel,[auxlef,auxrel])- termo0*[auxweightrel1,auxweightrel2];
         
     end
-     % contribuicao do termo gravitacional
+    % contribuicao do termo gravitacional
     if strcmp(keygravity,'y')
         if numcase<200
             % escoamento bifasico oleo-agua
@@ -828,6 +833,7 @@ end
 
 % para calcular a carga hidraulica
 if numcase>300
+    coeficiente=dt^-1*MM*SS;
     % Euler backward method
     if strcmp(methodhydro,'backward')
         M=M+coeficiente*eye(size(elem,1));

@@ -1,6 +1,6 @@
 function [p,flowrate,flowresult,flowratedif,flowresultc]=ferncodes_solverpressureNLFVH(nflagface,...
     parameter,wells,mobility,weightDMP,...
-    p_old,w,s,nflagno,contnorm,weightDMPc,Con,nflagfacec,dparameter,wightc,sc,SS,dt,h,MM,gravrate)
+    p_old,w,s,nflagno,contnorm,weightDMPc,Con,nflagfacec,dparameter,wightc,sc)
 
 
 global acel
@@ -23,6 +23,6 @@ if strcmp(acel,'FPI')
 elseif strcmp(acel,'AA')
     [p,flowrate,flowresult,flowratedif,flowresultc]=ferncodes_iterpicardANLFVH(M_old,RHS_old,...
         parameter,p_old,nflagface,wells,mobility,weightDMP,w,s,...
-        nflagno,contnorm,weightDMPc,Con,nflagfacec,dparameter,wightc,sc,SS,dt,h,MM,gravrate);
+        nflagno,contnorm,weightDMPc,Con,nflagfacec,dparameter,wightc,sc);
 end
 end
