@@ -26,16 +26,24 @@
 function [taylorterms] = gettaylorterms(Sw,flagknownedge,satonboundedges,...
     wvector,wmap,lsw,injecelem,amountofneigvec,auxvecforswept)
 %Define global parameters:
-global bedge bcflagc order;
-
-%Get the periodic position (In case of PERIODIC BOUNDARY CONDITION)
-if order > 1 && any(bcflagc(:,1) > 600)
-    periodicpos = getperiodicelem;
-%There is no PERIODIC BOUNDARY CONDITION.
+global bedge bcflagc order numcase bcflag;
+if 30<numcase && numcase <200
+    %Get the periodic position (In case of PERIODIC BOUNDARY CONDITION)
+    if order > 1 && any(bcflag(:,1) > 600)
+        periodicpos = getperiodicelem;
+        %There is no PERIODIC BOUNDARY CONDITION.
+    else
+        periodicpos = 0;
+    end  %End of IF
 else
-    periodicpos = 0;
-end  %End of IF
-
+    %Get the periodic position (In case of PERIODIC BOUNDARY CONDITION)
+    if order > 1 && any(bcflagc(:,1) > 600)
+        periodicpos = getperiodicelem;
+        %There is no PERIODIC BOUNDARY CONDITION.
+    else
+        periodicpos = 0;
+    end  %End of IF
+end
 %Initialize "elemtoswept". It is the amount of elements for swept. 
 %In producer well treatment procedure, the amount of wells to swept is 
 %equal to "auxvecforswept".

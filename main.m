@@ -57,10 +57,6 @@ global coord centelem elem esurn1 esurn2 nsurn1 nsurn2 bedge inedge ...
 % y=bedge(:,2);
 % bedge(:,1)=y;
 % bedge(:,2)=x;
-%---------------------------------------------------------------------------
-% Bifasico para não linear precisa modificar na acelerador de Anderson
-% Calculo dos pesos fora do tempo analisar
-%--------------------------------------------------------------------------
 % necesitamos ajeitar para o campo de pressao quando tem "restart"
 % this numcase is used to simulate concentration solute in aquifers
 if 200<numcase && numcase <300
