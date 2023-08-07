@@ -60,7 +60,7 @@ while stopcriteria < 100
    
     
     [h_new,flowrate,] = ferncodes_solvePressure_TPFA(Kde, Kn,...
-        nflag, Hesq,wells,viscosity, Kdec, Knc,nflagc,Con,SS,dt,h,MM);
+        nflagface, Hesq,wells,viscosity, Kdec, Knc,nflagc,Con,SS,dt,h,MM);
     elseif strcmp(pmethod,'mpfad')
     % Calculate hydraulic head and flowrate using the MPFA with diamond pacth
         [h_new,flowrate,] = ferncodes_solverpressure(...
@@ -109,8 +109,8 @@ plotandwrite(producelem,Con,h,satonvertices,0,0,0,0);
 %Mesage for the user:
 disp('------------------------------------------------');
 disp('>> Global Hydraulic head extrema values [hmax hmin]:');
-max_satval = max(h)
-min_satval = min(h)
+max_hyval = max(h)
+min_hyval = min(h)
 %It deletes the "restart.dat" file
 command = ['del ' char(filepath) '\' 'restart.dat'];
 %It calls system

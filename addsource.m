@@ -87,10 +87,14 @@ if (size(wells,2) > 1)
         %Swept all elements with source term
         for iprod = 1:length(producrow)
             %Apply the source to "mvector" (algebric system)
+            if numcase<300
             mvector(wells(producrow(iprod),1)) = ...
                 mvector(wells(producrow(iprod),1)) + ...
-                (flowratevalue(iprod)*...
-                elemarea(wells(producrow(iprod),1))/sumelemwell);
+                (flowratevalue(iprod)*elemarea(wells(producrow(iprod),1))/sumelemwell);
+            else
+              mvector(wells(producrow(iprod),1)) = ...
+                mvector(wells(producrow(iprod),1)) + flowratevalue(iprod)*(elemarea(wells(producrow(iprod),1))/sumelemwell);  
+            end
         end  %End of FOR (flowrate in producer well)
     %2. Applying PRESSURE:
     elseif any(wells(producrow,5) > 500 & wells(producrow,5) < 601)

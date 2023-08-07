@@ -566,6 +566,46 @@ elseif numcase > 200
             %xlim([0 1])
             %ylim([0 1.21])
             hold on
+        case 330
+            [posit,confield,] = getlineresult(pressure,satonvertices);
+            
+            confieldaux= zeros(length(confield)+2,1);
+            positaux= zeros(length(posit)+2,1);
+            
+            confieldaux(1)=100;
+            positaux(1)=0;
+            confieldaux(end)=100;
+            positaux(end)=1000;
+            
+            confieldaux(2:length(confield)+1,1)=confield;
+            positaux(2:length(posit)+1,1)=posit;
+            
+            plot(positaux,confieldaux,'--b','LineWidth',1.5);
+            hold on
+            grid
+            xlabel('y(m)');
+            ylabel('Hydraulic head (m)');
+            title('MPFA-H method');
+     case 332
+            [posit,confield,] = getlineresult(pressure,satonvertices);
+            
+            confieldaux= zeros(length(confield)+2,1);
+            positaux= zeros(length(posit)+2,1);
+            
+            confieldaux(1)=100;
+            positaux(1)=0;
+            confieldaux(end)=100;
+            positaux(end)=1000;
+            
+            confieldaux(2:length(confield)+1,1)=confield;
+            positaux(2:length(posit)+1,1)=posit;
+            
+            plot(positaux,confieldaux,'--r','LineWidth',1.5);
+            hold on
+            grid
+            xlabel('y(m)');
+            ylabel('Hydraulic head (m)');
+            title('MPFA-H method');
             
     end
     
@@ -648,6 +688,9 @@ for i = 1:size(centelem,1)
         %ymax=10;
         %ymin=ymax/2;
         ymin=0;
+    else
+        ymin=0;
+        ymax=0;
     end
     if 200<numcase && ((ymin<=centelem(i,2)) && (centelem(i,2) <= ymax))
         %if (2.2<=centelem(i,2)) && (centelem(i,2) <= 2.4)
@@ -688,6 +731,31 @@ for i = 1:size(centelem,1)
             %Increment "jj"
             jj = jj + 1;
         end  %End of IF
+    elseif 300<numcase
+        if numcase==330
+            %if (498<centelem(i,1) && centelem(i,1)<501) && centelem(i,2)<1000
+            if (abs(centelem(i,1)-500)/500)<1e-2 && centelem(i,2)<1000
+                %"y_value"
+                getxvalue(j) = centelem(i,2);
+                %Attribute to "satfield" the value of "Sw".
+                getsatfield(j) = Sw(i);
+                %Attribute the number of element to "getelemonline"
+                getelemonline(j) = i;
+                %Increment "jj"
+                j = j + 1;
+            end
+        elseif numcase==332
+            if (abs(centelem(i,1)-250)/250)<1e-2 && centelem(i,2)<1000
+                %"y_value"
+                getxvalue(j) = centelem(i,2);
+                %Attribute to "satfield" the value of "Sw".
+                getsatfield(j) = Sw(i);
+                %Attribute the number of element to "getelemonline"
+                getelemonline(j) = i;
+                %Increment "jj"
+                j = j + 1;
+            end
+        end
     end  %End of IF
 end  %End of FOR
 
