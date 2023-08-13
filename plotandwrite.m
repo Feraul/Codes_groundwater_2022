@@ -600,7 +600,7 @@ elseif numcase > 200
             confieldaux(2:length(confield)+1,1)=confield;
             positaux(2:length(posit)+1,1)=posit;
             
-            plot(positaux,confieldaux,'--r','LineWidth',1.5);
+            plot(positaux,confieldaux,'--g','LineWidth',1.5);
             hold on
             grid
             xlabel('y(m)');
@@ -745,8 +745,11 @@ for i = 1:size(centelem,1)
                 j = j + 1;
             end
         elseif numcase==332
-            if (abs(centelem(i,1)-250)/250)<1e-2 && centelem(i,2)<1000
-                %"y_value"
+            %if (abs(centelem(i,1)-250)/250)<1e-2 && centelem(i,2)<1000
+            const=25; % para malha 40x40
+            if ((const*30<centelem(i,1)&& centelem(i,1)<const*31) && centelem(i,2)<1000)
+              
+            %"y_value"
                 getxvalue(j) = centelem(i,2);
                 %Attribute to "satfield" the value of "Sw".
                 getsatfield(j) = Sw(i);

@@ -1,6 +1,6 @@
 function [M,I]=ferncodes_assemblematrixMPFAH(parameter,nflagface,...
     weightDMP,SS,dt,h,MM,gravrate,viscosity)
-global inedge coord bedge bcflag elem numcase methodhydro keygravity dens
+global inedge coord bedge bcflag elem numcase methodhydro keygravity dens elemarea
 %---------------------------------------------------------
 % viscosity=viscosity when contaminant transport
 % viscosity=mobility when two-phase flow
@@ -833,11 +833,11 @@ end
 
 % para calcular a carga hidraulica
 if numcase>300
-    coeficiente=dt^-1*MM*SS;
+    coeficiente=dt^-1*MM*SS.*elemarea(:);
     % Euler backward method
     if strcmp(methodhydro,'backward')
-        M=M+coeficiente*eye(size(elem,1));
-        I=I+coeficiente*eye(size(elem,1))*h;
+        M=M+coeficiente.*eye(size(elem,1));
+        I=I+coeficiente.*eye(size(elem,1))*h;
     else
         % Crank-Nicolson method
         I=I+coeficiente*eye(size(elem,1))*h-0.5*M*h;

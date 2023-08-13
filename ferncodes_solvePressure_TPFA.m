@@ -31,7 +31,8 @@ M=zeros(size(elem,1),size(elem,1));
 mvector=zeros(size(elem,1),1);
 bedgesize = size(bedge,1);
 % Loop de faces de contorno
-coeficiente=dt^-1*MM*SS.*elemarea(:);
+mu=MM*SS;
+coeficiente=(mu.*elemarea(:))/dt;
 for ifacont=1:size(bedge,1)
     v0=coord(bedge(ifacont,2),:)-coord(bedge(ifacont,1),:);
     if numcase == 246 || numcase == 245 || numcase==247 || numcase==248 || numcase==249

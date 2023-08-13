@@ -61,9 +61,10 @@ switch numcase
         % step time
         dt=0.01;
         % find the well element
+        const=25;
         %b1=find(abs(centelem(:,1)-250)<1e-9 & abs(centelem(:,2)-250)<1e-9);
-        %b1=find((21.7*11<centelem(:,1)& centelem(:,1)<21.7*12) & (21.7*11<centelem(:,2)& centelem(:,2)<21.7*12));
-        b1=find((abs(centelem(:,1)-250)/250)<1e-2 & (abs(centelem(:,2)-250)/250)<1e-2);
+        b1=find((const*9<centelem(:,1)& centelem(:,1)<const*10) & (const*9<centelem(:,2)& centelem(:,2)<const*10));
+        %b1=find((abs(centelem(:,1)-250)/250)<1e-2 & (abs(centelem(:,2)-250)/250)<1e-2);
         wells(1,1)=b1;
         wells(1,2)=1;
         wells(1,3)=0;
@@ -71,7 +72,8 @@ switch numcase
         wells(1,5)=0;
         wells(1,6)=-10000;
         %-----------------------------------------------------------------
-        b2=find((abs(centelem(:,1)-750)/750)<1e-2 & (abs(centelem(:,2)-250)/250)<1e-2);
+        b2=find((const*30<centelem(:,1)& centelem(:,1)<const*31) & (const*9<centelem(:,2)& centelem(:,2)<const*10));
+        %b2=find((abs(centelem(:,1)-750)/750)<1e-2 & (abs(centelem(:,2)-250)/250)<1e-2);
         %b2=find(abs(centelem(:,1)-750)<1e-9 & abs(centelem(:,2)-250)<1e-9);
         wells(2,1)=b2;
         wells(2,2)=1;
@@ -80,8 +82,9 @@ switch numcase
         wells(2,5)=0;
         wells(2,6)=-10000;
         %------------------------------------------------------------------
-        b3=find((abs(centelem(:,1)-750)/750)<1e-2 & (abs(centelem(:,2)-750)/750)<1e-2);
-        %b3=find(abs(centelem(:,1)-750)<1e-9 & abs(centelem(:,2)-750)<1e-9);
+        b3=find((const*30<centelem(:,1)& centelem(:,1)<const*31) & (const*30<centelem(:,2)& centelem(:,2)<const*31));
+        %b3=find((abs(centelem(:,1)-750)/750)<1e-2 & (abs(centelem(:,2)-750)/750)<1e-2);
+        
         wells(3,1)=b3;
         wells(3,2)=1;
         wells(3,3)=0;
@@ -89,8 +92,9 @@ switch numcase
         wells(3,5)=0;
         wells(3,6)=-10000;
         %------------------------------------------------------------------
-        b4=find((abs(centelem(:,1)-250)/250)<1e-2 & (abs(centelem(:,2)-750)/750)<1e-2);
-        %b4=find(abs(centelem(:,1)-250)<1e-9 & abs(centelem(:,2)-750)<1e-9);
+        b4=find((const*9<centelem(:,1)& centelem(:,1)<const*10) & (const*30<centelem(:,2)& centelem(:,2)<const*31));
+        %b4=find((abs(centelem(:,1)-250)/250)<1e-2 & (abs(centelem(:,2)-750)/750)<1e-2);
+        
         wells(4,1)=b4;
         wells(4,2)=1;
         wells(4,3)=0;
