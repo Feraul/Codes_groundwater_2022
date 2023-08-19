@@ -31,10 +31,10 @@ global bedge inedge elemarea normals filepath foldername numcase;
 %Calculate the error
 
 %"invh" is equivalent to (1/h). Used in structured mesh
-invh
+
 
 %Evaluate the benchmarks with CONVERGENCE RATE
-if numcase < 20 
+if numcase < 20 || numcase==306
     %User mesage
     disp('---------------------------');
     disp('>> Ploting error analisys!');
@@ -141,27 +141,27 @@ if numcase < 20
     %GRAPHICS
 
     %Plot the error field (PRESSURE)
-    figure(1);
-    plot(errormatrix(:,1),errormatrix(:,2),'-ko');
-    hold on;
-    plot(errormatrix(:,1),errormatrix(:,3),'-ks');
-    %plot(errormatrix(:,1),errormatrix(:,4),'-kv');
-    hold off;
-
-    grid on;
-    xlabel('Log2(N)');
-    ylabel('Log2(error)');
-    title('Pressure error');
-    legend('Norm Max','Norm L2');
-
-    %Plot the error field (VELOCITY)
-    figure(2);
-    plot(errormatrix(:,1),errormatrix(:,4),'-kd');
-    grid on;
-    xlabel('Log2(N)');
-    ylabel('Log2(error)');
-    title('Velocity error');
-    legend('Norm L2');
+%     figure(1);
+%     plot(errormatrix(:,1),errormatrix(:,2),'-ko');
+%     hold on;
+%     plot(errormatrix(:,1),errormatrix(:,3),'-ks');
+%     %plot(errormatrix(:,1),errormatrix(:,4),'-kv');
+%     hold off;
+% 
+%     grid on;
+%     xlabel('Log2(N)');
+%     ylabel('Log2(error)');
+%     title('Pressure error');
+%     legend('Norm Max','Norm L2');
+% 
+%     %Plot the error field (VELOCITY)
+%     figure(2);
+%     plot(errormatrix(:,1),errormatrix(:,4),'-kd');
+%     grid on;
+%     xlabel('Log2(N)');
+%     ylabel('Log2(error)');
+%     title('Velocity error');
+%     legend('Norm L2');
 
 %Evaluate the benchmarks majo than 20 and minor than 30 (Pmax and Pmin)
 elseif numcase > 20 && numcase < 30 || numcase == 16 

@@ -59,7 +59,7 @@ switch phasekey
                 parameter,kmap,weightDMP,wells,1,V,1,N);
         elseif strcmp(pmethod,'mpfah')
             [pressure,flowrate,]=ferncodes_solverpressureMPFAH(nflagface,...
-                parameter,weightDMP,wells,1);
+                parameter,weightDMP,wells,SS,dt,h_old,MM,gravrate,1);
         elseif strcmp(pmethod,'nlfvpp')
             [pressure,flowrate,]=ferncodes_solverpressureNLFVPP(nflagno,...
                 parameter,kmap,wells,1,V,1,N,p_old,contnorm);
@@ -81,7 +81,7 @@ switch phasekey
         %Plot the fields (pressure, normal velocity, etc)
         %This function create the "*.vtk" file used in VISIT to
         %postprocessing the results
-        postprocessor(pressure,flowrate,0,1,overedgecoord,keywrite,invh,normk);
+        postprocessor(pressure,flowrate,0,1,1,overedgecoord,1,keywrite,invh,normk);
         
         %It finishes the time counter and "profile".
         toc

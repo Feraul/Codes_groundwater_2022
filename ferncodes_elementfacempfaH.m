@@ -1,4 +1,4 @@
-function [F]=element_face
+function [F]=ferncodes_elementfacempfaH
 global bedge inedge elem coord
 for ii=1:size(elem,1)
     i=1;
@@ -29,8 +29,6 @@ for ii=1:size(elem,1)
             else
                 iedge=find((inedge(:,1)==list(jj) & inedge(:,2)==list(1))|(inedge(:,1)==list(1) & inedge(:,2)==list(jj)));
                 F(ii,i)=iedge+size(bedge,1);
-                
-
                 i=i+1;
             end
         end

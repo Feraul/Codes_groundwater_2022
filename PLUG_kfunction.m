@@ -686,7 +686,7 @@ switch numcase
         kmap(1,1:5) = [1 33.33 0 0 33.33];
         elem(:,5)=1;
         
-    case 331
+    case 301
         for i=1:size(centelem,1)
             
             K(i,1:5) = [i kmap(1,2) 0 0 kmap(1,2)];
@@ -697,7 +697,7 @@ switch numcase
         % A Local Grid-Refined Numerical Groundwater Model 
         % Based on the Vertex-centred Finite-Volume Method 
        kmap=K;
-     case 332
+     case 302
          % Permeability tensor for the case III, article 2023:
         % A Local Grid-Refined Numerical Groundwater Model 
         % Based on the Vertex-centred Finite-Volume Method 
@@ -706,6 +706,20 @@ switch numcase
         %----------------------------------------------------------------------
         %Example 43: Two-Phase Flow case. Adapted from Nikitin et al., 2012
         %Case 1, four litologies  
+    case 306
+        % Permeability tensor for the case 0, article 2023:
+        % A Local Grid-Refined Numerical Groundwater Model 
+        % Based on the Vertex-centred Finite-Volume Method
+        for j=1:size(centelem,1)
+            if centelem(j,1)<0.5 ||centelem(j,1)==0.5
+                 K(j,1:5) = [j 1 0.5 0.5 1];
+                 elem(j,5)=j;
+            else
+               K(j,1:5) = [j 10 2 2 100];
+               elem(j,5)=j; 
+            end
+        end
+        kmap=K;
     case 43
         %Get the permeability field
         kmap = getnikitinperm(centelem);

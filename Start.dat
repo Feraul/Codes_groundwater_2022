@@ -26,7 +26,7 @@ y
 //***OBS.: Even if you chose [n], write below both the path and 
 //folder's name where you want to store your results:
 
-C:\Users\flc59\Documents\Benchmark_Cases\BenchHydraulic300
+C:\Users\flc59\Documents\Benchmark_Cases\BenchHydraulic306
 
 //Write below either a number or any other key word to feature the 
 //folder where the results will be stored:
@@ -50,7 +50,7 @@ teste_h
 //[4] ==> "Water-flow"
 //[5] ==> "Unsatured-flow"
 
-4
+1
 
 //--------------------------------------------------------------------
 //Coordinate System (only 2D application)
@@ -324,7 +324,7 @@ upwd
 
 //Do you have a mesh file? [y] ==> "yes"; [n] ==> "no".
 
-n
+y
 
 //If [y], write below the path where the mesh file is:
  
@@ -332,7 +332,7 @@ C:\Users\flc59\Documents\GitHub\Malhas2
 
 //Write below the name of the mesh file. Use the extension *.msh:
 
-BenchHydraulic2.msh
+HermelineMeshModQuad_12_12.msh
 
 //If [n], write below the path where the geometry file is:  
 
@@ -628,9 +628,8 @@ n
 //(Dirichlet, Neumann or Periodic);
 //3. In the same row, put the algebric value of this BC.  
 
-2
-101 100
-201 0      
+1
+101 100      
 
 //--------------------------------------------------------------------
 //Treatment of Boundary Points
@@ -717,5 +716,5 @@ s
 //if you write "0" replacing the number of wells, it will be not 
 //necessary to erase the numbers below. Keep it to reference.  
 
-1
+0
 1 500   500  0.008 301 1 401  100000   1

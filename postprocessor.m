@@ -177,6 +177,56 @@ fprintf(fid,'%26.16E \r\n',normk);
 %Jump a line
 fprintf(fid,'\r\n');
 %Close the text bilder using "fclose"
+
+%Initialize "presanalit" and "flowrateanalit" in cases where there is no 
+%benchmark
+presanalit = 0;
+flowrateanalit = 0;
+
+%If "numcase" is major than "0" and minor than 20, evaluate the benchmark
+if (numcase > 0 && numcase < 20)|| numcase==306
+    %----------------------------------------------------------------------
+    %Call "benchmark" function
+
+    %This function calculate the analitical pressure field according with 
+    %case choosed. The last parameters call the benchmark to be worked. If 
+    %anyone benchmark is requered, the user must put "0" in this lack. 
+    %Otherwise, the user must put the benchmark number ("1", "2", "3", etc). 
+    %To know which case corresponds to its number see each example inside 
+    %"validation" funct.
+    [presanalit,flowrateanalit] = benchmark(overedgecoord,numcase);
+
+    %Write data related to Analitical PRESSURE
+    fprintf(fid,'SCALARS Analytpressure float 1 \r\n');
+    fprintf(fid,'LOOKUP_TABLE default \r\n\r\n');
+    fprintf(fid,'%26.16E \r\n',presanalit);
+    %Jump a line
+    fprintf(fid,'\r\n');
+end  %End of IF (Benchmarks)
+
+%If "numcase" is major than "0" and minor than 30, plot a validation 
+%analisys
+if (numcase > 0 && numcase < 30)|| numcase==306
+    %----------------------------------------------------------------------
+    %Call "validation" function
+
+    %This function is imployed to validate the numerical results, comparing 
+    %it with analitical solutions of benchmark.
+    %The letter "i" or "a" mean, respectively, flags to initial data (run 
+    %for first time) or a flag to accumulate data (run the routine 
+    %accumuling erros informations). The last number means the amount of 
+    %elements by dirction 
+    %(or 1/h, with "h" beeing the mesh spacement).
+    [presserrorfield] = validation(pressure,presanalit,flowrate,...
+        flowrateanalit,keywrite,invh);
+
+    %Write data related to Absolute ERROR
+    fprintf(fid,'SCALARS AbsPressureERROR float 1 \r\n');
+    fprintf(fid,'LOOKUP_TABLE default \r\n\r\n');
+    fprintf(fid,'%26.16E \r\n',presserrorfield);
+    %Jump a line
+    fprintf(fid,'\r\n');
+end  %End of IF (Validation)
 fclose(fid);
 
 end  %End of function

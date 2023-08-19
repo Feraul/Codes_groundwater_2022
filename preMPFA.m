@@ -380,7 +380,7 @@ for ik = 1:length(normk)
     %Calculate the norm of tensor
     normk(ik) = norm(permcompon);
 end
-if numcase>300
+if 300<numcase && numcase~=306
     % see equation (2), of the article -- A local grid-refined
     % numerical groundwater model based on the vertex centered finite
     % volume method

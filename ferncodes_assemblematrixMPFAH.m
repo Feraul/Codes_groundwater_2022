@@ -833,17 +833,19 @@ end
 
 % para calcular a carga hidraulica
 if numcase>300
-    coeficiente=dt^-1*MM*SS.*elemarea(:);
-    % Euler backward method
-    if strcmp(methodhydro,'backward')
-        M=M+coeficiente.*eye(size(elem,1));
-        I=I+coeficiente.*eye(size(elem,1))*h;
-    else
-        % Crank-Nicolson method
-        I=I+coeficiente*eye(size(elem,1))*h-0.5*M*h;
-        
-        M=0.5*M+coeficiente*eye(size(elem,1));
-        
+    if numcase~=306
+        coeficiente=dt^-1*MM*SS.*elemarea(:);
+        % Euler backward method
+        if strcmp(methodhydro,'backward')
+            M=M+coeficiente.*eye(size(elem,1));
+            I=I+coeficiente.*eye(size(elem,1))*h;
+        else
+            % Crank-Nicolson method
+            I=I+coeficiente*eye(size(elem,1))*h-0.5*M*h;
+            
+            M=0.5*M+coeficiente*eye(size(elem,1));
+            
+        end
     end
 end
 

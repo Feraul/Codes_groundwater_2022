@@ -5,7 +5,11 @@
 function [SS,h_old,MM,wells,dt]=prehydraulic
 
 global numcase elem centelem
-
+SS=0;
+h_old=0;
+MM=0;
+wells=0;
+dt=0;
 switch numcase
     % The cases 330-333 were obtained of the article -- A local grid-refined
     % numerical groundwater model based on the vertex centered finite

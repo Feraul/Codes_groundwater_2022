@@ -19,7 +19,8 @@ p = solver(M,I);
 
 %Message to user:
 disp('>> The Pressure field was calculated with success!');
-[pinterp]=ferncodes_pressureinterpHP(p,nflagface,parameter,weightDMP);
+[pinterp]=ferncodes_pressureinterpHP(p,nflagface,parameter,weightDMP,0,0,0,0);
+
 %Get the flow rate 
 [flowrate,flowresult]=ferncodes_flowratelfvHP(parameter,weightDMP,pinterp,p,viscosity);
 

@@ -956,7 +956,57 @@ flowrateanalit = zeros(size(bedge,1) + size(inedge,1),1);
                 flowrateanalit(size(bedge,1) + ianal) = ...
                     dot(V,normals(size(bedge,1) + ianal,:));
             end  %End of FOR (internal edges)
+        case 306
+            %Swept all elements:
+            for ianal = 1:size(centelem,1)
+                %Attribute to "x" and "y" "centelem" values
+                x = centelem(ianal,1);
+                y = centelem(ianal,2);
+                %Fill "presanalit"
+                if x<0.5 || x==0.5
+                  presanalit(ianal) =10+2*x*y ;  
+                else
+                  presanalit(ianal) = 10.75-1.5*x+9*y+2*x*y;
+                
+                end
+            end  %End of FOR (pressure)            
+            %Calculate the analitical velocity
+            %Boundary edges
+            for ianal = 1:size(bedge,1)
+                %Attribute to "x" and "y" "centelem" values
+                x = overedgecoord(ianal,1);
+                y = overedgecoord(ianal,2);
+                if x<0.5 || x==0.5
+                %Obtain the vector velocity (-KnablaP)
+                V = [-20*y-10*x; 
+                    -10*y-20*x; 0];
+                else
+                  V = [15-20*y-18-4*x; 
+                    3-4*y-900-200*x; 0];  
+                end
+                %Obtain the flow rate
+                flowrateanalit(ianal) = dot(V,normals(ianal,:));
+            end  %End of FOR (boundary edges)
+            
+            for ianal = 1:size(inedge,1)
+                %Attribute to "x" and "y" "centelem" values
+                x = overedgecoord(size(bedge,1) + ianal,1);
+                y = overedgecoord(size(bedge,1) + ianal,2);
 
+                %Obtain the vector velocity (-KnablaP)
+                if x<0.5 || x==0.5
+                %Obtain the vector velocity (-KnablaP)
+                V = [-20*y-10*x; 
+                    -10*y-20*x; 0];
+                else
+                  V = [15-20*y-18-4*x; 
+                    3-4*y-900-200*x; 0];  
+                end
+                %Obtain the flow rate
+                flowrateanalit(size(bedge,1) + ianal) = ...
+                    dot(V,normals(size(bedge,1) + ianal,:));
+            end  %End of FOR (internal edges)
+            
     end  %End of SWITCH
 
 %User mesage
