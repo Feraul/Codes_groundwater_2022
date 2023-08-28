@@ -232,7 +232,7 @@ for iface = 1:inedgesize
 end  %End of FOR ("inedge")
 %==========================================================================
 % para calcular a carga hidraulica
-if numcase>300
+if numcase>300 && numcase~=306
     % Euler backward
     if strcmp(methodhydro,'backward')
         M=M+coeficiente*eye(size(elem,1));

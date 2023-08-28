@@ -99,7 +99,7 @@ n
 //[nlfvpp]==> "Non-Linear Finite Volume" using lpew
 //[nlfvh]==> "Non-Linear Finite Volume" using harmonic point
 
-mpfah
+mpfad
 
 //If you chose [fps] or [mpfae], write below the auxiliary control
 //volume factor. It defines the auxiliary control volume size.
@@ -324,7 +324,7 @@ upwd
 
 //Do you have a mesh file? [y] ==> "yes"; [n] ==> "no".
 
-y
+n
 
 //If [y], write below the path where the mesh file is:
  
@@ -336,11 +336,11 @@ HermelineMeshModQuad_12_12.msh
 
 //If [n], write below the path where the geometry file is:  
 
-C:\Users\flc59\Documents\GitHub\Benchmark_GeometryFiles
+C:\Users\flc59\Documents\GitHub\Malhas2
 
 //Write below the name of the geometry file. Use the extension *.geo.
 
-BenchHydraulic2.geo
+five_spot.geo
 
 //--------------------------------------------------------------------
 //----------------- General Options (Configure gmsh) -----------------
@@ -374,13 +374,13 @@ y
 //and two geometric tag)
 
 1
-25 1 1 3
+8 1 1 3
 
 //Direction "y" (number of statments, number of points, growth rate 
 //and two geometric tag)
 
 1
-25 1 2 4
+8 1 2 4
 
 //------------------
 //UNSTRUCTURED MESH:

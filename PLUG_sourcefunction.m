@@ -366,9 +366,9 @@ for isource = 1:size(elem,1)
                 %As the value of source is 1 and this mult. the volume of 
                 %each element, the source value is the owner volume of each 
                 %element evaluated.
-                sourcevector(isource) = 20*elemarea(isource);
+                sourcevector(isource) = -20*elemarea(isource);
             else
-                sourcevector(isource) = 8*elemarea(isource);
+                sourcevector(isource) =- 8*elemarea(isource);
             end  %End of internal if 
     end  %End of SWITCH
 end  %End of FOR

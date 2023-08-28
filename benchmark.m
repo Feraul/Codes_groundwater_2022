@@ -976,6 +976,7 @@ flowrateanalit = zeros(size(bedge,1) + size(inedge,1),1);
                 %Attribute to "x" and "y" "centelem" values
                 x = overedgecoord(ianal,1);
                 y = overedgecoord(ianal,2);
+               
                 if x<0.5 || x==0.5
                 %Obtain the vector velocity (-KnablaP)
                 V = [-20*y-10*x; 
@@ -992,7 +993,7 @@ flowrateanalit = zeros(size(bedge,1) + size(inedge,1),1);
                 %Attribute to "x" and "y" "centelem" values
                 x = overedgecoord(size(bedge,1) + ianal,1);
                 y = overedgecoord(size(bedge,1) + ianal,2);
-
+               
                 %Obtain the vector velocity (-KnablaP)
                 if x<0.5 || x==0.5
                 %Obtain the vector velocity (-KnablaP)

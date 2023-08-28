@@ -341,11 +341,10 @@ coordmid = mean(coord(vertices,1:2))*(1 - boolean) + ...
             x=coordmid(1);
             y=coordmid(2);
             
-            if x< 0.5 || x==0.5
-                
-                bcattrib =10+20*x*y;
-            else
-                bcattrib =10.75-1.5*x+9*y+2*x*y;
+            if x<= 0.5 
+                bcattrib =10 + 20*x*y;
+            elseif x>0.5
+                bcattrib =10.75 - 1.5*x + 9*y + 2*x*y;
             end
         %When the boundary condition cames from "bcflag"
 %         case 231
