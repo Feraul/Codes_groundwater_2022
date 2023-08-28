@@ -494,7 +494,16 @@ flowrateanalit = zeros(size(bedge,1) + size(inedge,1),1);
             %Calculate the presure field
             [presanalit,flowrateanalit] = calcCase6(normals,centelem,...
                 overedgecoord,bedge,inedge,kapla);
-            
+
+        case 7.1
+            %Calculate the analitical pressure
+            for ianal = 1:size(centelem,1)
+                %Define "x" and "y"
+                x = centelem(ianal,1);
+                y = centelem(ianal,2);
+                %Calculate the pressure field
+                presanalit(ianal) = 2-x-0.2*y;
+            end  %End of FOR
         %------------------------------------------------------------------
         %Solve cases with SOURCE TERM
         %------------------------------------------------------------------
@@ -964,9 +973,9 @@ flowrateanalit = zeros(size(bedge,1) + size(inedge,1),1);
                 y = centelem(ianal,2);
                 %Fill "presanalit"
                 if x<0.5 || x==0.5
-                  presanalit(ianal) =10+2*x*y ;  
+                  presanalit(ianal) =10;%+2*x*y ;  
                 else
-                  presanalit(ianal) = 10.75-1.5*x+9*y+2*x*y;
+                  presanalit(ianal) = 10.75-1.5*x+9*y;%+2*x*y;
                 
                 end
             end  %End of FOR (pressure)            

@@ -205,6 +205,13 @@ coordmid = mean(coord(vertices,1:2))*(1 - boolean) + ...
             %Attribute the simple boundary condition
             bcattrib = coordmid(1);
 
+        case 7.1 
+        %Example 7.1: Adaptaded from FVCA 5 (Herbin and Hubert, 2008).
+        %Case 3 - Oblique flow.
+            x=coordmid(1);
+            y=coordmid(2);
+            bcattrib=2-x-0.2*y;
+            
         %------------------------------------------------------------------
         %Solve cases with SOURCE TERM
         %------------------------------------------------------------------
@@ -341,10 +348,10 @@ coordmid = mean(coord(vertices,1:2))*(1 - boolean) + ...
             x=coordmid(1);
             y=coordmid(2);
             
-            if x<= 0.5 
-                bcattrib =10 + 20*x*y;
+            if x<0.5 || abs(x-0.5)<1e-8
+                bcattrib =10 ;%+ 20*x*y;
             elseif x>0.5
-                bcattrib =10.75 - 1.5*x + 9*y + 2*x*y;
+                bcattrib =10.75 - 1.5*x + 9*y;% + 2*x*y;
             end
         %When the boundary condition cames from "bcflag"
 %         case 231

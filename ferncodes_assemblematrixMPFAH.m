@@ -27,7 +27,7 @@ for ifacont=1:bedgesize
             visonface = 1;
         end  %End of IF
         % when numcase<200, is two-phase model
-    elseif numcase<200
+    elseif 30<numcase && numcase<200
         % equacao de saturacao "viscosity=mobility"
         visonface=sum(viscosity(ifacont,:));
     else
@@ -84,7 +84,7 @@ for iface=1:inedgesize
         else
             visonface = 1;
         end  %End of IF
-    elseif numcase<200
+    elseif 30<numcase && numcase<200
         % saturation equation "viscosity=mobility"
         visonface=sum(viscosity(bedgesize + iface,:));
     else

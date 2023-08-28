@@ -30,7 +30,7 @@ for ifacont = 1:bedgesize
         else
             visonface = 1;
         end  %End of IF
-    elseif numcase<200
+    elseif 30<numcase && numcase<200
         % equacao de saturacao "viscosity=mobility"
         visonface=sum(viscosity(ifacont,:));
     else
@@ -131,7 +131,7 @@ for iface = 1:inedgesize
         else
             visonface = 1;
         end  %End of IF
-    elseif numcase<200
+    elseif 30<numcase && numcase<200
         % equacao de saturacao "viscosity=mobility"
         visonface=sum(viscosity(bedgesize + iface,:));
     else
@@ -141,7 +141,7 @@ for iface = 1:inedgesize
     % unconfined aquifer 
     if numcase==331
            h_avg=(h(inedge(iface,3))+h(inedge(iface,4)))/2;
-        else
+    else
            h_avg=1; 
     end
     % pressão prescrita no elemento do poço injetor
