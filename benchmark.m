@@ -973,9 +973,9 @@ flowrateanalit = zeros(size(bedge,1) + size(inedge,1),1);
                 y = centelem(ianal,2);
                 %Fill "presanalit"
                 if x<0.5 || x==0.5
-                  presanalit(ianal) =10;%+2*x*y ;  
+                  presanalit(ianal) =10+2*x*y ;  
                 else
-                  presanalit(ianal) = 10.75-1.5*x+9*y;%+2*x*y;
+                  presanalit(ianal) = 10.75-1.5*x+9*y+2*x*y;
                 
                 end
             end  %End of FOR (pressure)            
