@@ -2,7 +2,7 @@
 % Esta funcao determina os parametros iniciais como adequacao dos pocos
 % injetores e produtores, condicao inicial hydrologica alguns outros
 % parametro fisicos necessarios para rodar os problemas
-function [SS,h_old,MM,wells,dt]=prehydraulic
+function [SS,h_old,MM,wells,dt,P]=prehydraulic
 
 global numcase elem centelem
 SS=0;
@@ -10,6 +10,7 @@ h_old=0;
 MM=0;
 wells=0;
 dt=0;
+P=0;
 switch numcase
     % The cases 330-333 were obtained of the article -- A local grid-refined
     % numerical groundwater model based on the vertex centered finite
@@ -64,8 +65,12 @@ switch numcase
         MM=3;
         % step time
         dt=0.01;
+        % number of divisions
+        const=25; 
         % find the well element
-        const=25;
+        
+        % the flow rate value in the well is divided by number wells
+        
         %b1=find(abs(centelem(:,1)-250)<1e-9 & abs(centelem(:,2)-250)<1e-9);
         b1=find((const*9<centelem(:,1)& centelem(:,1)<const*10) & (const*9<centelem(:,2)& centelem(:,2)<const*10));
         %b1=find((abs(centelem(:,1)-250)/250)<1e-2 & (abs(centelem(:,2)-250)/250)<1e-2);
@@ -94,7 +99,7 @@ switch numcase
         wells(3,3)=0;
         wells(3,4)=0;
         wells(3,5)=0;
-        wells(3,6)=-10000;
+        wells(3,6)=-10000; 
         %------------------------------------------------------------------
         b4=find((const*9<centelem(:,1)& centelem(:,1)<const*10) & (const*30<centelem(:,2)& centelem(:,2)<const*31));
         %b4=find((abs(centelem(:,1)-250)/250)<1e-2 & (abs(centelem(:,2)-750)/750)<1e-2);
@@ -105,6 +110,19 @@ switch numcase
         wells(4,4)=0;
         wells(4,5)=0;
         wells(4,6)=-10000;
+    case 333
+        % Case 4:Two parallel canals (Qian et al)
+        elem(:,5)=1:size(elem,1);
+        % initially hydraulic charge
+        h_old=2*ones(size(elem,1),1);
+        % coeficiente de armazenamento especifico
+        SS=0.1;
+        % espesura do aquifero
+        MM=5;
+        % step time no considered 
+        dt=0.5;
+        % precipitation infiltration 
+        P=0.002;
 end
 
 end

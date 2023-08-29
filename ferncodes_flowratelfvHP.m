@@ -50,7 +50,7 @@ for ifacont=1:bedgesize
         % average hydralic head
         % unconfined aquifer
         
-        if numcase==301
+        if numcase==301 || numcase==333
             h_avg=p(lef);
         else
             h_avg=1;
@@ -88,7 +88,7 @@ for iface=1:inedgesize
     rel=inedge(iface,4);
     % average hydraulic head
     % unconfined aquifer
-    if numcase==301
+    if numcase==301 || numcase==333
         h_avg=(p(lef)+p(rel))/2;
     else
         h_avg=1;

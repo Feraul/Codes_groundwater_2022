@@ -48,7 +48,7 @@ for ifacont=1:bedgesize
     else
         % average hydraulic head
         % unconfined aquifer
-        if numcase==331
+        if numcase==331 
             h_avg=h(lef);
         else
             h_avg=1;
@@ -96,8 +96,9 @@ for iface=1:inedgesize
     rel=inedge(iface,4);
     % average hydraulic head
     % unconfined aquifer
-    if numcase==331
+    if numcase==331 
         h_avg=(h(lef)+h(rel))/2;
+      
     else
         h_avg=1;
     end
@@ -833,7 +834,7 @@ end
 
 % para calcular a carga hidraulica
 if numcase>300
-    if numcase~=306
+    if numcase~=306 
         coeficiente=dt^-1*MM*SS.*elemarea(:);
         % Euler backward method
         if strcmp(methodhydro,'backward')
@@ -841,9 +842,9 @@ if numcase>300
             I=I+coeficiente.*eye(size(elem,1))*h;
         else
             % Crank-Nicolson method
-            I=I+coeficiente*eye(size(elem,1))*h-0.5*M*h;
+            I=I+coeficiente.*eye(size(elem,1))*h-0.5*M*h;
             
-            M=0.5*M+coeficiente*eye(size(elem,1));
+            M=0.5*M+coeficiente.*eye(size(elem,1));
             
         end
     end

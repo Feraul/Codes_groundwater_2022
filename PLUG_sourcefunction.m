@@ -20,7 +20,7 @@
 %--------------------------------------------------------------------------
 
 %Calculate the value of the source therm
-function [sourcevector] = PLUG_sourcefunction
+function [sourcevector] = PLUG_sourcefunction(P)
 %Define global parameters:
 global elem centelem elemarea numcase;
 
@@ -370,5 +370,7 @@ for isource = 1:size(elem,1)
             else
                 sourcevector(isource) =8*elemarea(isource);
             end  %End of internal if 
+        case 333
+           sourcevector(isource)=P*elemarea(isource); 
     end  %End of SWITCH
 end  %End of FOR

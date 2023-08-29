@@ -26,7 +26,7 @@ function [transmvecleft,transmvecright,knownvecleft,knownvecright,storeinv,...
     knownvecleftcon,knownvecrightcon,storeinvcon,Bleftcon,Brightcon,Fgcon,...
     mapinvcon,maptransmcon,mapknownveccon,pointedgecon,bodytermcon,Kdec,...
     Knc,Ktc,Dedc,wightc,sc,weightDMPc,dparameter,nflagnoc,nflagfacec,Con,...
-    lastimelevel,lastimeval,gravrate] = preMPFA(kmap,klb,dmap,MM)
+    lastimelevel,lastimeval,gravrate,pointarmonic] = preMPFA(kmap,klb,dmap,MM,h)
 %Define global parameters:
 global pmethod elem interptype phasekey keygravity numcase
 
@@ -63,7 +63,7 @@ q = 1;
 %Fill the matrix "overedgecoord"
 overedgecoord = overedge;
 %Define the norm of permeability tensor ("normk")
-[normk,kmap] = calcnormk(kmap,MM);
+[normk,kmap] = calcnormk(kmap,MM,h);
 
 %Get the length of the edge with non-null Neumann Boundary Condition.
 knownboundlength = getknownboundlength(klb);
@@ -361,33 +361,4 @@ overedgecoord(size(bedge,1) + 1:size(overedgecoord,1),:) = ...
 %Function "calcnormk"
 %--------------------------------------------------------------------------
 end
-function [normk,kmap] = calcnormk(kmap,MM)
-%Define global parameters:
-global elem centelem numcase;
 
-%Initialize "normk" (it is a vector)
-normk = zeros(size(centelem,1),1);
-%Define the norm of permeability tensor
-%Obtain "kmap" for each case
-kmap = PLUG_kfunction(kmap);
-%Swept all elements
-for ik = 1:length(normk)
-    %Define the material pointer in "elem"
-    pointer = elem(ik,5);
-    %It catches only the permeability components
-    permcompon = [kmap(pointer,2) kmap(pointer,3); ...
-        kmap(pointer,4) kmap(pointer,5)];
-    %Calculate the norm of tensor
-    normk(ik) = norm(permcompon);
-end
-if 300<numcase && numcase~=306
-    % see equation (2), of the article -- A local grid-refined
-    % numerical groundwater model based on the vertex centered finite
-    % volume method
-    if numcase==330 || numcase==332
-        kmap(:,2:5)=MM*kmap(:,2:5);
-    elseif numcase==331
-        kmap=kmap;
-    end
-end
-end%End of FOR

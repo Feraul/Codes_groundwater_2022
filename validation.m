@@ -34,7 +34,7 @@ global bedge inedge elemarea normals filepath foldername numcase;
 
 
 %Evaluate the benchmarks with CONVERGENCE RATE
-if numcase < 20 || numcase==306
+if numcase < 20 || numcase==306 || numcase==333
     %User mesage
     disp('---------------------------');
     disp('>> Ploting error analisys!');
@@ -168,19 +168,6 @@ elseif numcase > 20 && numcase < 30 || numcase == 16
     %Ensure the return of variable
     abserrorMAX = 0;
 end  %End of IF
-
-%--------------------------------------------------------------------------
-%EXTREMA Values
-    
-%User mesage
-disp('---------------------------');
-disp('>> Extrema pressure values:');
-
-%Plot max value of pressure
-Pmax = max(pressure)
-%Plot min value of pressure
-Pmin = min(pressure)
-
 
 %--------------------------------------------------------------------------
 %Special case: Axisymmetric domain

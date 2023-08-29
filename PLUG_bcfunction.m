@@ -353,9 +353,7 @@ coordmid = mean(coord(vertices,1:2))*(1 - boolean) + ...
             elseif x>0.5
                 bcattrib =10.75 - 1.5*x + 9*y+ 2*x*y;
             end
-        %When the boundary condition cames from "bcflag"
-%         case 231
-%             bcattrib=bcflagc(flagptr,2);
+
         otherwise
             %Attribute the boundary condition's value from "bcflag"
             bcattrib = bcflag(flagptr,2);

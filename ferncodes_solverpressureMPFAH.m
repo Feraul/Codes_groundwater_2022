@@ -1,5 +1,5 @@
 function [p,flowrate,flowresult]=ferncodes_solverpressureMPFAH(nflagface,...
-             parameter,weightDMP,wells,SS,dt,h,MM,gravrate,viscosity)
+             parameter,weightDMP,wells,SS,dt,h,MM,gravrate,viscosity,P)
 
 
 [M,I]=ferncodes_assemblematrixMPFAH(parameter,nflagface,weightDMP,SS,dt,h,...
@@ -9,12 +9,12 @@ function [p,flowrate,flowresult]=ferncodes_solverpressureMPFAH(nflagface,...
 %Add a source therm to independent vector "mvector" 
 
 %Often it may change the global matrix "M"
-[M,I] = addsource(sparse(M),I,wells);
+[M,I] = addsource(sparse(M),I,wells,P);
 
 %--------------------------------------------------------------------------
 %Solve global algebric system 
 
-% calculo das pressões
+% calculo das pressões ou carga hidraulica
 p = solver(M,I);
 
 %Message to user:

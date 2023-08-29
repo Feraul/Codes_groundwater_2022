@@ -1016,6 +1016,16 @@ flowrateanalit = zeros(size(bedge,1) + size(inedge,1),1);
                 flowrateanalit(size(bedge,1) + ianal) = ...
                     dot(V,normals(size(bedge,1) + ianal,:));
             end  %End of FOR (internal edges)
+        case 333
+            %Swept all elements:
+            for ianal = 1:size(centelem,1)
+                %Attribute to "x" and "y" "centelem" values
+                x = centelem(ianal,1);
+                %Fill "presanalit"
+               
+                  presanalit(ianal) =sqrt(4+4e-3*(40*x-x^2)) ;  
+               
+            end  %End of FOR (pressure)
             
     end  %End of SWITCH
 

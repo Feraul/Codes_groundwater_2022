@@ -22,7 +22,7 @@
 %Fill the matrix of permeability as a function of element to left and right
 %of half edge evaluated. This function receives "kmap" and a feature of
 %element which wants to know the permeability ("kfeature").
-function [kmap] = PLUG_kfunction(kmap)
+function [kmap] = PLUG_kfunction(kmap,h)
 %Define global parameters:
 global elem centelem numcase coord;
 
@@ -30,6 +30,17 @@ global elem centelem numcase coord;
 switch numcase
     %----------------------------------------------------------------------
     %Example 1.7: Axisymmetric Case (Anisotropic Medium). teta = pi/6
+    case 333
+        %Initialize "kaux"
+        kaux = zeros(size(centelem,1),5);
+        for i = 1:size(centelem,1)
+                        
+          kaux(i,:) = [i h(i)*0.5 0 0 h(i)*0.5];
+           
+        end  %End of FOR
+        
+        %Restore "kmap"
+        kmap = kaux;
     case 1.7
         %Definition of "R" matrix
         %Initialization

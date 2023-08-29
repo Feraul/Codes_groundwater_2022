@@ -22,7 +22,7 @@
 
 %--------------------------------------------------------------------------
 
-function [M,mvector] = addsource(M,mvector,wells)
+function [M,mvector] = addsource(M,mvector,wells,P)
 %Define global parameters:
 global elemarea numcase;
 
@@ -121,9 +121,9 @@ if (size(wells,2) > 1)
 
 %Case the source term has came from benchmark case with analitical solution 
 %(Benchmark from 10 to 20):
-elseif (numcase >= 10 && numcase <= 30) || numcase == 1.6 || numcase==306
+elseif (numcase >= 10 && numcase <= 30) || numcase == 1.6 || numcase==306 || numcase==333
     %Catch "source" came from "PLUG_sourcefunction"
-    source = PLUG_sourcefunction;
+    source = PLUG_sourcefunction(P);
     %The vector "mvector" is added to vector returned from function below.
     mvector = mvector + source;
 end  %End of IF

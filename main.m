@@ -97,7 +97,7 @@ elseif numcase>300
     velmedio=0;
     wellsc=0;
    % Flags adequation for hydrological head problem
-   [SS,h_old,MM,wells,dt]=prehydraulic;
+   [SS,h_old,MM,wells,dt,P]=prehydraulic;
    % Choose Backward method or Crank-Nicolson
    % use oara caso aquifero confinado
    methodhydro='backward';
@@ -111,7 +111,7 @@ else
     gamma=0;
     velmedio=0;
     wellsc=0;
-    SS=0; h_old=0; MM=0; dt=0;  
+    SS=0; h_old=0; MM=0; dt=0; P=0; 
 end
 %adeSPE; % para um campo de permeabilidade da SPE active descomente.
 %--------------------------------------------------------------------------
@@ -124,5 +124,5 @@ inedgesize = size(inedge,1);
 
 %It preprocess the schemes and set a One-phase or Two-phase simulation.
 setmethod(kmap,wells,'i',8,limiterflag,klb,elemsize,bedgesize,...
-    inedgesize,auxpar, wellsc,velmedio,dmap,Dmedio,gamma,SS,h_old,MM,dt);
+    inedgesize,auxpar, wellsc,velmedio,dmap,Dmedio,gamma,SS,h_old,MM,dt,P);
 

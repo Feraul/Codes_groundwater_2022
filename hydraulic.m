@@ -25,9 +25,9 @@
 
 function hydraulic(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
                parameter,h_old,contnorm,SS,MM,weight,s,dt,gravrate,...
-               nflagface,weightDMP)
+               nflagface,weightDMP,P,pointarmonic)
 %Define global parameters:
-global timew  totaltime  pmethod filepath elem  ;
+global timew  totaltime  pmethod filepath elem numcase  ;
 
 %--------------------------------------------------------------------------
 %Initialize parameters:
@@ -39,11 +39,10 @@ orderintimestep = ones(size(elem,1),1)*0;
 %Attribute to time limit ("finaltime") the value put in "Start.dat".
 finaltime = totaltime(2);
 timew = 0;
-
+% inicialization variables
 satonvertices=0;
 producelem=0;
 h=h_old;
-
 Con=0;
 Kdec=0;
 Knc=0;
@@ -71,7 +70,7 @@ while stopcriteria < 100
      % Calculate hydraulic head and flowrate using the MPFA with harmonic
      % points
         [h_new,flowrate,]=ferncodes_solverpressureMPFAH(nflagface,...
-            parameter,weightDMP,wells,SS,dt,h,MM,gravrate,viscosity);
+            parameter,weightDMP,wells,SS,dt,h,MM,gravrate,viscosity,P);
     elseif strcmp(pmethod,'nlfvpp')
          [h_new,flowrate,]=...
             ferncodes_solverpressureNLFVPP(nflag,parameter,kmap,wells,...
@@ -89,6 +88,16 @@ while stopcriteria < 100
    
     contiterplot=contiterplot+1
     h=h_new;
+    %----------------------------------------------------------------------
+    if numcase==333
+    
+    [facelement]=ferncodes_elementfacempfaH;
+    [~,kmap] = calcnormk(kmap,MM,h);
+    [pointarmonic]=ferncodes_harmonicopoint(kmap);
+    [parameter,]=ferncodes_coefficientmpfaH(facelement,pointarmonic,kmap);
+    [weightDMP]=ferncodes_weightnlfvDMP(kmap);
+    %----------------------------------------------------------------------
+    end
     postprocessor(h,flowrate,Con,1-Con,contiterplot,overedgecoord,orderintimestep,'i',1,auxkmap);
      
 end

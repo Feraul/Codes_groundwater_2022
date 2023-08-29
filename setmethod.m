@@ -16,7 +16,8 @@
 %--------------------------------------------------------------------------
 
 function setmethod(kmap,wells,keywrite,invh,limiterflag,klb,elemsize,...
-    bedgesize,inedgesize,auxpar,wellsc,velmedio,dmap,Dmedio,gamma,SS,h_old,MM,dt)
+    bedgesize,inedgesize,auxpar,wellsc,velmedio,dmap,Dmedio,gamma,SS,...
+    h_old,MM,dt,P)
 %Define global parameters:
 global phasekey pmethod 
 
@@ -31,7 +32,7 @@ if phasekey ~= 0
         knownvecleftcon,knownvecrightcon,storeinvcon,...
         Bleftcon,Brightcon,Fgcon,mapinvcon,maptransmcon,mapknownveccon,...
         pointedgecon, bodytermcon,Kdec,Knc,Ktc,Dedc,weightc,sc,weightDMPc,dparameter,...
-    nflagnoc,nflagfacec,Con,lastimelevel,lastimeval,gravrate] = preMPFA(kmap,klb,dmap,MM);
+    nflagnoc,nflagfacec,Con,lastimelevel,lastimeval,gravrate,pointarmonic] = preMPFA(kmap,klb,dmap,MM,h_old);
     
 end  %End of IF (execute "preMPFA")
 
@@ -56,8 +57,9 @@ switch phasekey
                 wells,Hesq,Kde,Kn,Kt,Ded,nflag,weight,s,Con,Kdec,...
                 Knc,Ktc,Dedc,nflagnoc,weightc,sc,SS,dt,h_old,MM,gravrate);
         elseif strcmp(pmethod,'mpfaql')
-            [pressure,flowrate,]=ferncodes_solverpressureMPFAQL(nflagno,...
-                parameter,kmap,weightDMP,wells,1,V,1,N);
+            [pressure,flowrate,]=ferncodes_solverpressureMPFAQL(nflag,...
+                parameter,kmap,weightDMP,wells,1,V,1,N,weight,s);
+            
         elseif strcmp(pmethod,'mpfah')
             [pressure,flowrate,]=ferncodes_solverpressureMPFAH(nflagface,...
                 parameter,weightDMP,wells,SS,dt,h_old,MM,gravrate,1);
@@ -167,7 +169,7 @@ switch phasekey
 
         hydraulic(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
             parameter,h_old,contnorm,SS,MM,weight,s,dt,gravrate,nflagface,...
-            weightDMP);
+            weightDMP,P,pointarmonic);
 
         %It Souves only the HYPERBOLIC Equation:
     case 5
