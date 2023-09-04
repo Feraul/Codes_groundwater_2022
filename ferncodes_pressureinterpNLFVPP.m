@@ -5,7 +5,7 @@ global coord esurn1 esurn2 numcase
 % concentrações interpolados:cinterp
 
 cinterp=0;
-%% interpolação das pressões nos nós
+%% interpolação das pressões nos vertices
 for no=1:size(coord,1)
     nec1=esurn2(no+1)-esurn2(no);
     c1=0;
@@ -31,7 +31,8 @@ for no=1:size(coord,1)
     end
     
     pressurinterp(no,1)=c1;
-    %==========================================================================
+    %% interpolacao concentracao nos vertices
+    
     if 200<numcase && numcase<300
         c1aux=0;
         auxflagc=202; % quando a vazão é diferente de 0

@@ -71,19 +71,20 @@ switch numcase
         dmedio=4;
         gamma=0;
     case 241
-        %dmap(1,:) = [1 4 0 0 4]; % r=1, pe=0.05, dx=0.2
+        dmap(1,:) = [1 4 0 0 4]; % r=1, pe=0.05, dx=0.2
+        dmedio=4;
         %dmap(1,:) = [1 4 0 0 0.4]; % r=10
-        k = [4 0; 0 0.4];
+        %k = [4 0; 0 0.4];
                 %Definition of angle
                 %teta = pi/7.2;
-                teta=pi/6;
+              %  teta=pi/6;
                 %Definition of ratation matrix
-                R = [cos(teta) sin(teta); -sin(teta) cos(teta)];
+              %  R = [cos(teta) sin(teta); -sin(teta) cos(teta)];
                 %Define the permeability to be used
-                k = inv(R)*k*R;
-        dmap(1,:) = [1 k(1,1) k(1,2) k(2,1) k(2,2)]; % r=100
+              %  k = inv(R)*k*R;
+        %dmap(1,:) = [1 k(1,1) k(1,2) k(2,1) k(2,2)]; % r=100
         %dmap(1,:) = [1 4 0 0 0.004]; % r=10000
-        dmedio=norm(k,'fro');
+        %dmedio=norm(k,'fro');
         gamma=0;
     case 242
         dmap(1,:) = [1 0.01 0 0 0.01]; % para malha menos refinada dx=0.5

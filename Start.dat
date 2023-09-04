@@ -122,7 +122,7 @@ lpew2
 
 //Write below the Tolerance for the non-linear system solution: 
 
-1e-12 
+1e-8
 
 //Write below the Maximum Number of Iteraction allowed for the
 //non-linear system solution:
@@ -176,7 +176,7 @@ stdr
 //Write below the Order for the Hyperbolic Operator approximation.
 //It must be up to 6th order: 
 
-2
+1
 
 //Write below the type of approximation for the time term: 
 //[1] ==> "Forward Euler"; 
@@ -328,7 +328,7 @@ y
 
 //If [y], write below the path where the mesh file is:
  
-C:\Users\flc59\Documents\GitHub\Malhas2
+C:\Users\flc59\Documents\Malhas2
 
 //Write below the name of the mesh file. Use the extension *.msh:
 

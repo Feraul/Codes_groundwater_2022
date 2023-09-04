@@ -46,7 +46,8 @@ for ifacont=1:size(bedge,1)
             else
                 thetalef1=acos(dot(vi,ve2)/(norm(vi)*norm(ve2)));
             end
-            if ((sign(auxquadrant1(1,3))==sign(auxquadrant2(1,3)) && (abs(auxquadrant1(1,3))>1e-16 || abs(auxquadrant2(1,3))>1e-16))||(sign(auxquadrant1(1,3))==0 && sign(auxquadrant2(1,3))>0)||...
+            if ((sign(auxquadrant1(1,3))==sign(auxquadrant2(1,3)) && (abs(auxquadrant1(1,3))>1e-16...
+                    || abs(auxquadrant2(1,3))>1e-16))||(sign(auxquadrant1(1,3))==0 && sign(auxquadrant2(1,3))>0)||...
                     (sign(auxquadrant1(1,3))>0 && sign(auxquadrant2(1,3))==0)) && ((thetalef2 + thetalef1)<pi)
                 
                 aux11=no1;
@@ -91,7 +92,8 @@ for ifacont=1:size(bedge,1)
             else
                 thetalef1=acos(dot(vi,ve2)/(norm(vi)*norm(ve2)));
             end
-            if ((sign(auxquadrant1(1,3))==sign(auxquadrant2(1,3)) && (abs(auxquadrant1(1,3))>1e-16 || abs(auxquadrant2(1,3))>1e-16))||(sign(auxquadrant1(1,3))==0 && sign(auxquadrant2(1,3))>0)||...
+            if ((sign(auxquadrant1(1,3))==sign(auxquadrant2(1,3)) && (abs(auxquadrant1(1,3))>1e-16...
+                    || abs(auxquadrant2(1,3))>1e-16))||(sign(auxquadrant1(1,3))==0 && sign(auxquadrant2(1,3))>0)||...
                     (sign(auxquadrant1(1,3))>0 && sign(auxquadrant2(1,3))==0)) && ((thetalef2 + thetalef1)<pi)
                 
                 aux11=no1;
@@ -176,7 +178,8 @@ for iface=1:size(inedge,1)
             else
                 thetalef1=acos(dot(vi,ve2)/(norm(vi)*norm(ve2)));
             end
-            if ((sign(auxquadrant1(1,3))==sign(auxquadrant2(1,3)) && (abs(auxquadrant1(1,3))>1e-16 || abs(auxquadrant2(1,3))>1e-16))||(sign(auxquadrant1(1,3))==0 && sign(auxquadrant2(1,3))>0)||...
+            if ((sign(auxquadrant1(1,3))==sign(auxquadrant2(1,3)) && (abs(auxquadrant1(1,3))>1e-16 ...
+                    || abs(auxquadrant2(1,3))>1e-16))||(sign(auxquadrant1(1,3))==0 && sign(auxquadrant2(1,3))>0)||...
                     (sign(auxquadrant1(1,3))>0 && sign(auxquadrant2(1,3))==0)) && ((thetalef2 + thetalef1)<pi)
                 
                 aux11=no1;
@@ -221,7 +224,8 @@ for iface=1:size(inedge,1)
             else
                 thetalef1=acos(dot(vi,ve2)/(norm(vi)*norm(ve2)));
             end
-            if ((sign(auxquadrant1(1,3))==sign(auxquadrant2(1,3)) && (abs(auxquadrant1(1,3))>1e-16 || abs(auxquadrant2(1,3))>1e-16))||(sign(auxquadrant1(1,3))==0 && sign(auxquadrant2(1,3))>0)||...
+            if ((sign(auxquadrant1(1,3))==sign(auxquadrant2(1,3)) && (abs(auxquadrant1(1,3))>1e-16 ...
+                    || abs(auxquadrant2(1,3))>1e-16))||(sign(auxquadrant1(1,3))==0 && sign(auxquadrant2(1,3))>0)||...
                     (sign(auxquadrant1(1,3))>0 && sign(auxquadrant2(1,3))==0)) && ((thetalef2 + thetalef1)<pi)
                 
                 aux11=no1;
@@ -282,7 +286,8 @@ for iface=1:size(inedge,1)
                 thetarel1=acos( dot(vi,vetor12)/(norm(vi)*norm(vetor12)));
                 
             end
-            if ((sign(auxquadrant1(1,3))==sign(auxquadrant2(1,3)) && (abs(auxquadrant1(1,3))>1e-16 || abs(auxquadrant2(1,3))>1e-16))||(sign(auxquadrant1(1,3))==0 && sign(auxquadrant2(1,3))>0)||...
+            if ((sign(auxquadrant1(1,3))==sign(auxquadrant2(1,3)) && (abs(auxquadrant1(1,3))>1e-16 ...
+                    || abs(auxquadrant2(1,3))>1e-16))||(sign(auxquadrant1(1,3))==0 && sign(auxquadrant2(1,3))>0)||...
                     (sign(auxquadrant1(1,3))>0 && sign(auxquadrant2(1,3))==0))  && ((thetarel2 + thetarel1)<pi)
                 
                 auxi=no1;
@@ -332,7 +337,8 @@ for iface=1:size(inedge,1)
                 thetarel1=acos( dot(vi,vetor12)/(norm(vi)*norm(vetor12)));
                 
             end
-            if ((sign(auxquadrant1(1,3))==sign(auxquadrant2(1,3)) && (abs(auxquadrant1(1,3))>1e-16 || abs(auxquadrant2(1,3))>1e-16))||(sign(auxquadrant1(1,3))==0 && sign(auxquadrant2(1,3))>0)||...
+            if ((sign(auxquadrant1(1,3))==sign(auxquadrant2(1,3)) && (abs(auxquadrant1(1,3))>1e-16 ...
+                    || abs(auxquadrant2(1,3))>1e-16))||(sign(auxquadrant1(1,3))==0 && sign(auxquadrant2(1,3))>0)||...
                     (sign(auxquadrant1(1,3))>0 && sign(auxquadrant2(1,3))==0))  && ((thetarel2 + thetarel1)<pi)
                 
                 auxi=no1;
