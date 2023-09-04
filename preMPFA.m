@@ -313,7 +313,7 @@ switch char(interptype)
         %LPEW 2
     case 'lpew2'
         % calculo dos pesos que correspondem ao LPEW2
-        [weightc,sc] = ferncodes_Pre_LPEW_2(dmap,N);
+        [weightc,sc] = ferncodes_Pre_LPEW_2(dmap,N,1);
         
 end  %End of SWITCH
 end

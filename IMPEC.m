@@ -105,7 +105,16 @@ mobility=1;
     transmvecright,knownvecleft,knownvecright,storeinv,Bleft,...
     Bright,wells,mapinv,maptransm,mapknownvec,pointedge,mobility,...
     bodyterm,Kdec,Knc,Ktc,Dedc,weightDMPc,nflagfacec,gravrate);
-
+if numcase==241
+    %----------------------------------------------------------------------
+    %Calculate "dt" using the function "calctimestep"
+    
+    %This function obtains the time step using the "Courant" number.
+    %The necessity of calculate the time step is ensure the stability of
+    %explicit concentration formulation.
+    
+    dt = calctimestep(flowrateadvec,satinbound,gamma,Dmedio)
+end
 %
 while stopcriteria < 100
     
@@ -132,7 +141,14 @@ while stopcriteria < 100
             transmvecright,knownvecleft,knownvecright,storeinv,Bleft,...
             Bright,wells,mapinv,maptransm,mapknownvec,pointedge,viscosity,...
             bodyterm,Kdec,Knc,Ktc,Dedc,weightDMPc,nflagfacec,gravrate);
-        
+        %----------------------------------------------------------------------
+    %Calculate "dt" using the function "calctimestep"
+    
+    %This function obtains the time step using the "Courant" number.
+    %The necessity of calculate the time step is ensure the stability of
+    %explicit concentration formulation.
+    
+    dt = calctimestep(flowrateadvec,satinbound,gamma,Dmedio)
     elseif numcase==241 || numcase==242 || numcase==231 || numcase==232
         viscosity=1;
         % calcula fluxo dispersivo
@@ -145,18 +161,11 @@ while stopcriteria < 100
             mapinv,maptransm,mapknownvec,pointedge, bodyterm,nflag,...
             weight,s,nflagc,wightc,sc,nflagface,weightDMPc,nflagfacec,...
             dparameter,Kde,Ded,Kn,Kt,Hesq,Kdec,Knc,Ktc,Dedc,time,...
-            viscosity,parameter,weightDMP);
+            viscosity,parameter,weightDMP,gravrate);
         
     end
     
-    %----------------------------------------------------------------------
-    %Calculate "dt" using the function "calctimestep"
     
-    %This function obtains the time step using the "Courant" number.
-    %The necessity of calculate the time step is ensure the stability of
-    %explicit concentration formulation.
-    
-    dt = calctimestep(flowrateadvec,satinbound,gamma,Dmedio)
     %dt=0.001;
     %----------------------------------------------------------------------
     
@@ -387,7 +396,7 @@ if numcase~=246 & numcase~=246 & numcase~=247 & numcase~=248 & ...
             ferncodes_solverpressureNLFVPP(nflag,parameter,kmap,wells,...
             mobility,V,N,p_old,contnorm,weight,s,Con,nflagc,wightc,...
             sc,weightDMPc,nflagfacec,dparameter,SS,dt,h,MM,gravrate);
-        
+      
         %Any other type of scheme to solve the Pressure Equation
     elseif strcmp(pmethod,'nlfvh') % revisar com cuidado
         
@@ -419,7 +428,7 @@ function [flowrate,flowresult,flowratedif]=auxiliarysolverflux(pressure,...
     storeinv,Bleft,Bright,Fg,mapinv,maptransm,mapknownvec,pointedge, bodyterm,nflag,...
     weight,s,nflagc,wightc,sc,nflagface,weightDMPc,nflagfacec,...
     dparameter,Kde,Ded,Kn,Kt,Hesq,Kdec,Knc,Ktc,Dedc,time,viscosity,...
-    parameter,weightDMP)
+    parameter,weightDMP,gravrate)
 global  pmethod 
 if strcmp(pmethod,'nlfvpp')
     % pressure and concentration interpolation
@@ -427,8 +436,8 @@ if strcmp(pmethod,'nlfvpp')
         weight,s,Con,nflagc,wightc,sc);
     % calculate dispersive flux
     [flowrate,flowresult,flowratedif]=ferncodes_flowrateNLFVPP(pressure,...
-        pinterp, parameter,viscosity,Con,nflagc,wightc,sc,dparameter,cinterp);
-  
+        pinterp, parameter,viscosity,Con,nflagc,wightc,sc,dparameter,cinterp,gravrate);
+ 
 elseif strcmp(pmethod,'nlfvh')
     % pressure and concentration interpoltion on the harmonic points
     [pinterp,cinterp]=ferncodes_pressureinterpHP(pressure,nflagface,parameter,...

@@ -1,5 +1,5 @@
 function [M,I]=ferncodes_assemblematrixNLFVPP(pinterp,parameter,viscosity,...
-    contnorm,SS,dt,h,MM,gravrate)
+    contnorm,SS,dt,h,MM,gravrate,p)
 global inedge coord bedge bcflag elem numcase keygravity methodhydro dens
 %-----------------------inicio da rOtina ----------------------------------%
 %Constrói a matriz global.
@@ -11,7 +11,7 @@ coeficiente=dt^-1*MM*SS;
 %Initialize "M" (global matrix) and "I" (known vector)
 M = sparse(size(elem,1),size(elem,1)); %Prealocação de M.
 I = zeros(size(elem,1),1);
-
+valuemin=1e-16;
 for ifacont=1:bedgesize
     
     if 200<numcase && numcase<300
@@ -97,14 +97,12 @@ for iface=1:inedgesize
     
     % calculo do a Eq. 2.7 (resp. eq. 16) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
     % esquerda
-    % tirei o norma*  parameter(1,1,ifactual)*pinterp(parameter(1,3,ifactual))+...
-    %    parameter(1,2,ifactual)*pinterp(parameter(1,4,ifactual))
+   
     alef=parameter(1,1,ifactual)*pinterp(parameter(1,3,ifactual))+...
         parameter(1,2,ifactual)*pinterp(parameter(1,4,ifactual));
     
     % direita
-    % tirei norma*parameter(2,1,ifactual)*pinterp(parameter(2,3,ifactual))+...
-    %    parameter(2,2,ifactual)*pinterp(parameter(2,4,ifactual));
+   
     arel= parameter(2,1,ifactual)*pinterp(parameter(2,3,ifactual))+...
         parameter(2,2,ifactual)*pinterp(parameter(2,4,ifactual));
     
@@ -116,6 +114,13 @@ for iface=1:inedgesize
     %      murel=(abs(alef)+contnorm^2)/(abs(alef)+abs(arel)+2*contnorm^2);
     
     % calculo da contribuição, Eq. 2.12 (resp. Eq. 21) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
+    
+    %% calculo da contribuição, Eq. 2.10 (resp. eq. 19) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
+    Bsigma=murel*arel-mulef*alef;
+    
+    Bmas=(abs(Bsigma)+Bsigma)/2;
+    Bmenos=(abs(Bsigma)-Bsigma)/2;
+    
     ALL=norma*mulef*(parameter(1,1,ifactual)+parameter(1,2,ifactual));
     
     ARR=norma*murel*(parameter(2,1,ifactual)+parameter(2,2,ifactual));
@@ -126,6 +131,11 @@ for iface=1:inedgesize
     % contribuição da transmisibilidade no elemento direita
     M(rel,rel)=M(rel,rel)+ visonface*ARR;
     M(rel,lef)=M(rel,lef)- visonface*ALL;
+    
+    
+   % I(lef, 1)=I(lef,1)- (norma*Bmas*valuemin/(p(lef)+valuemin)-norma*Bmenos*valuemin/(p(rel)+valuemin));
+   % I(rel, 1)=I(rel,1)+ (norma*Bmas*valuemin/(p(lef)+valuemin)-norma*Bmenos*valuemin/(p(rel)+valuemin));
+    
     
     % contribuicao do termo gravitacional
     if strcmp(keygravity,'y')

@@ -62,7 +62,7 @@ disp('>> The Pressure field was calculated with success!');
 [pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(p,nflagno,w,s,Con,nflagc,wightc,sc);
 %Get the flow rate (Diamond)
 [flowrate,flowresult,flowratedif]=ferncodes_flowrateNLFVPP(p, pinterp,...
-    parameter,mobility,Con,nflagc,wightc,sc,dparameter,cinterp,gravrate);
+    parameter,viscosity,Con,nflagc,wightc,sc,dparameter,cinterp,gravrate);
 
 %Message to user:
 disp('>> The Flow Rate field was calculated with success!');

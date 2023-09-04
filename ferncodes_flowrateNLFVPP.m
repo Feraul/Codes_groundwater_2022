@@ -12,7 +12,7 @@ flowrate = zeros(bedgesize + inedgesize,1);
 flowresult = zeros(size(centelem,1),1);
 flowratec = zeros(bedgesize + inedgesize,1);
 flowresultc = zeros(size(centelem,1),1);
-
+valuemin=1e-16;
 for ifacont=1:bedgesize
     
     
@@ -44,10 +44,10 @@ for ifacont=1:bedgesize
         flowrate(ifacont,1)= -normcont*bcflag(r,2);% problema de buckley leverett Bastian
     else
         % contribuicao do termo gravitacional
-        if strcmp(keygravity,'y')        
-                m=gravrate(ifacont);
-            else
-                m=0; 
+        if strcmp(keygravity,'y')
+            m=gravrate(ifacont);
+        else
+            m=0;
         end
         flowrate(ifacont,1)=visonface*normcont*(parameter(1,1,ifacont)*(p(lef)-pinterp(parameter(1,3,ifacont)))+...
             parameter(1,2,ifacont)*(p(lef)-pinterp(parameter(1,4,ifacont))))-visonface*m;
@@ -55,7 +55,7 @@ for ifacont=1:bedgesize
     %Attribute the flow rate to "flowresult"
     %On the left:
     
-            
+    
     flowresult(lef) = flowresult(lef) + flowrate(ifacont);
     %% ================================================================
     if 200<numcase && numcase<300
@@ -104,11 +104,11 @@ for iface=1:inedgesize
     
     %% calculo do a Eq. 2.7 (resp. eq. 16) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
     % esquerda
-    alef=norma*(parameter(1,1,ifactual)*pinterp(parameter(1,3,ifactual))+...
+    alef=(parameter(1,1,ifactual)*pinterp(parameter(1,3,ifactual))+...
         parameter(1,2,ifactual)*pinterp(parameter(1,4,ifactual)));
     % direita
     
-    arel= norma*(parameter(2,1,ifactual)*pinterp(parameter(2,3,ifactual))+...
+    arel= (parameter(2,1,ifactual)*pinterp(parameter(2,3,ifactual))+...
         parameter(2,2,ifactual)*pinterp(parameter(2,4,ifactual)));
     %% calculo dos "mu", Eq. 2.8 (resp. eq. 18) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
     if alef==0 && arel==0
@@ -121,15 +121,15 @@ for iface=1:inedgesize
     %% calculo da contribuição, Eq. 2.12 (resp. Eq. 21) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
     ALL=norma*mulef*(parameter(1,1,ifactual)+parameter(1,2,ifactual));
     ALR=norma*murel*(parameter(2,1,ifactual)+parameter(2,2,ifactual));
-     
-        % contribuicao do termo gravitacional
-        if strcmp(keygravity,'y')
-            
-            m=gravrate(iface+size(bedge,1));
-        else
-            m=0;
-            
-        end
+    
+    % contribuicao do termo gravitacional
+    if strcmp(keygravity,'y')
+        
+        m=gravrate(iface+size(bedge,1));
+    else
+        m=0;
+        
+    end
     flowrate(iface+size(bedge,1),1)=visonface*(ALL*p(lef)-ALR*p(rel))-visonface*m;
     
     %Attribute the flow rate to "flowresult"
@@ -143,11 +143,11 @@ for iface=1:inedgesize
         % calculo do fluxo para o campo de concentracoes
         % calculo do a Eq. 2.7 (resp. eq. 16) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
         % esquerda
-        alef=norma*(dparameter(1,1,ifactual)*cinterp(dparameter(1,3,ifactual))+...
+        alef=(dparameter(1,1,ifactual)*cinterp(dparameter(1,3,ifactual))+...
             dparameter(1,2,ifactual)*cinterp(dparameter(1,4,ifactual)));
         % direita
         
-        arel= norma*(dparameter(2,1,ifactual)*cinterp(dparameter(2,3,ifactual))+...
+        arel= (dparameter(2,1,ifactual)*cinterp(dparameter(2,3,ifactual))+...
             dparameter(2,2,ifactual)*cinterp(dparameter(2,4,ifactual)));
         % calculo dos "mu", Eq. 2.8 (resp. eq. 18) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
         if alef==0 && arel==0
@@ -157,10 +157,11 @@ for iface=1:inedgesize
             mulef=abs(arel)/(abs(alef)+abs(arel));
             murel=1-mulef;
         end
+        
         % calculo da contribuição, Eq. 2.12 (resp. Eq. 21) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
         ALLc=norma*mulef*(dparameter(1,1,ifactual)+dparameter(1,2,ifactual));
         ALRc=norma*murel*(dparameter(2,1,ifactual)+dparameter(2,2,ifactual));
-       
+        
         flowratec(iface+size(bedge,1),1)=(ALLc*Con(lef)-ALRc*Con(rel));
         
         %Attribute the flow rate to "flowresult"

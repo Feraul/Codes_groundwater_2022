@@ -13,7 +13,7 @@
 %Programer: Márcio Souza
 %Modified: Fernando Contreras,
 function [p,flowrate,flowresult,flowratedif,flowresultc]=ferncodes_solverpressureNLFVPP(nflag,...
-                                  parameter,kmap,wells,viscosity,Sw,V,N,...
+                                  parameter,kmap,wells,viscosity,V,N,...
                                   p_old,contnorm,weight,s,Con,nflagc,...
                                   weightc,sc,weightDMPc,nflagfacec,dparameter,SS,dt,h,MM,gravrate)
                             
@@ -24,7 +24,7 @@ global acel;
 [pinterp,]=ferncodes_pressureinterpNLFVPP(p_old,nflag,weight,s,Con,nflagc,weightc,sc);
 
 % montagem das matriz global 
-[M,I]=ferncodes_assemblematrixNLFVPP(pinterp,parameter,viscosity,contnorm,SS,dt,h,MM,gravrate);
+[M,I]=ferncodes_assemblematrixNLFVPP(pinterp,parameter,viscosity,contnorm,SS,dt,h,MM,gravrate,p_old);
 %--------------------------------------------------------------------------
 %Add a source therm to independent vector "mvector" 
 
