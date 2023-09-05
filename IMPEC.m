@@ -151,8 +151,9 @@ while stopcriteria < 100
     dt = calctimestep(flowrateadvec,satinbound,gamma,Dmedio)
     elseif numcase==241 || numcase==242 || numcase==231 || numcase==232
         viscosity=1;
+       
         % calcula fluxo dispersivo
-        [flowrate,flowresult,flowratedif]=auxiliarysolverflux(pressure,...
+        [~,~,flowratedif]=auxiliarysolverflux(pressure,...
             Con,transmvecleftcon,transmvecrightcon,...
             knownvecleftcon,knownvecrightcon,storeinvcon,Bleftcon,...
             Brightcon,Fgcon,mapinvcon,maptransmcon,mapknownveccon,...
@@ -190,8 +191,6 @@ while stopcriteria < 100
         
         %Select the "letter" for "fopen"
         if timelevel == 1
-            letter = 'w';
-        else
             letter = 'w';
         end  %End of IF
         
@@ -237,6 +236,7 @@ while stopcriteria < 100
     %Dimentional (s, h, day, etc)
     disp('>> Time evolution:');
     time = time + dt
+
     concluded = time*100/finaltime;
     %It is used for restart activation
     percentdt = dt*100/finaltime;
@@ -436,7 +436,8 @@ if strcmp(pmethod,'nlfvpp')
         weight,s,Con,nflagc,wightc,sc);
     % calculate dispersive flux
     [flowrate,flowresult,flowratedif]=ferncodes_flowrateNLFVPP(pressure,...
-        pinterp, parameter,viscosity,Con,nflagc,wightc,sc,dparameter,cinterp,gravrate);
+        pinterp, parameter,viscosity,Con,nflagc,wightc,sc,dparameter,cinterp,gravrate,weightDMPc);
+    
  
 elseif strcmp(pmethod,'nlfvh')
     % pressure and concentration interpoltion on the harmonic points

@@ -641,17 +641,17 @@ switch numcase
         kmap=K;
   
     case 241
-       K(1,1:5) = [1 10 0 0 10]; % see Nilson's dissertation, when r=1
+       %K(1,1:5) = [1 10 0 0 10]; % see Nilson's dissertation, when r=1
        %Initialization
-       %         k = [10 0; 0 0.01];
+                k = [10 0; 0 0.01];
                 %Definition of angle
-                %teta = pi/7.2;
-              %  teta=pi/6;
+                teta = pi/7.2;
+                %teta=pi/6;
                 %Definition of ratation matrix
-              %  R = [cos(teta) sin(teta); -sin(teta) cos(teta)];
+                R = [cos(teta) sin(teta); -sin(teta) cos(teta)];
                 %Define the permeability to be used
-              %  k = inv(R)*K*R;
-             %  K(1,1:5) = [1 k(1,1) k(1,2) k(2,1) k(2,2)];
+                k = inv(R)*k*R;
+               K(1,1:5) = [1 k(1,1) k(1,2) k(2,1) k(2,2)];
        %K(1,1:5) = [1 k(1,1) k(1,2) k(2,1) k(2,2)];% see Nilson's dissertation, when r=100
 
         kmap=K;

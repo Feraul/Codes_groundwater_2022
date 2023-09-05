@@ -55,7 +55,11 @@ for no=1:size(coord,1)
         else
             c1aux=nflagc(no,2);
         end
-        
+        if c1aux<0
+            c1aux=0;
+        elseif c1aux>1
+            c1aux=1;
+        end
         cinterp(no,1)=c1aux;
     end
 end

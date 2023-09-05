@@ -199,6 +199,8 @@ switch char(pmethod)
             
             % flags boundary conditions
             [nflagnoc,nflagfacec] = ferncodes_calflag_con(lastimeval);
+            % calculo dos pesos DMP
+       
         end
         % contreras et al, 2016
     case 'mpfah'

@@ -1,5 +1,5 @@
 function [flowrate,flowresult,flowratec,flowresultc]=ferncodes_flowrateNLFVPP(p, ...
-    pinterp, parameter,viscosity,Con,nflagc,wightc,sc,dparameter,cinterp,gravrate)
+    pinterp, parameter,viscosity,Con,nflagc,wightc,sc,dparameter,cinterp,gravrate,weightDMPc)
 global inedge coord bedge bcflag centelem numcase bcflagc keygravity
 
 %Initialize "bedgesize" and "inedgesize"
@@ -143,27 +143,27 @@ for iface=1:inedgesize
         % calculo do fluxo para o campo de concentracoes
         % calculo do a Eq. 2.7 (resp. eq. 16) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
         % esquerda
-        alef=(dparameter(1,1,ifactual)*cinterp(dparameter(1,3,ifactual))+...
+        alefc=(dparameter(1,1,ifactual)*cinterp(dparameter(1,3,ifactual))+...
             dparameter(1,2,ifactual)*cinterp(dparameter(1,4,ifactual)));
         % direita
         
-        arel= (dparameter(2,1,ifactual)*cinterp(dparameter(2,3,ifactual))+...
+        arelc= (dparameter(2,1,ifactual)*cinterp(dparameter(2,3,ifactual))+...
             dparameter(2,2,ifactual)*cinterp(dparameter(2,4,ifactual)));
         % calculo dos "mu", Eq. 2.8 (resp. eq. 18) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
-        if alef==0 && arel==0
-            mulef= 0.5;
-            murel=1-mulef;
+        if alefc==0 && arelc==0
+            mulefc= 0.5;
+            murelc=1-mulefc;
         else
-            mulef=abs(arel)/(abs(alef)+abs(arel));
-            murel=1-mulef;
+            mulefc=abs(arelc)/(abs(alefc)+abs(arelc));
+            murelc=1-mulefc;
         end
         
         % calculo da contribuição, Eq. 2.12 (resp. Eq. 21) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
-        ALLc=norma*mulef*(dparameter(1,1,ifactual)+dparameter(1,2,ifactual));
-        ALRc=norma*murel*(dparameter(2,1,ifactual)+dparameter(2,2,ifactual));
+        ALLc=norma*mulefc*(dparameter(1,1,ifactual)+dparameter(1,2,ifactual));
+        ALRc=norma*murelc*(dparameter(2,1,ifactual)+dparameter(2,2,ifactual));
         
-        flowratec(iface+size(bedge,1),1)=(ALLc*Con(lef)-ALRc*Con(rel));
-        
+        flowratec(iface+size(bedge,1),1)=(ALLc*Con(lef)-ALRc*Con(rel))+norma*(murelc*arelc-mulefc*alefc);
+     
         %Attribute the flow rate to "flowresult"
         %On the left:
         flowresultc(lef) = flowresultc(lef) + flowratec(bedgesize + iface);

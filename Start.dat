@@ -33,7 +33,7 @@ C:\Users\flc59\Documents\Benchmark_Cases\BenchContaminant211
 //***OBS.: If you set "0", the folder "Results" and other will be 
 //created into folder set above:
 
-teste_semvalor
+teste_fps_VA
 
 //--------------------------------------------------------------------
 //------------------------ Solver Properties -------------------------
@@ -99,7 +99,7 @@ n
 //[nlfvpp]==> "Non-Linear Finite Volume" using lpew
 //[nlfvh]==> "Non-Linear Finite Volume" using harmonic point
 
-nlfvpp
+fps
 
 //If you chose [fps] or [mpfae], write below the auxiliary control
 //volume factor. It defines the auxiliary control volume size.
@@ -122,7 +122,7 @@ lpew2
 
 //Write below the Tolerance for the non-linear system solution: 
 
-1e-8
+1e-15
 
 //Write below the Maximum Number of Iteraction allowed for the
 //non-linear system solution:
@@ -176,7 +176,7 @@ stdr
 //Write below the Order for the Hyperbolic Operator approximation.
 //It must be up to 6th order: 
 
-1
+2
 
 //Write below the type of approximation for the time term: 
 //[1] ==> "Forward Euler"; 
@@ -225,7 +225,7 @@ tse
 //Edge-based Limiter:
 //Is there an Edge-based Limiter? [y] ==> "yes"; [n] ==> "no".
 
-n
+y
 
 //If [y], choose among the Edge-Based limiters below:
 //[mm] ==> "MinMod";
@@ -249,7 +249,7 @@ va2
 //Patch-based Limiter:
 //Is there a Patch-based Limiter? [y] ==> "yes"; [n] ==> "no"
 
-y
+n
 
 //If [y], choose among the Patch-Based limiters below:
 //[wf] ==> "Woodfield Strategy";
@@ -328,7 +328,7 @@ y
 
 //If [y], write below the path where the mesh file is:
  
-C:\Users\flc59\Documents\Malhas2
+C:\Users\flc59\Documents\GitHub\Malhas2
 
 //Write below the name of the mesh file. Use the extension *.msh:
 
