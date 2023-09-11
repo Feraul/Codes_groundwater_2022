@@ -129,7 +129,7 @@ lpew2
 
 500 
 
-// Qual acelerador da iteração de Picard desja utilizar:
+// Qual acelerador da iteraÃ§Ã£o de Picard desja utilizar:
 //[FPI] ==> "full Picard"; 
 //[AA] ==> "Aceleration Anderson" ;
 //[RRE] ==> "Rank Reduced Extrapolation" ; 
@@ -232,7 +232,7 @@ y
 //[sb] ==> "SuperBee";
 //[bj] ==> "Barth-Jespersen";
 //[va1] ==> "vanAlbada 1" (see vanAlbada et al., 1982);
-//[va2] ==> "vanAlbada 2" (see Löhner, 2001); 
+//[va2] ==> "vanAlbada 2" (see LÃ¶hner, 2001); 
 //[vl1] ==> "vanLeer 1";
 //[vl2] ==> "vanLeer 2" (see Berger, 2005);
 //[nl2] ==> "new Limiter type 2" (see Mandal, 2008);
@@ -249,7 +249,7 @@ va2
 //Patch-based Limiter:
 //Is there a Patch-based Limiter? [y] ==> "yes"; [n] ==> "no"
 
-y
+n
 
 //If [y], choose among the Patch-Based limiters below:
 //[wf] ==> "Woodfield Strategy";
