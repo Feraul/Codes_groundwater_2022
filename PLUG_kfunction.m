@@ -643,7 +643,7 @@ switch numcase
     case 241
        %K(1,1:5) = [1 10 0 0 10]; % see Nilson's dissertation, when r=1
        %Initialization
-                k = [10 0; 0 0.01];
+                k = [10 0; 0 0.1];
                 %Definition of angle
                 teta = pi/7.2;
                 %teta=pi/6;

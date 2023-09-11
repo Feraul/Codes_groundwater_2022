@@ -250,7 +250,7 @@ while stopcriteria < 100
     %Call the "postprocessor" (plot results in each time step)
     
     %Just create the vtk file if "flagtoplot" reaches 0.1.
-    %if flagtoplot >= 1
+    if flagtoplot >= 1
     %This function create the "*.vtk" file used in VISIT to posprocessing
     %the results
     
@@ -261,7 +261,7 @@ while stopcriteria < 100
     flagtoplot = 0;
     %Update "contiterplot"
     contiterplot = contiterplot + 1;
-    %end  %End of IF
+    end  %End of IF
     
     %User mesage
     disp('>> Concentration field calculated with success!');

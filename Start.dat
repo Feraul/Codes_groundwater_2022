@@ -33,7 +33,7 @@ C:\Users\flc59\Documents\Benchmark_Cases\BenchContaminant211
 //***OBS.: If you set "0", the folder "Results" and other will be 
 //created into folder set above:
 
-teste_fps_VA
+teste_MPFAD_FOU_25G_R_100
 
 //--------------------------------------------------------------------
 //------------------------ Solver Properties -------------------------
@@ -99,7 +99,7 @@ n
 //[nlfvpp]==> "Non-Linear Finite Volume" using lpew
 //[nlfvh]==> "Non-Linear Finite Volume" using harmonic point
 
-fps
+mpfad
 
 //If you chose [fps] or [mpfae], write below the auxiliary control
 //volume factor. It defines the auxiliary control volume size.
@@ -176,7 +176,7 @@ stdr
 //Write below the Order for the Hyperbolic Operator approximation.
 //It must be up to 6th order: 
 
-2
+1
 
 //Write below the type of approximation for the time term: 
 //[1] ==> "Forward Euler"; 
@@ -256,7 +256,7 @@ n
 //[mlp] ==> "Multidimensional Limiting Process";
 //[mlp_vk] ==> "MLP, type Venkathakrishnen (see Park and Kim, 2012).
 
-mlp
+wf
 
 //If you chose [wf], write below the additional parameter ("delta"):
 
