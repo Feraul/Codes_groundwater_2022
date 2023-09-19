@@ -33,7 +33,7 @@ C:\Users\flc59\Documents\Benchmark_Cases\BenchContaminant211
 //***OBS.: If you set "0", the folder "Results" and other will be 
 //created into folder set above:
 
-teste_MPFAD_WF_30G_R_100
+teste_MPFAD_MLP_0G_R_100
 
 //--------------------------------------------------------------------
 //------------------------ Solver Properties -------------------------
@@ -249,7 +249,7 @@ va2
 //Patch-based Limiter:
 //Is there a Patch-based Limiter? [y] ==> "yes"; [n] ==> "no"
 
-y
+n
 
 //If [y], choose among the Patch-Based limiters below:
 //[wf] ==> "Woodfield Strategy";

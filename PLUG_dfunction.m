@@ -76,8 +76,9 @@ switch numcase
         %dmap(1,:) = [1 4 0 0 0.4]; % r=10
         k = [4 0; 0 0.04];
                 %Definition of angle
+                teta=0;
                 %teta = pi/7.2;
-                teta=pi/6;
+                %teta=pi/6;
                 %Definition of ratation matrix
                 R = [cos(teta) sin(teta); -sin(teta) cos(teta)];
                 %Define the permeability to be used

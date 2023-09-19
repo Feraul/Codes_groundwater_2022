@@ -645,8 +645,9 @@ switch numcase
        %Initialization
                 k = [10 0; 0 0.1];
                 %Definition of angle
+                teta=0;
                 %teta = pi/7.2;
-                teta=pi/6;
+                %teta=pi/6;
                 %Definition of ratation matrix
                 R = [cos(teta) sin(teta); -sin(teta) cos(teta)];
                 %Define the permeability to be used
