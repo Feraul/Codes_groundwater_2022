@@ -85,57 +85,57 @@ if numcase < 20 || numcase==306 || numcase==333
     %Open the file "error.dat" with its respective path
     %This file can receive either a first value or an accumulate value:
     %To write for first time the file, "keywrite" must receive "i" (initial)
-    if strcmp(keywrite,'i') == 1
-        erroreval = fopen(sprintf('%s\\%s\\erroreval.dat',char(filepath),...
-            foldername),'w');
-        %Print the error value
-        fprintf(erroreval,'%u \t%f \t%f \t%f\r\n',...
-            log2(invh),log2(emax),log2(el2),log2(evel));
-
-        %Read the file "erroreval.dat"
-        errormatrix = ...
-            textread(sprintf('%s\\%s\\erroreval.dat',char(filepath),...
-            foldername),'','delimiter',' ');
-
-    %To write an accumulate time in the file, "keywrite" must receive "a" 
-    %(accumulated)
-    elseif strcmp(keywrite,'a') == 1
-        erroreval = fopen(sprintf('%s\\%s\\erroreval.dat',char(filepath),...
-            foldername),'a');
-        %Print the error information
-        %fprintf(erroreval,'elements \tMAXerror \tL2error \tRMSerror\r\n\r\n');
-        %Print the error value
-        fprintf(erroreval,'%u \t%f \t%f \t%f\r\n',...
-            log2(invh),log2(emax),log2(el2),log2(evel));
-
-        %Read the file "erroreval.dat"
-        errormatrix = ...
-            textread(sprintf('%s\\%s\\erroreval.dat',char(filepath),...
-            foldername),'','delimiter',' ');
+%     if strcmp(keywrite,'i') == 1
+%         erroreval = fopen(sprintf('%s\\%s\\erroreval.dat',char(filepath),...
+%             foldername),'w');
+%         %Print the error value
+%         fprintf(erroreval,'%u \t%f \t%f \t%f\r\n',...
+%             log2(invh),log2(emax),log2(el2),log2(evel));
+% 
+%         %Read the file "erroreval.dat"
+%         errormatrix = ...
+%             textread(sprintf('%s\\%s\\erroreval.dat',char(filepath),...
+%             foldername),'','delimiter',' ');
+% 
+%     %To write an accumulate time in the file, "keywrite" must receive "a" 
+%     %(accumulated)
+%     elseif strcmp(keywrite,'a') == 1
+%         erroreval = fopen(sprintf('%s\\%s\\erroreval.dat',char(filepath),...
+%             foldername),'a');
+%         %Print the error information
+%         %fprintf(erroreval,'elements \tMAXerror \tL2error \tRMSerror\r\n\r\n');
+%         %Print the error value
+%         fprintf(erroreval,'%u \t%f \t%f \t%f\r\n',...
+%             log2(invh),log2(emax),log2(el2),log2(evel));
+% 
+%         %Read the file "erroreval.dat"
+%         errormatrix = ...
+%             textread(sprintf('%s\\%s\\erroreval.dat',char(filepath),...
+%             foldername),'','delimiter',' ');
 
         
         %------------------------------------------------------------------
         %Convergence RATE
         
         %User mesage
-        disp('--------------------------------------');
-        disp('>> Convergence Rate (MAX and L2 norms):');
+       % disp('--------------------------------------');
+       % disp('>> Convergence Rate (MAX and L2 norms):');
         %If there is accumulated erros analisys, we can calculate the
         %convergence rate, R.
         %To max norm:
-        Rmax = ...
-            abs((errormatrix(size(errormatrix,1),2) - errormatrix(size(errormatrix,1) - 1,2))/...
-            (errormatrix(size(errormatrix,1),1) - errormatrix(size(errormatrix,1) - 1,1)))
+       % Rmax = ...
+       %     abs((errormatrix(size(errormatrix,1),2) - errormatrix(size(errormatrix,1) - 1,2))/...
+       %     (errormatrix(size(errormatrix,1),1) - errormatrix(size(errormatrix,1) - 1,1)))
         %To L2 norm:
-        Rl2 = ...
-            abs((errormatrix(size(errormatrix,1),3) - errormatrix(size(errormatrix,1) - 1,3))/...
-            (errormatrix(size(errormatrix,1),1) - errormatrix(size(errormatrix,1) - 1,1)))
+       % Rl2 = ...
+        %    abs((errormatrix(size(errormatrix,1),3) - errormatrix(size(errormatrix,1) - 1,3))/...
+        %    (errormatrix(size(errormatrix,1),1) - errormatrix(size(errormatrix,1) - 1,1)))
 
         %To VEL norm:
-        Rvel = ...
-            abs((errormatrix(size(errormatrix,1),4) - errormatrix(size(errormatrix,1) - 1,4))/...
-            (errormatrix(size(errormatrix,1),1) - errormatrix(size(errormatrix,1) - 1,1)))
-    end  %End of IF
+        %Rvel = ...
+        %    abs((errormatrix(size(errormatrix,1),4) - errormatrix(size(errormatrix,1) - 1,4))/...
+        %    (errormatrix(size(errormatrix,1),1) - errormatrix(size(errormatrix,1) - 1,1)))
+ %   end  %End of IF
     
     %----------------------------------------------------------------------
     %GRAPHICS

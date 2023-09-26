@@ -122,7 +122,7 @@ switch numcase
         % step time no considered 
         dt=0.5;
         % precipitation infiltration 
-        P=0.002;
+        P=0.01;
 end
 
 end

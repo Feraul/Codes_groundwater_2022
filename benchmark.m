@@ -27,7 +27,7 @@
 %(over each edge)
 function [presanalit,flowrateanalit] = benchmark(overedgecoord,numcase)
 %Define global parameters:
-global bedge inedge centelem normals;
+global bedge inedge centelem normals bcflag P MM;
 
 %--------------------------------------------------------------------------
 %Analitical solution

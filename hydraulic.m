@@ -24,8 +24,8 @@
 %--------------------------------------------------------------------------
 
 function hydraulic(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
-               parameter,h_old,contnorm,SS,MM,weight,s,dt,gravrate,...
-               nflagface,weightDMP,P,pointarmonic)
+    parameter,h_old,contnorm,SS,MM,weight,s,dt,gravrate,...
+    nflagface,weightDMP,P,pointarmonic)
 %Define global parameters:
 global timew  totaltime  pmethod filepath elem numcase  ;
 
@@ -53,53 +53,51 @@ auxkmap=0;
 mobility=1;
 Ktc=0;Dedc=0;wightc=0;sc=0;dparameter=0;
 tic
- %Get "hydraulic head" and "flowrate"
+%Get "hydraulic head" and "flowrate"
 while stopcriteria < 100
     if strcmp(pmethod,'tpfa')
-   
-    
-    [h_new,flowrate,] = ferncodes_solvePressure_TPFA(Kde, Kn,...
-        nflagface, Hesq,wells,viscosity, Kdec, Knc,nflagc,Con,SS,dt,h,MM);
+        [h_new,flowrate,] = ferncodes_solvePressure_TPFA(Kde, Kn,...
+            nflagface, Hesq,wells,viscosity, Kdec, Knc,nflagc,Con,SS,dt,h,MM);
     elseif strcmp(pmethod,'mpfad')
-    % Calculate hydraulic head and flowrate using the MPFA with diamond pacth
+        % Calculate hydraulic head and flowrate using the MPFA with diamond pacth
         [h_new,flowrate,] = ferncodes_solverpressure(...
             mobility,wells,Hesq,Kde,Kn,Kt,Ded,nflag,...
             weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc,SS,dt,h,MM,...
             gravrate);
-     elseif strcmp(pmethod,'mpfah')
-     % Calculate hydraulic head and flowrate using the MPFA with harmonic
-     % points
+    elseif strcmp(pmethod,'mpfah')
+        % Calculate hydraulic head and flowrate using the MPFA with harmonic
+        % points
         [h_new,flowrate,]=ferncodes_solverpressureMPFAH(nflagface,...
             parameter,weightDMP,wells,SS,dt,h,MM,gravrate,viscosity,P);
     elseif strcmp(pmethod,'nlfvpp')
-         [h_new,flowrate,]=...
+        [h_new,flowrate,]=...
             ferncodes_solverpressureNLFVPP(nflag,parameter,kmap,wells,...
             mobility,V,Con,N,p_old,contnorm,weight,s,Con,nflagc,wightc,...
             sc,dparameter,SS,dt,h,MM);
     end
-        %% time step calculation
+    %% time step calculation
     disp('>> Time evolution:');
     time = time + dt
-    
+
     concluded = time*100/finaltime;
-     stopcriteria = concluded;
+    stopcriteria = concluded;
     concluded = num2str(concluded);
     status = [concluded '% concluded']
-   
+
     contiterplot=contiterplot+1
     h=h_new;
     %----------------------------------------------------------------------
     if numcase==333
-    
-    [facelement]=ferncodes_elementfacempfaH;
-    [~,kmap] = calcnormk(kmap,MM,h);
-    [pointarmonic]=ferncodes_harmonicopoint(kmap);
-    [parameter,]=ferncodes_coefficientmpfaH(facelement,pointarmonic,kmap);
-    [weightDMP]=ferncodes_weightnlfvDMP(kmap);
-    %----------------------------------------------------------------------
+
+        [facelement]=ferncodes_elementfacempfaH;
+        [~,kmap] = calcnormk(kmap,MM,h);
+        [pointarmonic]=ferncodes_harmonicopoint(kmap);
+        [parameter,]=ferncodes_coefficientmpfaH(facelement,pointarmonic,kmap);
+        [weightDMP]=ferncodes_weightnlfvDMP(kmap);
+        %----------------------------------------------------------------------
     end
     postprocessor(h,flowrate,Con,1-Con,contiterplot,overedgecoord,orderintimestep,'i',1,auxkmap);
-     
+
 end
 
 toc

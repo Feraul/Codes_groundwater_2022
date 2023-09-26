@@ -833,7 +833,7 @@ for iface=1:inedgesize
 end
 
 % para calcular a carga hidraulica
-if numcase>300
+if numcase>300 
     if numcase~=306 
         coeficiente=dt^-1*MM*SS.*elemarea(:);
         % Euler backward method
