@@ -46,23 +46,17 @@ for ifacont=1:bedgesize
         %problemas monofásico
         I(lef)=I(lef)+ normcont*bcflag(r,2); % problema de buckley leverett Bastian
     else
-        % average hydraulic head
-        % unconfined aquifer
-        if numcase==331 
-            h_avg=h(lef);
-        else
-            h_avg=1;
-        end
+        
         %-------------------------------------------------------------%
         % somando 1
         ifacelef1=parameter(1,3,ifacont);
-        auxparameter1=h_avg*parameter(1,1,ifacont);
+        auxparameter1=parameter(1,1,ifacont);
         [M,I]=ferncodes_tratmentcontourlfvHP(ifacelef1,parameter,nflagface,...
             normcont,auxparameter1,visonface,lef,weightDMP,M,I);
         %-------------------------------------------------------------%
         % somando 2
         ifacelef2=parameter(1,4,ifacont);
-        auxparameter2=h_avg*parameter(1,2,ifacont);
+        auxparameter2=parameter(1,2,ifacont);
         [M,I]=ferncodes_tratmentcontourlfvHP(ifacelef2,parameter,nflagface,...
             normcont,auxparameter2,visonface,lef,weightDMP,M,I);
         
@@ -94,15 +88,7 @@ for iface=1:inedgesize
     % element flags
     lef=inedge(iface,3);
     rel=inedge(iface,4);
-    % average hydraulic head
-    % unconfined aquifer
-    if numcase==331 
-        h_avg=(h(lef)+h(rel))/2;
-      
-    else
-        h_avg=1;
-    end
-    
+        
     %Determinação dos centróides dos elementos à direita e à esquerda.%
     vd1=coord(inedge(iface,2),:)-coord(inedge(iface,1),:);
     % calculo da norma do vetor "vd1"
@@ -130,16 +116,16 @@ for iface=1:inedgesize
     ARR=norma*mulef*(parameter(2,1,ifactual)+parameter(2,2,ifactual));
     % implementação da matriz global
     % contribuição da transmisibilidade no elemento esquerda
-    M(lef,lef)=M(lef,lef)+ h_avg*visonface*ALL;
-    M(lef,rel)=M(lef,rel)- h_avg*visonface*ARR;
+    M(lef,lef)=M(lef,lef)+ visonface*ALL;
+    M(lef,rel)=M(lef,rel)- visonface*ARR;
     % contribuição da transmisibilidade no elemento direita
-    M(rel,rel)=M(rel,rel)+ h_avg*visonface*ARR;
-    M(rel,lef)=M(rel,lef)- h_avg*visonface*ALL;
+    M(rel,rel)=M(rel,rel)+ visonface*ARR;
+    M(rel,lef)=M(rel,lef)- visonface*ALL;
     
     
     % contribuições do elemento a esquerda
     %------------------------ somando 1 ----------------------------------%
-    termo0=h_avg*visonface*norma*murel*parameter(1,1,ifactual);
+    termo0=visonface*norma*murel*parameter(1,1,ifactual);
     if ifacelef1<size(bedge,1) || ifacelef1==size(bedge,1)
         if nflagface(ifacelef1,1)<200
             % neste caso automaticamente introduzimos o valor dada no
@@ -305,7 +291,7 @@ for iface=1:inedgesize
     end
     
     %--------------------------- somando 2 -------------------------------%
-    termo0=h_avg*visonface*norma*murel*parameter(1,2,ifactual);
+    termo0=visonface*norma*murel*parameter(1,2,ifactual);
     if ifacelef2<size(bedge,1) || ifacelef2==size(bedge,1)
         if nflagface(ifacelef2,1)<200
             % neste caso automaticamente introduzimos o valor dada no
@@ -469,7 +455,7 @@ for iface=1:inedgesize
     %%
     % contribuições do elemento a direita
     % somando 1
-    termo0=h_avg*visonface*norma*mulef*parameter(2,1,ifactual);
+    termo0=visonface*norma*mulef*parameter(2,1,ifactual);
     if ifacerel1<size(bedge,1) || ifacerel1==size(bedge,1)
         if nflagface(ifacerel1,1)<200
             % neste caso automaticamente introduzimos o valor dada no
@@ -482,8 +468,6 @@ for iface=1:inedgesize
             % a ideia principal nesta rutina é isolar a pressão na face "ifacerel1"
             % e escrever eem funcção das pressões de face internas ou
             % Dirichlet ou simplesmente em funcação da pressão da VC.
-            
-            
             normcont=norm(coord(bedge(ifacerel1,1),:)-coord(bedge(ifacerel1,2),:));
             x=bcflag(:,1)==bedge(ifacerel1,5);
             r=find(x==1);
@@ -507,8 +491,6 @@ for iface=1:inedgesize
                 atualksi=ksi2;
                 opostoksi=ksi1;
             end
-            
-            
             % vejamos a qual face pertence a face oposto
             if faceoposto<size(bedge,1) || faceoposto==size(bedge,1)
                 if nflagface(faceoposto,1)<200
@@ -526,8 +508,6 @@ for iface=1:inedgesize
                     
                     M(lef,rel)=M(lef,rel)+ termo0*termo1;
                     I(lef)=I(lef)+termo0*termo2;
-                    
-                    
                 else
                     
                     normcontopost=norm(coord(bedge(faceoposto,1),:)-coord(bedge(faceoposto,2),:));
@@ -548,12 +528,8 @@ for iface=1:inedgesize
                     end
                     
                     sumaksiatual=  opostksO*(atualksi + opostoksi);
-                    
                     sumaksiopost= opostoksi*(atualksO + opostksO);
-                    
-                    
                     sumatotalnumer=  sumaksiatual - sumaksiopost;
-                    
                     sumatotaldenom= atualksi*opostksO - atualksO*opostoksi;
                     
                     termo1=sumatotalnumer/sumatotaldenom;
@@ -569,9 +545,7 @@ for iface=1:inedgesize
                     
                     M(lef,rel)=M(lef,rel)+ termo0*termo1;
                     I(lef)=I(lef)- termo0*termo2;
-                    
                 end
-                
             else
                 % caso III. Quando a face oposto pertence à interior da
                 % malha
@@ -633,20 +607,13 @@ for iface=1:inedgesize
         
         auxlef=weightDMP(ifacerel1-size(bedge,1),3);
         auxrel=weightDMP(ifacerel1-size(bedge,1),4);
-        
-        
         % contribuição do elemento a esquerda
         M(lef,[auxlef,auxrel])=  M(lef,[auxlef,auxrel])+ termo0*[auxweightrel1,auxweightrel2];
-        
-        
         % contribuição do elemento a direita
         M(rel,[auxlef,auxrel])=  M(rel,[auxlef,auxrel])- termo0*[auxweightrel1,auxweightrel2];
-        
-        
-        
     end
     % somando 2
-    termo0=h_avg*visonface*norma*mulef*parameter(2,2,ifactual);
+    termo0=visonface*norma*mulef*parameter(2,2,ifactual);
     if ifacerel2<size(bedge,1) || ifacerel2==size(bedge,1)
         if nflagface(ifacerel2,1)<200
             % neste caso automaticamente introduzimos o valor dada no
@@ -833,9 +800,13 @@ for iface=1:inedgesize
 end
 
 % para calcular a carga hidraulica
-if numcase>300 
-    if numcase~=306 
-        coeficiente=dt^-1*MM*SS.*elemarea(:);
+if numcase>300
+    if numcase~=306
+        if numcase==333 || numcase==331
+            coeficiente=dt^-1*SS.*elemarea(:);
+        else
+            coeficiente=dt^-1*MM*SS.*elemarea(:);
+        end
         % Euler backward method
         if strcmp(methodhydro,'backward')
             M=M+coeficiente.*eye(size(elem,1));
@@ -843,10 +814,10 @@ if numcase>300
         else
             % Crank-Nicolson method
             I=I+coeficiente.*eye(size(elem,1))*h-0.5*M*h;
-            
             M=0.5*M+coeficiente.*eye(size(elem,1));
             
         end
+        
     end
 end
 

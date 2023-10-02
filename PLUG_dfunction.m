@@ -74,7 +74,7 @@ switch numcase
         %dmap(1,:) = [1 4 0 0 4]; % r=1, pe=0.05, dx=0.2
         %dmedio=4;
         %dmap(1,:) = [1 4 0 0 0.4]; % r=10
-        k = [4 0; 0 0.04];
+        k = [4 0; 0 0.004];
                 %Definition of angle
                 teta=0;
                 %teta = pi/7.2;

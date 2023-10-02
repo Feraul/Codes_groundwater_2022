@@ -41,6 +41,17 @@ switch numcase
         
         %Restore "kmap"
         kmap = kaux;
+    case 331
+        %Initialize "kaux"
+        kaux = zeros(size(centelem,1),5);
+        for i = 1:size(centelem,1)
+                        
+          kaux(i,:) = [i h(i)*33.3 0 0 h(i)*33.33];
+           
+        end  %End of FOR
+        
+        %Restore "kmap"
+        kmap = kaux;
     case 1.7
         %Definition of "R" matrix
         %Initialization
@@ -643,7 +654,7 @@ switch numcase
     case 241
        %K(1,1:5) = [1 10 0 0 10]; % see Nilson's dissertation, when r=1
        %Initialization
-                k = [10 0; 0 0.1];
+                k = [10 0; 0 0.01];
                 %Definition of angle
                 teta=0;
                 %teta = pi/7.2;
@@ -707,19 +718,7 @@ switch numcase
         % Based on the Vertex-centred Finite-Volume Method 
         kmap(1,1:5) = [1 33.33 0 0 33.33];
         elem(:,5)=1;
-        
-    case 301
-        for i=1:size(centelem,1)
-            
-            K(i,1:5) = [i kmap(1,2) 0 0 kmap(1,2)];
-            
-            elem(i,5)=i;
-        end
-        % Permeability tensor for the case II, article 2023:
-        % A Local Grid-Refined Numerical Groundwater Model 
-        % Based on the Vertex-centred Finite-Volume Method 
-       kmap=K;
-     case 302
+     case 332
          % Permeability tensor for the case III, article 2023:
         % A Local Grid-Refined Numerical Groundwater Model 
         % Based on the Vertex-centred Finite-Volume Method 

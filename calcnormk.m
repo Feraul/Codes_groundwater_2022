@@ -21,8 +21,10 @@ if 300<numcase && numcase~=306
     % see equation (2), of the article -- A local grid-refined
     % numerical groundwater model based on the vertex centered finite
     % volume method
-    if numcase==330 || numcase==332 || numcase==333
+    if numcase==330 || numcase==332 
         kmap(:,2:5)=MM*kmap(:,2:5);
+    elseif numcase==333
+        kmap(:,2:5)=kmap(:,2:5);
     elseif numcase==331
         kmap=kmap;
     end

@@ -332,7 +332,8 @@ disp('>> Global Concentration extrema values [Con_max Con_min]:');
 max_conval = max(Con)
 min_conval = min(Con)
 auxCon=Con(Con<0);
-percentCon=(length(auxCon)/length(Con))*100;
+auxCon1=Con(Con>1);
+percentCon=((length(auxCon)+length(auxCon1))/length(Con))*100;
 %Mesage for the user:
 disp('------------------------------------------------');
 sprintf('>> Percentagem negative values for the concentratio: %s', num2str(percentCon))

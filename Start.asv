@@ -33,7 +33,7 @@ C:\Users\flc59\Documents\Benchmark_Cases\BenchContaminant211
 //***OBS.: If you set "0", the folder "Results" and other will be 
 //created into folder set above:
 
-teste_NLTPFA_WF_0G_R_1000
+teste_MPFAD_V_0G_R_1000
 
 //--------------------------------------------------------------------
 //------------------------ Solver Properties -------------------------
@@ -99,7 +99,7 @@ n
 //[nlfvpp]==> "Non-Linear Finite Volume" using lpew
 //[nlfvh]==> "Non-Linear Finite Volume" using harmonic point
 
-nlfvpp
+mpfad
 
 //If you chose [fps] or [mpfae], write below the auxiliary control
 //volume factor. It defines the auxiliary control volume size.
@@ -225,7 +225,7 @@ tse
 //Edge-based Limiter:
 //Is there an Edge-based Limiter? [y] ==> "yes"; [n] ==> "no".
 
-y
+n
 
 //If [y], choose among the Edge-Based limiters below:
 //[mm] ==> "MinMod";
@@ -249,14 +249,14 @@ va2
 //Patch-based Limiter:
 //Is there a Patch-based Limiter? [y] ==> "yes"; [n] ==> "no"
 
-y
+n
 
 //If [y], choose among the Patch-Based limiters below:
 //[wf] ==> "Woodfield Strategy";
 //[mlp] ==> "Multidimensional Limiting Process";
 //[mlp_vk] ==> "MLP, type Venkathakrishnen (see Park and Kim, 2012).
 
-wf
+mlp
 
 //If you chose [wf], write below the additional parameter ("delta"):
 

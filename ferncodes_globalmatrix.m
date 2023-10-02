@@ -4,7 +4,7 @@ function [M,I] = ferncodes_globalmatrix(w,s,Kde,Ded,Kn,Kt,Hesq,viscosity,...
     nflag,SS,dt,h,MM,gravrate)
 %Define global variables:
 global coord elem esurn1 esurn2 bedge inedge centelem bcflag ...
-    numcase methodhydro keygravity dens;
+    numcase methodhydro keygravity dens elemarea;
 
 %-----------------------inicio da rOtina ----------------------------------%
 %Constrói a matriz global.
@@ -16,7 +16,7 @@ inedgesize = size(inedge,1);
 %Initialize "M" (global matrix) and "I" (known vector)
 M = sparse(size(elem,1),size(elem,1)); %Prealocação de M.
 I = zeros(size(elem,1),1);
-coeficiente=dt^-1*MM*SS;
+
 %Evaluate "bedge"
 for ifacont = 1:bedgesize
     
@@ -72,31 +72,27 @@ for ifacont = 1:bedgesize
         end
          % average hydraulic head 
         % unconfined aquifer
-        if numcase==331
-            h_avg=h(lef);
-        else
-           h_avg=1; 
-        end
+       
         %------------------------------------------------------------------
         % ambos os nos pertenecem ao contorno de Dirichlet
         if nflag(bedge(ifacont,2),1)<200 && nflag(bedge(ifacont,1),1)<200
             %montagem da matriz global
-            M(lef,lef)=M(lef,lef)-h_avg*visonface*A*(norm(v0)^2);
+            M(lef,lef)=M(lef,lef)-visonface*A*(norm(v0)^2);
             % termo de fonte
-            I(lef)=I(lef)-h_avg*visonface*A*(dot(v2,-v0)*c1+dot(v1,v0)*c2)+visonface*(c2-c1)*Kt(ifacont)+visonface*m;
+            I(lef)=I(lef)-visonface*A*(dot(v2,-v0)*c1+dot(v1,v0)*c2)+visonface*(c2-c1)*Kt(ifacont)+visonface*m;
         else
             % quando um dos nos da quina da malha computacional
             % pertence ao contorno de Neumann
             if nflag(bedge(ifacont,1),1)>200
                 %montagem da matriz global
-                M(lef,lef)=M(lef,lef)-h_avg*visonface*A*(norm(v0)^2)+visonface*Kt(ifacont)+visonface*A*dot(v2,-v0);
+                M(lef,lef)=M(lef,lef)-visonface*A*(norm(v0)^2)+visonface*Kt(ifacont)+visonface*A*dot(v2,-v0);
                 % termo de fonte
-                I(lef)=I(lef)-h_avg*visonface*A*(dot(v1,v0)*c2)+visonface*(c2)*Kt(ifacont)+visonface*m;
+                I(lef)=I(lef)-visonface*A*(dot(v1,v0)*c2)+visonface*(c2)*Kt(ifacont)+visonface*m;
             elseif nflag(bedge(ifacont,2),1)>200
                 %montagem da matriz global
-                M(lef,lef)=M(lef,lef)-h_avg*visonface*A*(norm(v0)^2)-visonface*Kt(ifacont)+visonface*A*dot(v1,v0);
+                M(lef,lef)=M(lef,lef)-visonface*A*(norm(v0)^2)-visonface*Kt(ifacont)+visonface*A*dot(v1,v0);
                 % termo de fonte
-                I(lef)=I(lef)-h_avg*visonface*A*(dot(v2,-v0)*c1)+visonface*(-c1)*Kt(ifacont)+visonface*m;
+                I(lef)=I(lef)-visonface*A*(dot(v2,-v0)*c1)+visonface*(-c1)*Kt(ifacont)+visonface*m;
             end
         end
         %------------------------------------------------------------------
@@ -137,53 +133,47 @@ for iface = 1:inedgesize
     else
         visonface=1;
     end
-    % average hydraulic head 
-    % unconfined aquifer 
-    if numcase==331
-           h_avg=(h(inedge(iface,3))+h(inedge(iface,4)))/2;
-    else
-           h_avg=1; 
-    end
+    
     % pressão prescrita no elemento do poço injetor
     %Contabiliza as contribuições do fluxo numa aresta para os elementos %
     %a direita e a esquerda dela.                                        %
     
     M(inedge(iface,3),inedge(iface,3)) = ...
-        M(inedge(iface,3),inedge(iface,3)) - h_avg*visonface*Kde(iface);
+        M(inedge(iface,3),inedge(iface,3)) - visonface*Kde(iface);
     M(inedge(iface,3),inedge(iface,4)) = ...
-        M(inedge(iface,3),inedge(iface,4)) + h_avg*visonface*Kde(iface);
+        M(inedge(iface,3),inedge(iface,4)) + visonface*Kde(iface);
     M(inedge(iface,4),inedge(iface,4)) = ...
-        M(inedge(iface,4), inedge(iface,4)) - h_avg*visonface*Kde(iface);
+        M(inedge(iface,4), inedge(iface,4)) - visonface*Kde(iface);
     M(inedge(iface,4),inedge(iface,3)) = ...
-        M(inedge(iface,4), inedge(iface,3)) + h_avg*visonface*Kde(iface);
+        M(inedge(iface,4), inedge(iface,3)) + visonface*Kde(iface);
     
     if nflag(inedge(iface,1),1) < 200
-        I(inedge(iface,3)) = I(inedge(iface,3)) - h_avg*visonface*Kde(iface)*...
+        I(inedge(iface,3)) = I(inedge(iface,3)) - visonface*Kde(iface)*...
             Ded(iface)*nflag(inedge(iface,1),2);
-        I(inedge(iface,4)) = I(inedge(iface,4)) + h_avg*visonface*Kde(iface)*...
+        I(inedge(iface,4)) = I(inedge(iface,4)) + visonface*Kde(iface)*...
             Ded(iface)*nflag(inedge(iface,1),2);
     end
     if nflag(inedge(iface,2),1) < 200
-        I(inedge(iface,3)) = I(inedge(iface,3)) + h_avg*visonface*Kde(iface)*...
+        I(inedge(iface,3)) = I(inedge(iface,3)) + visonface*Kde(iface)*...
             Ded(iface)*nflag(inedge(iface,2),2);
-        I(inedge(iface,4)) = I(inedge(iface,4)) - h_avg*visonface*Kde(iface)*...
+        I(inedge(iface,4)) = I(inedge(iface,4)) - visonface*Kde(iface)*...
             Ded(iface)*nflag(inedge(iface,2),2);
     end
     % quando o nó pertece ao contorno de Neumann
     if nflag(inedge(iface,1),1) == 202
         
-        I(inedge(iface,3)) = I(inedge(iface,3)) - h_avg*visonface*Kde(iface)*...
+        I(inedge(iface,3)) = I(inedge(iface,3)) - visonface*Kde(iface)*...
             Ded(iface)*s(inedge(iface,1)); %ok
         
-        I(inedge(iface,4)) = I(inedge(iface,4)) + h_avg*visonface*Kde(iface)*...
+        I(inedge(iface,4)) = I(inedge(iface,4)) + visonface*Kde(iface)*...
             Ded(iface)*s(inedge(iface,1)); %ok
     end
     if nflag(inedge(iface,2),1) == 202
         
-        I(inedge(iface,3)) = I(inedge(iface,3)) + h_avg*visonface*Kde(iface)*...
+        I(inedge(iface,3)) = I(inedge(iface,3)) + visonface*Kde(iface)*...
             Ded(iface)*s(inedge(iface,2)); %ok
         
-        I(inedge(iface,4)) = I(inedge(iface,4)) - h_avg*visonface*Kde(iface)*...
+        I(inedge(iface,4)) = I(inedge(iface,4)) - visonface*Kde(iface)*...
             Ded(iface)*s(inedge(iface,2)); %ok
         
     end
@@ -197,10 +187,10 @@ for iface = 1:inedgesize
             post_cont = esurn2(inedge(iface,1)) + j;
             
             M(inedge(iface,3),esurn1(post_cont)) = M(inedge(iface,3),...
-                esurn1(post_cont)) + h_avg*visonface*Kde(iface)*Ded(iface)*w(post_cont);
+                esurn1(post_cont)) + visonface*Kde(iface)*Ded(iface)*w(post_cont);
             
             M(inedge(iface,4),esurn1(post_cont)) = M(inedge(iface,4),...
-                esurn1(post_cont)) - h_avg*visonface*Kde(iface)*Ded(iface)*w(post_cont);
+                esurn1(post_cont)) - visonface*Kde(iface)*Ded(iface)*w(post_cont);
             
         end
     end
@@ -210,10 +200,10 @@ for iface = 1:inedgesize
             post_cont = esurn2(inedge(iface,2)) + j;
             
             M(inedge(iface,3), esurn1(post_cont)) = M(inedge(iface,3),...
-                esurn1(post_cont)) - h_avg*visonface*Kde(iface)*Ded(iface)*w(post_cont);
+                esurn1(post_cont)) - visonface*Kde(iface)*Ded(iface)*w(post_cont);
             
             M(inedge(iface,4), esurn1(post_cont)) = M(inedge(iface,4),...
-                esurn1(post_cont)) + h_avg*visonface*Kde(iface)*Ded(iface)*w(post_cont);
+                esurn1(post_cont)) + visonface*Kde(iface)*Ded(iface)*w(post_cont);
         end
     end
     % contribuicao do termo gravitacional
@@ -234,6 +224,11 @@ end  %End of FOR ("inedge")
 % para calcular a carga hidraulica
 if numcase>300 && numcase~=306
     % Euler backward
+    if numcase==331 || numcase==333
+      coeficiente=dt^-1*SS.*elemarea(:);  
+    else
+     coeficiente=dt^-1*MM*SS.*elemarea(:);   
+    end
     if strcmp(methodhydro,'backward')
         M=M+coeficiente*eye(size(elem,1));
         I=I+coeficiente*eye(size(elem,1))*h;

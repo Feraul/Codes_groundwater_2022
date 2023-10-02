@@ -2,11 +2,7 @@
 %Subject: numerical code used to simulate fluid flow in porous media. That 
 %routine calls several others which defines how the equation will be solved 
 %Type of file: MAIN
-%Criate date: 29/02/2012
-%Modify data:   /  /2012
-%Advisor: Paulo Lyra and Darlan Karlo
-%Programer: Márcio Souza
-%Modified: Fernando Contreras, 2021
+%Programer: PhD. Fernando Contreras, 
 %--------------------------------------------------------------------------
 %Goals: Do the manegement of simulator. This is a MAIN program. 
 

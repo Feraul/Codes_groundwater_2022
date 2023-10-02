@@ -27,7 +27,7 @@ function hydraulic(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
     parameter,h_old,contnorm,SS,MM,weight,s,dt,gravrate,...
     nflagface,weightDMP,P,pointarmonic)
 %Define global parameters:
-global timew  totaltime  pmethod filepath elem numcase  ;
+global timew  totaltime  pmethod filepath elem numcase inedge bedge  ;
 
 %--------------------------------------------------------------------------
 %Initialize parameters:
@@ -48,10 +48,11 @@ Kdec=0;
 Knc=0;
 nflagc=0;
 viscosity=1;
-contiterplot=0;
+contiterplot=1;
 auxkmap=0;
 mobility=1;
 Ktc=0;Dedc=0;wightc=0;sc=0;dparameter=0;
+postprocessor(h_old,zeros(size(inedge,1)+size(bedge,1),1),Con,1-Con,contiterplot,overedgecoord,orderintimestep,'i',1,auxkmap);
 tic
 %Get "hydraulic head" and "flowrate"
 while stopcriteria < 100
@@ -87,7 +88,9 @@ while stopcriteria < 100
     contiterplot=contiterplot+1
     h=h_new;
     %----------------------------------------------------------------------
-    if numcase==333
+    % case unconfined aquifer
+    % case 1 and 4 of the article Qian, et al 2023
+    if numcase==333 || numcase==331
 
         [facelement]=ferncodes_elementfacempfaH;
         [~,kmap] = calcnormk(kmap,MM,h);
@@ -103,7 +106,7 @@ end
 toc
 %Write data file ("ProdutionReport.dat" and others)
 
-plotandwrite(producelem,Con,h,satonvertices,0,0,0,0);
+plotandwrite(producelem,Con,h,satonvertices,0,0,0,0,overedgecoord);
 
 %--------------------------------------------------------------------------
 %Write data file ("ProdutionReport.dat" and others)

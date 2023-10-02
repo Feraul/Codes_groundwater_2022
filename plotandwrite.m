@@ -18,7 +18,8 @@
 
 %--------------------------------------------------------------------------
 
-function [analsw, presanal]=plotandwrite(producelem,Sw,pressure,satonvertices,Dmedio,velmedio,gamma,time)
+function [analsw, presanal]=plotandwrite(producelem,Sw,pressure,...
+    satonvertices,Dmedio,velmedio,gamma,time,overedgecoord)
 %Define global parameters:
 global filepath satlimit resfolder bcflag bcflagc numcase totaltime  elemarea;
 
@@ -586,6 +587,26 @@ elseif numcase > 200
             xlabel('y(m)');
             ylabel('Hydraulic head (m)');
             title('MPFA-H method');
+     case 331
+            [posit,confield,] = getlineresult(pressure,satonvertices);
+            
+            confieldaux= zeros(length(confield)+2,1);
+            positaux= zeros(length(posit)+2,1);
+            
+            confieldaux(1)=90;
+            positaux(1)=0;
+            confieldaux(end)=90;
+            positaux(end)=1000;
+            
+            confieldaux(2:length(confield)+1,1)=confield;
+            positaux(2:length(posit)+1,1)=posit;
+            
+            plot(positaux,confieldaux,'--b','LineWidth',1.5);
+            hold on
+            grid
+            xlabel('y(m)');
+            ylabel('Hydraulic head (m)');
+            title('MPFA-H method');
      case 332
             [posit,confield,] = getlineresult(pressure,satonvertices);
             
@@ -606,7 +627,44 @@ elseif numcase > 200
             xlabel('y(m)');
             ylabel('Hydraulic head (m)');
             title('MPFA-H method');
+        case 333
+            [presanalit,] = benchmark(overedgecoord,numcase);
+
+           [posit,confield,elemonline] = getlineresult(pressure,satonvertices); 
+           % adequation boundary Dirichlet 
+           % numerical solution
+           confieldaux= zeros(length(confield)+2,1);
+            positaux= zeros(length(posit)+2,1);
             
+            confieldaux(1)=2;
+            positaux(1)=0;
+            confieldaux(end)=2;
+            positaux(end)=40;
+            
+            confieldaux(2:length(confield)+1,1)=confield;
+            positaux(2:length(posit)+1,1)=posit;
+            % adequation boundary Dirichlet 
+            % analytical solution
+            confieldaux1= zeros(length(elemonline)+2,1);
+            positaux1= zeros(length(posit)+2,1);
+            
+            confieldaux1(1)=2;
+            positaux1(1)=0;
+            confieldaux1(end)=2;
+            positaux1(end)=40;
+            
+            confieldaux1(2:length(confield)+1,1)=presanalit(elemonline);
+            positaux1(2:length(posit)+1,1)=posit;
+            %---------------------------------------------
+            plot(positaux1,confieldaux1,'k','LineWidth',1.)
+            hold on 
+            %------------------------------------------------------
+            plot(positaux,confieldaux,'*g','LineWidth',1.5);
+            hold on
+            grid
+            xlabel('y(m)');
+            ylabel('Hydraulic head (m)');
+            title('MPFA-H method');
     end
     
 else
@@ -732,7 +790,7 @@ for i = 1:size(centelem,1)
             jj = jj + 1;
         end  %End of IF
     elseif 300<numcase
-        if numcase==330
+        if numcase==330 || numcase==331
             %if (498<centelem(i,1) && centelem(i,1)<501) && centelem(i,2)<1000
             if (abs(centelem(i,1)-500)/500)<1e-2 && centelem(i,2)<1000
                 %"y_value"
@@ -744,6 +802,7 @@ for i = 1:size(centelem,1)
                 %Increment "jj"
                 j = j + 1;
             end
+        
         elseif numcase==332
             %if (abs(centelem(i,1)-250)/250)<1e-2 && centelem(i,2)<1000
             const=25; % para malha 40x40
@@ -751,6 +810,17 @@ for i = 1:size(centelem,1)
               
             %"y_value"
                 getxvalue(j) = centelem(i,2);
+                %Attribute to "satfield" the value of "Sw".
+                getsatfield(j) = Sw(i);
+                %Attribute the number of element to "getelemonline"
+                getelemonline(j) = i;
+                %Increment "jj"
+                j = j + 1;
+            end
+        elseif numcase==333
+            
+            if (1.25*3<centelem(i,2) && centelem(i,2)<1.25*4) && centelem(i,1)<40
+                getxvalue(j) = centelem(i,1);
                 %Attribute to "satfield" the value of "Sw".
                 getsatfield(j) = Sw(i);
                 %Attribute the number of element to "getelemonline"

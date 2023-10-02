@@ -51,6 +51,13 @@ if numcase < 20 || numcase==306 || numcase==333
     %Calculate "el2"
     el2 = sqrt(sum(relerrorL2)/sum(elemarea))
 
+    % Calculate Mean Absolute Error (MAE), adopted of Qian et al 2023
+    MAE= sum(abs(presanalit - pressure))/length(pressure)
+    
+    % Calculate the relative root mean square error (RRMSE), adopted of Qian et al 2023
+    a=((presanalit - pressure).^2);
+    n=length(pressure);
+    RRMSE=sqrt(((1/n)*sum(a))/(((1/n)*sum(presanalit))^2))
     %----------------------------------------------------------------------
     %Calculate the erros to colocation node (VELOCITY)
     %Boundary edges

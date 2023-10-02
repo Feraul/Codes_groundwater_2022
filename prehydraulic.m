@@ -47,10 +47,10 @@ switch numcase
         % step time
         dt=0.01;
         % find the well element
-        b=find(abs(centelem(:,1)-500)<1e-9 & abs(centelem(:,2)-500)<1e-9);
+        b=find((abs(centelem(:,1)-500)/500)<1e-2 & (abs(centelem(:,2)-500)/500)<1e-2);
         wells(1,1)=b;
         wells(1,2)=2;
-        wells(1,3)=1;
+        wells(1,3)=0;
         wells(1,4)=0;
         wells(1,5)=0;
         wells(1,6)=-40000;
@@ -66,7 +66,8 @@ switch numcase
         % step time
         dt=0.01;
         % number of divisions
-        const=25; 
+        const=25;
+        pumpingrate=2500;
         % find the well element
         
         % the flow rate value in the well is divided by number wells
@@ -75,41 +76,41 @@ switch numcase
         b1=find((const*9<centelem(:,1)& centelem(:,1)<const*10) & (const*9<centelem(:,2)& centelem(:,2)<const*10));
         %b1=find((abs(centelem(:,1)-250)/250)<1e-2 & (abs(centelem(:,2)-250)/250)<1e-2);
         wells(1,1)=b1;
-        wells(1,2)=1;
+        wells(1,2)=2;
         wells(1,3)=0;
         wells(1,4)=0;
         wells(1,5)=0;
-        wells(1,6)=-10000;
+        wells(1,6)=-pumpingrate;
         %-----------------------------------------------------------------
         b2=find((const*30<centelem(:,1)& centelem(:,1)<const*31) & (const*9<centelem(:,2)& centelem(:,2)<const*10));
         %b2=find((abs(centelem(:,1)-750)/750)<1e-2 & (abs(centelem(:,2)-250)/250)<1e-2);
         %b2=find(abs(centelem(:,1)-750)<1e-9 & abs(centelem(:,2)-250)<1e-9);
         wells(2,1)=b2;
-        wells(2,2)=1;
+        wells(2,2)=2;
         wells(2,3)=0;
         wells(2,4)=0;
         wells(2,5)=0;
-        wells(2,6)=-10000;
+        wells(2,6)=-pumpingrate;
         %------------------------------------------------------------------
         b3=find((const*30<centelem(:,1)& centelem(:,1)<const*31) & (const*30<centelem(:,2)& centelem(:,2)<const*31));
         %b3=find((abs(centelem(:,1)-750)/750)<1e-2 & (abs(centelem(:,2)-750)/750)<1e-2);
         
         wells(3,1)=b3;
-        wells(3,2)=1;
+        wells(3,2)=2;
         wells(3,3)=0;
         wells(3,4)=0;
         wells(3,5)=0;
-        wells(3,6)=-10000; 
+        wells(3,6)=-pumpingrate; 
         %------------------------------------------------------------------
         b4=find((const*9<centelem(:,1)& centelem(:,1)<const*10) & (const*30<centelem(:,2)& centelem(:,2)<const*31));
         %b4=find((abs(centelem(:,1)-250)/250)<1e-2 & (abs(centelem(:,2)-750)/750)<1e-2);
         
         wells(4,1)=b4;
-        wells(4,2)=1;
+        wells(4,2)=2;
         wells(4,3)=0;
         wells(4,4)=0;
         wells(4,5)=0;
-        wells(4,6)=-10000;
+        wells(4,6)=-pumpingrate;
     case 333
         % Case 4:Two parallel canals (Qian et al)
         elem(:,5)=1:size(elem,1);
@@ -122,7 +123,7 @@ switch numcase
         % step time no considered 
         dt=0.5;
         % precipitation infiltration 
-        P=0.01;
+        P=0.002;
 end
 
 end

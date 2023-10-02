@@ -47,10 +47,14 @@ if (size(wells,2) > 1)
         %Swept all eleemnts with source term
         for inj = 1:length(injecrow)
             %Apply the source to "mvector" (algebric system)
+            if numcase==332
+                mvector(wells(injecrow(inj),1)) = ...
+                mvector(wells(injecrow(inj),1)) +flowratevalue(inj);
+            else
+                
             mvector(wells(injecrow(inj),1)) = ...
-                mvector(wells(injecrow(inj),1)) + ...
-                (flowratevalue(inj)*elemarea(wells(injecrow(inj),1))/...
-                sumelemwell);
+                mvector(wells(injecrow(inj),1)) +(flowratevalue(inj)*elemarea(wells(injecrow(inj),1))/sumelemwell);
+            end
         end  %End of FOR (flowrate in injector well)
     %2. Applying PRESSURE:
     elseif any(wells(injecrow,5) > 400 & wells(injecrow,5) < 501)
@@ -92,8 +96,14 @@ if (size(wells,2) > 1)
                 mvector(wells(producrow(iprod),1)) + ...
                 (flowratevalue(iprod)*elemarea(wells(producrow(iprod),1))/sumelemwell);
             else
-              mvector(wells(producrow(iprod),1)) = ...
-                mvector(wells(producrow(iprod),1)) + flowratevalue(iprod)*(elemarea(wells(producrow(iprod),1))/sumelemwell);  
+                if numcase==332
+                    mvector(wells(producrow(iprod),1)) = ...
+                        mvector(wells(producrow(iprod),1)) + flowratevalue(iprod);
+                else
+                    mvector(wells(producrow(iprod),1)) = ...
+                        mvector(wells(producrow(iprod),1)) +...
+                        flowratevalue(iprod)*(elemarea(wells(producrow(iprod),1))/sumelemwell);
+                end
             end
         end  %End of FOR (flowrate in producer well)
     %2. Applying PRESSURE:
