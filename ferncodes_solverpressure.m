@@ -15,7 +15,7 @@
 %Modified: Fernando Contreras, 2021
 function [p,flowrate,flowresult,flowratedif] = ferncodes_solverpressure(viscosity,...
     wells,Hesq,Kde,Kn,Kt,Ded,nflag,weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,...
-    wc,sc,SS,dt,h,MM,gravrate)
+    wc,sc,SS,dt,h,MM,gravrate,P)
 
 
 % Montagem da matriz global
@@ -25,7 +25,7 @@ function [p,flowrate,flowresult,flowratedif] = ferncodes_solverpressure(viscosit
 %Add a source therm to independent vector "mvector" 
 
 %Often it may change the global matrix "M"
-[M,I] = addsource(sparse(M),I,wells);
+[M,I] = addsource(sparse(M),I,wells,P);
 
 %--------------------------------------------------------------------------
 %Solve global algebric system 

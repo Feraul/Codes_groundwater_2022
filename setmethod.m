@@ -169,7 +169,7 @@ switch phasekey
 
         hydraulic(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
             parameter,h_old,contnorm,SS,MM,weight,s,dt,gravrate,nflagface,...
-            weightDMP,P,pointarmonic);
+            weightDMP,P);
 
         %It Souves only the HYPERBOLIC Equation:
     case 5

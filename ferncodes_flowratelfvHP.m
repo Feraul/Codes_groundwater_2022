@@ -49,13 +49,7 @@ for ifacont=1:bedgesize
         facelef2=parameter(1,4,ifacont);
         % average hydralic head
         % unconfined aquifer
-        
-        if numcase==301 || numcase==333
-            h_avg=p(lef);
-        else
-            h_avg=1;
-        end
-        flowrate(ifacont,1)= h_avg*visonface*normcont*((parameter(1,1,ifacont)+parameter(1,2,ifacont))*p(lef)-...
+        flowrate(ifacont,1)= visonface*normcont*((parameter(1,1,ifacont)+parameter(1,2,ifacont))*p(lef)-...
             parameter(1,1,ifacont)*pinterp(facelef1)-parameter(1,2,ifacont)*pinterp(facelef2));
     end
     %Attribute the flow rate to "flowresult"
@@ -86,13 +80,6 @@ for iface=1:inedgesize
     end
     lef=inedge(iface,3);
     rel=inedge(iface,4);
-    % average hydraulic head
-    % unconfined aquifer
-    if numcase==301 || numcase==333
-        h_avg=(p(lef)+p(rel))/2;
-    else
-        h_avg=1;
-    end
     
     % orientation vector
     vd1=coord(inedge(iface,2),:)-coord(inedge(iface,1),:);
@@ -115,7 +102,7 @@ for iface=1:inedgesize
     fluxdireit=norma*((parameter(2,1,ifactual)+parameter(2,2,ifactual))*p(rel)-...
         parameter(2,1,ifactual)*pinterp(auxfacerel1)-parameter(2,2,ifactual)*pinterp(auxfacerel2));
     % calculo do fluxo unico na face
-    flowrate(iface+size(bedge,1),1)=h_avg*visonface*(murel*fluxesq-mulef*fluxdireit);
+    flowrate(iface+size(bedge,1),1)=visonface*(murel*fluxesq-mulef*fluxdireit);
     
     %Attribute the flow rate to "flowresult"
     %On the left:

@@ -25,9 +25,9 @@
 
 function hydraulic(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
     parameter,h_old,contnorm,SS,MM,weight,s,dt,gravrate,...
-    nflagface,weightDMP,P,pointarmonic)
+    nflagface,weightDMP,P)
 %Define global parameters:
-global timew  totaltime  pmethod filepath elem numcase inedge bedge  ;
+global timew  totaltime  pmethod filepath elem numcase inedge bedge interptype ;
 
 %--------------------------------------------------------------------------
 %Initialize parameters:
@@ -64,7 +64,7 @@ while stopcriteria < 100
         [h_new,flowrate,] = ferncodes_solverpressure(...
             mobility,wells,Hesq,Kde,Kn,Kt,Ded,nflag,...
             weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc,SS,dt,h,MM,...
-            gravrate);
+            gravrate,P);
     elseif strcmp(pmethod,'mpfah')
         % Calculate hydraulic head and flowrate using the MPFA with harmonic
         % points
@@ -79,28 +79,44 @@ while stopcriteria < 100
     %% time step calculation
     disp('>> Time evolution:');
     time = time + dt
-
+    
     concluded = time*100/finaltime;
     stopcriteria = concluded;
     concluded = num2str(concluded);
     status = [concluded '% concluded']
-
+    
     contiterplot=contiterplot+1
     h=h_new;
     %----------------------------------------------------------------------
     % case unconfined aquifer
     % case 1 and 4 of the article Qian, et al 2023
     if numcase==333 || numcase==331
-
-        [facelement]=ferncodes_elementfacempfaH;
-        [~,kmap] = calcnormk(kmap,MM,h);
-        [pointarmonic]=ferncodes_harmonicopoint(kmap);
-        [parameter,]=ferncodes_coefficientmpfaH(facelement,pointarmonic,kmap);
-        [weightDMP]=ferncodes_weightnlfvDMP(kmap);
+        if strcmp(pmethod,'mpfah')
+            [facelement]=ferncodes_elementfacempfaH;
+            [~,kmap] = calcnormk(kmap,MM,h);
+            [pointarmonic]=ferncodes_harmonicopoint(kmap);
+            [parameter,]=ferncodes_coefficientmpfaH(facelement,pointarmonic,kmap);
+            [weightDMP]=ferncodes_weightnlfvDMP(kmap);
+        else
+            [~,kmap] = calcnormk(kmap,MM,h);
+            %Get preprocessed terms:
+            [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap);
+            %It switches according to "interptype"
+            switch char(interptype)
+                %LPEW 1
+                case 'lpew1'
+                    % calculo dos pesos que correspondem ao LPEW1
+                    [weight,s] = ferncodes_Pre_LPEW_1(kmap,N);
+                    %LPEW 2
+                case 'lpew2'
+                    % calculo dos pesos que correspondem ao LPEW2
+                    [weight,s] = ferncodes_Pre_LPEW_2(kmap,N,zeros(size(elem,1),1));
+            end  %End of SWITCH
+        end
         %----------------------------------------------------------------------
     end
     postprocessor(h,flowrate,Con,1-Con,contiterplot,overedgecoord,orderintimestep,'i',1,auxkmap);
-
+    
 end
 
 toc

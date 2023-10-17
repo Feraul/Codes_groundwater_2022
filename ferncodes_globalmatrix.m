@@ -222,21 +222,24 @@ for iface = 1:inedgesize
 end  %End of FOR ("inedge")
 %==========================================================================
 % para calcular a carga hidraulica
-if numcase>300 && numcase~=306
-    % Euler backward
-    if numcase==331 || numcase==333
-      coeficiente=dt^-1*SS.*elemarea(:);  
-    else
-     coeficiente=dt^-1*MM*SS.*elemarea(:);   
-    end
-    if strcmp(methodhydro,'backward')
-        M=M+coeficiente*eye(size(elem,1));
-        I=I+coeficiente*eye(size(elem,1))*h;
-    else
-        % Crank-Nicolson
-        I=I+coeficiente*eye(size(elem,1))*h-0.5*M*h;
-        
-        M=0.5*M+coeficiente*eye(size(elem,1));
+% para calcular a carga hidraulica
+if numcase>300
+    if numcase~=306
+        if numcase==333 || numcase==331
+            coeficiente=dt^-1*SS.*elemarea(:);
+        else
+            coeficiente=dt^-1*MM*SS.*elemarea(:);
+        end
+        % Euler backward method
+        if strcmp(methodhydro,'backward')
+            M=M+coeficiente.*eye(size(elem,1));
+            I=I+coeficiente.*eye(size(elem,1))*h;
+        else
+            % Crank-Nicolson method
+            I=I+coeficiente.*eye(size(elem,1))*h-0.5*M*h;
+            M=0.5*M+coeficiente.*eye(size(elem,1));
+            
+        end
         
     end
 end
