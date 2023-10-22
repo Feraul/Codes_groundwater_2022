@@ -47,7 +47,7 @@ flowresult = zeros(size(elem,1),1);
 %schemes (calculate the "flowrate" on whole edges).
 
 if phasekey == 1 || (phasekey == 3 && strcmp(smethod,'stdr')) || ...
-        (phasekey == 3 && strcmp(smethod,'goef')) 
+        (phasekey == 3 && strcmp(smethod,'goef'))|| phasekey==4
     %Initialize "flowrate"
     flowrate = zeros(bedgesize + inedgesize,1);
 

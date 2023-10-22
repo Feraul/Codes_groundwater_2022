@@ -727,7 +727,7 @@ switch numcase
         %----------------------------------------------------------------------
         %Example 43: Two-Phase Flow case. Adapted from Nikitin et al., 2012
         %Case 1, four litologies  
-    case 306
+    case 336
         % Permeability tensor for the case 0, article 2023:
         % A Local Grid-Refined Numerical Groundwater Model 
         % Based on the Vertex-centred Finite-Volume Method

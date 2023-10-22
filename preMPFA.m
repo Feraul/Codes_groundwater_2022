@@ -26,7 +26,7 @@ function [transmvecleft,transmvecright,knownvecleft,knownvecright,storeinv,...
     knownvecleftcon,knownvecrightcon,storeinvcon,Bleftcon,Brightcon,Fgcon,...
     mapinvcon,maptransmcon,mapknownveccon,pointedgecon,bodytermcon,Kdec,...
     Knc,Ktc,Dedc,wightc,sc,weightDMPc,dparameter,nflagnoc,nflagfacec,Con,...
-    lastimelevel,lastimeval,gravrate,pointarmonic] = preMPFA(kmap,klb,dmap,MM,h)
+    lastimelevel,lastimeval,gravrate] = preMPFA(kmap,klb,dmap,MM,h)
 %Define global parameters:
 global pmethod elem interptype phasekey keygravity numcase
 
@@ -151,11 +151,11 @@ switch char(pmethod)
     case 'mpfad'
         
         %Get "ferncodes_nflag"
-        nflag = ferncodes_calflag(0);
+        %nflag = ferncodes_calflag(0);
         %Get preprocessed terms:
         [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap);
         %Call another parameters that I don't know.
-        [V,N,] = ferncodes_elementface(nflag);
+        %[V,N,] = ferncodes_elementface(nflag);
         
         % for the concentration transport
         if 200<numcase && numcase<300

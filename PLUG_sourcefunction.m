@@ -359,16 +359,16 @@ for isource = 1:size(elem,1)
                 %element evaluated.
                 sourcevector(isource) = 10*elemarea(isource);
             end  %End of internal if
-        case 306
+        case 336
            x = centelem(isource,1);
             %Define the region where the sourcevalue is major than zero
             if x <0.5 || x==0.5 
                 %As the value of source is 1 and this mult. the volume of 
                 %each element, the source value is the owner volume of each 
                 %element evaluated.
-                sourcevector(isource) =20*elemarea(isource);
+                sourcevector(isource) =-20*elemarea(isource);
             else
-                sourcevector(isource) =8*elemarea(isource);
+                sourcevector(isource) =-8*elemarea(isource);
             end  %End of internal if 
         case 333
            sourcevector(isource)=P*elemarea(isource); 

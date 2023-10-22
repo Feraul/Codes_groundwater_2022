@@ -965,7 +965,7 @@ flowrateanalit = zeros(size(bedge,1) + size(inedge,1),1);
                 flowrateanalit(size(bedge,1) + ianal) = ...
                     dot(V,normals(size(bedge,1) + ianal,:));
             end  %End of FOR (internal edges)
-        case 306
+        case 336
             %Swept all elements:
             for ianal = 1:size(centelem,1)
                 %Attribute to "x" and "y" "centelem" values

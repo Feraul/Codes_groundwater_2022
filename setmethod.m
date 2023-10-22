@@ -19,7 +19,7 @@ function setmethod(kmap,wells,keywrite,invh,limiterflag,klb,elemsize,...
     bedgesize,inedgesize,auxpar,wellsc,velmedio,dmap,Dmedio,gamma,SS,...
     h_old,MM,dt,P)
 %Define global parameters:
-global phasekey pmethod 
+global phasekey pmethod numcase
 
 %Get a preprocessment of pressure scheme (used in One-phase and Two-Phase).
 if phasekey ~= 0
@@ -32,7 +32,8 @@ if phasekey ~= 0
         knownvecleftcon,knownvecrightcon,storeinvcon,...
         Bleftcon,Brightcon,Fgcon,mapinvcon,maptransmcon,mapknownveccon,...
         pointedgecon, bodytermcon,Kdec,Knc,Ktc,Dedc,weightc,sc,weightDMPc,dparameter,...
-    nflagnoc,nflagfacec,Con,lastimelevel,lastimeval,gravrate,pointarmonic] = preMPFA(kmap,klb,dmap,MM,h_old);
+        nflagnoc,nflagfacec,Con,lastimelevel,lastimeval,...
+        gravrate] = preMPFA(kmap,klb,dmap,MM,h_old);
     
 end  %End of IF (execute "preMPFA")
 
@@ -55,14 +56,14 @@ switch phasekey
             %Get "pressure" and "flowrate"
             [pressure,flowrate,] = ferncodes_solverpressure(1,...
                 wells,Hesq,Kde,Kn,Kt,Ded,nflag,weight,s,Con,Kdec,...
-                Knc,Ktc,Dedc,nflagnoc,weightc,sc,SS,dt,h_old,MM,gravrate);
+                Knc,Ktc,Dedc,nflagnoc,weightc,sc,SS,dt,h_old,MM,gravrate,P);
         elseif strcmp(pmethod,'mpfaql')
             [pressure,flowrate,]=ferncodes_solverpressureMPFAQL(nflag,...
                 parameter,kmap,weightDMP,wells,1,V,1,N,weight,s);
             
         elseif strcmp(pmethod,'mpfah')
             [pressure,flowrate,]=ferncodes_solverpressureMPFAH(nflagface,...
-                parameter,weightDMP,wells,SS,dt,h_old,MM,gravrate,1);
+                parameter,weightDMP,wells,SS,dt,h_old,MM,gravrate,P);
         elseif strcmp(pmethod,'nlfvpp')
             [pressure,flowrate,]=ferncodes_solverpressureNLFVPP(nflagno,...
                 parameter,kmap,wells,1,V,1,N,p_old,contnorm);
@@ -126,7 +127,7 @@ switch phasekey
             Con,nflagnoc,weightc,sc,dparameter,SS,dt,h_old,MM,gravrate,...
             Dmedio,velmedio,nflagfacec,weightDMPc);
     case 3 % contaminant transport
-    
+        
         
         %          if numcase==243 || numcase==245 || numcase==247
         %              elem(:,5)=1;
@@ -161,16 +162,58 @@ switch phasekey
             weightDMP,nflagface,p_old,contnorm,dparameter,nflagnoc,...
             gamma,Dmedio,Kdec,Knc,Ktc,Dedc,weightc,sc,nflagfacec,...
             weightDMPc,wellsc,weight,s,velmedio,transmvecleftcon,transmvecrightcon,...
-        knownvecleftcon,knownvecrightcon,storeinvcon,...
+            knownvecleftcon,knownvecrightcon,storeinvcon,...
             Bleftcon,Brightcon,Fgcon,mapinvcon,maptransmcon,mapknownveccon,...
             pointedgecon, bodytermcon,gravrate);
         
     case 4 % hydrological head simulation
-
-        hydraulic(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
-            parameter,h_old,contnorm,SS,MM,weight,s,dt,gravrate,nflagface,...
-            weightDMP,P);
-
+        if numcase==336
+            if strcmp(pmethod,'tpfa')
+                %Get "pressure" and "flowrate"
+                [pressure,flowrate,] = solvePressure_TPFA(transmvecleft,...
+                    knownvecleft,1,0,Fg,bodyterm);
+                
+                %MPFA-D (Gao and Wu, 2010)
+            elseif strcmp(pmethod,'mpfad')
+                %Get "pressure" and "flowrate"
+                [pressure,flowrate,] = ferncodes_solverpressure(1,...
+                    wells,Hesq,Kde,Kn,Kt,Ded,nflag,weight,s,Con,Kdec,...
+                    Knc,Ktc,Dedc,nflagnoc,weightc,sc,SS,dt,h_old,MM,gravrate,P);
+            elseif strcmp(pmethod,'mpfaql')
+                [pressure,flowrate,]=ferncodes_solverpressureMPFAQL(nflag,...
+                    parameter,kmap,weightDMP,wells,1,V,1,N,weight,s);
+                
+            elseif strcmp(pmethod,'mpfah')
+                [pressure,flowrate,]=ferncodes_solverpressureMPFAH(nflagface,...
+                    parameter,weightDMP,wells,SS,dt,h_old,MM,gravrate,1,P);
+            elseif strcmp(pmethod,'nlfvpp')
+                [pressure,flowrate,]=ferncodes_solverpressureNLFVPP(nflagno,...
+                    parameter,kmap,wells,1,V,1,N,p_old,contnorm);
+            elseif strcmp(pmethod,'nlfvh')
+                [pressure,flowrate,]=ferncodes_solverpressureNLFVH(nflagface,...
+                    parameter,kmap,wells,1,weightDMP,p_old,contnorm);
+                %Any other Pressure solver (traditionals MPFA schemes)
+            elseif strcmp(pmethod,'nlfvdmp')
+                [pressure,flowrate,]=ferncodes_solverpressureDMP(nflagface,...
+                    parameter,wells,1,weightDMP,p_old,0,0,0);
+            else
+                %Get "pressure" and "flowrate"
+                [pressure,flowrate,] = ...
+                    solvePressure(transmvecleft,transmvecright,knownvecleft,...
+                    knownvecright,storeinv,Bleft,Bright,wells,mapinv,maptransm,...
+                    mapknownvec,pointedge,1,bodyterm,P);
+            end  %End of IF (type of pressure solver - one-phase flow)
+            
+        %Plot the fields (pressure, normal velocity, etc)
+        %This function create the "*.vtk" file used in VISIT to
+        %postprocessing the results
+        postprocessor(pressure,flowrate,0,1,1,overedgecoord,1,keywrite,invh,normk);
+        
+        else
+            hydraulic(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
+                parameter,h_old,contnorm,SS,MM,weight,s,dt,gravrate,nflagface,...
+                weightDMP,P);
+        end
         %It Souves only the HYPERBOLIC Equation:
     case 5
         % unsatured flow

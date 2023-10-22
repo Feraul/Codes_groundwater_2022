@@ -344,7 +344,7 @@ coordmid = mean(coord(vertices,1:2))*(1 - boolean) + ...
                 bcattrib = (0.8/pi)*cos(0.25*pi*(x+y+2*aa))+0.5*(x+y);
                 %bcattrib = (0.2/pi)*cos(pi*(x+y-2*aa))-0.5*(x+y);
             end
-        case 306
+        case 336
             x=coordmid(1);
             y=coordmid(2);
             

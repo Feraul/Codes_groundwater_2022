@@ -38,7 +38,7 @@
 %the nodes which try for the node evaluated.  
 function [pressure,flowrate,flowresult] = solvePressure(transmvecleft,...
     transmvecright,knownvecleft,knownvecright,storeinv,Bleft,Bright,...
-    wells,mapinv,maptransm,mapknownvec,pointedge,mobility,bodyterm)
+    wells,mapinv,maptransm,mapknownvec,pointedge,mobility,bodyterm,P)
 %Define global parameters:
 global elem bedge inedge phasekey smethod;
 
@@ -220,7 +220,7 @@ clear transmvecleft transmvecright knownvecleft knownvecright storeinv ...
 %Add a source therm to independent vector "mvector" 
 
 %Often it may change the global matrix "M"
-[M,mvector] = addsource(sparse(M),mvector,wells);
+[M,mvector] = addsource(sparse(M),mvector,wells,P);
 
 %--------------------------------------------------------------------------
 %Solver the algebric system

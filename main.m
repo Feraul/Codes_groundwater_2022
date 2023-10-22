@@ -96,7 +96,7 @@ elseif numcase>300
    % Flags adequation for hydrological head problem
    [SS,h_old,MM,wells,dt,P]=prehydraulic;
    % Choose Backward method or Crank-Nicolson
-   % use oara caso aquifero confinado
+   % use quando o aquifero for confinado
    methodhydro='backward';
    % use para o caso aquifero nao confinado
    %methodhydro='cranknicolson'; 

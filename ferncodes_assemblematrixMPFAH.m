@@ -801,7 +801,7 @@ end
 
 % para calcular a carga hidraulica
 if numcase>300
-    if numcase~=306
+    if numcase~=336
         if numcase==333 || numcase==331
             coeficiente=dt^-1*SS.*elemarea(:);
         else
