@@ -152,7 +152,14 @@ switch numcase
         % aquifer thickness
         MM=10;
         % precipitation infiltration 
-        P=0.001; 
+        P=0.001;
+   case 339
+        % Case flow through two zones of different transmissiviteis
+        % (Mark Bakker), pag. 23
+        % aquifer unconfined flow
+        % aquifer thickness
+        MM=10;
+        
 end
 
 end

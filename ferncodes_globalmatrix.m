@@ -225,7 +225,7 @@ end  %End of FOR ("inedge")
 % para calcular a carga hidraulica
 if numcase>300
     if numcase~=336 && numcase~=334 && numcase~=335 &&...
-            numcase~=337 && numcase~=338
+            numcase~=337 && numcase~=338 && numcase~=339
         if numcase==333 || numcase==331
             coeficiente=dt^-1*SS.*elemarea(:);
         else

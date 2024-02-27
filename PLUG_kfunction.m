@@ -919,6 +919,18 @@ switch numcase
 %                 kmap(i,:) = [i k(1,1) k(1,2) k(2,1) k(2,2)];
 %             end  %End of IF
         end  %End of FOR
+    case 339
+        for i = 1:size(centelem,1)
+            %Define "x" and "y"
+            x = centelem(i,1);
+            if x<500 || x==500
+                %  in this case considere T see pag. 23 
+             kmap (i,:) = [i 200 0 0 200];   
+                
+            else
+            kmap (i,:) = [i 20 0 0 20];
+            end 
+        end
 end  %End of Switch
 
 %--------------------------------------------------------------------------
