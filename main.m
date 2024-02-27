@@ -86,8 +86,8 @@ if 200<numcase && numcase <300
     SS=0; h_old=0; MM=0;wells=0; dt=0;P=0; 
     % This numcase is used to simulate head hydraulic in aquifers
 elseif numcase>300
-    
-    auxpar=0;
+    % Benchmark hidrology 
+    auxpar=0; 
     dmap=0;
     Dmedio=0;
     gamma=0;

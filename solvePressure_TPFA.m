@@ -32,7 +32,6 @@ inedgesize = size(inedge,1);
 M = zeros(size(elem,1));
 %Initialize "mvector" which is the independent vector of algebric system.
 mvector = zeros(size(elem,1),1);
-coeficiente=dt^-1*MM*SS;
 %Swept "bedge"
 for ibedg = 1:bedgesize
     %Get "leftelem"
@@ -101,7 +100,29 @@ for iinedg = 1:inedgesize
     transmvecleft(bedgesize + iinedg) = ...
         visonface*transmvecleft(bedgesize + iinedg);
 end  %End of FOR ("inedge")
-
+%==========================================================================
+% para calcular a carga hidraulica
+% para calcular a carga hidraulica
+if numcase>300
+    if numcase~=336 && numcase~=334
+        if numcase==333 || numcase==331
+            coeficiente=dt^-1*SS.*elemarea(:);
+        else
+            coeficiente=dt^-1*MM*SS.*elemarea(:);
+        end
+        % Euler backward method
+        if strcmp(methodhydro,'backward')
+            M=M+coeficiente.*eye(size(elem,1));
+            transmvecleft=transmvecleft+coeficiente.*eye(size(elem,1))*h;
+        else
+            % Crank-Nicolson method
+            transmvecleft=transmvecleft+coeficiente.*eye(size(elem,1))*h-0.5*M*h;
+            M=0.5*M+coeficiente.*eye(size(elem,1));
+            
+        end
+        
+    end
+end
 %--------------------------------------------------------------------------
 %Add a source therm to independent vector "mvector"
 

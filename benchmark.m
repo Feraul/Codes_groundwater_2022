@@ -1028,7 +1028,27 @@ flowrateanalit = zeros(size(bedge,1) + size(inedge,1),1);
                presanalit(ianal) =sqrt(4+(P/0.5)*(40*x-x^2)) ;  
                
             end  %End of FOR (pressure)
-            
+        case 334
+           for ianal = 1:size(centelem,1)
+                %Attribute to "x" and "y" "centelem" values
+                x = centelem(ianal,1);
+               % analytical hydraulic head 
+               
+               presanalit(ianal) =((4-6)*x)/1000+6;  
+               
+            end  %End of FOR (pressure) 
+        case 335
+            %Swept all elements:
+            for ianal = 1:size(centelem,1)
+                %Attribute to "x" and "y" "centelem" values
+                x = centelem(ianal,1);
+               % analytical hydraulic head 
+               % equation 43 from article QIAN et al 2023.
+               % for more details see introduction to groundwater modeling
+               % Herbet Wang,1995
+               presanalit(ianal) =-(0.001/(2*100))*(x^2-1000*x)+((4-6)*x)/1000+6;  
+               
+            end  %End of FOR (pressure)
     end  %End of SWITCH
 
 %User mesage

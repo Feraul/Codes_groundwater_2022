@@ -104,7 +104,7 @@ end
 switch char(pmethod)
     %Calculate the transmissibilities from TPFA
     case 'tpfa'
-        %         [transmvecleft,knownvecleft,Fg,bodyterm] = transmTPFA(kmap,0);
+         %[transmvecleft,knownvecleft,Fg,bodyterm] = transmTPFA(kmap,0);
         %nflag = ferncodes_calflag(0);
          nflagface= ferncodes_contflagface;
         %Get preprocessed terms:

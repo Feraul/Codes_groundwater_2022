@@ -167,12 +167,12 @@ switch phasekey
             pointedgecon, bodytermcon,gravrate);
         
     case 4 % hydrological head simulation
-        if numcase==336
+        if numcase==336 || numcase==334 ||numcase==335 || numcase==337 || numcase==338
             if strcmp(pmethod,'tpfa')
                 %Get "pressure" and "flowrate"
                 [pressure,flowrate,] = solvePressure_TPFA(transmvecleft,...
-                    knownvecleft,1,0,Fg,bodyterm);
-                
+                    knownvecleft,1,0,Fg,bodyterm,Con,transmvecleftc,aa,SS,dt,h,MM);
+                           
                 %MPFA-D (Gao and Wu, 2010)
             elseif strcmp(pmethod,'mpfad')
                 %Get "pressure" and "flowrate"

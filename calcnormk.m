@@ -17,11 +17,12 @@ for ik = 1:length(normk)
     %Calculate the norm of tensor
     normk(ik) = norm(permcompon);
 end
-if 300<numcase && numcase~=336
+if 300<numcase && numcase~=336 
     % see equation (2), of the article -- A local grid-refined
     % numerical groundwater model based on the vertex centered finite
     % volume method
-    if numcase==330 || numcase==332 
+    if numcase==330 || numcase==332 || numcase==334 || numcase==335 ...
+        || numcase==337|| numcase==338
         kmap(:,2:5)=MM*kmap(:,2:5);
     elseif numcase==333
         kmap(:,2:5)=kmap(:,2:5);

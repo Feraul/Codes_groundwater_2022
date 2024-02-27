@@ -131,7 +131,8 @@ if (size(wells,2) > 1)
 
 %Case the source term has came from benchmark case with analitical solution 
 %(Benchmark from 10 to 20):
-elseif (numcase >= 10 && numcase <= 30) || numcase == 1.6 || numcase==336 || numcase==333
+elseif (numcase >= 10 && numcase <= 30) || numcase == 1.6 ||...
+        numcase==336 || numcase==333 || numcase==335 || numcase==337 || numcase==338
     %Catch "source" came from "PLUG_sourcefunction"
     source = PLUG_sourcefunction(P);
     %The vector "mvector" is added to vector returned from function below.
