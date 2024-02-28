@@ -171,8 +171,8 @@ switch phasekey
             || numcase==338 || numcase==339 ||numcase==340
             if strcmp(pmethod,'tpfa')
                 %Get "pressure" and "flowrate"
-                [pressure,flowrate,] = solvePressure_TPFA(transmvecleft,...
-                    knownvecleft,1,0,Fg,bodyterm,Con,0,0,SS,dt,h_old,MM);
+                [pressure,flowrate,] = solvePressure_TPFA(Kde, Kn, nflagface, ...
+                    Hesq,0,0,0,0,0,0,SS,dt,h_old,MM,wells);
                            
                 %MPFA-D (Gao and Wu, 2010)
             elseif strcmp(pmethod,'mpfad')

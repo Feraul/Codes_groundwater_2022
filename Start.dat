@@ -99,7 +99,7 @@ n
 //[nlfvpp]==> "Non-Linear Finite Volume" using lpew
 //[nlfvh]==> "Non-Linear Finite Volume" using harmonic point
 
-tpfa
+mpfad
 
 //If you chose [fps] or [mpfae], write below the auxiliary control
 //volume factor. It defines the auxiliary control volume size.

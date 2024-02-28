@@ -18,89 +18,80 @@
 
 %--------------------------------------------------------------------------
 
-function [pressure,flowrate,flowresult,flowratedif] = solvePressure_TPFA(transmvecleft,...
-    knownvecleft,viscosity,wells,Fg,bodyterm,Con,transmvecleftc,aa,SS,dt,h,MM)
+function [pressure,flowrate,flowresult,flowratedif] = solvePressure_TPFA(Kde, Kn, ...
+    nflagface, Hesq,gravresult,gravrate,gravno,gravelem,fonte,aa,SS,dt,h,MM,wells)
 %Define global parameters:
 global elem bedge inedge phasekey numcase elemarea;
 
-%Initialize "bedgesize" and "inedgesize"
-bedgesize = size(bedge,1);
-inedgesize = size(inedge,1);
+global inedge bedge elem coord bcflag gravitational strategy
 
-%Initialize the global matrix which have order equal to parameter
-%"size(elem)".
-M = zeros(size(elem,1));
-%Initialize "mvector" which is the independent vector of algebric system.
-mvector = zeros(size(elem,1),1);
-%Swept "bedge"
-for ibedg = 1:bedgesize
-    %Get "leftelem"
-    leftelem = bedge(ibedg,3);
-    %viscosidade
-    if numcase == 246 || numcase == 245 || numcase==247 || numcase==248 || numcase==249
-        % vicosity on the boundary edge
-        visonface = viscosity(ibedg,1);
-        %It is a Two-phase flow
-    else
-        visonface = 1;
-    end  %End of IF
-    
-    %Fill the global matrix "M" and known vector "mvector"
-    M(leftelem,leftelem) = M(leftelem,leftelem) + ...
-        visonface*transmvecleft(ibedg);
-    %Update "transmvecleft"
-    transmvecleft(ibedg) = visonface*transmvecleft(ibedg);
-     if numcase==330
-        % Letf
-        transmvecleft(ibedg) = transmvecleft(ibedg);
-    end
-    %Fill "mvector"
-    mvector(leftelem) = ...
-        mvector(leftelem) + visonface*knownvecleft(ibedg);
-end  %End of FOR ("bedge")
+% Constrói a matriz global.
+% prealocação da matriz global e do vetor termo de fonte
+M=zeros(size(elem,1),size(elem,1));
+I=zeros(size(elem,1),1);
+I=I+fonte;
+% Loop de faces de contorno
+m=0;
 
-%Swept "inedge"
-for iinedg = 1:inedgesize
-    %Get "leftelem" and "right"
-    leftelem = inedge(iinedg,3);
-    rightelem = inedge(iinedg,4);
-    %viscosidade
-    if numcase == 246 || numcase == 245 || numcase==247 || numcase==248 || numcase==249
-        % vicosity on the boundary edge
-        visonface = viscosity(bedgesize + iinedg,1);
-        %It is a Two-phase flow
-    else
-        visonface = 1;
-    end  %End of IF
+for ifacont=1:size(bedge,1)
+    v0=coord(bedge(ifacont,2),:)-coord(bedge(ifacont,1),:);
+    normcont=norm(v0);
+    lef=bedge(ifacont,3);
+    % calculo das constantes nas faces internas
+    A=-Kn(ifacont)/(Hesq(ifacont)*norm(v0));
     
-    %Fill the global matrix "M" and known vector "mvector"
-    %Contribution from the element on the LEFT to:
-    %Left
-    M(leftelem,leftelem) = M(leftelem,leftelem) + ...
-        visonface*transmvecleft(bedgesize + iinedg);
-    %Right
-    M(leftelem,rightelem) = M(leftelem,rightelem) - ...
-        visonface*transmvecleft(bedgesize + iinedg);
-    %Contribution from the element on the RIGHT to:
-    %Right
-    M(rightelem,rightelem) = M(rightelem,rightelem) + ...
-        visonface*transmvecleft(bedgesize + iinedg);
-    %Right
-    M(rightelem,leftelem) = M(rightelem,leftelem) - ...
-        visonface*transmvecleft(bedgesize + iinedg);
-    if numcase==330
-        % Letf
-        M(leftelem,leftelem) = M(leftelem,leftelem) + ...
-            coeficiente;
-        %Right
-        M(rightelem,rightelem) = M(rightelem,rightelem) + ...
-            coeficiente;
+    if bedge(ifacont,5)<200
+        
+        c1=nflagface(ifacont,2);
+        
+        if strcmp(gravitational,'yes')
+            if strcmp(strategy,'starnoni')
+                m=gravrate(ifacont);
+            else
+                % proposto de nos
+                m1=-nflagface(ifacont,2);
+                m=A*(norm(v0)^2*m1-norm(v0)^2*gravelem(lef));
+            end
+        else
+            m=0;
+        end
+        %Preenchimento
+        M(bedge(ifacont,3),bedge(ifacont,3))=M(bedge(ifacont,3),bedge(ifacont,3))- A*(norm(v0)^2);
+        
+        I(bedge(ifacont,3))=I(bedge(ifacont,3))-c1*A*(norm(v0)^2)+m;
+        
+    else
+        x=bcflag(:,1)==bedge(ifacont,5);
+        r=find(x==1);
+        I(bedge(ifacont,3))=I(bedge(ifacont,3))- normcont*bcflag(r,2);
+        
+        
     end
-    %Update "transmvecleft"
-    transmvecleft(bedgesize + iinedg) = ...
-        visonface*transmvecleft(bedgesize + iinedg);
-end  %End of FOR ("inedge")
-%==========================================================================
+    
+end
+
+for iface=1:size(inedge,1),
+    lef=inedge(iface,3);
+    rel=inedge(iface,4);
+    %Contabiliza as contribuições do fluxo numa faces  para os elementos %
+    %a direita e a esquerda dela.                                        %
+    M(lef, lef)=M(lef, lef)- Kde(iface);
+    M(lef, rel)=M(lef, rel)+ Kde(iface);
+    M(rel, rel)=M(rel, rel)- Kde(iface);
+    M(rel, lef)=M(rel, lef)+ Kde(iface);
+    if strcmp(gravitational,'yes')
+        if strcmp(strategy,'starnoni')
+            m=gravrate(size(bedge,1)+iface);
+        else
+            m= Kde(iface)*(gravelem(rel,1)-gravelem(lef,1));
+            %m=gravrate(size(bedge,1)+iface,1);
+            
+        end
+        I(lef)=I(lef)+m;
+        I(rel)=I(rel)-m;
+    end
+        
+end
 % para calcular a carga hidraulica
 % para calcular a carga hidraulica
 if numcase>300
@@ -113,10 +104,10 @@ if numcase>300
         % Euler backward method
         if strcmp(methodhydro,'backward')
             M=M+coeficiente.*eye(size(elem,1));
-            transmvecleft=transmvecleft+coeficiente.*eye(size(elem,1))*h;
+            I=I+coeficiente.*eye(size(elem,1))*h;
         else
             % Crank-Nicolson method
-            transmvecleft=transmvecleft+coeficiente.*eye(size(elem,1))*h-0.5*M*h;
+            I=I+coeficiente.*eye(size(elem,1))*h-0.5*M*h;
             M=0.5*M+coeficiente.*eye(size(elem,1));
             
         end
@@ -127,7 +118,7 @@ end
 %Add a source therm to independent vector "mvector"
 
 %Often it may change the global matrix "M"
-[M,mvector] = addsource(M,mvector,wells);
+[M,I] = addsource(M,I,wells);
 
 %--------------------------------------------------------------------------
 %Solver the algebric system
@@ -135,7 +126,7 @@ end
 %When this is assembled, that is solved using the function "solver".
 %This function returns the pressure field with value put in each colocation
 %point.
-[pressure] = solver(M,mvector);
+[pressure] = solver(M,I);
 
 %Message to user:
 disp('>> The Pressure field was calculated with success!');
@@ -145,7 +136,7 @@ disp('>> The Pressure field was calculated with success!');
 
 %Calculate flow rate through edge. "satkey" equal to "1" means one-phase
 %flow (the flow rate is calculated throgh whole edge)
-[flowrate,flowresult,flowratedif] = calcflowrateTPFA(transmvecleft,pressure,Con,transmvecleftc,aa);
+[flowrate,flowresult,flowratedif] = calcflowrateTPFA(pressure,Kde,Kn,Hesq,nflagface,1,gravresult,gravrate,aa);
 
 %Message to user:
 disp('>> The Flow Rate field was calculated with success!');
