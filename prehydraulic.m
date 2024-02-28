@@ -159,7 +159,6 @@ switch numcase
         % aquifer unconfined flow
         % aquifer thickness
         MM=10;
-        
 end
 
 end

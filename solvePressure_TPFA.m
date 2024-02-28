@@ -21,7 +21,7 @@
 function [pressure,flowrate,flowresult,flowratedif] = solvePressure_TPFA(transmvecleft,...
     knownvecleft,viscosity,wells,Fg,bodyterm,Con,transmvecleftc,aa,SS,dt,h,MM)
 %Define global parameters:
-global elem bedge inedge phasekey numcase;
+global elem bedge inedge phasekey numcase elemarea;
 
 %Initialize "bedgesize" and "inedgesize"
 bedgesize = size(bedge,1);
@@ -52,7 +52,7 @@ for ibedg = 1:bedgesize
     transmvecleft(ibedg) = visonface*transmvecleft(ibedg);
      if numcase==330
         % Letf
-        transmvecleft(ibedg) = transmvecleft(ibedg)+coeficiente*h(leftelem);
+        transmvecleft(ibedg) = transmvecleft(ibedg);
     end
     %Fill "mvector"
     mvector(leftelem) = ...
@@ -104,7 +104,7 @@ end  %End of FOR ("inedge")
 % para calcular a carga hidraulica
 % para calcular a carga hidraulica
 if numcase>300
-    if numcase~=336 && numcase~=334
+    if numcase~=336 && numcase~=334 && numcase~=340
         if numcase==333 || numcase==331
             coeficiente=dt^-1*SS.*elemarea(:);
         else

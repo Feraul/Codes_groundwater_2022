@@ -20,7 +20,7 @@
 
 function [flowrate,flowresult,flowratedif] = calcflowrateTPFA(transmvecleft,pressure,Con,transmvecleftc,aa)
 %Define global parameters
-global elem bedge inedge bcflag normals phasekey smethod coord;
+global elem bedge inedge bcflag normals phasekey numcase smethod coord;
 
 %Initialize "bedgesize" and "inedgesize"
 bedgesize = size(bedge,1);
@@ -55,22 +55,24 @@ for ibedg = 1:bedgesize
     %Attribute the "flowrate" to "flowresult"
     flowresult(leftelem) = flowresult(leftelem) + flowrate(ibedg); 
     %% ====================================================================
-    vertex1 = bedge(ibedg,1);
-    vertex2 = bedge(ibedg,2);
-    auxvertex= 0.5*(coord(vertex1,:)+coord(vertex2,:));
-    x1 = auxvertex(1,1);
-    y1 = auxvertex(1,2);
-    y= x1+y1;
-    knownvalc = PLUG_bcfunction_con(y,aa);
-    if bedge(ibedg,7) < 200
-        %Calculate the flow rate (for LEFT normal).
-        flowratedif(ibedg) = ...
-            transmvecleftc(ibedg)*(Con(leftelem) - knownvalc);
-    %There is a Neumann boundary
-    else
-        %Calculate the flow rate (for LEFT normal).
-        flowratedif(ibedg) = knownvalc*norm(normals(ibedg,:));
-    end  %End of IF
+    if 200<numcase && numcase<300
+        vertex1 = bedge(ibedg,1);
+        vertex2 = bedge(ibedg,2);
+        auxvertex= 0.5*(coord(vertex1,:)+coord(vertex2,:));
+        x1 = auxvertex(1,1);
+        y1 = auxvertex(1,2);
+        y= x1+y1;
+        knownvalc = PLUG_bcfunction_con(y,aa);
+        if bedge(ibedg,7) < 200
+            %Calculate the flow rate (for LEFT normal).
+            flowratedif(ibedg) = ...
+                transmvecleftc(ibedg)*(Con(leftelem) - knownvalc);
+            %There is a Neumann boundary
+        else
+            %Calculate the flow rate (for LEFT normal).
+            flowratedif(ibedg) = knownvalc*norm(normals(ibedg,:));
+        end  %End of IF
+    end
 
 end  %End of FOR ("bedge")
 
@@ -92,8 +94,10 @@ for iinedg = 1:inedgesize
         flowresult(rightelem) - flowrate(bedgesize + iinedg);
     %% ====================================================================
     %Calculate the flow rate (left element)
+    if 200<numcase && numcase<300
     flowratedif(bedgesize + iinedg) = -transmvecleftc(bedgesize + iinedg)*...
         (Con(rightelem) - Con(leftelem));
+    end
 end  %End of FOR ("inedge")
 
 %--------------------------------------------------------------------------
