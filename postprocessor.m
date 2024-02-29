@@ -185,7 +185,8 @@ flowrateanalit = 0;
 
 %If "numcase" is major than "0" and minor than 20, evaluate the benchmark
 if (numcase > 0 && numcase < 20)|| numcase==336 || numcase==333 ||...
-        numcase==334 ||numcase==335 || numcase==337 || numcase==338 || numcase==339
+        numcase==334 ||numcase==335 || numcase==337 || numcase==338 ...
+        || numcase==339 || numcase==340
     %----------------------------------------------------------------------
     %Call "benchmark" function
 
@@ -208,7 +209,8 @@ end  %End of IF (Benchmarks)
 %If "numcase" is major than "0" and minor than 30, plot a validation 
 %analisys
 if (numcase > 0 && numcase < 30)|| numcase==336 || numcase==333 || ... 
-        numcase==334 || numcase==335 || numcase==337||numcase==338 || numcase==339
+        numcase==334 || numcase==335 || numcase==337||numcase==338 ...
+        || numcase==339 || numcase==340
     %----------------------------------------------------------------------
     %Call "validation" function
 

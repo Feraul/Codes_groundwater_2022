@@ -18,83 +18,53 @@
 
 %--------------------------------------------------------------------------
 
-function [flowrate,flowresult,flowratedif] = calcflowrateTPFA(transmvecleft,pressure,Con,transmvecleftc,aa)
+function [flowrate,flowresult,flowratedif] = calcflowrateTPFA(p,Kde,Kn,Hesq,nflagface,gravno,gravresult,gravrate,aa)
 %Define global parameters
-global elem bedge inedge bcflag normals phasekey smethod coord;
-
+global elem bedge inedge bcflag normals phasekey centelem numcase smethod coord;
+flowratedif=0;
 %Initialize "bedgesize" and "inedgesize"
 bedgesize = size(bedge,1);
 inedgesize = size(inedge,1);
-
+%Initialize "bedgeamount"
+bedgeamount = 1:bedgesize;
+mobility=1;
 %Initialize "flowrate" and "flowresult"
 flowrate = zeros(bedgesize + inedgesize,1);
-flowratedif = zeros(bedgesize + inedgesize,1);
-flowresult = zeros(size(elem,1),1);
-
-%Swept "bedge"
-for ibedg = 1:bedgesize
-    %Get "vertices"
-    vertices = bedge(ibedg,1:2);
-    %Get "leftelem"
-    leftelem = bedge(ibedg,3);
-    
-    %Get known pressure or flow rate
-    flagpointer = logical(bcflag(:,1) == bedge(ibedg,5));
-    knownval = PLUG_bcfunction(vertices,flagpointer,aa);
-    %Dirichlet boundary condition (known pressure)
-    if bedge(ibedg,5) < 200
-        %Calculate the flow rate (for LEFT normal).
-        flowrate(ibedg) = ...
-            transmvecleft(ibedg)*(pressure(leftelem) - knownval);
-    %There is a Neumann boundary
+flowresult = zeros(size(centelem,1),1);
+for ifacont=1:size(bedge,1);
+    lef=bedge(ifacont,3);
+    nor=norm(coord(bedge(ifacont,1),:)-coord(bedge(ifacont,2),:));
+    % calculo das constantes nas faces internas
+    A=-Kn(ifacont)/(Hesq(ifacont)*nor);
+    if bedge(ifacont,5)<200 % se os nós esteverem na fronteira de DIRICHLET
+        c1=nflagface(ifacont,2);
+        
+        
+        flowrate(ifacont)=mobility*A*(nor^2)*(c1-p(lef));
     else
-        %Calculate the flow rate (for LEFT normal).
-        flowrate(ibedg) = knownval*norm(normals(ibedg,:));
-    end  %End of IF
-    
-    %Attribute the "flowrate" to "flowresult"
-    flowresult(leftelem) = flowresult(leftelem) + flowrate(ibedg); 
-    %% ====================================================================
-    vertex1 = bedge(ibedg,1);
-    vertex2 = bedge(ibedg,2);
-    auxvertex= 0.5*(coord(vertex1,:)+coord(vertex2,:));
-    x1 = auxvertex(1,1);
-    y1 = auxvertex(1,2);
-    y= x1+y1;
-    knownvalc = PLUG_bcfunction_con(y,aa);
-    if bedge(ibedg,7) < 200
-        %Calculate the flow rate (for LEFT normal).
-        flowratedif(ibedg) = ...
-            transmvecleftc(ibedg)*(Con(leftelem) - knownvalc);
-    %There is a Neumann boundary
-    else
-        %Calculate the flow rate (for LEFT normal).
-        flowratedif(ibedg) = knownvalc*norm(normals(ibedg,:));
-    end  %End of IF
+        x=bcflag(:,1)==bedge(ifacont,5);
+        r=find(x==1);
+        flowrate(ifacont)= nor*bcflag(r,2);
+    end
+    %Attribute the flow rate to "flowresult"
+    %On the left:
+    flowresult(lef) = flowresult(lef) + flowrate(ifacont);
+end
 
-end  %End of FOR ("bedge")
-
-%Swept "inedge"
-for iinedg = 1:inedgesize
-    %Get "leftelem" and "rightelem"
-    leftelem = inedge(iinedg,3);
-    rightelem = inedge(iinedg,4);
+for iface=1:size(inedge,1)
+    lef=inedge(iface,3); %indice do elemento a direita da aresta i
+    rel=inedge(iface,4); %indice do elemento a esquerda da aresta i
     
-    %Calculate the flow rate (left element)
-    flowrate(bedgesize + iinedg) = -transmvecleft(bedgesize + iinedg)*...
-        (pressure(rightelem) - pressure(leftelem));
-    %Attribute "flowrate" to both right and left elements in "flowresult"
-    %On the left
-    flowresult(leftelem) = ...
-        flowresult(leftelem) + flowrate(bedgesize + iinedg);  
-    %On the right
-    flowresult(rightelem) = ...
-        flowresult(rightelem) - flowrate(bedgesize + iinedg);
-    %% ====================================================================
-    %Calculate the flow rate (left element)
-    flowratedif(bedgesize + iinedg) = -transmvecleftc(bedgesize + iinedg)*...
-        (Con(rightelem) - Con(leftelem));
-end  %End of FOR ("inedge")
+    %-------------------- calculo das vazões e velocidades ---------------%
+    
+    flowrate(iface+size(bedge,1))=mobility*Kde(iface)*(p(rel)-p(lef));
+    %Attribute the flow rate to "flowresult"
+    %On the left:
+    flowresult(lef) = flowresult(lef) + flowrate(bedgesize + iface);
+    %On the right:
+    flowresult(rel) = flowresult(rel) - flowrate(bedgesize + iface);
+end
+
 
 %--------------------------------------------------------------------------
 %When some multiD schemes are chosen, it is necessary attribute flow rate

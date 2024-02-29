@@ -1085,6 +1085,17 @@ switch numcase
                 presanalit(ianal) =((200*1000)/(200*500+20*500))*(((4-6)*(x-1000))/1000) +4;
             end
         end  %End of FOR (pressure)
+    case 340
+         for ianal = 1:size(centelem,1)
+            %Attribute to "x" and "y" "centelem" values
+            y = centelem(ianal,2);
+            % analytical hydraulic head
+            % equation 43 from article QIAN et al 2023.
+            % for more details see introduction to groundwater modeling
+            % Herbet Wang,1995
+            presanalit(ianal) =y;
+            
+        end  %End of FOR (pressure)
 end  %End of SWITCH
 
 %User mesage
