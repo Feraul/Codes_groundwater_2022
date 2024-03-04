@@ -36,7 +36,7 @@ global bedge inedge elemarea normals filepath foldername numcase;
 %Evaluate the benchmarks with CONVERGENCE RATE
 if numcase < 20 || numcase==336 || numcase==333 || numcase==334 ||...
         numcase==335 || numcase==337|| numcase==338 || ... 
-        numcase==339 || numcase==340
+        numcase==339 || numcase==340 || numcase==341
     %User mesage
     disp('---------------------------');
     disp('>> Ploting error analisys!');

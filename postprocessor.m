@@ -186,7 +186,7 @@ flowrateanalit = 0;
 %If "numcase" is major than "0" and minor than 20, evaluate the benchmark
 if (numcase > 0 && numcase < 20)|| numcase==336 || numcase==333 ||...
         numcase==334 ||numcase==335 || numcase==337 || numcase==338 ...
-        || numcase==339 || numcase==340
+        || numcase==339 || numcase==340 || numcase==341
     %----------------------------------------------------------------------
     %Call "benchmark" function
 
@@ -210,7 +210,7 @@ end  %End of IF (Benchmarks)
 %analisys
 if (numcase > 0 && numcase < 30)|| numcase==336 || numcase==333 || ... 
         numcase==334 || numcase==335 || numcase==337||numcase==338 ...
-        || numcase==339 || numcase==340
+        || numcase==339 || numcase==340 || numcase==341
     %----------------------------------------------------------------------
     %Call "validation" function
 
@@ -230,6 +230,7 @@ if (numcase > 0 && numcase < 30)|| numcase==336 || numcase==333 || ...
     fprintf(fid,'%26.16E \r\n',presserrorfield);
     %Jump a line
     fprintf(fid,'\r\n');
+    
 end  %End of IF (Validation)
 fclose(fid);
 

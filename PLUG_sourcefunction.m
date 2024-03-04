@@ -377,7 +377,11 @@ for isource = 1:size(elem,1)
         case 337
            sourcevector(isource)=P*elemarea(isource);
         case 338
-           sourcevector(isource)=P*elemarea(isource); 
+           sourcevector(isource)=P*elemarea(isource);
+        case 341
+        
+        sourcevector(isource)=P(isource)*elemarea(isource);
+        
             
     end  %End of SWITCH
 end  %End of FOR

@@ -931,6 +931,12 @@ switch numcase
             kmap (i,:) = [i 20 0 0 20];
             end 
         end
+    case 341
+        [auxperm2,]=calcpermeab;
+        for ii=1:size(centelem,1)
+                kmap(ii,:)=[ii auxperm2(ii) 0 0 auxperm2(ii)];
+        end
+        
 end  %End of Switch
 
 %--------------------------------------------------------------------------

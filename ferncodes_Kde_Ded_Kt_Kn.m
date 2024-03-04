@@ -92,7 +92,7 @@ for iface = 1:size(inedge,1),
     % Ded: é uma constante que tem constantes geometricas + contantes
     % tangeciais
     Ded(iface) = (dot(vd1,vcen)/norm(vd1)^2) - ...
-        (1/norm(vd1))*((Kt2/Kn2)*H1 + (Kt1/Kn1)*H2);
+        (1/norm(vd1))*((Kt2/Kn2)*H2 + (Kt1/Kn1)*H1);
 end  %End of FOR ("inedge")
 
 

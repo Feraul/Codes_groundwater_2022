@@ -137,15 +137,18 @@ for No=1:size(coord,1)
     m1=1;
     vetor1=nsurn1(nsurn2(No)+1:nsurn2(No+1));
     for j= [vetor1']
-        ibedge=find(((bedge(:,1)==No & bedge(:,2)==j)|(bedge(:,1)==j & bedge(:,2)==No)));
+        b=logical(((bedge(:,1)==No & bedge(:,2)==j)|(bedge(:,1)==j & bedge(:,2)==No)));
+        key=1:length(b);
+        ibedge=key(b==1);
         if ibedge~=0
-            
-            N(No,m1)=ibedge+size(inedge,1);
+          
+            N(No,m1)=ibedge;
             m1=m1+1;
         else
-            iedge=find(((inedge(:,1)==j & inedge(:,2)==No)|(inedge(:,1)==No & inedge(:,2)==j)));
-            
-            N(No,m1)=iedge;
+             b=logical(((inedge(:,1)==j & inedge(:,2)==No)|(inedge(:,1)==No & inedge(:,2)==j)));
+            key=1:length(b);
+            iedge=key(b==1);
+            N(No,m1)=iedge+size(bedge,1);
             m1=m1+1;
         end
     end

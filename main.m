@@ -56,6 +56,7 @@ global coord centelem elem esurn1 esurn2 nsurn1 nsurn2 bedge inedge ...
 % bedge(:,2)=x;
 % necesitamos ajeitar para o campo de pressao quando tem "restart"
 % this numcase is used to simulate concentration solute in aquifers
+%permeabilitytest
 if 200<numcase && numcase <300
     % Flags adequation for contamination and groundwater problem
     [bedge,bcflagc,wellsc,auxpar,velmedio,dmap,Dmedio,gamma]=...
@@ -87,12 +88,7 @@ if 200<numcase && numcase <300
     % This numcase is used to simulate head hydraulic in aquifers
 elseif numcase>300
     % Benchmark hidrology 
-    auxpar=0; 
-    dmap=0;
-    Dmedio=0;
-    gamma=0;
-    velmedio=0;
-    wellsc=0;
+    auxpar=0; dmap=0; Dmedio=0; gamma=0; velmedio=0; wellsc=0;
    % Flags adequation for hydrological head problem
    [SS,h_old,MM,wells,dt,P]=prehydraulic;
    % Choose Backward method or Crank-Nicolson
@@ -102,22 +98,15 @@ elseif numcase>300
    %methodhydro='cranknicolson'; 
    % This numcase is used for two-phase (water-oil) flow problems  
 else
-    auxpar=0;
-    dmap=0;
-    Dmedio=0;
-    gamma=0;
-    velmedio=0;
-    wellsc=0;
-    SS=0; h_old=0; MM=0; dt=0; P=0; 
+    auxpar=0;dmap=0; Dmedio=0; gamma=0; velmedio=0; wellsc=0; SS=0; 
+    h_old=0; MM=0; dt=0; P=0; 
 end
 %adeSPE; % para um campo de permeabilidade da SPE active descomente.
 %--------------------------------------------------------------------------
 %Call "setmethod"
 %elem(:,5)=1;
 %Initialize general parameters:
-elemsize = size(elem,1);
-bedgesize = size(bedge,1);
-inedgesize = size(inedge,1);
+elemsize = size(elem,1); bedgesize = size(bedge,1); inedgesize = size(inedge,1);
 
 %It preprocess the schemes and set a One-phase or Two-phase simulation.
 setmethod(kmap,wells,'i',8,limiterflag,klb,elemsize,bedgesize,...

@@ -168,7 +168,7 @@ switch phasekey
         
     case 4 % hydrological head simulation
         if numcase==336 || numcase==334 ||numcase==335 || numcase==337 ...
-            || numcase==338 || numcase==339 ||numcase==340
+            || numcase==338 || numcase==339 ||numcase==340 || numcase==341
             if strcmp(pmethod,'tpfa')
                 %Get "pressure" and "flowrate"
                 [pressure,flowrate,] = solvePressure_TPFA(Kde, Kn, nflagface, ...
@@ -178,8 +178,8 @@ switch phasekey
             elseif strcmp(pmethod,'mpfad')
                 %Get "pressure" and "flowrate"
                 [pressure,flowrate,] = ferncodes_solverpressure(1,...
-                    wells,Hesq,Kde,Kn,Kt,Ded,nflag,weight,s,Con,Kdec,...
-                    Knc,Ktc,Dedc,nflagnoc,weightc,sc,SS,dt,h_old,MM,gravrate,P);
+                    wells,Hesq,Kde,Kn,Kt,Ded,nflag,nflagface,weight,s,Con,Kdec,...
+                    Knc,Ktc,Dedc,nflagnoc,weightc,sc,SS,dt,h_old,MM,gravrate,P,kmap);
             elseif strcmp(pmethod,'mpfaql')
                 [pressure,flowrate,]=ferncodes_solverpressureMPFAQL(nflag,...
                     parameter,kmap,weightDMP,wells,1,V,1,N,weight,s);

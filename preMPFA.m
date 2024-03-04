@@ -71,7 +71,7 @@ knownboundlength = getknownboundlength(klb);
 % calculate the weight
 if strcmp(pmethod,'mpfad')|| strcmp(pmethod,'nlfvpp')|| strcmp(pmethod,'mpfaql')
     % adequação dos flags de contorno
-    nflag = ferncodes_calflag(0);
+    [nflag,nflagface] = ferncodes_calflag(0);
     %Call another parameters that I don't know.
     [V,N,] = ferncodes_elementface(nflag);
     %It switches according to "interptype"
@@ -83,7 +83,7 @@ if strcmp(pmethod,'mpfad')|| strcmp(pmethod,'nlfvpp')|| strcmp(pmethod,'mpfaql')
             %LPEW 2
         case 'lpew2'
             % calculo dos pesos que correspondem ao LPEW2
-            [weight,s] = ferncodes_Pre_LPEW_2(kmap,N,zeros(size(elem,1),1));
+            [weight,s] = ferncodes_Pre_LPEW_2(kmap,N,zeros(size(elem,1),1),nflagface,nflag);
     end  %End of SWITCH
 end
 

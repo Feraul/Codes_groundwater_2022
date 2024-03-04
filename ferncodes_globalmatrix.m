@@ -1,10 +1,10 @@
 %It is called by "ferncodes_solvepressure.m"
 
 function [M,I] = ferncodes_globalmatrix(w,s,Kde,Ded,Kn,Kt,Hesq,viscosity,...
-    nflag,SS,dt,h,MM,gravrate)
+    nflag,nflagface,SS,dt,h,MM,gravrate,kmap)
 %Define global variables:
 global coord elem esurn1 esurn2 bedge inedge centelem bcflag ...
-    numcase methodhydro keygravity dens elemarea;
+    numcase methodhydro keygravity dens elemarea normals;
 
 %-----------------------inicio da rOtina ----------------------------------%
 %Constrói a matriz global.
@@ -108,8 +108,14 @@ for ifacont = 1:bedgesize
         
         %Neumann boundary
     else
+        if numcase==341
+            auxkmap=kmap(lef, 2);
+           I(lef) = I(lef)+ (2*normals(ifacont,1)+ normals(ifacont,2))*auxkmap*nflagface(ifacont,2); 
+           %I(lef) = I(lef) + (2*normals(ifacont,1)+ normals(ifacont,2))*auxkmap*0.5*(nflag(bedge(ifacont,2),2)+nflag(bedge(ifacont,1),2)); 
+        else
         x = logical(bcflag(:,1) == bedge(ifacont,5));
         I(lef) = I(lef) + nor*bcflag(x,2);
+        end
     end  %End of IF
 end  %End of FOR
 
@@ -160,7 +166,7 @@ for iface = 1:inedgesize
             Ded(iface)*nflag(inedge(iface,2),2);
     end
     % quando o nó pertece ao contorno de Neumann
-    if nflag(inedge(iface,1),1) == 202
+    if nflag(inedge(iface,1),1) == 202 || nflag(inedge(iface,1),1) == 201
         
         I(inedge(iface,3)) = I(inedge(iface,3)) - visonface*Kde(iface)*...
             Ded(iface)*s(inedge(iface,1)); %ok
@@ -168,7 +174,7 @@ for iface = 1:inedgesize
         I(inedge(iface,4)) = I(inedge(iface,4)) + visonface*Kde(iface)*...
             Ded(iface)*s(inedge(iface,1)); %ok
     end
-    if nflag(inedge(iface,2),1) == 202
+    if nflag(inedge(iface,2),1) == 202 || nflag(inedge(iface,2),1) == 201
         
         I(inedge(iface,3)) = I(inedge(iface,3)) + visonface*Kde(iface)*...
             Ded(iface)*s(inedge(iface,2)); %ok
@@ -221,11 +227,13 @@ for iface = 1:inedgesize
     end
 end  %End of FOR ("inedge")
 %==========================================================================
-% para calcular a carga hidraulica
-% para calcular a carga hidraulica
+% calcula um problema transiente
 if numcase>300
+    %
     if numcase~=336 && numcase~=334 && numcase~=335 &&...
-            numcase~=337 && numcase~=338 && numcase~=339 && numcase~=340
+            numcase~=337 && numcase~=338 && numcase~=339 &&...
+            numcase~=340 && numcase~=341
+        
         if numcase==333 || numcase==331
             coeficiente=dt^-1*SS.*elemarea(:);
         else

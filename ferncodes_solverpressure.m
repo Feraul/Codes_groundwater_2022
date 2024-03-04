@@ -14,13 +14,13 @@
 
 %Modified: Fernando Contreras, 2021
 function [p,flowrate,flowresult,flowratedif] = ferncodes_solverpressure(viscosity,...
-    wells,Hesq,Kde,Kn,Kt,Ded,nflag,weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,...
-    wc,sc,SS,dt,h,MM,gravrate,P)
+    wells,Hesq,Kde,Kn,Kt,Ded,nflag,nflagface,weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,...
+    wc,sc,SS,dt,h,MM,gravrate,P,kmap)
 
 
 % Montagem da matriz global
-[M,I] = ferncodes_globalmatrix(weight,s,Kde,Ded,Kn,Kt,Hesq,viscosity,nflag,...
-    SS,dt,h,MM,gravrate);
+[M,I] = ferncodes_globalmatrix(weight,s,Kde,Ded,Kn,Kt,Hesq,viscosity,nflag,nflagface,...
+    SS,dt,h,MM,gravrate,kmap);
 %--------------------------------------------------------------------------
 %Add a source therm to independent vector "mvector" 
 
@@ -31,8 +31,11 @@ function [p,flowrate,flowresult,flowratedif] = ferncodes_solverpressure(viscosit
 %Solve global algebric system 
 
 % calculo das pressões
-p = solver(M,I);
+%p = solver(M,I);
+[L,U] = ilu(M,struct('type','ilutp','droptol',1e-9));
 
+restarrt=7;
+[p,]=gmres(M,I,restarrt,1e-9,1000,L,U);
 %Message to user:
 disp('>> The Pressure field was calculated with success!');
 
