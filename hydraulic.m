@@ -62,9 +62,9 @@ while stopcriteria < 100
     elseif strcmp(pmethod,'mpfad')
         % Calculate hydraulic head and flowrate using the MPFA with diamond pacth
         [h_new,flowrate,] = ferncodes_solverpressure(...
-            mobility,wells,Hesq,Kde,Kn,Kt,Ded,nflag,...
+            mobility,wells,Hesq,Kde,Kn,Kt,Ded,nflag,nflagface,...
             weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc,SS,dt,h,MM,...
-            gravrate,P);
+            gravrate,P,kmap);
     elseif strcmp(pmethod,'mpfah')
         % Calculate hydraulic head and flowrate using the MPFA with harmonic
         % points
@@ -125,10 +125,11 @@ toc
 plotandwrite(producelem,Con,h,satonvertices,0,0,0,0,overedgecoord);
 
 %--------------------------------------------------------------------------
-%Write data file ("ProdutionReport.dat" and others)
+% activate if you want to visualize the hydraulic field in the final time
 
-% plotandwrite(producelem,Sw,pressure,overedgecoord(:,1),injecelem);
+%h
 
+%--------------------------------------------------------------------------
 % profile off
 % profsave(profile('info'),'myprofile_results')
 

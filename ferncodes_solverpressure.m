@@ -31,11 +31,7 @@ function [p,flowrate,flowresult,flowratedif] = ferncodes_solverpressure(viscosit
 %Solve global algebric system 
 
 % calculo das pressões
-%p = solver(M,I);
-[L,U] = ilu(M,struct('type','ilutp','droptol',1e-9));
-
-restarrt=7;
-[p,]=gmres(M,I,restarrt,1e-9,1000,L,U);
+p = solver(M,I);
 %Message to user:
 disp('>> The Pressure field was calculated with success!');
 

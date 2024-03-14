@@ -60,11 +60,13 @@ for y = 1:size(coord,1),
         vetor = nsurn1(nsurn2(No) + 1:nsurn2(No + 1));
         comp1 = N(No,1);
         comp2 = N(No,length(vetor));
-        if comp1 < size(inedge,1) && comp2 < size(inedge,1)
+        MM=bedge(:,1)==No;
+        MMM= find(MM == 1);
+        if comp1<= size(bedge,1) && comp2 <=size(bedge,1) && 200<bedge(MMM,4)
             a = bcflag(:,1) == bedge(comp1,5);
-            s1 = find(a == 1);
-            b = bcflag(:,1) == bedge(comp2,5);
-            s2 = find(b == 1);
+           s1 = find(a == 1);
+           b = bcflag(:,1) == bedge(comp2,5);
+           s2 = find(b == 1);
             
             s(No,1) = -(1/sum(lambda))*(r(No,1)*bcflag(s1,2) + ...
                 r(No,2)*bcflag(s2,2));

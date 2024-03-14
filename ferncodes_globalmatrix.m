@@ -4,7 +4,7 @@ function [M,I] = ferncodes_globalmatrix(w,s,Kde,Ded,Kn,Kt,Hesq,viscosity,...
     nflag,nflagface,SS,dt,h,MM,gravrate,kmap)
 %Define global variables:
 global coord elem esurn1 esurn2 bedge inedge centelem bcflag ...
-    numcase methodhydro keygravity dens elemarea normals;
+    numcase methodhydro keygravity dens elemarea normals modflowcompared;
 
 %-----------------------inicio da rOtina ----------------------------------%
 %Constrói a matriz global.
@@ -16,7 +16,8 @@ inedgesize = size(inedge,1);
 %Initialize "M" (global matrix) and "I" (known vector)
 M = sparse(size(elem,1),size(elem,1)); %Prealocação de M.
 I = zeros(size(elem,1),1);
-
+m=0;
+jj=1;
 %Evaluate "bedge"
 for ifacont = 1:bedgesize
     
@@ -54,7 +55,11 @@ for ifacont = 1:bedgesize
         % valor da pressao no contorno
         c1 = nflag(bedge(ifacont,1),2);
         c2 = nflag(bedge(ifacont,2),2);
-        
+        if strcmp(modflowcompared,'y')
+            elembedge(jj,1)=bedge(ifacont,3);
+             elembedge(jj,2)=nflag(bedge(ifacont,2),2);
+            jj=jj+1;
+        end
         A = -Kn(ifacont)/(Hesq(ifacont)*norm(v0));
         % contribuicao do termo gravitacional
         if strcmp(keygravity,'y')
@@ -66,20 +71,19 @@ for ifacont = 1:bedgesize
                 % concentracao soluto-solvente
                 m=dens(1,1)*gravrate(ifacont)/visonface;
             end
-            
-        else
-            m=0;
         end
          % average hydraulic head 
         % unconfined aquifer
-       
+        
         %------------------------------------------------------------------
         % ambos os nos pertenecem ao contorno de Dirichlet
         if nflag(bedge(ifacont,2),1)<200 && nflag(bedge(ifacont,1),1)<200
+           
             %montagem da matriz global
             M(lef,lef)=M(lef,lef)-visonface*A*(norm(v0)^2);
             % termo de fonte
             I(lef)=I(lef)-visonface*A*(dot(v2,-v0)*c1+dot(v1,v0)*c2)+visonface*(c2-c1)*Kt(ifacont)+visonface*m;
+           
         else
             % quando um dos nos da quina da malha computacional
             % pertence ao contorno de Neumann
@@ -228,6 +232,18 @@ for iface = 1:inedgesize
 end  %End of FOR ("inedge")
 %==========================================================================
 % calcula um problema transiente
+
+if strcmp(modflowcompared,'y')
+    
+    for iw = 1:size(elembedge,1)
+        
+        M(elembedge(iw,1),:)=0*M(elembedge(iw,1),:);
+        M(elembedge(iw,1),elembedge(iw,1))=1;
+        I(elembedge(iw,1))=elembedge(iw,2);
+        
+    end
+end
+
 if numcase>300
     %
     if numcase~=336 && numcase~=334 && numcase~=335 &&...

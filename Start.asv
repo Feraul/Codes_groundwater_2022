@@ -1,0 +1,60 @@
+//--------------------------------------------------------------------
+//---------------- UNIVERSIDADE FEDERAL DE PERNAMBUCO ----------------
+//---------------- CENTRO DE TECNOLOGIA E GEOCIENCIAS ----------------
+//---------- PROGRAMA DE POS GRADUACAO EM ENGENHARIA CIVIL -----------
+//--------------------------------------------------------------------
+
+//Work developed by: Marcio Souza and Luiz E. Queiroz modify by Fernando
+//Advisor Professors: Paulo Lyra & Darlan Carvalho
+//Create date: .../2022
+
+//--------------------------------------------------------------------
+//------------------- PREPROCESSOR INITIALIZATION --------------------
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+//-------------------------- Set Benchmark ---------------------------
+//--------------------------------------------------------------------
+
+//Do you want to run a benchmark case? [y] ==> "yes"; [n] ==> "no";
+// [r]==> "restart"  
+
+y
+
+//If [y], write below the path where where you want to store the
+//results (vtk, images, tables):
+//***OBS.: Even if you chose [n], write below both the path and 
+//folder's name where you want to store your results:
+
+C:\Users\flc59\Documents\Benchmark_Cases\BenchHydraulic311
+
+//Write below either a number or any other key word to feature the 
+//folder where the results will be stored:
+//***OBS.: If you set "0", the folder "Results" and other will be 
+//created into folder set above:
+
+teste_h
+
+//--------------------------------------------------------------------
+//------------------------ Solver Properties -------------------------
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+//Type of Simulation
+
+//Write below the type of simulation: 
+//[0] ==> "Only Hyperbolic Equation"; 
+//[1] ==> "One Phase-Flow";
+//[2] ==> "Two Phase-Flow".
+//[3] ==> "Contaminant transport"
+//[4] ==> "Water-flow"
+//[5] ==> "Unsatured-flow"
+
+4
+
+//--------------------------------------------------------------------
+// Want to compare the numerical results with data MODFLOW
+//[y] ==> "yes"; [n] ==> "no".
+
+y
+
