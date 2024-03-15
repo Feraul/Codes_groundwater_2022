@@ -25,9 +25,9 @@
 %"presanalit" is the value of analitical pressure in each colocation point
 %"presanaloveredge" is the analitical value of pressure in each midpoint
 %(over each edge)
-function [presanalit,flowrateanalit] = benchmark(overedgecoord,numcase)
+function [presanalit,flowrateanalit] = benchmark(overedgecoord)
 %Define global parameters:
-global bedge inedge centelem normals bcflag P MM;
+global bedge inedge centelem normals P numcase;
 
 %--------------------------------------------------------------------------
 %Analitical solution
@@ -1054,9 +1054,7 @@ switch numcase
             %Attribute to "x" and "y" "centelem" values
             x = centelem(ianal,1);
             % analytical hydraulic head
-            % equation 43 from article QIAN et al 2023.
-            % for more details see introduction to groundwater modeling
-            % Herbet Wang,1995
+            
             presanalit(ianal) =-(0.001/(2*100))*(x^2-1000^2)+4;
             
         end  %End of FOR (pressure)
@@ -1065,9 +1063,7 @@ switch numcase
             %Attribute to "x" and "y" "centelem" values
             x = centelem(ianal,1);
             % analytical hydraulic head
-            % equation 43 from article QIAN et al 2023.
-            % for more details see introduction to groundwater modeling
-            % Herbet Wang,1995
+            
             presanalit(ianal) =-(0.001/(2*100))*(x^2-1000^2)+5;
             
         end  %End of FOR (pressure)
@@ -1076,9 +1072,7 @@ switch numcase
             %Attribute to "x" and "y" "centelem" values
             x = centelem(ianal,1);
             % analytical hydraulic head
-            % equation 43 from article QIAN et al 2023.
-            % for more details see introduction to groundwater modeling
-            % Herbet Wang,1995
+            
             if x<500
                 presanalit(ianal) =((20*1000)/(200*500+20*500))*(((4-6)*x)/1000) +6;
             else
@@ -1090,21 +1084,16 @@ switch numcase
             %Attribute to "x" and "y" "centelem" values
             y = centelem(ianal,2);
             % analytical hydraulic head
-            % equation 43 from article QIAN et al 2023.
-            % for more details see introduction to groundwater modeling
-            % Herbet Wang,1995
+            
             presanalit(ianal) =y;
             
         end  %End of FOR (pressure)
     case 341
         for ianal = 1:size(centelem,1)
             %Attribute to "x" and "y" "centelem" values
-            y = centelem(ianal,2);
-            x = centelem(ianal,1);
+            y = centelem(ianal,2);x = centelem(ianal,1);
             % analytical hydraulic head
-            % equation 43 from article QIAN et al 2023.
-            % for more details see introduction to groundwater modeling
-            % Herbet Wang,1995
+            
             presanalit(ianal) =1+sin(2*x+y);
             
         end  %End of FOR (pressure)

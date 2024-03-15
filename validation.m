@@ -56,7 +56,7 @@ if numcase < 20 || numcase==336 || numcase==333 || numcase==334 ||...
     % Calculate Mean Absolute Error (MAE), adopted of Qian et al 2023
     MAE= sum(abs(presanalit - pressure))/length(pressure)
     
-    % Calculate the relative root mean square error (RRMSE), adopted of Qian et al 2023
+    % Calculate the relative root mean square error (RRMSE), adopted of QIAN et al 2023
     a=((presanalit - pressure).^2);
     n=length(pressure);
     RRMSE=sqrt(((1/n)*sum(a))/(((1/n)*sum(presanalit))^2))
@@ -69,7 +69,7 @@ if numcase < 20 || numcase==336 || numcase==333 || numcase==334 ||...
     for i = 1:size(bedge,1)
         %Calculate "errorvel"
         errorvel(i) = ...
-            (((flowrateanalit(i) - flowrate(i))/norm(normals(i,:)))^2)*elemarea(bedge(i,3));
+    (((flowrateanalit(i) - flowrate(i))/norm(normals(i,:)))^2)*elemarea(bedge(i,3));
         %Catch the sum of mean areas
         sumarea = sumarea + elemarea(bedge(i,3));
     end  %End of FOR (boundary edges)

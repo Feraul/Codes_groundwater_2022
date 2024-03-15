@@ -1,6 +1,7 @@
 function [M,I]=ferncodes_assemblematrixNLFVPP(pinterp,parameter,viscosity,...
     contnorm,SS,dt,h,MM,gravrate,p)
-global inedge coord bedge bcflag elem numcase keygravity methodhydro dens
+global inedge coord bedge bcflag elem numcase keygravity ...
+    methodhydro dens modflowcompared elemarea;
 %-----------------------inicio da rOtina ----------------------------------%
 %Constrói a matriz global.
 
@@ -12,6 +13,8 @@ coeficiente=dt^-1*MM*SS;
 M = sparse(size(elem,1),size(elem,1)); %Prealocação de M.
 I = zeros(size(elem,1),1);
 valuemin=1e-16;
+jj=1;
+m=0;
 for ifacont=1:bedgesize
     
     if 200<numcase && numcase<300
@@ -42,6 +45,11 @@ for ifacont=1:bedgesize
         %problemas monofásico
         I(lef)=I(lef)+ normcont*bcflag(r,2); % problema de buckley leverett Bastian
     else
+        if strcmp(modflowcompared,'y')
+            elembedge(jj,1)=bedge(ifacont,3);
+            elembedge(jj,2)=nflag(bedge(ifacont,2),2);
+            jj=jj+1;
+        end
         %% calculo da contribuição do contorno, veja Eq. 2.17 (resp. eq. 24) do artigo Gao and Wu 2015 (resp. Gao and Wu 2014)
         % contribuicao do termo gravitacional
         if strcmp(keygravity,'y')
@@ -53,8 +61,6 @@ for ifacont=1:bedgesize
                 % concentracao soluto-solvente
                 m=dens(1,1)*gravrate(ifacont)/visonface;
             end
-        else
-            m=0;
         end
         
         alef= visonface*normcont*(parameter(1,1,ifacont)*pinterp(parameter(1,3,ifacont))+...
@@ -152,18 +158,41 @@ for iface=1:inedgesize
         I(rel)=I(rel)-visonface*m;
     end
 end
+if strcmp(modflowcompared,'y')
+    
+    for iw = 1:size(elembedge,1)
+        
+        M(elembedge(iw,1),:)=0*M(elembedge(iw,1),:);
+        M(elembedge(iw,1),elembedge(iw,1))=1;
+        I(elembedge(iw,1))=elembedge(iw,2);
+        
+    end
+end
 %==========================================================================
 % para calcular a carga hidraulica
+
 if numcase>300
-    if strcmp(methodhydro,'backward')
-        % Euler backward
-        M=M+coeficiente*eye(size(elem,1));
-        I=I+coeficiente*eye(size(elem,1))*h;
-    else
-        % Crank-Nicolson
-        I=I+coeficiente*eye(size(elem,1))*h-0.5*M*h;
+    %
+    if numcase~=336 && numcase~=334 && numcase~=335 &&...
+            numcase~=337 && numcase~=338 && numcase~=339 &&...
+            numcase~=340 && numcase~=341
         
-        M=0.5*M+coeficiente*eye(size(elem,1));  
+        if numcase==333 || numcase==331
+            coeficiente=dt^-1*SS.*elemarea(:);
+        else
+            coeficiente=dt^-1*MM*SS.*elemarea(:);
+        end
+        % Euler backward method
+        if strcmp(methodhydro,'backward')
+            M=M+coeficiente.*eye(size(elem,1));
+            I=I+coeficiente.*eye(size(elem,1))*h;
+        else
+            % Crank-Nicolson method
+            I=I+coeficiente.*eye(size(elem,1))*h-0.5*M*h;
+            M=0.5*M+coeficiente.*eye(size(elem,1));
+            
+        end
+        
     end
 end
 end

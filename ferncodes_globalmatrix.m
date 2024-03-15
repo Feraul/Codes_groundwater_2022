@@ -4,7 +4,8 @@ function [M,I] = ferncodes_globalmatrix(w,s,Kde,Ded,Kn,Kt,Hesq,viscosity,...
     nflag,nflagface,SS,dt,h,MM,gravrate,kmap)
 %Define global variables:
 global coord elem esurn1 esurn2 bedge inedge centelem bcflag ...
-    numcase methodhydro keygravity dens elemarea normals modflowcompared;
+    numcase methodhydro keygravity dens elemarea normals modflowcompared...
+    Nmod;
 
 %-----------------------inicio da rOtina ----------------------------------%
 %Constrói a matriz global.
@@ -18,6 +19,8 @@ M = sparse(size(elem,1),size(elem,1)); %Prealocação de M.
 I = zeros(size(elem,1),1);
 m=0;
 jj=1;
+% viscosidade ou mobilidade
+visonface = 1;
 %Evaluate "bedge"
 for ifacont = 1:bedgesize
     
@@ -28,14 +31,10 @@ for ifacont = 1:bedgesize
             % vicosity on the boundary edge
             visonface = viscosity(ifacont,:);
             %It is a Two-phase flow
-        else
-            visonface = 1;
         end  %End of IF
     elseif 30<numcase && numcase<200
         % equacao de saturacao "viscosity=mobility"
         visonface=sum(viscosity(ifacont,:));
-    else
-        visonface=1;
     end
     
     %Get element on the left:
@@ -57,7 +56,7 @@ for ifacont = 1:bedgesize
         c2 = nflag(bedge(ifacont,2),2);
         if strcmp(modflowcompared,'y')
             elembedge(jj,1)=bedge(ifacont,3);
-             elembedge(jj,2)=nflag(bedge(ifacont,2),2);
+            elembedge(jj,2)=nflag(bedge(ifacont,2),2);
             jj=jj+1;
         end
         A = -Kn(ifacont)/(Hesq(ifacont)*norm(v0));
@@ -72,18 +71,18 @@ for ifacont = 1:bedgesize
                 m=dens(1,1)*gravrate(ifacont)/visonface;
             end
         end
-         % average hydraulic head 
+        % average hydraulic head
         % unconfined aquifer
         
         %------------------------------------------------------------------
         % ambos os nos pertenecem ao contorno de Dirichlet
         if nflag(bedge(ifacont,2),1)<200 && nflag(bedge(ifacont,1),1)<200
-           
+            
             %montagem da matriz global
             M(lef,lef)=M(lef,lef)-visonface*A*(norm(v0)^2);
             % termo de fonte
             I(lef)=I(lef)-visonface*A*(dot(v2,-v0)*c1+dot(v1,v0)*c2)+visonface*(c2-c1)*Kt(ifacont)+visonface*m;
-           
+            
         else
             % quando um dos nos da quina da malha computacional
             % pertence ao contorno de Neumann
@@ -113,12 +112,25 @@ for ifacont = 1:bedgesize
         %Neumann boundary
     else
         if numcase==341
-            auxkmap=kmap(lef, 2);
-           I(lef) = I(lef)+ (2*normals(ifacont,1)+ normals(ifacont,2))*auxkmap*nflagface(ifacont,2); 
-           %I(lef) = I(lef) + (2*normals(ifacont,1)+ normals(ifacont,2))*auxkmap*0.5*(nflag(bedge(ifacont,2),2)+nflag(bedge(ifacont,1),2)); 
+            %-----------------------------------------------------------
+            
+            [phiExpNmod10000,wavenumberExp0Nmod10000,wavenumberExp1Nmod10000]=parametrosGauss;
+            %[phiExpNmod10000,wavenumberExp0Nmod10000,wavenumberExp1Nmod10000]=parametrosExpo;
+            phi = phiExpNmod10000(1:Nmod);
+            C(:,1) = wavenumberExp0Nmod10000(1:Nmod);
+            C(:,2) = wavenumberExp1Nmod10000(1:Nmod);
+            KMean = 15;
+            aaa=0.5*(coord(bedge(ifacont,1),:) + coord(bedge(ifacont,2),:));
+            auxkmap = K(aaa(1,1),aaa(1,2),KMean,C(:,1),C(:,2),phi);
+            %----------------------------------------------------------
+            
+            
+            %auxkmap=kmap(lef, 2);
+            I(lef) = I(lef)+ normals(ifacont,2)*auxkmap*nflagface(ifacont,2);
+            
         else
-        x = logical(bcflag(:,1) == bedge(ifacont,5));
-        I(lef) = I(lef) + nor*bcflag(x,2);
+            x = logical(bcflag(:,1) == bedge(ifacont,5));
+            I(lef) = I(lef) + nor*bcflag(x,2);
         end
     end  %End of IF
 end  %End of FOR
@@ -230,26 +242,20 @@ for iface = 1:inedgesize
         I(inedge(iface,4))=I(inedge(iface,4))-visonface*m;
     end
 end  %End of FOR ("inedge")
-%==========================================================================
-% calcula um problema transiente
-
 if strcmp(modflowcompared,'y')
-    
     for iw = 1:size(elembedge,1)
-        
         M(elembedge(iw,1),:)=0*M(elembedge(iw,1),:);
         M(elembedge(iw,1),elembedge(iw,1))=1;
         I(elembedge(iw,1))=elembedge(iw,2);
-        
     end
 end
-
+%==========================================================================
+% calcula um problema transiente
 if numcase>300
     %
     if numcase~=336 && numcase~=334 && numcase~=335 &&...
             numcase~=337 && numcase~=338 && numcase~=339 &&...
             numcase~=340 && numcase~=341
-        
         if numcase==333 || numcase==331
             coeficiente=dt^-1*SS.*elemarea(:);
         else
@@ -268,5 +274,14 @@ if numcase>300
         
     end
 end
+
+end
+function sol = K(x,y,KMean,C1,C2,phi)
+global Nmod varK
+coeff = sqrt(varK*2/Nmod) ;
+
+ak = coeff*sum( cos( (C1*x + C2*y)*(2*pi) + phi) ) ;
+
+sol = KMean * exp(-varK/2) * exp(ak) ;
 
 end

@@ -34,9 +34,9 @@ switch numcase
         %Initialize "kaux"
         kaux = zeros(size(centelem,1),5);
         for i = 1:size(centelem,1)
-                        
-          kaux(i,:) = [i h(i)*0.5 0 0 h(i)*0.5];
-           
+            
+            kaux(i,:) = [i h(i)*0.5 0 0 h(i)*0.5];
+            
         end  %End of FOR
         
         %Restore "kmap"
@@ -45,9 +45,9 @@ switch numcase
         %Initialize "kaux"
         kaux = zeros(size(centelem,1),5);
         for i = 1:size(centelem,1)
-                        
-          kaux(i,:) = [i h(i)*33.3 0 0 h(i)*33.33];
-           
+            
+            kaux(i,:) = [i h(i)*33.3 0 0 h(i)*33.33];
+            
         end  %End of FOR
         
         %Restore "kmap"
@@ -517,10 +517,10 @@ switch numcase
         %Example 31.2: Two-Phase Flow case. Adapted from Chueh et al., 2010
         %(Very High Permeability Distribution)
     case 31.2
-%         for i=1:size(centelem,1)
-%             k(i,:)=[i log(kmap(i,2)) 0 0 log(kmap(i,2)) ];
-%         end
-%        kmap=kmap;
+        %         for i=1:size(centelem,1)
+        %             k(i,:)=[i log(kmap(i,2)) 0 0 log(kmap(i,2)) ];
+        %         end
+        %        kmap=kmap;
         %Define number of the randomic values
         N = 40;
         %Define Randomic paramiter
@@ -553,7 +553,7 @@ switch numcase
         %(Very High Permeability Distribution for FIVE-SPOT Case)
     case 31.3
         kmap=kmap;
-            
+        
     case 34.6
         %        kthin = zeros((90)^2,5);
         %Define number of the randomic values
@@ -620,67 +620,67 @@ switch numcase
     case 35
         
         for i=1:size(centelem,1)
-                    x=centelem(i,1);
-                    y=centelem(i,2);
-                    k0=1;
-                    s=1;
-                    m=3;
-                    l=3;
-                    r=k0*exp(sqrt(s)*cos(2*pi*m*x)*cos(2*pi*l*y));
-                    K(i,1:5) = [i r 0 0 r];
-                    %normKmap(i,1)= r;
-                    elem(i,5)=i;
-                    u=0;
+            x=centelem(i,1);
+            y=centelem(i,2);
+            k0=1;
+            s=1;
+            m=3;
+            l=3;
+            r=k0*exp(sqrt(s)*cos(2*pi*m*x)*cos(2*pi*l*y));
+            K(i,1:5) = [i r 0 0 r];
+            %normKmap(i,1)= r;
+            elem(i,5)=i;
+            u=0;
         end
         kmap=K;
     case 36
         for ii=1:size(centelem,1)
-                    yy=centelem(ii,2);
-                   if yy<0.25
-                       K(ii,1:5) = [ii 1 0 0 1]; 
-                   elseif 0.25<yy && yy<0.5
-                        K(ii,1:5) = [ii 2 0 0 2];
-                       
-                   elseif 0.5<yy && yy<0.75
-                        K(ii,1:5) = [ii 5 0 0 5];
-                   else
-                       K(ii,1:5) = [ii 10 0 0 10]; 
-                   end
-                   
-                    u=0;
+            yy=centelem(ii,2);
+            if yy<0.25
+                K(ii,1:5) = [ii 1 0 0 1];
+            elseif 0.25<yy && yy<0.5
+                K(ii,1:5) = [ii 2 0 0 2];
+                
+            elseif 0.5<yy && yy<0.75
+                K(ii,1:5) = [ii 5 0 0 5];
+            else
+                K(ii,1:5) = [ii 10 0 0 10];
+            end
+            
+            u=0;
         end
         kmap=K;
-  
+        
     case 241
-       %K(1,1:5) = [1 10 0 0 10]; % see Nilson's dissertation, when r=1
-       %Initialization
-                k = [10 0; 0 0.01];
-                %Definition of angle
-                %teta=0;
-                teta = pi/7.2;
-                %teta=pi/6;
-                %Definition of ratation matrix
-                R = [cos(teta) sin(teta); -sin(teta) cos(teta)];
-                %Define the permeability to be used
-                k = inv(R)*k*R;
-               K(1,1:5) = [1 k(1,1) k(1,2) k(2,1) k(2,2)];
-       %K(1,1:5) = [1 k(1,1) k(1,2) k(2,1) k(2,2)];% see Nilson's dissertation, when r=100
-
+        %K(1,1:5) = [1 10 0 0 10]; % see Nilson's dissertation, when r=1
+        %Initialization
+        k = [10 0; 0 0.01];
+        %Definition of angle
+        %teta=0;
+        teta = pi/7.2;
+        %teta=pi/6;
+        %Definition of ratation matrix
+        R = [cos(teta) sin(teta); -sin(teta) cos(teta)];
+        %Define the permeability to be used
+        k = inv(R)*k*R;
+        K(1,1:5) = [1 k(1,1) k(1,2) k(2,1) k(2,2)];
+        %K(1,1:5) = [1 k(1,1) k(1,2) k(2,1) k(2,2)];% see Nilson's dissertation, when r=100
+        
         kmap=K;
         
     case 245
         for i=1:size(centelem,1)
-                    x=centelem(i,1);
-                    y=centelem(i,2);
-                    k0=1;
-                    s=4;
-                    m=3;
-                    l=3;
-                    r=k0*exp(sqrt(s)*cos(2*pi*m*x)*cos(2*pi*l*y));
-                    K(i,1:5) = [i r 0 0 r];
-                    %normKmap(i,1)= r;
-                    elem(i,5)=i;
-                    u=0;
+            x=centelem(i,1);
+            y=centelem(i,2);
+            k0=1;
+            s=4;
+            m=3;
+            l=3;
+            r=k0*exp(sqrt(s)*cos(2*pi*m*x)*cos(2*pi*l*y));
+            K(i,1:5) = [i r 0 0 r];
+            %normKmap(i,1)= r;
+            elem(i,5)=i;
+            u=0;
         end
         kmap=K;
     case 247
@@ -692,7 +692,7 @@ switch numcase
             elem(i,5)=i;
         end
         kmap=K;
-
+        
         
     case 249
         for i=1:size(centelem,1)
@@ -714,30 +714,30 @@ switch numcase
         kmap=kmap;
     case 330
         % Permeability tensor for the case I, article 2023:
-        % A Local Grid-Refined Numerical Groundwater Model 
-        % Based on the Vertex-centred Finite-Volume Method 
+        % A Local Grid-Refined Numerical Groundwater Model
+        % Based on the Vertex-centred Finite-Volume Method
         kmap(1,1:5) = [1 33.33 0 0 33.33];
         elem(:,5)=1;
-     case 332
-         % Permeability tensor for the case III, article 2023:
-        % A Local Grid-Refined Numerical Groundwater Model 
-        % Based on the Vertex-centred Finite-Volume Method 
+    case 332
+        % Permeability tensor for the case III, article 2023:
+        % A Local Grid-Refined Numerical Groundwater Model
+        % Based on the Vertex-centred Finite-Volume Method
         kmap(1,1:5) = [1 33.33 0 0 33.33];
         elem(:,5)=1;
         %----------------------------------------------------------------------
         %Example 43: Two-Phase Flow case. Adapted from Nikitin et al., 2012
-        %Case 1, four litologies  
+        %Case 1, four litologies
     case 336
         % Permeability tensor for the case 0, article 2023:
-        % A Local Grid-Refined Numerical Groundwater Model 
+        % A Local Grid-Refined Numerical Groundwater Model
         % Based on the Vertex-centred Finite-Volume Method
         for j=1:size(centelem,1)
             if centelem(j,1)<0.5 ||centelem(j,1)==0.5
-                 K(j,1:5) = [j 1 0.5 0.5 1];
-                 elem(j,5)=j;
+                K(j,1:5) = [j 1 0.5 0.5 1];
+                elem(j,5)=j;
             else
-               K(j,1:5) = [j 10 2 2 100];
-               elem(j,5)=j; 
+                K(j,1:5) = [j 10 2 2 100];
+                elem(j,5)=j;
             end
         end
         kmap=K;
@@ -752,54 +752,54 @@ switch numcase
         %Initialize "kmap"
         kmap = zeros(size(centelem,1),5);
         %Swept all elements:
-%         for i = 1:size(centelem,1)
-%             %Get the vertices:
-%             vertices = elem(i,1:4);
-%             %Get only the non zero values
-%             vertices = vertices(logical(vertices ~= 0));
-%             %Get the "y" coordinate of each vertex
-%             ycoordvtx = coord(vertices,2);
-%             %Calculate the maximum and minimum "y" coordinate
-%             ycoordmin = min(ycoordvtx);
-%             ycoordmax = max(ycoordvtx);
-%             %Define "x" and "y" (centroid of element)
-%             x = centelem(i,1);
-%             y = centelem(i,2);
-%             %Evaluate the position of "x" and "y"
-%             y_reg1 = -x + 0.25;
-%             y_reg2 = -x + 0.5;
-%             y_reg3 = -x + 0.75;
-%             y_reg4 = -x + 1;
-%             y_reg5 = -x + 1.25;
-%             y_reg6 = -x + 1.5;
-%             y_reg7 = -x + 1.75;
-%             %The element is in region 1 or 4
-%             if (x <= 0.25 && y <= y_reg1) || (x <= 0.25 && ...
-%                     y_reg1 >= ycoordmin && y_reg1 <= ycoordmax) ...
-%                     || (x > 0.75 && y >= y_reg7) || (x > 0.75 && ...
-%                     y_reg7 >= ycoordmin && y_reg7 <= ycoordmax)
-%                 %Definition of permeability components
-%                 k = [505 495; 495 505];
-%                 %The element is in region 2
-%             elseif (x <= 0.5 && y > y_reg1 && y < y_reg2) || ...
-%                     (y_reg2 >= ycoordmin && y_reg2 <= ycoordmax) || ...
-%                     (x > 0.5 && y < y_reg2)
-%                 %The element is in region 3
-%             elseif (x <= 0.5 && y > y_reg1 && y < y_reg2) || ...
-%                     (y_reg2 >= ycoordmin && y_reg2 <= ycoordmax) || ...
-%                     (x > 0.5 && y < y_reg2)
-%                 %Definition of permeability components
-%                 k = [1000 0; 0 10];
-%                 %The element is in region 3
-%             else
-%                 %Definition of permeability components
-%                 k = [10 0; 0 1000];
-%             end  %End of IF
-%             %Build "kmap"
-%             kmap(i,:) = [i k(1,1) k(1,2) k(2,1) k(2,2)];
-%         end  %End of FOR
+        %         for i = 1:size(centelem,1)
+        %             %Get the vertices:
+        %             vertices = elem(i,1:4);
+        %             %Get only the non zero values
+        %             vertices = vertices(logical(vertices ~= 0));
+        %             %Get the "y" coordinate of each vertex
+        %             ycoordvtx = coord(vertices,2);
+        %             %Calculate the maximum and minimum "y" coordinate
+        %             ycoordmin = min(ycoordvtx);
+        %             ycoordmax = max(ycoordvtx);
+        %             %Define "x" and "y" (centroid of element)
+        %             x = centelem(i,1);
+        %             y = centelem(i,2);
+        %             %Evaluate the position of "x" and "y"
+        %             y_reg1 = -x + 0.25;
+        %             y_reg2 = -x + 0.5;
+        %             y_reg3 = -x + 0.75;
+        %             y_reg4 = -x + 1;
+        %             y_reg5 = -x + 1.25;
+        %             y_reg6 = -x + 1.5;
+        %             y_reg7 = -x + 1.75;
+        %             %The element is in region 1 or 4
+        %             if (x <= 0.25 && y <= y_reg1) || (x <= 0.25 && ...
+        %                     y_reg1 >= ycoordmin && y_reg1 <= ycoordmax) ...
+        %                     || (x > 0.75 && y >= y_reg7) || (x > 0.75 && ...
+        %                     y_reg7 >= ycoordmin && y_reg7 <= ycoordmax)
+        %                 %Definition of permeability components
+        %                 k = [505 495; 495 505];
+        %                 %The element is in region 2
+        %             elseif (x <= 0.5 && y > y_reg1 && y < y_reg2) || ...
+        %                     (y_reg2 >= ycoordmin && y_reg2 <= ycoordmax) || ...
+        %                     (x > 0.5 && y < y_reg2)
+        %                 %The element is in region 3
+        %             elseif (x <= 0.5 && y > y_reg1 && y < y_reg2) || ...
+        %                     (y_reg2 >= ycoordmin && y_reg2 <= ycoordmax) || ...
+        %                     (x > 0.5 && y < y_reg2)
+        %                 %Definition of permeability components
+        %                 k = [1000 0; 0 10];
+        %                 %The element is in region 3
+        %             else
+        %                 %Definition of permeability components
+        %                 k = [10 0; 0 1000];
+        %             end  %End of IF
+        %             %Build "kmap"
+        %             kmap(i,:) = [i k(1,1) k(1,2) k(2,1) k(2,2)];
+        %         end  %End of FOR
         
-         for i=1:size(centelem,1)
+        for i=1:size(centelem,1)
             if centelem(i,2)<=(0.251-centelem(i,1))
                 elem(i,5)=i;
                 
@@ -819,7 +819,7 @@ switch numcase
                 elem(i,5)=i;
                 
                 k=[10 0; 0 1000];
-              
+                
             elseif (0.99-centelem(i,1))<=centelem(i,2) && centelem(i,2)<(1.249-centelem(i,1))
                 elem(i,5)=i;
                 
@@ -836,7 +836,7 @@ switch numcase
                 elem(i,5)=i;
                 
                 k=[505 495; 495 505];
-               
+                
             end
             %Build "kmap"
             kmap(i,:) = [i k(1,1) k(1,2) k(2,1) k(2,2)];
@@ -846,22 +846,22 @@ switch numcase
         %(Case 1)
     case 44
         %Initialize a parameter
-%         epsilon = 5e-3;
-%         %Initialize "kmap"
-%         kmap = zeros(size(centelem,1),5);
-%         for i = 1:size(centelem,1)
-%             %Define "x" and "y"
-%             x = centelem(i,1);
-%             y = centelem(i,2);
-%             %Definition of permeability components
-%             k(1,1) = (y^2) + (epsilon*(x^2));
-%             k(1,2) = -(1 - epsilon)*x*y;
-%             k(2,1) = -(1 - epsilon)*x*y;
-%             k(2,2) = (epsilon*(y^2)) + (x^2);
-%             %Build "kmap"
-%             kmap(i,:) = [i k(1,1) k(1,2) k(2,1) k(2,2)];
-%         end  %End of FOR
-         k = [500 0; 0 1];
+        %         epsilon = 5e-3;
+        %         %Initialize "kmap"
+        %         kmap = zeros(size(centelem,1),5);
+        %         for i = 1:size(centelem,1)
+        %             %Define "x" and "y"
+        %             x = centelem(i,1);
+        %             y = centelem(i,2);
+        %             %Definition of permeability components
+        %             k(1,1) = (y^2) + (epsilon*(x^2));
+        %             k(1,2) = -(1 - epsilon)*x*y;
+        %             k(2,1) = -(1 - epsilon)*x*y;
+        %             k(2,2) = (epsilon*(y^2)) + (x^2);
+        %             %Build "kmap"
+        %             kmap(i,:) = [i k(1,1) k(1,2) k(2,1) k(2,2)];
+        %         end  %End of FOR
+        k = [500 0; 0 1];
         %Fill "R"
         %theta=5*pi/6;
         %theta=67.5;
@@ -888,9 +888,9 @@ switch numcase
         epsilon = 1e-3;
         theta = 0.25*pi;
         k = [1 0; 0 220];
-%         %Rotate the tensor in "theta"
-%         Krot = [cos(theta) -sin(theta); sin(theta) cos(theta)]*k*...
-%             [cos(theta) sin(theta); -sin(theta) cos(theta)];
+        %         %Rotate the tensor in "theta"
+        %         Krot = [cos(theta) -sin(theta); sin(theta) cos(theta)]*k*...
+        %             [cos(theta) sin(theta); -sin(theta) cos(theta)];
         
         %Initialize "kmap"
         kmap = zeros(size(centelem,1),5);
@@ -899,42 +899,42 @@ switch numcase
             x = centelem(i,1);
             y = centelem(i,2);
             %Choose the tensor according "x" position
-%            if x < 0.5
-                a11=x/(sqrt(x^2+y^2)); a12=y/(sqrt(x^2+y^2));
-                %         %Rotate the tensor in "theta"
-         Krot = [a11 -a12; a12 a11]*k*...
-             [a11 a12; -a12 a11];
-
-                kmap (i,:) = [i Krot(1,1) Krot(1,2) Krot(2,1) Krot(2,2)];
-%             else
-%                 %Define "x1" and "y1"
-%                 x1 = x + 1e-3;
-%                 y1 = y + 1e-3;
-%                 %Definition of permeability components
-%                 k(1,1) = ((y1^2) + epsilon*(x1^2));
-%                 k(1,2) = -(1 - epsilon)*(x1*y1);
-%                 k(2,1) = -(1 - epsilon)*(x1*y1);
-%                 k(2,2) = ((x1^2) + epsilon*(y1^2));
-%                 %Build "kmap"
-%                 kmap(i,:) = [i k(1,1) k(1,2) k(2,1) k(2,2)];
-%             end  %End of IF
+            %            if x < 0.5
+            a11=x/(sqrt(x^2+y^2)); a12=y/(sqrt(x^2+y^2));
+            %         %Rotate the tensor in "theta"
+            Krot = [a11 -a12; a12 a11]*k*...
+                [a11 a12; -a12 a11];
+            
+            kmap (i,:) = [i Krot(1,1) Krot(1,2) Krot(2,1) Krot(2,2)];
+            %             else
+            %                 %Define "x1" and "y1"
+            %                 x1 = x + 1e-3;
+            %                 y1 = y + 1e-3;
+            %                 %Definition of permeability components
+            %                 k(1,1) = ((y1^2) + epsilon*(x1^2));
+            %                 k(1,2) = -(1 - epsilon)*(x1*y1);
+            %                 k(2,1) = -(1 - epsilon)*(x1*y1);
+            %                 k(2,2) = ((x1^2) + epsilon*(y1^2));
+            %                 %Build "kmap"
+            %                 kmap(i,:) = [i k(1,1) k(1,2) k(2,1) k(2,2)];
+            %             end  %End of IF
         end  %End of FOR
     case 339
         for i = 1:size(centelem,1)
             %Define "x" and "y"
             x = centelem(i,1);
             if x<500 || x==500
-                %  in this case considere T see pag. 23 
-             kmap (i,:) = [i 200 0 0 200];   
+                %  in this case considere T see pag. 23
+                kmap (i,:) = [i 200 0 0 200];
                 
             else
-            kmap (i,:) = [i 20 0 0 20];
-            end 
+                kmap (i,:) = [i 20 0 0 20];
+            end
         end
     case 341
         [auxperm2,]=calcpermeab;
         for ii=1:size(centelem,1)
-                kmap(ii,:)=[ii auxperm2(ii) 0 0 auxperm2(ii)];
+            kmap(ii,:)=[ii auxperm2(ii) 0 0 auxperm2(ii)];
         end
         
 end  %End of Switch

@@ -36,7 +36,7 @@ global coord centelem elem esurn1 esurn2 nsurn1 nsurn2 bedge inedge ...
     numcase pmethod smethod phasekey order timeorder auxcvfactor ...
     interptype multdopt goefreeopt lsneightype lsexp ...
     recovtype keygravity g benchkey rowposit nltol maxiter acel bcflagc...
-    methodhydro SS MM P modflowcompared;
+    methodhydro SS MM P modflowcompared Nmod varK;
 
 %--------------------------------------------------------------------------
 %Call the "preprocessor" function
@@ -49,13 +49,19 @@ global coord centelem elem esurn1 esurn2 nsurn1 nsurn2 bedge inedge ...
    multdopt,goefreeopt,order,timeorder,recovtype,lsneightype,...
     lsexp,keygravity,g,keycapil,ncaplcorey,filepath,resfolder,benchkey,...
     kmap,wells,klb,limiterflag,rowposit,nltol,maxiter,acel,modflowcompared] = preprocessor;
+%-----------------------------------------------------------------------------
 % As concicoes abaixo utilize para malhas Tipo1Malha4.msh, Tipo1Malha5.msh, Tipo1Malha6.msh
 % x=bedge(:,1);
 % y=bedge(:,2);
 % bedge(:,1)=y;
 % bedge(:,2)=x;
+%------------------------------------------------------------------
+% modificar a linha 647-673 do codigo plotandwrite.m para o caso
+% modflowcompared ativado
+%-------------------------------------------------------------------
 % necesitamos ajeitar para o campo de pressao quando tem "restart"
 % this numcase is used to simulate concentration solute in aquifers
+%-------------------------------------------------------------------
 %permeabilitytest
 if 200<numcase && numcase <300
     % Flags adequation for contamination and groundwater problem
@@ -96,7 +102,11 @@ elseif numcase>300
    methodhydro='backward';
    % use para o caso aquifero nao confinado
    %methodhydro='cranknicolson'; 
-   % This numcase is used for two-phase (water-oil) flow problems  
+   % This numcase is used for two-phase (water-oil) flow problems 
+   if numcase==341
+       % Nmod:Numero de funcoes coseno % vark:varianca
+       Nmod=100;  varK=0.1;
+   end
 else
     auxpar=0;dmap=0; Dmedio=0; gamma=0; velmedio=0; wellsc=0; SS=0; 
     h_old=0; MM=0; dt=0; P=0; 

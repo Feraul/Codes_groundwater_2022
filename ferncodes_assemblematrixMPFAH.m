@@ -1,6 +1,7 @@
 function [M,I]=ferncodes_assemblematrixMPFAH(parameter,nflagface,...
     weightDMP,SS,dt,h,MM,gravrate,viscosity)
-global inedge coord bedge bcflag elem numcase methodhydro keygravity dens elemarea
+global inedge coord bedge bcflag elem numcase methodhydro ...
+    keygravity dens elemarea modflowcompared;
 %---------------------------------------------------------
 % viscosity=viscosity when contaminant transport
 % viscosity=mobility when two-phase flow
@@ -13,7 +14,9 @@ inedgesize = size(inedge,1);
 %Initialize "M" (global matrix) and "I" (known vector)
 M = zeros(size(elem,1)); %Prealocação de M.
 I = zeros(size(elem,1),1);
-
+jj=1;
+%viscosidade ou mobilidade na face
+visonface = 1;
 for ifacont=1:bedgesize
     % when 200<numcase<300, is groundwater transport model
     if 200<numcase && numcase<300
@@ -22,17 +25,11 @@ for ifacont=1:bedgesize
                 numcase==248 || numcase==249 ||numcase==251
             % vicosity on the boundary edge
             visonface = viscosity(ifacont,:);
-            %It is a Two-phase flow
-        else
-            visonface = 1;
         end  %End of IF
         % when numcase<200, is two-phase model
     elseif 30<numcase && numcase<200
         % equacao de saturacao "viscosity=mobility"
         visonface=sum(viscosity(ifacont,:));
-    else
-        % otherwise, the model is groundwater flow model
-        visonface=1;
     end
     % element flag
     lef=bedge(ifacont,3);
@@ -46,7 +43,12 @@ for ifacont=1:bedgesize
         %problemas monofásico
         I(lef)=I(lef)+ normcont*bcflag(r,2); % problema de buckley leverett Bastian
     else
-        
+        % armazena os elementos proximo ao contorno de Dirichlet
+         if strcmp(modflowcompared,'y')
+            elembedge(jj,1)=bedge(ifacont,3);
+            elembedge(jj,2)=nflagface(ifacont,2);
+            jj=jj+1;
+        end
         %-------------------------------------------------------------%
         % somando 1
         ifacelef1=parameter(1,3,ifacont);
@@ -75,15 +77,10 @@ for iface=1:inedgesize
             % vicosity on the boundary edge
             visonface = viscosity(bedgesize + iface,:);
             %It is a Two-phase flow
-        else
-            visonface = 1;
         end  %End of IF
     elseif 30<numcase && numcase<200
         % saturation equation "viscosity=mobility"
         visonface=sum(viscosity(bedgesize + iface,:));
-    else
-        % single-phase or groundwater flow model
-        visonface=1;
     end
     % element flags
     lef=inedge(iface,3);
@@ -798,10 +795,20 @@ for iface=1:inedgesize
         I(inedge(iface,4))=I(inedge(iface,4))-visonface*m;
     end
 end
+%--------------------------------------------------------------------
+if strcmp(modflowcompared,'y')
+    for iw = 1:size(elembedge,1)
+        M(elembedge(iw,1),:)=0*M(elembedge(iw,1),:);
+        M(elembedge(iw,1),elembedge(iw,1))=1;
+        I(elembedge(iw,1))=elembedge(iw,2);
+    end
+end
 
-% para calcular a carga hidraulica
+% used to calculate the hydraulic head
 if numcase>300
-    if numcase~=336
+     if numcase~=336 && numcase~=334 && numcase~=335 &&...
+            numcase~=337 && numcase~=338 && numcase~=339 &&...
+            numcase~=340 && numcase~=341
         if numcase==333 || numcase==331
             coeficiente=dt^-1*SS.*elemarea(:);
         else
@@ -820,5 +827,4 @@ if numcase>300
         
     end
 end
-
 end

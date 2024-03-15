@@ -21,9 +21,9 @@
 function [pressure,flowrate,flowresult,flowratedif] = solvePressure_TPFA(Kde, Kn, ...
     nflagface, Hesq,gravresult,gravrate,gravno,gravelem,fonte,aa,SS,dt,h,MM,wells)
 %Define global parameters:
-global elem bedge inedge phasekey numcase elemarea;
 
-global inedge bedge elem coord bcflag gravitational strategy
+global inedge bedge elem numcase elemarea coord bcflag ...
+    gravitational strategy modflowcompared;
 
 % Constrói a matriz global.
 % prealocação da matriz global e do vetor termo de fonte
@@ -32,7 +32,7 @@ I=zeros(size(elem,1),1);
 I=I+fonte;
 % Loop de faces de contorno
 m=0;
-
+jj=0;
 for ifacont=1:size(bedge,1)
     v0=coord(bedge(ifacont,2),:)-coord(bedge(ifacont,1),:);
     normcont=norm(v0);
@@ -41,7 +41,12 @@ for ifacont=1:size(bedge,1)
     A=-Kn(ifacont)/(Hesq(ifacont)*norm(v0));
     
     if bedge(ifacont,5)<200
-        
+        % armazena os elementos proximo ao contorno de Dirichlet
+         if strcmp(modflowcompared,'y')
+            elembedge(jj,1)=bedge(ifacont,3);
+            elembedge(jj,2)=nflagface(ifacont,2);
+            jj=jj+1;
+        end
         c1=nflagface(ifacont,2);
         
         if strcmp(gravitational,'yes')
@@ -52,8 +57,6 @@ for ifacont=1:size(bedge,1)
                 m1=-nflagface(ifacont,2);
                 m=A*(norm(v0)^2*m1-norm(v0)^2*gravelem(lef));
             end
-        else
-            m=0;
         end
         %Preenchimento
         M(bedge(ifacont,3),bedge(ifacont,3))=M(bedge(ifacont,3),bedge(ifacont,3))- A*(norm(v0)^2);
@@ -92,6 +95,16 @@ for iface=1:size(inedge,1),
     end
         
 end
+
+%--------------------------------------------------------------------
+if strcmp(modflowcompared,'y')
+    for iw = 1:size(elembedge,1)
+        M(elembedge(iw,1),:)=0*M(elembedge(iw,1),:);
+        M(elembedge(iw,1),elembedge(iw,1))=1;
+        I(elembedge(iw,1))=elembedge(iw,2);
+    end
+end
+
 % para calcular a carga hidraulica
 % para calcular a carga hidraulica
 if numcase>300
@@ -114,6 +127,7 @@ if numcase>300
         
     end
 end
+
 %--------------------------------------------------------------------------
 %Add a source therm to independent vector "mvector"
 

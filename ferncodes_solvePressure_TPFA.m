@@ -23,16 +23,15 @@ function [pressure,flowrate,flowresult,flowratedif] = ...
     ferncodes_solvePressure_TPFA(Kde, Kn, nflag, Hesq,wells,viscosity, Kdec, Knc,nflagc,Con,SS,dt,h,MM)
 %Define global parameters:
 
-global inedge bedge elem coord bcflag numcase methodhydro elemarea
+global inedge bedge elem coord bcflag numcase methodhydro elemarea  modflowcompared;
 
 % Constrói a matriz global.
 % prealocação da matriz global e do vetor termo de fonte
 M=zeros(size(elem,1),size(elem,1));
-mvector=zeros(size(elem,1),1);
+I=zeros(size(elem,1),1);
 bedgesize = size(bedge,1);
 % Loop de faces de contorno
-mu=MM*SS;
-coeficiente=(mu.*elemarea(:))/dt;
+jj=1;
 for ifacont=1:size(bedge,1)
     v0=coord(bedge(ifacont,2),:)-coord(bedge(ifacont,1),:);
     if numcase == 246 || numcase == 245 || numcase==247 || numcase==248 || numcase==249
@@ -46,7 +45,12 @@ for ifacont=1:size(bedge,1)
     A=-Kn(ifacont)/(Hesq(ifacont)*norm(v0));
     
     if bedge(ifacont,5)<200
-        
+        % armazena os elementos proximo ao contorno de Dirichlet
+         if strcmp(modflowcompared,'y')
+            elembedge(jj,1)=bedge(ifacont,3);
+            elembedge(jj,2)=nflag(ifacont,2);
+            jj=jj+1;
+        end
         %c1=nflag(bedge(ifacont,1),2);
         c1=nflag(ifacont,2);
         
@@ -54,12 +58,12 @@ for ifacont=1:size(bedge,1)
         
         M(bedge(ifacont,3),bedge(ifacont,3))=M(bedge(ifacont,3),bedge(ifacont,3))- visonface*A*(norm(v0)^2);
         
-        mvector(bedge(ifacont,3))=mvector(bedge(ifacont,3))-visonface*c1*A*(norm(v0)^2);
+        I(bedge(ifacont,3))=I(bedge(ifacont,3))-visonface*c1*A*(norm(v0)^2);
         
     else
         x=bcflag(:,1)==bedge(ifacont,5);
         r=find(x==1);
-        mvector(bedge(ifacont,3))=mvector(bedge(ifacont,3))- norm(v0)*bcflag(r,2);
+        I(bedge(ifacont,3))=I(bedge(ifacont,3))- norm(v0)*bcflag(r,2);
         
         
     end
@@ -82,27 +86,43 @@ for iface=1:size(inedge,1),
     M(inedge(iface,4), inedge(iface,3))=M(inedge(iface,4), inedge(iface,3))+visonface*Kde(iface,1);
      
 end
-
-
+if strcmp(modflowcompared,'y')
+    for iw = 1:size(elembedge,1)
+        M(elembedge(iw,1),:)=0*M(elembedge(iw,1),:);
+        M(elembedge(iw,1),elembedge(iw,1))=1;
+        I(elembedge(iw,1))=elembedge(iw,2);
+    end
+end
+% para calcular a carga hidraulica
 if numcase>300
-    if strcmp(methodhydro,'backward')
-        M=M+coeficiente.*eye(size(elem,1));
-        mvector=mvector+coeficiente.*eye(size(elem,1))*h;
-    else
-        mvector=mvector+coeficiente*eye(size(elem,1))*h-0.5*M*h; 
+    %
+    if numcase~=336 && numcase~=334 && numcase~=335 &&...
+            numcase~=337 && numcase~=338 && numcase~=339 &&...
+            numcase~=340 && numcase~=341
         
-        M=0.5*M+coeficiente*eye(size(elem,1));
+        if numcase==333 || numcase==331
+            coeficiente=dt^-1*SS.*elemarea(:);
+        else
+            coeficiente=dt^-1*MM*SS.*elemarea(:);
+        end
+        % Euler backward method
+        if strcmp(methodhydro,'backward')
+            M=M+coeficiente.*eye(size(elem,1));
+            I=I+coeficiente.*eye(size(elem,1))*h;
+        else
+            % Crank-Nicolson method
+            I=I+coeficiente.*eye(size(elem,1))*h-0.5*M*h;
+            M=0.5*M+coeficiente.*eye(size(elem,1));
+            
+        end
         
     end
-    
 end
-
-
 %--------------------------------------------------------------------------
 %Add a source therm to independent vector "mvector"
 
 %Often it may change the global matrix "M"
-[M,mvector] = addsource(M,mvector,wells);
+[M,I] = addsource(M,I,wells);
 
 %--------------------------------------------------------------------------
 %Solver the algebric system
@@ -110,7 +130,7 @@ end
 %When this is assembled, that is solved using the function "solver".
 %This function returns the pressure field with value put in each colocation
 %point.
-[pressure] = solver(M,mvector);
+[pressure] = solver(M,I);
 
 %Message to user:
 disp('>> The Pressure field was calculated with success!');

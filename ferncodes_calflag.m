@@ -19,7 +19,7 @@ for ifacont = 1:size(bedge,1)
         % the fifth column of bedge is face flag
         x1 = logical(bcflag(:,1) == bedge(ifacont,5));
         
-        % label of the vertex
+        % label of the edge
         vertex1 = bedge(ifacont,1:2);
         nflagface(ifacont,2)=PLUG_bcfunction(vertex1,x1,a);
         nflagface(ifacont,1) = bcflag(x1,1); 

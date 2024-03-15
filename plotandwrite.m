@@ -21,7 +21,8 @@
 function [analsw, presanal]=plotandwrite(producelem,Sw,pressure,...
     satonvertices,Dmedio,velmedio,gamma,time,overedgecoord)
 %Define global parameters:
-global filepath satlimit resfolder bcflag bcflagc numcase totaltime  elemarea;
+global filepath satlimit resfolder bcflag bcflagc numcase totaltime ...
+    elemarea modflowcompared;
 
 %"getgeodata" reads each row of *.geo and store it as a string array.
 %Get the data according to "producelem" size
@@ -249,7 +250,8 @@ elseif numcase > 200
     switch numcase
         case 231
             [posit,confield,elemonline] = getlineresult(Sw,satonvertices);
-            [analsolution]=ferncodes_analyticalSolution(satonvertices,Dmedio,velmedio,posit,gamma);
+            [analsolution]=ferncodes_analyticalSolution(satonvertices,...
+                Dmedio,velmedio,posit,gamma);
             % readequacao
             analsolutionaux=length(analsolution)+1;
             confieldaux= length(analsolution)+1;
@@ -344,7 +346,8 @@ elseif numcase > 200
             
         case 233
             [posit,confield,elemonline] = getlineresult(Sw,satonvertices);
-            [analsolution]=ferncodes_analyticalSolution(satonvertices,Dmedio,velmedio,posit,gamma);
+            [analsolution]=ferncodes_analyticalSolution(satonvertices,...
+                Dmedio,velmedio,posit,gamma);
             hold on
             %Plot the results (Analitical Solution)
             plot (posit,analsolution,'LineWidth',2)
@@ -361,7 +364,8 @@ elseif numcase > 200
             ylabel ('Concentration (C)');
         case 234
             [posit,confield,elemonline] = getlineresult(Sw,satonvertices);
-            [analsolution]=ferncodes_analyticalSolution(satonvertices,Dmedio,velmedio,posit,gamma);
+            [analsolution]=ferncodes_analyticalSolution(satonvertices,...
+                Dmedio,velmedio,posit,gamma);
             hold on
             %Plot the results (Analitical Solution)
             plot (posit,analsolution,'LineWidth',2)
@@ -378,7 +382,8 @@ elseif numcase > 200
             ylabel ('Concentration (C)');
         case 235
             [posit,confield,elemonline] = getlineresult(Sw,satonvertices);
-            [analsolution]=ferncodes_analyticalSolution(satonvertices,Dmedio,velmedio,posit,gamma);
+            [analsolution]=ferncodes_analyticalSolution(satonvertices,...
+                Dmedio,velmedio,posit,gamma);
             hold on
             %Plot the results (Analitical Solution)
             plot (posit,analsolution,'LineWidth',2)
@@ -568,99 +573,127 @@ elseif numcase > 200
             %ylim([0 1.21])
             hold on
         case 330
+            % solucao numerica numa determinada regiao do dominio
             [posit,confield,] = getlineresult(pressure,satonvertices);
             
-            confieldaux= zeros(length(confield)+2,1);
-            positaux= zeros(length(posit)+2,1);
-            
-            confieldaux(1)=100;
-            positaux(1)=0;
-            confieldaux(end)=100;
-            positaux(end)=1000;
-            
-            confieldaux(2:length(confield)+1,1)=confield;
-            positaux(2:length(posit)+1,1)=posit;
-            
-            plot(positaux,confieldaux,'--b','LineWidth',1.5);
+            if strcmp(modflowcompared,'n')
+                confieldaux= zeros(length(confield)+2,1);
+                positaux= zeros(length(posit)+2,1);
+                
+                confieldaux(1)=100;
+                positaux(1)=0;
+                confieldaux(end)=100;
+                positaux(end)=1000;
+                
+                confieldaux(2:length(confield)+1,1)=confield;
+                positaux(2:length(posit)+1,1)=posit;
+                
+                plot(positaux,confieldaux,'--b','LineWidth',1.5);
+            else
+                plot(posit,confield,'--b','LineWidth',1.5);
+            end
             hold on
             grid
             xlabel('y(m)');
             ylabel('Hydraulic head (m)');
             title('MPFA-H method');
-     case 331
+        case 331
+            % solucao numerica numa determinada regiao do dominio
             [posit,confield,] = getlineresult(pressure,satonvertices);
-            
-            confieldaux= zeros(length(confield)+2,1);
-            positaux= zeros(length(posit)+2,1);
-            
-            confieldaux(1)=90;
-            positaux(1)=0;
-            confieldaux(end)=90;
-            positaux(end)=1000;
-            
-            confieldaux(2:length(confield)+1,1)=confield;
-            positaux(2:length(posit)+1,1)=posit;
-            
-            plot(positaux,confieldaux,'--b','LineWidth',1.5);
+            if strcmp(modflowcompared,'n')
+                % neste caso as condicoes de contorno esta imposta na
+                % fronteita da malha
+                confieldaux= zeros(length(confield)+2,1);
+                positaux= zeros(length(posit)+2,1);
+                
+                confieldaux(1)=90;
+                positaux(1)=0;
+                confieldaux(end)=90;
+                positaux(end)=1000;
+                
+                confieldaux(2:length(confield)+1,1)=confield;
+                positaux(2:length(posit)+1,1)=posit;
+                
+                plot(positaux,confieldaux,'--b','LineWidth',1.5);
+            else
+                plot(posit,confield,'--b','LineWidth',1.5);
+            end
             hold on
             grid
             xlabel('y(m)');
             ylabel('Hydraulic head (m)');
             title('MPFA-H method');
-     case 332
+        case 332
+            % solucao numerica numa determinada regiao do dominio
             [posit,confield,] = getlineresult(pressure,satonvertices);
-            
-            confieldaux= zeros(length(confield)+2,1);
-            positaux= zeros(length(posit)+2,1);
-            
-            confieldaux(1)=100;
-            positaux(1)=0;
-            confieldaux(end)=100;
-            positaux(end)=1000;
-            
-            confieldaux(2:length(confield)+1,1)=confield;
-            positaux(2:length(posit)+1,1)=posit;
-            
-            plot(positaux,confieldaux,'--g','LineWidth',1.5);
+            if strcmp(modflowcompared,'n')
+                % neste caso as condicoes de contorno esta imposta na
+                % fronteita da malha
+                confieldaux= zeros(length(confield)+2,1);
+                positaux= zeros(length(posit)+2,1);
+                
+                confieldaux(1)=100;
+                positaux(1)=0;
+                confieldaux(end)=100;
+                positaux(end)=1000;
+                
+                confieldaux(2:length(confield)+1,1)=confield;
+                positaux(2:length(posit)+1,1)=posit;
+                
+                plot(positaux,confieldaux,'--g','LineWidth',1.5);
+            else
+                plot(posit,confield,'--g','LineWidth',1.5);
+            end
             hold on
             grid
             xlabel('y(m)');
             ylabel('Hydraulic head (m)');
             title('MPFA-H method');
         case 333
+            % solucao analitica
             [presanalit,] = benchmark(overedgecoord,numcase);
-
-           [posit,confield,elemonline] = getlineresult(pressure,satonvertices); 
-           % adequation boundary Dirichlet 
-           % numerical solution
-           confieldaux= zeros(length(confield)+2,1);
-            positaux= zeros(length(posit)+2,1);
-            
-            confieldaux(1)=2;
-            positaux(1)=0;
-            confieldaux(end)=2;
-            positaux(end)=40;
-            
-            confieldaux(2:length(confield)+1,1)=confield;
-            positaux(2:length(posit)+1,1)=posit;
-            % adequation boundary Dirichlet 
-            % analytical solution
-            confieldaux1= zeros(length(elemonline)+2,1);
-            positaux1= zeros(length(posit)+2,1);
-            
-            confieldaux1(1)=2;
-            positaux1(1)=0;
-            confieldaux1(end)=2;
-            positaux1(end)=40;
-            
-            confieldaux1(2:length(confield)+1,1)=presanalit(elemonline);
-            positaux1(2:length(posit)+1,1)=posit;
-            %---------------------------------------------
-            plot(positaux1,confieldaux1,'k','LineWidth',1.)
-            hold on 
-            %------------------------------------------------------
-            plot(positaux,confieldaux,'*g','LineWidth',1.5);
-            hold on
+            % solucao numerica
+            [posit,confield,elemonline] = getlineresult(pressure,satonvertices);
+            if strcmp(modflowcompared,'n')
+                % neste caso as condicoes de contorno esta imposta na
+                % fronteita da malha
+                % numerical solution
+                confieldaux= zeros(length(confield)+2,1);
+                positaux= zeros(length(posit)+2,1);
+                
+                confieldaux(1)=2;
+                positaux(1)=0;
+                confieldaux(end)=2;
+                positaux(end)=40;
+                
+                confieldaux(2:length(confield)+1,1)=confield;
+                positaux(2:length(posit)+1,1)=posit;
+                
+                % analytical solution
+                confieldaux1= zeros(length(elemonline)+2,1);
+                positaux1= zeros(length(posit)+2,1);
+                
+                confieldaux1(1)=2;
+                positaux1(1)=0;
+                confieldaux1(end)=2;
+                positaux1(end)=40;
+                
+                confieldaux1(2:length(confield)+1,1)=presanalit(elemonline);
+                positaux1(2:length(posit)+1,1)=posit;
+                %---------------------------------------------
+                plot(positaux1,confieldaux1,'k','LineWidth',1.)
+                hold on
+                %------------------------------------------------------
+                plot(positaux,confieldaux,'*g','LineWidth',1.5);
+                hold on
+            else
+                %---------------------------------------------
+                plot(posit,presanalit,'k','LineWidth',1.)
+                hold on
+                %------------------------------------------------------
+                plot(posit,confield,'*g','LineWidth',1.5);
+                hold on
+            end
             grid
             xlabel('y(m)');
             ylabel('Hydraulic head (m)');
@@ -802,13 +835,13 @@ for i = 1:size(centelem,1)
                 %Increment "jj"
                 j = j + 1;
             end
-        
+            
         elseif numcase==332
             %if (abs(centelem(i,1)-250)/250)<1e-2 && centelem(i,2)<1000
             const=25; % para malha 40x40
             if ((const*30<centelem(i,1)&& centelem(i,1)<const*31) && centelem(i,2)<1000)
-              
-            %"y_value"
+                
+                %"y_value"
                 getxvalue(j) = centelem(i,2);
                 %Attribute to "satfield" the value of "Sw".
                 getsatfield(j) = Sw(i);

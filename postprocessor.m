@@ -196,7 +196,7 @@ if (numcase > 0 && numcase < 20)|| numcase==336 || numcase==333 ||...
     %Otherwise, the user must put the benchmark number ("1", "2", "3", etc). 
     %To know which case corresponds to its number see each example inside 
     %"validation" funct.
-    [presanalit,flowrateanalit] = benchmark(overedgecoord,numcase);
+    [presanalit,flowrateanalit] = benchmark(overedgecoord);
 
     %Write data related to Analitical PRESSURE
     fprintf(fid,'SCALARS Analytpressure float 1 \r\n');

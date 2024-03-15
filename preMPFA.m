@@ -42,15 +42,13 @@ disp(' ');
 transmvecleft = 0; transmvecright = 0; knownvecleft = 0; knownvecright = 0;
 storeinv = 0; Bleft = 0; Bright = 0; Fg = 0; mapinv = 0; maptransm = 0;
 mapknownvec = 0; pointedge = 0; bodyterm = 0; Hesq = 0; Kde = 0; Kn = 0;
-Kt = 0; Ded = 0; V = 0; N = 0; parameter=0; weightDMP=0;
-nflagface=0;p_old=0;contnorm=0;weight=0;s=0;
-transmvecleftcon=0;pointarmonic=0;
-transmvecrightcon=0;
+Kt = 0; Ded = 0; V = 0; N = 0; parameter=0; weightDMP=0;nflagface=0;p_old=0;
+contnorm=0;weight=0;s=0; transmvecleftcon=0;pointarmonic=0; transmvecrightcon=0; 
 knownvecleftcon=0; knownvecrightcon=0; storeinvcon=0; Bleftcon=0;
 Brightcon=0; Fgcon=0; mapinvcon=0; maptransmcon=0; mapknownveccon=0;
-pointedgecon=0; bodytermcon=0;
-Kdec=0;Knc=0;Ktc=0;Dedc=0;wightc=0;sc=0;weightDMPc=0;nflag=0;dparameter=0;
-nflagnoc=0;nflagfacec=0;Con=0; gravrate=0;lastimeval=0;lastimelevel=0;
+pointedgecon=0; bodytermcon=0; Kdec=0;Knc=0;Ktc=0;Dedc=0;wightc=0;sc=0;
+weightDMPc=0;nflag=0;dparameter=0; nflagnoc=0;nflagfacec=0;Con=0; gravrate=0;
+lastimeval=0;lastimelevel=0;
 %Define parametric variables:
 %Parameter Used in Full Pressure Support (FPS)
 %"p" quadrature point to flux in the auxilary sub interaction region

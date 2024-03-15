@@ -29,6 +29,10 @@ function hydraulic(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
 %Define global parameters:
 global timew  totaltime  pmethod filepath elem numcase inedge bedge interptype ;
 
+%---------------------------------------------------------------------------
+% h: representa a carga hidraulica 
+% h_new: carga hidraulica atualizado a cada passo de tempo
+% h_old: carga hidraulica inicial
 %--------------------------------------------------------------------------
 %Initialize parameters:
 
@@ -40,36 +44,31 @@ orderintimestep = ones(size(elem,1),1)*0;
 finaltime = totaltime(2);
 timew = 0;
 % inicialization variables
-satonvertices=0;
-producelem=0;
-h=h_old;
-Con=0;
-Kdec=0;
-Knc=0;
-nflagc=0;
-viscosity=1;
-contiterplot=1;
-auxkmap=0;
-mobility=1;
-Ktc=0;Dedc=0;wightc=0;sc=0;dparameter=0;
+satonvertices=0;producelem=0;h=h_old;Con=0;Kdec=0;Knc=0;nflagc=0;viscosity=1;
+contiterplot=1;auxkmap=0;mobility=1;Ktc=0;Dedc=0;wightc=0;sc=0;dparameter=0;
+% armazena os vtk s no tempo 0
 postprocessor(h_old,zeros(size(inedge,1)+size(bedge,1),1),Con,1-Con,contiterplot,overedgecoord,orderintimestep,'i',1,auxkmap);
 tic
 %Get "hydraulic head" and "flowrate"
 while stopcriteria < 100
+    % utiliza o metodo TPFA para aproximar a carga hidraulica
     if strcmp(pmethod,'tpfa')
         [h_new,flowrate,] = ferncodes_solvePressure_TPFA(Kde, Kn,...
             nflagface, Hesq,wells,viscosity, Kdec, Knc,nflagc,Con,SS,dt,h,MM);
+        % utiliza o metodo MPFA-D para aproximar a carga hidraulica
     elseif strcmp(pmethod,'mpfad')
         % Calculate hydraulic head and flowrate using the MPFA with diamond pacth
         [h_new,flowrate,] = ferncodes_solverpressure(...
             mobility,wells,Hesq,Kde,Kn,Kt,Ded,nflag,nflagface,...
             weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc,SS,dt,h,MM,...
             gravrate,P,kmap);
+        % utiliza o metodo MPFA-H para aproximar a carga hidraulica
     elseif strcmp(pmethod,'mpfah')
         % Calculate hydraulic head and flowrate using the MPFA with harmonic
         % points
         [h_new,flowrate,]=ferncodes_solverpressureMPFAH(nflagface,...
             parameter,weightDMP,wells,SS,dt,h,MM,gravrate,viscosity,P);
+        % utiliza o metodo NL-TPFA para aproximar a carga hidraulica
     elseif strcmp(pmethod,'nlfvpp')
         [h_new,flowrate,]=...
             ferncodes_solverpressureNLFVPP(nflag,parameter,kmap,wells,...
@@ -79,13 +78,14 @@ while stopcriteria < 100
     %% time step calculation
     disp('>> Time evolution:');
     time = time + dt
-    
+    % calcula a evoluicao da simulacao em porcentagem
     concluded = time*100/finaltime;
     stopcriteria = concluded;
     concluded = num2str(concluded);
     status = [concluded '% concluded']
-    
+    % contador
     contiterplot=contiterplot+1
+    % atualiza a carga hidraulica 
     h=h_new;
     %----------------------------------------------------------------------
     % case unconfined aquifer
@@ -115,13 +115,13 @@ while stopcriteria < 100
         end
         %----------------------------------------------------------------------
     end
+    % armanzena os vtks e calcula alguns erros  
     postprocessor(h,flowrate,Con,1-Con,contiterplot,overedgecoord,orderintimestep,'i',1,auxkmap);
     
 end
 
 toc
-%Write data file ("ProdutionReport.dat" and others)
-
+% plotagem dos graficos em determinados regioes do dominio
 plotandwrite(producelem,Con,h,satonvertices,0,0,0,0,overedgecoord);
 
 %--------------------------------------------------------------------------
