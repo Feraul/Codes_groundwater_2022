@@ -49,8 +49,8 @@ for y = 1:size(coord,1),
                 C(:,1) = wavenumberExp0Nmod10000(1:Nmod);
                 C(:,2) = wavenumberExp1Nmod10000(1:Nmod);
                 KMean = 15;
-                aaa=0.5*(coord(bedge(comp1,1),:) + coord(bedge(comp1,2),:));
-                auxkmap = K(aaa(1,1),aaa(1,2),KMean,C(:,1),C(:,2),phi);
+                aa=0.5*(coord(bedge(comp1,1),:) + coord(bedge(comp1,2),:));
+                auxkmap = K(aa(1,1),aa(1,2),KMean,C(:,1),C(:,2),phi);
                 
                 %------------------------------------------------------
                 %auxkmap=kmap(bedge(comp1,3),2);

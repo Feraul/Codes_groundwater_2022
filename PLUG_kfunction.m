@@ -28,14 +28,19 @@ global elem centelem numcase coord;
 
 %Choose the benchmark to attribute permeability.
 switch numcase
+    case 341
+        [auxperm2,]=calcpermeab;
+        for ii=1:size(centelem,1)
+            kmap(ii,:)=[ii auxperm2(ii) 0 0 auxperm2(ii)];
+        end
     %----------------------------------------------------------------------
     %Example 1.7: Axisymmetric Case (Anisotropic Medium). teta = pi/6
     case 333
         %Initialize "kaux"
         kaux = zeros(size(centelem,1),5);
-        for i = 1:size(centelem,1)
+        for ii = 1:size(centelem,1)
             
-            kaux(i,:) = [i h(i)*0.5 0 0 h(i)*0.5];
+            kaux(ii,:) = [ii h(ii)*0.5 0 0 h(ii)*0.5];
             
         end  %End of FOR
         
@@ -44,9 +49,9 @@ switch numcase
     case 331
         %Initialize "kaux"
         kaux = zeros(size(centelem,1),5);
-        for i = 1:size(centelem,1)
+        for ii = 1:size(centelem,1)
             
-            kaux(i,:) = [i h(i)*33.3 0 0 h(i)*33.33];
+            kaux(ii,:) = [ii h(ii)*33.3 0 0 h(ii)*33.33];
             
         end  %End of FOR
         
@@ -55,15 +60,15 @@ switch numcase
     case 1.7
         %Definition of "R" matrix
         %Initialization
-        k = [kmap(1,2) kmap(1,3); kmap(1,4) kmap(1,5)];
+        kk = [kmap(1,2) kmap(1,3); kmap(1,4) kmap(1,5)];
         %Definition of angle
         teta = pi/6;
         %Definition of ratation matrix
         R = [cos(teta) sin(teta); -sin(teta) cos(teta)];
         %Define the permeability to be used
-        k = R'*k*R;
+        kk = R'*kk*R;
         %Build "kmap"
-        kmap(1,:) = [1 k(1,1) k(1,2) k(2,1) k(2,2)];
+        kmap(1,:) = [1 kk(1,1) kk(1,2) kk(2,1) kk(2,2)];
         
         %----------------------------------------------------------------------
         %Example 1.8: Axisymmetric Case (Heterogeneous and Anisotropic Medium).
@@ -72,9 +77,9 @@ switch numcase
         %Initialize a parameter
         epsilon = 1e-3;
         theta = pi/6;
-        k = [1000 0; 0 1];
+        kk = [1000 0; 0 1];
         %Rotate the tensor in "theta"
-        Krot = [cos(theta) -sin(theta); sin(theta) cos(theta)]*k*...
+        Krot = [cos(theta) -sin(theta); sin(theta) cos(theta)]*kk*...
             [cos(theta) sin(theta); -sin(theta) cos(theta)];
         
         %Initialize "kmap"
@@ -920,22 +925,18 @@ switch numcase
             %             end  %End of IF
         end  %End of FOR
     case 339
-        for i = 1:size(centelem,1)
+        for ii = 1:size(centelem,1)
             %Define "x" and "y"
-            x = centelem(i,1);
+            x = centelem(ii,1);
             if x<500 || x==500
                 %  in this case considere T see pag. 23
-                kmap (i,:) = [i 200 0 0 200];
+                kmap (ii,:) = [ii 200 0 0 200];
                 
             else
-                kmap (i,:) = [i 20 0 0 20];
+                kmap (ii,:) = [ii 20 0 0 20];
             end
         end
-    case 341
-        [auxperm2,]=calcpermeab;
-        for ii=1:size(centelem,1)
-            kmap(ii,:)=[ii auxperm2(ii) 0 0 auxperm2(ii)];
-        end
+    
         
 end  %End of Switch
 

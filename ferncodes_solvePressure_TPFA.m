@@ -23,7 +23,8 @@ function [pressure,flowrate,flowresult,flowratedif] = ...
     ferncodes_solvePressure_TPFA(Kde, Kn, nflag, Hesq,wells,viscosity, Kdec, Knc,nflagc,Con,SS,dt,h,MM)
 %Define global parameters:
 
-global inedge bedge elem coord bcflag numcase methodhydro elemarea  modflowcompared;
+global inedge bedge elem coord bcflag numcase methodhydro elemarea ...
+    modflowcompared Nmod normals;
 
 % Constrói a matriz global.
 % prealocação da matriz global e do vetor termo de fonte
@@ -61,10 +62,23 @@ for ifacont=1:size(bedge,1)
         I(bedge(ifacont,3))=I(bedge(ifacont,3))-visonface*c1*A*(norm(v0)^2);
         
     else
+        if numcase==341
+            [phiExpNmod10000,wavenumberExp0Nmod10000,wavenumberExp1Nmod10000]=parametrosGauss;
+            %[phiExpNmod10000,wavenumberExp0Nmod10000,wavenumberExp1Nmod10000]=parametrosExpo;
+            phi = phiExpNmod10000(1:Nmod);
+            C(:,1) = wavenumberExp0Nmod10000(1:Nmod);
+            C(:,2) = wavenumberExp1Nmod10000(1:Nmod);
+            KMean = 15;
+            aaa=0.5*(coord(bedge(ifacont,1),:) + coord(bedge(ifacont,2),:));
+            auxkmap = K(aaa(1,1),aaa(1,2),KMean,C(:,1),C(:,2),phi);
+            %----------------------------------------------------------
+            %auxkmap=kmap(lef, 2);
+            I(bedge(ifacont,3)) = I(bedge(ifacont,3))+ normals(ifacont,2)*auxkmap*nflag(ifacont,2);
+        else
         x=bcflag(:,1)==bedge(ifacont,5);
         r=find(x==1);
         I(bedge(ifacont,3))=I(bedge(ifacont,3))- norm(v0)*bcflag(r,2);
-        
+        end
         
     end
     
@@ -144,3 +158,13 @@ disp('>> The Pressure field was calculated with success!');
 
 %Message to user:
 disp('>> The Flow Rate field was calculated with success!');
+end
+function sol = K(x,y,KMean,C1,C2,phi)
+global Nmod varK
+coeff = sqrt(varK*2/Nmod) ;
+
+ak = coeff*sum( cos( (C1*x + C2*y)*(2*pi) + phi) ) ;
+
+sol = KMean * exp(-varK/2) * exp(ak) ;
+
+end

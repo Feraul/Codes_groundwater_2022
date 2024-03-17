@@ -1,7 +1,7 @@
 function [M,I]=ferncodes_assemblematrixMPFAH(parameter,nflagface,...
     weightDMP,SS,dt,h,MM,gravrate,viscosity)
 global inedge coord bedge bcflag elem numcase methodhydro ...
-    keygravity dens elemarea modflowcompared;
+    keygravity dens elemarea modflowcompared Nmod normals;
 %---------------------------------------------------------
 % viscosity=viscosity when contaminant transport
 % viscosity=mobility when two-phase flow
@@ -37,14 +37,29 @@ for ifacont=1:bedgesize
     normcont=norm(coord(bedge(ifacont,1),:)-coord(bedge(ifacont,2),:));
     
     if bedge(ifacont,5)>200
-        x=bcflag(:,1)==bedge(ifacont,5);
-        r=find(x==1);
-        % I(lef)=I(lef)- normcont*bcflag(r,2);% testes feitos em todos os
-        %problemas monofásico
-        I(lef)=I(lef)+ normcont*bcflag(r,2); % problema de buckley leverett Bastian
+        
+        if numcase==341
+            [phiExpNmod10000,wavenumberExp0Nmod10000,wavenumberExp1Nmod10000]=parametrosGauss;
+            %[phiExpNmod10000,wavenumberExp0Nmod10000,wavenumberExp1Nmod10000]=parametrosExpo;
+            phi = phiExpNmod10000(1:Nmod);
+            C(:,1) = wavenumberExp0Nmod10000(1:Nmod);
+            C(:,2) = wavenumberExp1Nmod10000(1:Nmod);
+            KMean = 15;
+            aaa=0.5*(coord(bedge(ifacont,1),:) + coord(bedge(ifacont,2),:));
+            auxkmap = K(aaa(1,1),aaa(1,2),KMean,C(:,1),C(:,2),phi);
+            %----------------------------------------------------------
+            %auxkmap=kmap(lef, 2);
+            I(lef) = I(lef)+ normals(ifacont,2)*auxkmap*nflagface(ifacont,2);
+        else
+            x=bcflag(:,1)==bedge(ifacont,5);
+            r=find(x==1);
+            % I(lef)=I(lef)- normcont*bcflag(r,2);% testes feitos em todos os
+            %problemas monofásico
+            I(lef)=I(lef)+ normcont*bcflag(r,2); % problema de buckley leverett Bastian
+        end
     else
         % armazena os elementos proximo ao contorno de Dirichlet
-         if strcmp(modflowcompared,'y')
+        if strcmp(modflowcompared,'y')
             elembedge(jj,1)=bedge(ifacont,3);
             elembedge(jj,2)=nflagface(ifacont,2);
             jj=jj+1;
@@ -85,7 +100,7 @@ for iface=1:inedgesize
     % element flags
     lef=inedge(iface,3);
     rel=inedge(iface,4);
-        
+    
     %Determinação dos centróides dos elementos à direita e à esquerda.%
     vd1=coord(inedge(iface,2),:)-coord(inedge(iface,1),:);
     % calculo da norma do vetor "vd1"
@@ -806,7 +821,7 @@ end
 
 % used to calculate the hydraulic head
 if numcase>300
-     if numcase~=336 && numcase~=334 && numcase~=335 &&...
+    if numcase~=336 && numcase~=334 && numcase~=335 &&...
             numcase~=337 && numcase~=338 && numcase~=339 &&...
             numcase~=340 && numcase~=341
         if numcase==333 || numcase==331
@@ -827,4 +842,14 @@ if numcase>300
         
     end
 end
+end
+
+function sol = K(x,y,KMean,C1,C2,phi)
+global Nmod varK
+coeff = sqrt(varK*2/Nmod) ;
+
+ak = coeff*sum( cos( (C1*x + C2*y)*(2*pi) + phi) ) ;
+
+sol = KMean * exp(-varK/2) * exp(ak) ;
+
 end
