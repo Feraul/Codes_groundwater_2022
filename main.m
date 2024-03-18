@@ -104,8 +104,8 @@ elseif numcase>300
    %methodhydro='cranknicolson'; 
    % This numcase is used for two-phase (water-oil) flow problems 
    if numcase==341
-       % Nmod:Numero de funcoes coseno % vark:varianca
-       Nmod=100;  varK=4;
+       % Nmod:Numero de funcoes coseno e vark:varianca
+       Nmod=100;  varK=0.1;
    end
 else
     auxpar=0;dmap=0; Dmedio=0; gamma=0; velmedio=0; wellsc=0; SS=0; 
