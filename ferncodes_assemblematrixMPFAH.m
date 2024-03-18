@@ -12,7 +12,7 @@ bedgesize = size(bedge,1);
 inedgesize = size(inedge,1);
 
 %Initialize "M" (global matrix) and "I" (known vector)
-M = zeros(size(elem,1)); %Prealocação de M.
+M = sparse(size(elem,1),size(elem,1)); %Prealocação de M.
 I = zeros(size(elem,1),1);
 jj=1;
 %viscosidade ou mobilidade na face
@@ -39,17 +39,12 @@ for ifacont=1:bedgesize
     if bedge(ifacont,5)>200
         
         if numcase==341
-            [phiExpNmod10000,wavenumberExp0Nmod10000,wavenumberExp1Nmod10000]=parametrosGauss;
-            %[phiExpNmod10000,wavenumberExp0Nmod10000,wavenumberExp1Nmod10000]=parametrosExpo;
-            phi = phiExpNmod10000(1:Nmod);
-            C(:,1) = wavenumberExp0Nmod10000(1:Nmod);
-            C(:,2) = wavenumberExp1Nmod10000(1:Nmod);
-            KMean = 15;
+           
             aaa=0.5*(coord(bedge(ifacont,1),:) + coord(bedge(ifacont,2),:));
-            auxkmap = K(aaa(1,1),aaa(1,2),KMean,C(:,1),C(:,2),phi);
+            auxkmap = ferncodes_K(aaa(1,1),aaa(1,2));
             %----------------------------------------------------------
             %auxkmap=kmap(lef, 2);
-            I(lef) = I(lef)+ normals(ifacont,2)*auxkmap*nflagface(ifacont,2);
+            I(lef) = I(lef)+ normals(ifacont,2)*auxkmap(1)*nflagface(ifacont,2);
         else
             x=bcflag(:,1)==bedge(ifacont,5);
             r=find(x==1);
@@ -842,14 +837,4 @@ if numcase>300
         
     end
 end
-end
-
-function sol = K(x,y,KMean,C1,C2,phi)
-global Nmod varK
-coeff = sqrt(varK*2/Nmod) ;
-
-ak = coeff*sum( cos( (C1*x + C2*y)*(2*pi) + phi) ) ;
-
-sol = KMean * exp(-varK/2) * exp(ak) ;
-
 end

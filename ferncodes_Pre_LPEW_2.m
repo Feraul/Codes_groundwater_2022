@@ -2,7 +2,7 @@
 
 function [w,s] = ferncodes_Pre_LPEW_2(kmap,N,Sw,nflagface,nflag)
 %Define global parameters
-global coord nsurn1 nsurn2 numcase bcflag bedge Nmod inedge normals
+global coord nsurn1 nsurn2 numcase bcflag bedge inedge normals
 
 % Retorna todos os parâmetros necessários às expressões dos fluxos.
 apw = ones(size(coord,1),1);
@@ -41,20 +41,13 @@ for y = 1:size(coord,1),
                 a = bcflag(:,1) == bedge(comp1,5);
                 s1 = find(a == 1);
                 % o "r" ja esta acompanhado pela norma
-                %-------------------------------------------------------
-              
-                [phiExpNmod10000,wavenumberExp0Nmod10000,wavenumberExp1Nmod10000]=parametrosGauss;
-                %[phiExpNmod10000,wavenumberExp0Nmod10000,wavenumberExp1Nmod10000]=parametrosExpo;
-                phi = phiExpNmod10000(1:Nmod);
-                C(:,1) = wavenumberExp0Nmod10000(1:Nmod);
-                C(:,2) = wavenumberExp1Nmod10000(1:Nmod);
-                KMean = 15;
+                %------------------------------------------------------
                 aa=0.5*(coord(bedge(comp1,1),:) + coord(bedge(comp1,2),:));
-                auxkmap = K(aa(1,1),aa(1,2),KMean,C(:,1),C(:,2),phi);
+                auxkmap = ferncodes_K(aa(1,1),aa(1,2));
                 
                 %------------------------------------------------------
                 %auxkmap=kmap(bedge(comp1,3),2);
-                aux1= r(No,1)*auxkmap*nflagface(s1,2);
+                aux1= r(No,1)*auxkmap(1)*nflagface(s1,2);
             end
             % avalia se a face comp1 esta no contorno de Neumann
             if bedge(comp2,5)>200
@@ -63,20 +56,14 @@ for y = 1:size(coord,1),
                 %
                 %-------------------------------------------------------
                 
-                [phiExpNmod10000,wavenumberExp0Nmod10000,wavenumberExp1Nmod10000]=parametrosGauss;
-                %[phiExpNmod10000,wavenumberExp0Nmod10000,wavenumberExp1Nmod10000]=parametrosExpo;
-                phi = phiExpNmod10000(1:Nmod);
-                C(:,1) = wavenumberExp0Nmod10000(1:Nmod);
-                C(:,2) = wavenumberExp1Nmod10000(1:Nmod);
-                KMean = 15;
                 aaa=0.5*(coord(bedge(comp2,1),:) + coord(bedge(comp2,2),:));
-                auxkmap = K(aaa(1,1),aaa(1,2),KMean,C(:,1),C(:,2),phi);
+                auxkmap = ferncodes_K(aaa(1,1),aaa(1,2));
                 
                 %------------------------------------------------------
                 % auxkmap=kmap(bedge(comp2,3),2);
                 
                 % o "r" ja esta acompanhado pela norma
-                aux2= r(No,2)*auxkmap*nflagface(s2,2);
+                aux2= r(No,2)*auxkmap(1)*nflagface(s2,2);
             end
             s(No,1) = -(1/sum(lambda))*(aux1+ aux2);
         end
@@ -101,15 +88,7 @@ for y = 1:size(coord,1),
 end
 end
 %End of FOR
-function sol = K(x,y,KMean,C1,C2,phi)
-global varK Nmod
-coeff = sqrt(varK*2/Nmod) ;
 
-ak = coeff*sum( cos( (C1*x + C2*y)*(2*pi) + phi) ) ;
-
-sol = KMean * exp(-varK/2) * exp(ak) ;
-
-end
 
 
 
