@@ -1,11 +1,10 @@
 %It is called by "ferncodes_solvepressure.m"
 
-function [M,I] = ferncodes_globalmatrix(w,s,Kde,Ded,Kn,Kt,Hesq,viscosity,...
+function [M,I,elembedge] = ferncodes_globalmatrix(w,s,Kde,Ded,Kn,Kt,Hesq,viscosity,...
     nflag,nflagface,SS,dt,h,MM,gravrate,kmap)
 %Define global variables:
 global coord elem esurn1 esurn2 bedge inedge centelem bcflag ...
-    numcase methodhydro keygravity dens elemarea normals modflowcompared...
-    Nmod;
+    numcase methodhydro keygravity dens elemarea normals modflowcompared;
 
 %-----------------------inicio da rOtina ----------------------------------%
 %Constrói a matriz global.
@@ -19,6 +18,7 @@ M = sparse(size(elem,1),size(elem,1)); %Prealocação de M.
 I = zeros(size(elem,1),1);
 m=0;
 jj=1;
+elembedge=0;
 % viscosidade ou mobilidade
 visonface = 1;
 %Evaluate "bedge"
@@ -54,6 +54,8 @@ for ifacont = 1:bedgesize
         % valor da pressao no contorno
         c1 = nflag(bedge(ifacont,1),2);
         c2 = nflag(bedge(ifacont,2),2);
+        % amazena os elementos vizinhos no contorno de Dirichlet e o valor
+        % da condicao de contorno nela
         if strcmp(modflowcompared,'y')
             elembedge(jj,1)=bedge(ifacont,3);
             elembedge(jj,2)=nflag(bedge(ifacont,2),2);
@@ -71,8 +73,6 @@ for ifacont = 1:bedgesize
                 m=dens(1,1)*gravrate(ifacont)/visonface;
             end
         end
-        % average hydraulic head
-        % unconfined aquifer
         
         %------------------------------------------------------------------
         % ambos os nos pertenecem ao contorno de Dirichlet
@@ -234,6 +234,39 @@ for iface = 1:inedgesize
         I(inedge(iface,4))=I(inedge(iface,4))-visonface*m;
     end
 end  %End of FOR ("inedge")
+
+%==========================================================================
+% calcula um problema transiente
+if numcase>300
+    %
+    if numcase~=336 && numcase~=334 && numcase~=335 &&...
+            numcase~=337 && numcase~=338 && numcase~=339 &&...
+            numcase~=340 && numcase~=341 
+        if numcase==333 || numcase==331
+            %para aquifero nao confinado
+            coeficiente=dt^-1*SS.*elemarea(:);
+        else
+            % para quifero confinado
+            coeficiente=dt^-1*MM*SS.*elemarea(:);
+        end
+        % Euler backward method
+        if strcmp(methodhydro,'backward')
+            % equacao 30 Qian et al 2023
+            M=coeficiente.*eye(size(elem,1))+M;
+            I=I+coeficiente.*eye(size(elem,1))*h;
+        else
+            % Crank-Nicolson method
+            % equacao 33 Qian et al 2023
+            I=I+(coeficiente.*eye(size(elem,1))-0.5*M)*h;
+            M=  (coeficiente.*eye(size(elem,1))+0.5*M);
+            
+        end
+        
+    end
+end
+%==========================================================================
+% utilizase somente quando o teste vai ser comparado com resultados do
+% modflow
 if strcmp(modflowcompared,'y')
     for iw = 1:size(elembedge,1)
         M(elembedge(iw,1),:)=0*M(elembedge(iw,1),:);
@@ -241,30 +274,4 @@ if strcmp(modflowcompared,'y')
         I(elembedge(iw,1))=elembedge(iw,2);
     end
 end
-%==========================================================================
-% calcula um problema transiente
-if numcase>300
-    %
-    if numcase~=336 && numcase~=334 && numcase~=335 &&...
-            numcase~=337 && numcase~=338 && numcase~=339 &&...
-            numcase~=340 && numcase~=341
-        if numcase==333 || numcase==331
-            coeficiente=dt^-1*SS.*elemarea(:);
-        else
-            coeficiente=dt^-1*MM*SS.*elemarea(:);
-        end
-        % Euler backward method
-        if strcmp(methodhydro,'backward')
-            M=M+coeficiente.*eye(size(elem,1));
-            I=I+coeficiente.*eye(size(elem,1))*h;
-        else
-            % Crank-Nicolson method
-            I=I+coeficiente.*eye(size(elem,1))*h-0.5*M*h;
-            M=0.5*M+coeficiente.*eye(size(elem,1));
-            
-        end
-        
-    end
-end
-
 end

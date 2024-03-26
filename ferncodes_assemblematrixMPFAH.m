@@ -1,4 +1,4 @@
-function [M,I]=ferncodes_assemblematrixMPFAH(parameter,nflagface,...
+function [M,I,elembedge]=ferncodes_assemblematrixMPFAH(parameter,nflagface,...
     weightDMP,SS,dt,h,MM,gravrate,viscosity)
 global inedge coord bedge bcflag elem numcase methodhydro ...
     keygravity dens elemarea modflowcompared Nmod normals;
@@ -10,7 +10,7 @@ global inedge coord bedge bcflag elem numcase methodhydro ...
 %Initialize "bedgesize" and "inedgesize"
 bedgesize = size(bedge,1);
 inedgesize = size(inedge,1);
-
+elembedge=0;
 %Initialize "M" (global matrix) and "I" (known vector)
 M = sparse(size(elem,1),size(elem,1)); %Prealocação de M.
 I = zeros(size(elem,1),1);
@@ -53,7 +53,8 @@ for ifacont=1:bedgesize
             I(lef)=I(lef)+ normcont*bcflag(r,2); % problema de buckley leverett Bastian
         end
     else
-        % armazena os elementos proximo ao contorno de Dirichlet
+        % amazena os elementos vizinhos no contorno de Dirichlet e o valor
+        % da condicao de contorno nela
         if strcmp(modflowcompared,'y')
             elembedge(jj,1)=bedge(ifacont,3);
             elembedge(jj,2)=nflagface(ifacont,2);
@@ -805,14 +806,7 @@ for iface=1:inedgesize
         I(inedge(iface,4))=I(inedge(iface,4))-visonface*m;
     end
 end
-%--------------------------------------------------------------------
-if strcmp(modflowcompared,'y')
-    for iw = 1:size(elembedge,1)
-        M(elembedge(iw,1),:)=0*M(elembedge(iw,1),:);
-        M(elembedge(iw,1),elembedge(iw,1))=1;
-        I(elembedge(iw,1))=elembedge(iw,2);
-    end
-end
+
 
 % used to calculate the hydraulic head
 if numcase>300
@@ -826,15 +820,28 @@ if numcase>300
         end
         % Euler backward method
         if strcmp(methodhydro,'backward')
+            % equacao 30 Qian et al 2023
             M=M+coeficiente.*eye(size(elem,1));
             I=I+coeficiente.*eye(size(elem,1))*h;
         else
+            
             % Crank-Nicolson method
-            I=I+coeficiente.*eye(size(elem,1))*h-0.5*M*h;
-            M=0.5*M+coeficiente.*eye(size(elem,1));
+            % equacao 33 Qian et al 2023
+            I=I+(coeficiente.*eye(size(elem,1))-0.5*M)*h;
+            M=  (coeficiente.*eye(size(elem,1))+0.5*M);
             
         end
         
+    end
+end
+%==========================================================================
+% utilizase somente quando o teste vai ser comparado com resultados do
+% modflow
+if strcmp(modflowcompared,'y')
+    for iw = 1:size(elembedge,1)
+        M(elembedge(iw,1),:)=0*M(elembedge(iw,1),:);
+        M(elembedge(iw,1),elembedge(iw,1))=1;
+        I(elembedge(iw,1))=elembedge(iw,2);
     end
 end
 end

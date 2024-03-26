@@ -22,7 +22,7 @@
 
 %--------------------------------------------------------------------------
 
-function [M,mvector] = addsource(M,mvector,wells,P)
+function [M,mvector] = addsource(M,mvector,wells,P,elembedge)
 %Define global parameters:
 global elemarea numcase;
 
@@ -138,7 +138,7 @@ elseif (numcase >= 10 && numcase <= 30) || numcase == 1.6 ||...
         [P]=ferncodes_calcfonte;
     end
     %Catch "source" came from "PLUG_sourcefunction"
-    source = PLUG_sourcefunction(P);
+    source = PLUG_sourcefunction(P,elembedge);
     %The vector "mvector" is added to vector returned from function below.
     mvector = mvector + source;
 end  %End of IF

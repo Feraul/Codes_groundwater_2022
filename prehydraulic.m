@@ -1,16 +1,13 @@
 
 % Esta funcao determina os parametros iniciais como adequacao dos pocos
-% injetores e produtores, condicao inicial hydrologica alguns outros
-% parametro fisicos necessarios para rodar os problemas
+% artesanais, condicao inicial hydrologica e alguns outros
+% parametro fisicos necessarios para rodar os problemas, alem disso, pode
+% colocar os parametros para os novos casos
 function [SS,h_old,MM,wells,dt,P]=prehydraulic
 
 global numcase elem centelem
-SS=0;
-h_old=0;
-MM=0;
-wells=0;
-dt=0;
-P=0;
+% inicialize os parametros
+SS=0; h_old=0; MM=0; wells=0; dt=0; P=0;
 switch numcase
     % The cases 330-333 were obtained of the article -- A local grid-refined
     % numerical groundwater model based on the vertex centered finite
@@ -121,7 +118,7 @@ switch numcase
         % espesura do aquifero
         MM=5;
         % step time no considered 
-        dt=0.5;
+        dt=20;
         % precipitation infiltration 
         P=0.002;
     case 334 

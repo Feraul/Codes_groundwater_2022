@@ -24,10 +24,6 @@ if 300<numcase && numcase~=336
     if numcase==330 || numcase==332 || numcase==334 || numcase==335 ...
         || numcase==337|| numcase==338
         kmap(:,2:5)=MM*kmap(:,2:5);
-    elseif numcase==333
-        kmap(:,2:5)=kmap(:,2:5);
-    elseif numcase==331 
-        kmap=kmap;
     end
 end
 end%End of FOR

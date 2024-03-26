@@ -27,7 +27,7 @@
 %(over each edge)
 function [presanalit,flowrateanalit] = benchmark(overedgecoord)
 %Define global parameters:
-global bedge inedge centelem normals P numcase;
+global bedge inedge centelem normals P numcase modflowcompared bcflag;
 
 %--------------------------------------------------------------------------
 %Analitical solution
@@ -1017,16 +1017,30 @@ switch numcase
                 dot(V,normals(size(bedge,1) + ianal,:));
         end  %End of FOR (internal edges)
     case 333
+       c=0;
+        if  strcmp(modflowcompared,'y')
+            v=bedge(:,5)<200;
+            a=find(v==1);
+            c=bedge(a,3);
+            
+        end
         %Swept all elements:
         for ianal = 1:size(centelem,1)
-            %Attribute to "x" and "y" "centelem" values
-            x = centelem(ianal,1);
-            % analytical hydraulic head
-            % equation 43 from article QIAN et al 2023.
-            % for more details see introduction to groundwater modeling
-            % Herbet Wang,1995
-            presanalit(ianal) =sqrt(4+(P/0.5)*(40*x-x^2)) ;
             
+            if max(c==ianal)>0
+               
+             presanalit(ianal)=2;
+               
+            else
+                
+                %Attribute to "x" and "y" "centelem" values
+                x = centelem(ianal,1);
+                % analytical hydraulic head
+                % equation 43 from article QIAN et al 2023.
+                % for more details see introduction to groundwater modeling
+                % Herbet Wang,1995
+                presanalit(ianal) =sqrt(4+(P/0.5)*(40*x-x^2)) ;
+            end
         end  %End of FOR (pressure)
     case 334
         for ianal = 1:size(centelem,1)

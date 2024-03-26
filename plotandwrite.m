@@ -651,7 +651,7 @@ elseif numcase > 200
             title('MPFA-H method');
         case 333
             % solucao analitica
-            [presanalit,] = benchmark(overedgecoord,numcase);
+            [presanalit,] = benchmark(overedgecoord);
             % solucao numerica
             [posit,confield,elemonline] = getlineresult(pressure,satonvertices);
             if strcmp(modflowcompared,'n')
@@ -688,7 +688,7 @@ elseif numcase > 200
                 hold on
             else
                 %---------------------------------------------
-                plot(posit,presanalit,'k','LineWidth',1.)
+                plot(posit,presanalit(elemonline),'k','LineWidth',1.)
                 hold on
                 %------------------------------------------------------
                 plot(posit,confield,'*g','LineWidth',1.5);
