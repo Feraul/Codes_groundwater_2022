@@ -7,12 +7,12 @@
 %Goals: Do the manegement of simulator. This is a MAIN program. 
 
 %--------------------------------------------------------------------------
-%In this numerical routine the flow may be simulated with one or two phase 
-% or contaminants or groundwater. The functions below are organized in order
-%give flexibility to software resourcers.
-%For example: the saturation and pressure fields are calculated by IMPES,
-%but it may be calculated also by a fully implicit scheme. This change is
-%done in the present rountine just call each function.
+% In this numerical routine the flow may be simulated with one or two phase 
+% or contaminants or groundwater (hydraulic head). The functions below are
+% organized in order give flexibility to software resourcers.
+% For example: the saturation and pressure fields are calculated by IMPES,
+% but it may be calculated also by a fully implicit scheme. This change is
+% done in the present rountine just call each function.
 
 %|--------------------------------------|
 %|  leia com muita atencao as indicacoes|
@@ -48,7 +48,9 @@ global coord centelem elem esurn1 esurn2 nsurn1 nsurn2 bedge inedge ...
     smethod,xyrz,r0,symaxe,keymsfv,coarseratio,auxcvfactor,interptype,...
    multdopt,goefreeopt,order,timeorder,recovtype,lsneightype,...
     lsexp,keygravity,g,keycapil,ncaplcorey,filepath,resfolder,benchkey,...
-    kmap,wells,klb,limiterflag,rowposit,nltol,maxiter,acel,modflowcompared] = preprocessor;
+    kmap,wells,klb,limiterflag,rowposit,nltol,maxiter,acel,modflowcompared] = preprocessormod;
+%---------------------------------------------------------------------------
+% In preprocessormod.m, we include the line: 2737 to 2739
 %-----------------------------------------------------------------------------
 % As concicoes abaixo utilize para malhas Tipo1Malha4.msh, Tipo1Malha5.msh, Tipo1Malha6.msh
 % x=bedge(:,1);

@@ -20,7 +20,8 @@
 %--------------------------------------------------------------------------
 
 function [pressure,flowrate,flowresult,flowratedif] = ...
-    ferncodes_solvePressure_TPFA(Kde, Kn, nflag, Hesq,wells,viscosity, Kdec, Knc,nflagc,Con,SS,dt,h,MM)
+    ferncodes_solvePressure_TPFA(Kde, Kn, nflag, Hesq,wells,viscosity,...
+    Kdec, Knc,nflagc,Con,SS,dt,h,MM,P)
 %Define global parameters:
 
 global inedge bedge elem coord bcflag numcase methodhydro elemarea ...
@@ -31,6 +32,7 @@ global inedge bedge elem coord bcflag numcase methodhydro elemarea ...
 M=zeros(size(elem,1),size(elem,1));
 I=zeros(size(elem,1),1);
 bedgesize = size(bedge,1);
+elembedge=0;
 % Loop de faces de contorno
 jj=1;
 for ifacont=1:size(bedge,1)
@@ -136,7 +138,7 @@ end
 %Add a source therm to independent vector "mvector"
 
 %Often it may change the global matrix "M"
-[M,I] = addsource(M,I,wells);
+[M,I] = addsource(M,I,wells,P,elembedge);
 
 %--------------------------------------------------------------------------
 %Solver the algebric system

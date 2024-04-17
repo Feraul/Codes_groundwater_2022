@@ -174,7 +174,7 @@ switch phasekey
             if strcmp(pmethod,'tpfa')
                 %Get "pressure" and "flowrate"
                 [pressure,flowrate,] = ferncodes_solvePressure_TPFA(Kde, Kn,...
-                    nflagface, Hesq,0,0,0,0,0,0,SS,dt,h_old,MM);
+                    nflagface, Hesq,0,0,0,0,0,0,SS,dt,h_old,MM,P);
                 %MPFA-D (Gao and Wu, 2010)
             elseif strcmp(pmethod,'mpfad')
                 %Get "pressure" and "flowrate"
