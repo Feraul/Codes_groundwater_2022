@@ -70,7 +70,7 @@ switch numcase
         % the flow rate value in the well is divided by number wells
         
         %b1=find(abs(centelem(:,1)-250)<1e-9 & abs(centelem(:,2)-250)<1e-9);
-        b1=find((const*9<centelem(:,1)& centelem(:,1)<const*10) & (const*9<centelem(:,2)& centelem(:,2)<const*10));
+        b1=find((const*10<centelem(:,1)& centelem(:,1)<const*11) & (const*10<centelem(:,2)& centelem(:,2)<const*11));
         %b1=find((abs(centelem(:,1)-250)/250)<1e-2 & (abs(centelem(:,2)-250)/250)<1e-2);
         wells(1,1)=b1;
         wells(1,2)=2;
@@ -79,7 +79,7 @@ switch numcase
         wells(1,5)=0;
         wells(1,6)=-pumpingrate;
         %-----------------------------------------------------------------
-        b2=find((const*30<centelem(:,1)& centelem(:,1)<const*31) & (const*9<centelem(:,2)& centelem(:,2)<const*10));
+        b2=find((const*29<centelem(:,1)& centelem(:,1)<const*30) & (const*10<centelem(:,2)& centelem(:,2)<const*11));
         %b2=find((abs(centelem(:,1)-750)/750)<1e-2 & (abs(centelem(:,2)-250)/250)<1e-2);
         %b2=find(abs(centelem(:,1)-750)<1e-9 & abs(centelem(:,2)-250)<1e-9);
         wells(2,1)=b2;
@@ -89,7 +89,7 @@ switch numcase
         wells(2,5)=0;
         wells(2,6)=-pumpingrate;
         %------------------------------------------------------------------
-        b3=find((const*30<centelem(:,1)& centelem(:,1)<const*31) & (const*30<centelem(:,2)& centelem(:,2)<const*31));
+        b3=find((const*29<centelem(:,1)& centelem(:,1)<const*30) & (const*29<centelem(:,2)& centelem(:,2)<const*30));
         %b3=find((abs(centelem(:,1)-750)/750)<1e-2 & (abs(centelem(:,2)-750)/750)<1e-2);
         
         wells(3,1)=b3;
@@ -99,7 +99,7 @@ switch numcase
         wells(3,5)=0;
         wells(3,6)=-pumpingrate; 
         %------------------------------------------------------------------
-        b4=find((const*9<centelem(:,1)& centelem(:,1)<const*10) & (const*30<centelem(:,2)& centelem(:,2)<const*31));
+        b4=find((const*10<centelem(:,1)& centelem(:,1)<const*11) & (const*29<centelem(:,2)& centelem(:,2)<const*30));
         %b4=find((abs(centelem(:,1)-250)/250)<1e-2 & (abs(centelem(:,2)-750)/750)<1e-2);
         
         wells(4,1)=b4;

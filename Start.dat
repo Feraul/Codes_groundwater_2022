@@ -26,14 +26,14 @@ y
 //***OBS.: Even if you chose [n], write below both the path and 
 //folder's name where you want to store your results:
 
-C:\Users\flc59\Documents\Benchmark_Cases\BenchHydraulic302
+C:\Users\flc59\Documents\Benchmark_Cases\BenchHydraulic303
 
 //Write below either a number or any other key word to feature the 
 //folder where the results will be stored:
 //***OBS.: If you set "0", the folder "Results" and other will be 
 //created into folder set above:
 
-teste_tpfa
+teste_mpfad
 
 //--------------------------------------------------------------------
 //------------------------ Solver Properties -------------------------
@@ -135,7 +135,7 @@ lpew2
 
 500 
 
-// Qual acelerador da itera  o de Picard desja utilizar:
+// Qual acelerador da iteração de Picard desja utilizar:
 //[FPI] ==> "full Picard"; 
 //[AA] ==> "Aceleration Anderson" ;
 //[RRE] ==> "Rank Reduced Extrapolation" ; 
@@ -238,7 +238,7 @@ n
 //[sb] ==> "SuperBee";
 //[bj] ==> "Barth-Jespersen";
 //[va1] ==> "vanAlbada 1" (see vanAlbada et al., 1982);
-//[va2] ==> "vanAlbada 2" (see L hner, 2001); 
+//[va2] ==> "vanAlbada 2" (see Löhner, 2001); 
 //[vl1] ==> "vanLeer 1";
 //[vl2] ==> "vanLeer 2" (see Berger, 2005);
 //[nl2] ==> "new Limiter type 2" (see Mandal, 2008);
@@ -334,19 +334,19 @@ n
 
 //If [y], write below the path where the mesh file is:
  
-C:\Users\flc59\Documents\GitHub\Malhas2
+C:\Users\flc59\Documents\Malhas2
 
 //Write below the name of the mesh file. Use the extension *.msh:
 
-BenchHydraulic2.msh
+Tipo6Malha1.msh
 
 //If [n], write below the path where the geometry file is:  
 
-C:\Users\flc59\Documents\Benchmark_GeometryFiles
+C:\Users\flc59\Documents\Malhas2
 
 //Write below the name of the geometry file. Use the extension *.geo.
 
-BenchHydraulic2.geo
+BenchHydraulic303.geo
 
 //--------------------------------------------------------------------
 //----------------- General Options (Configure gmsh) -----------------
@@ -380,13 +380,13 @@ y
 //and two geometric tag)
 
 1
-41 1 1 3
+32 1 1 3
 
 //Direction "y" (number of statments, number of points, growth rate 
 //and two geometric tag)
 
 1
-41 1 2 4
+8 1 2 4
 
 //------------------
 //UNSTRUCTURED MESH:
@@ -394,7 +394,7 @@ y
 //Write below the average size for the control volumes: 
 //[1] ==> "DEFAULT value"
 
-0.0625
+1.25
 
 //Write below the maximum size admissible for the control volumes:
 //[1e22] ==> "DEFAULT Option" 
@@ -415,7 +415,7 @@ y
 //[1] ==> "Quadrangles"; 
 //[2] ==> "Both".
 
-1
+2
 
 //OBS.: 
 //The option "Both" does not work when the mesh is structured. 
@@ -529,7 +529,7 @@ viscositytable.dat
 //[y] ==> "yes" (each control volume has a permeability value); 
 //[n] ==> "no" (the permeability value is attributed to layer(s)).
 
-r
+n
 
 //If [r], the matlab generates a randomic distribution with the 
 //component values variating between the minimum and maximum values. 
@@ -567,8 +567,8 @@ r
 //used to "draw" the surfaces during CAD building. (*.geo).  
 
 1
-33.33 0 
-0 33.33
+0.5 0 
+0 0.5
 
 //--------------------------------------------------------------------
 //Distribution of porosity:
@@ -634,9 +634,11 @@ n
 //(Dirichlet, Neumann or Periodic);
 //3. In the same row, put the algebric value of this BC.  
 
-2
-101 100
-201 0      
+4
+101 2
+102 2
+201 0 
+202 0     
 
 //--------------------------------------------------------------------
 //Treatment of Boundary Points
@@ -647,8 +649,8 @@ n
 //2. In another row, the sequence of codes to be associated with 
 //each point group. 
 
-1
-101    
+4
+101 102 201  202
 
 //--------------------------------------------------------------------
 //----------------------- Convergence Criteria -----------------------
@@ -673,7 +675,7 @@ n
 //[s] ==> "to dimentional time" (seconds, days, etc); 
 //[pvi] ==> "to non-dmentional time" (Pore Volume Injected). 
 
-s
+d
 
 //--------------------------------------------------------------------
 //Total time of simulation (days) or PVI's value (adm)
@@ -683,7 +685,7 @@ s
 //state simulation (parameter of stop). Write below the amount of 
 //days or the PVI's value instead:
 
-20
+100
 
 //--------------------------------------------------------------------
 //------------------------------- Wells ------------------------------
@@ -723,5 +725,5 @@ s
 //if you write "0" replacing the number of wells, it will be not 
 //necessary to erase the numbers below. Keep it to reference.  
 
-1
+0
 1 500   500  0.008 301 1 401  100000   1

@@ -596,7 +596,7 @@ elseif numcase > 200
             grid
             xlabel('y(m)');
             ylabel('Hydraulic head (m)');
-            title('MPFA-H method');
+            
         case 331
             % solucao numerica numa determinada regiao do dominio
             [posit,confield,] = getlineresult(pressure,satonvertices);
@@ -622,7 +622,7 @@ elseif numcase > 200
             grid
             xlabel('y(m)');
             ylabel('Hydraulic head (m)');
-            title('MPFA-H method');
+            
         case 332
             % solucao numerica numa determinada regiao do dominio
             [posit,confield,] = getlineresult(pressure,satonvertices);
@@ -648,7 +648,7 @@ elseif numcase > 200
             grid
             xlabel('y(m)');
             ylabel('Hydraulic head (m)');
-            title('MPFA-H method');
+            
         case 333
             % solucao analitica
             [presanalit,] = benchmark(overedgecoord);
@@ -697,7 +697,7 @@ elseif numcase > 200
             grid
             xlabel('y(m)');
             ylabel('Hydraulic head (m)');
-            title('MPFA-H method');
+            
     end
     
 else
@@ -839,7 +839,7 @@ for i = 1:size(centelem,1)
         elseif numcase==332
             %if (abs(centelem(i,1)-250)/250)<1e-2 && centelem(i,2)<1000
             const=25; % para malha 40x40
-            if ((const*30<centelem(i,1)&& centelem(i,1)<const*31) && centelem(i,2)<1000)
+            if ((const*29<centelem(i,1)&& centelem(i,1)<const*30) && centelem(i,2)<1000)
                 
                 %"y_value"
                 getxvalue(j) = centelem(i,2);
