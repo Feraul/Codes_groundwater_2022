@@ -16,6 +16,7 @@ M = sparse(size(elem,1),size(elem,1)); %Prealocação de M.
 I = zeros(size(elem,1),1);
 jj=1;
 %viscosidade ou mobilidade na face
+% Montagem da matriz global
 visonface = 1;
 for ifacont=1:bedgesize
     % when 200<numcase<300, is groundwater transport model
@@ -77,7 +78,7 @@ for ifacont=1:bedgesize
         
     end
 end
-% Montagem da matriz global
+
 
 for iface=1:inedgesize
     % when 200<numcase<300, is groundwater transport model
@@ -806,16 +807,16 @@ for iface=1:inedgesize
         I(inedge(iface,4))=I(inedge(iface,4))-visonface*m;
     end
 end
-
-
-% used to calculate the hydraulic head
+%% used to calculate the hydraulic head
 if numcase>300
     if numcase~=336 && numcase~=334 && numcase~=335 &&...
             numcase~=337 && numcase~=338 && numcase~=339 &&...
-            numcase~=340 && numcase~=341
-        if numcase==333 || numcase==331
+            numcase~=340 && numcase~=341 
+
+        if numcase==333 || numcase==331 
             coeficiente=dt^-1*SS.*elemarea(:);
         else
+            
             coeficiente=dt^-1*MM*SS.*elemarea(:);
         end
         % Euler backward method
@@ -834,8 +835,7 @@ if numcase>300
         
     end
 end
-%==========================================================================
-% utilizase somente quando o teste vai ser comparado com resultados do
+%% utilize somente quando o teste vai ser comparado com resultados do
 % modflow
 if strcmp(modflowcompared,'y')
     for iw = 1:size(elembedge,1)

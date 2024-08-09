@@ -80,7 +80,7 @@ for ifacont = 1:bedgesize
     flowresult(lef) = flowresult(lef) + flowrate(ifacont);
     %% ===================================================================
     % calculo do fluxo dispersivo
-    if 200<numcase && numcase<300
+    if (200<numcase && numcase<300) || numcase==380
         if bedge(ifacont,7)>200
             x=bcflagc(:,1)==bedge(ifacont,7);
             r=find(x==1);
@@ -150,7 +150,7 @@ for iface = 1:inedgesize
     %On the right:
     flowresult(rel) = flowresult(rel) - flowrate(bedgesize + iface);
     %% ====================================================================
-    if 200<numcase && numcase<300
+    if (200<numcase && numcase<300) || numcase==380
         % calculo do fluxo dispersivo
         
         conno1=cinterp(inedge(iface,1),1);

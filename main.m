@@ -110,6 +110,11 @@ elseif numcase>300
        % Nmod:Numero de funcoes coseno % vark:varianca
        Nmod=100;  varK=0.1;
    end
+   if 350<numcase && numcase <400
+       % Flags adequation for contamination and groundwater problem
+       [bedge,bcflagc,wellsc,auxpar,velmedio,dmap,Dmedio,gamma]=...
+           preconcentration(bedge,wells);
+   end
 else
     auxpar=0;dmap=0; Dmedio=0; gamma=0; velmedio=0; wellsc=0; SS=0; 
     h_old=0; MM=0; dt=0; P=0; 

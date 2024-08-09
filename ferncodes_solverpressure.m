@@ -15,7 +15,8 @@
 %Modified: Fernando Contreras, 2021
 function [p,flowrate,flowresult,flowratedif] = ferncodes_solverpressure(viscosity,...
     wells,Hesq,Kde,Kn,Kt,Ded,nflag,nflagface,weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,...
-    wc,sc,SS,dt,h,MM,gravrate,P,kmap)
+    wc,sc,SS,dt,h,MM,gravrate,P,kmap,tempo)
+global numcase
 
 
 % Montagem da matriz global
@@ -25,13 +26,16 @@ function [p,flowrate,flowresult,flowratedif] = ferncodes_solverpressure(viscosit
 %Add a source therm to independent vector "mvector" 
 
 %Often it may change the global matrix "M"
-[M,I] = addsource(sparse(M),I,wells,P,elembedge);
+[M,I] = addsource(sparse(M),I,wells,P,elembedge,tempo);
 
 %--------------------------------------------------------------------------
 %Solve global algebric system 
-
-% calculo das pressões
-p = solver(M,I);
+if numcase==347
+    % calculo das pressões
+    p = solver(M+eye(size(M,1)),I);
+else
+    p = solver(M,I);
+end
 %Message to user:
 disp('>> The Pressure field was calculated with success!');
 

@@ -8,6 +8,15 @@ normk = zeros(size(centelem,1),1);
 %Obtain "kmap" for each case
 kmap = PLUG_kfunction(kmap,h);
 %Swept all elements
+if 300<numcase && numcase~=336 
+    % see equation (2), of the article -- A local grid-refined
+    % numerical groundwater model based on the vertex centered finite
+    % volume method
+    if numcase==330 || numcase==332 || numcase==334 || numcase==335 ...
+        || numcase==337|| numcase==338 || numcase==342 || numcase==347
+        kmap(:,2:5)=MM*kmap(:,2:5);
+    end
+end
 for ik = 1:length(normk)
     %Define the material pointer in "elem"
     pointer = elem(ik,5);
@@ -17,13 +26,5 @@ for ik = 1:length(normk)
     %Calculate the norm of tensor
     normk(ik) = norm(permcompon);
 end
-if 300<numcase && numcase~=336 
-    % see equation (2), of the article -- A local grid-refined
-    % numerical groundwater model based on the vertex centered finite
-    % volume method
-    if numcase==330 || numcase==332 || numcase==334 || numcase==335 ...
-        || numcase==337|| numcase==338
-        kmap(:,2:5)=MM*kmap(:,2:5);
-    end
-end
+
 end%End of FOR

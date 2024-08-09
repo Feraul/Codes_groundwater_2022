@@ -4,7 +4,7 @@
 
 function [bedge,bcflagc,wellsc,auxpar,velmedio,dmap,Dmedio,gamma]= ...
     preconcentration(bedge,wells)
-global numcase
+global numcase centelem
 
 auxpar=0;
 wellsc=zeros(2,6);
@@ -17,7 +17,7 @@ elseif numcase==231 || numcase==232 || numcase==243 || ...
         numcase==236 || numcase==237 || numcase==238 ||...
         numcase==239 || numcase==241 || numcase==242 ||...
         numcase==244  || numcase==234|| numcase==233 ||...
-        numcase==248 || numcase==251
+        numcase==248 || numcase==251 || numcase==380
     velmedio=1;
 end
 %% calculate diffusion tensor
@@ -502,6 +502,38 @@ switch numcase
         bedge([d1],7)=251;
         f1=logical(bedge(:,5)==201);
         bedge([f1],7)=250;
+    case 380
+        bcflagc(1,1)=251;
+        bcflagc(1,2)=0;
+        %bcflagc(2,1)=251;  % dicichlet concen
+        %bcflagc(2,2)=0; % valor dirich
+        %bcflagc(3,1)=251; % dirich neumann
+        %bcflagc(3,2)=0;  % valor concent
+        
+        c=logical(bedge(:,4)==201);
+        bedge([c],6)=251;
+        d=logical(bedge(:,4)==101);
+        bedge([d],6)=251;
+        e=logical(bedge(:,4)==102);
+        bedge([e],6)=251;
+        
+        c1=logical(bedge(:,5)==201);
+        bedge([c1],7)=251;
+        d1=logical(bedge(:,5)==101);
+        bedge([d1],7)=251;
+        e1=logical(bedge(:,5)==102);
+        bedge([e1],7)=251;
+        
+        b=find((10.85<centelem(:,1) & centelem(:,1)<10.95) & (0<centelem(:,2) & centelem(:,2)<1));
+        b1=find((10.85<centelem(:,1) & centelem(:,1)<10.95) & (4<centelem(:,2) & centelem(:,2)<5));
+        %bb=logical;
+        wellsc(1:10,1)=b;
+        wellsc(11:20,1)=b1;
+        wellsc(:,2)=2;
+        wellsc(:,3)=380;
+        wellsc(:,4)=100;
+        wellsc(:,5)=0;
+        wellsc(:,6)=0;
 end
 % end flags
 %% flags adicionais para o problema 5.3.3 Darlan

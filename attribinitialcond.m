@@ -383,6 +383,12 @@ switch numcase
             
             Sw(i) = sin(0.25*pi*(centelem(i,1)+centelem(i,2)));
         end  %End of FOR
-        
+    case 380
+        for i = 1:elemsize
+            
+            %The initial condition is a integral mean of function.
+            
+            Sw(i) = 0;
+        end  %End of FOR
 end  %End of SWITCH
 

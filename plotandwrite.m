@@ -697,6 +697,22 @@ elseif numcase > 200
             grid
             xlabel('y(m)');
             ylabel('Hydraulic head (m)');
+        case 342
+            % solucao analitica
+            %[presanalit,] = benchmark(overedgecoord);
+            % solucao numerica
+            [posit,confield,elemonline] = getlineresult(pressure,satonvertices);
+            
+                %---------------------------------------------
+                %plot(posit,presanalit(elemonline),'k','LineWidth',1.)
+                %hold on
+                %------------------------------------------------------
+                plot(posit,confield,'-<','LineWidth',1.5);
+                hold on
+            
+            grid
+            xlabel('y(m)');
+            ylabel('Hydraulic head (m)');
             
     end
     
@@ -861,6 +877,19 @@ for i = 1:size(centelem,1)
                 %Increment "jj"
                 j = j + 1;
             end
+        elseif numcase==342
+           if (110<centelem(i,2) && centelem(i,2)<111 && centelem(i,1)<1800)
+            %Attribute to "pos" the value of "centelem" which match with
+            %"y_value"
+            getxvalue(j) = centelem(i,1);
+            %Attribute to "satfield" the value of "Sw".
+            getsatfield(j) = Sw(i);
+            %Attribute the number of element to "getelemonline"
+            getelemonline(j) = i;
+            %Increment "jj"
+            j = j + 1;
+          end  %End of IF
+
         end
     end  %End of IF
 end  %End of FOR

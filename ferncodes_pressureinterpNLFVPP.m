@@ -33,7 +33,7 @@ for no=1:size(coord,1)
     pressurinterp(no,1)=c1;
     %% interpolacao concentracao nos vertices
     
-    if 200<numcase && numcase<300
+    if (200<numcase && numcase<300)|| numcase==380
         c1aux=0;
         auxflagc=202; % quando a vazão é diferente de 0
         if nflagc(no,1) >200

@@ -14,7 +14,6 @@ switch numcase
     % volume method
     case 330
         % Case 1: single pumping well in a confined aquifer (Y. Qian et al)
-        
         % initially hydraulic charge
         h_old=100*ones(size(elem,1),1);
         % the espeficied storage
@@ -28,7 +27,7 @@ switch numcase
         b=find((abs(centelem(:,1)-500)/500)<1e-2 & (abs(centelem(:,2)-500)/500)<1e-2);
         wells(1,1)=b;
         wells(1,2)=2;
-        wells(1,3)=1;
+        wells(1,3)=0;
         wells(1,4)=0;
         wells(1,5)=0;
         wells(1,6)=-10000;
@@ -156,6 +155,111 @@ switch numcase
         % aquifer unconfined flow
         % aquifer thickness
         MM=10;
+    case 342
+        % book: introduction to groundwater: Herbert Wang, page 80
+
+        % initially hydraulic charge
+        h_old=0*ones(size(elem,1),1);
+        % the espeficied storage
+        SS=3.28*10^-3;
+        % aquifer thickness
+        MM= 3;
+        % step time, change for each time
+        dt=1;
+        % find the well element
+        %wells(1,1)=1;
+        %wells(1,2)=2;
+        %wells(1,3)=0;
+        %wells(1,4)=0;
+        %wells(1,5)=0;
+        %wells(1,6)=-2000; % pumping rate
+    case 347
+        
+        % initially hydraulic charge
+        h_old=1*ones(size(elem,1),1);
+        % coeficiente de armazenamento especifico
+        SS=0.001;
+        % espesura do aquifero
+        MM=100;
+        % step time no considered 
+        dt=1;
+        % precipitation infiltration 
+        P=0.0009593;
+        %pumping rate
+        pumpingrate=-0.38475;
+        
+       
+        b1 = 1; % Índice para wells
+        wells(b1, 1) = 5688;            % Define o índice do poço
+        wells(b1, 2) = 2;    % Referencia ao elemento correspondente
+        wells(b1, 3) = 0;             % Valor placeholder (exemplo: coordenada x)
+        wells(b1, 4) = 0;             % Valor placeholder (exemplo: coordenada y)
+        wells(b1, 5) = 0;             % Valor placeholder (exemplo: coordenada z)
+        wells(b1, 6) = pumpingrate;   % Define a taxa de bombeamento
+
+b2 = 2; % Índice para wells
+        wells(b2, 1) = 9466;
+        wells(b2, 2) = 2;
+        wells(b2, 3) = 0;
+        wells(b2, 4) = 0;
+        wells(b2, 5) = 0;
+        wells(b2, 6) = pumpingrate;
+
+b3 = 3; % Índice para wells
+        wells(b3, 1) = 8343;
+        wells(b3, 2) = 2;
+        wells(b3, 3) = 0;
+        wells(b3, 4) = 0;
+        wells(b3, 5) = 0;
+        wells(b3, 6) = pumpingrate;
+
+b4 = 4; % Índice para wells
+        wells(b4, 1) = 7461;
+        wells(b4, 2) = 2;
+        wells(b4, 3) = 0;
+        wells(b4, 4) = 0;
+        wells(b4, 5) = 0;
+        wells(b4, 6) = pumpingrate; % Neste caso, a taxa de bombeamento é negativa
+
+b5 = 5; % Índice para wells
+        wells(b5, 1) = 7462;
+        wells(b5, 2) = 2;
+        wells(b5, 3) = 0;
+        wells(b5, 4) = 0;
+        wells(b5, 5) = 0;
+        wells(b5, 6) = pumpingrate;
+
+b6 = 6; % Índice para wells GAMELEIRA
+        wells(b6, 1) = 3955;
+        wells(b6, 2) = 2;
+        wells(b6, 3) = 0;
+        wells(b6, 4) = 0;
+        wells(b6, 5) = 0;
+        wells(b6, 6) = pumpingrate;
+
+b7 = 7; % Índice para wells LAGOINHA
+        wells(b7, 1) = 1280;
+        wells(b7, 2) = 2;
+        wells(b7, 3) = 0;
+        wells(b7, 4) = 0;
+        wells(b7, 5) = 0;
+        wells(b7, 6) = pumpingrate;
+
+b8 = 8; % Índice para wells PAROIS
+        wells(b8, 1) = 3510;
+        wells(b8, 2) = 2;
+        wells(b8, 3) = 0;
+        wells(b8, 4) = 0;
+        wells(b8, 5) = 0;
+        wells(b8, 6) = pumpingrate;
+    case 380
+        % article: Numerical modeling of contaminant transport in a stratified
+        % heterogeneous aquifer with dipping anisotropy, author QIN 2013
+        % coeficiente de armazenamento especifico
+        SS=1;
+        % espesura do aquifero
+        MM=1;
+        % step time
 end
 
 end

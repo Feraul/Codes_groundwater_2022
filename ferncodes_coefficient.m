@@ -1,5 +1,5 @@
-function [coefficient,contnorm]=ferncodes_coefficient(kmap)
-global inedge bedge coord elem centelem
+function [coefficient,contnorm]=ferncodes_coefficient(kmap,elem)
+global inedge bedge coord centelem
 Klef=zeros(3,3);
 Krel=zeros(3,3);
 R=[0 1 0; -1 0 0;0 0 0];

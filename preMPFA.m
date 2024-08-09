@@ -106,7 +106,7 @@ switch char(pmethod)
         %nflag = ferncodes_calflag(0);
          nflagface= ferncodes_contflagface;
         %Get preprocessed terms:
-        [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap);
+        [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap,elem);
         %Calculate the little matrices for MPFA-TPS (Aavatsmark et al., 1998)
     case 'mpfao'
         %Get the initial condition
@@ -151,12 +151,22 @@ switch char(pmethod)
         %Get "ferncodes_nflag"
         %nflag = ferncodes_calflag(0);
         %Get preprocessed terms:
-        [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap);
+        [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap, elem);
         %Call another parameters that I don't know.
         %[V,N,] = ferncodes_elementface(nflag);
         
         % for the concentration transport
         if 200<numcase && numcase<300
+            %Get the initial condition
+            [Con,lastimelevel,lastimeval] = applyinicialcond;
+            % calculate the auxiliary parameters
+            
+            [Hesq,Kdec,Knc,Ktc,Dedc,wightc,sc,weightDMPc,dparameter ]=...
+                parametersauxiliary(dmap,N);
+            
+            % flags boundary conditions
+            [nflagnoc,nflagfacec] = ferncodes_calflag_con(lastimeval);
+        elseif 350<numcase && numcase<400
             %Get the initial condition
             [Con,lastimelevel,lastimeval] = applyinicialcond;
             % calculate the auxiliary parameters
@@ -218,7 +228,7 @@ switch char(pmethod)
         % adequação dos flags de contorno
         nflag = ferncodes_calflag(0);
         %% calculo dos pesos DMP
-        [weightDMP]=ferncodes_weightnlfvDMP(kmap);
+        [weightDMP]=ferncodes_weightnlfvDMP(kmap,elem);
         % contreras et al, 2016
     case 'nlfvh'
         p_old=1e1*ones(size(elem,1),1); % inicializando a pressão
@@ -294,15 +304,17 @@ end
 % calculate the auxiliary parameters
 function       [Hesq,Kdec,Knc,Ktc,Dedc,weightc,sc,weightDMPc,dparameter ]=...
     parametersauxiliary(dmap,N)
-global interptype
+global interptype elem
 
-
+if max(max(dmap))~=0
+elem(:,5)=1;
+end
 %Get preprocessed terms:
-[Hesq,Kdec,Knc,Ktc,Dedc] = ferncodes_Kde_Ded_Kt_Kn(dmap);
+[Hesq,Kdec,Knc,Ktc,Dedc] = ferncodes_Kde_Ded_Kt_Kn(dmap, elem);
 %temos usado para muitos estes o seguinte rutina
-[dparameter,]=ferncodes_coefficient(dmap);
+[dparameter,]=ferncodes_coefficient(dmap,elem);
 % calculo dos pesos DMP
-[weightDMPc]=ferncodes_weightnlfvDMP(dmap);
+[weightDMPc]=ferncodes_weightnlfvDMP(dmap,elem);
 
 %It switches according to "interptype"
 switch char(interptype)

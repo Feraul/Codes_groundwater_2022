@@ -10,19 +10,19 @@ nflagfacec=5000*ones(size(bedge,1)+size(inedge,1),3);
 nflagfacec(:,2:3)=0;
 
 for ifacont = 1:size(bedge,1)
-    
+
     %----------------------------------------------------------------------
     % flag no vertice
     x = logical(bcflagc(:,1) == bedge(ifacont,6));
     vertex = bedge(ifacont,1);
-   %First column receives the boundary condition flag.
-   
-    nflagnoc(vertex,1) = bcflagc(x,1);
-    
+    %First column receives the boundary condition flag.
+
+     nflagnoc(vertex,1) = bcflagc(x,1);
+
     if numcase==248
         % avalia o valor da concentração no contorno utilizando a solução
         % exata
-        
+
         x1 = coord(vertex,1);
         y1 = coord(vertex,2);
         x= x1+y1;
@@ -30,28 +30,28 @@ for ifacont = 1:size(bedge,1)
         nflagnoc(vertex,2) = PLUG_bcfunction_con(x,a);
     else
         %Second column receives the boundary condition value.
-        
+
         nflagnoc(vertex,2) = PLUG_bcfunction_con(x,a);
-       
+
     end
-    % primeira coluna flag das condições de contorno de Dirichlet
+    % primeira coluna flag das condicoes de contorno de Dirichlet
     % segunda coluna valores das concentrações impostos sobre as condicoes
     % de contorno
     % terceira coluna, é flag de no vertice.
-    
+
     if nflagnoc(vertex,1)<100
-        
-       nflagnoc(vertex,3)=1;
+
+        nflagnoc(vertex,3)=1;
     else
-       nflagnoc(vertex,3)=0; 
+        nflagnoc(vertex,3)=0;
     end
-    
+
     %% --------------------------------------------------------------------
     % flag sobre a face
-    
+
     y = logical(bcflagc(:,1) == bedge(ifacont,7));
     %First column receives the boundary condition flag.
-    nflagfacec(ifacont,1) = bcflagc(y,1); 
+    nflagfacec(ifacont,1) = bcflagc(y,1);
     if numcase==248
         % avalia o valor da concentração no contorno utilizando a solução
         vertex2 = bedge(ifacont,2);
@@ -66,9 +66,9 @@ for ifacont = 1:size(bedge,1)
         nflagfacec(ifacont,2) = PLUG_bcfunction_con(y,a);
     end
     if nflagfacec(ifacont,1)<100
-       nflagfacec(ifacont,3)=1;
+        nflagfacec(ifacont,3)=1;
     else
-        nflagfacec(ifacont,3)=0; 
+        nflagfacec(ifacont,3)=0;
     end
-    
+
 end  %End of FOR

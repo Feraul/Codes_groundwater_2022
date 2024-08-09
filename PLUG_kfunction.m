@@ -33,6 +33,9 @@ switch numcase
         for ii=1:size(centelem,1)
             kmap(ii,:)=[ii auxperm2(ii) 0 0 auxperm2(ii)];
         end
+    case 342
+       kmap(1,1:5) = kmap;
+       elem(:,5)=1;
     %----------------------------------------------------------------------
     %Example 1.7: Axisymmetric Case (Anisotropic Medium). teta = pi/6
     case 333
@@ -721,7 +724,7 @@ switch numcase
         % Permeability tensor for the case I, article 2023:
         % A Local Grid-Refined Numerical Groundwater Model
         % Based on the Vertex-centred Finite-Volume Method
-        kmap(1,1:5) = [1 33.33 0 0 33.33];
+        kmap(1,1:5) = kmap;
         elem(:,5)=1;
     case 332
         % Permeability tensor for the case III, article 2023:
@@ -936,7 +939,9 @@ switch numcase
                 kmap (ii,:) = [ii 20 0 0 20];
             end
         end
+    case 380
     
+        [kmap]=conduchidraulica;
         
 end  %End of Switch
 

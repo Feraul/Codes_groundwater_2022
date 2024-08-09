@@ -1,6 +1,6 @@
-function [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap)
+function [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap,elem)
 
-global bedge inedge coord elem centelem
+global bedge inedge coord centelem
 % Retorna alguns parâmetros da expressão dos fluxos na face interna e no contorno.
 % podemos verificar na pag. 5 e na pag. 6 do paper chinês
 

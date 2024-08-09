@@ -1,5 +1,5 @@
-function [weightDMP]=ferncodes_weightnlfvDMP(kmap)
-global inedge centelem elem coord
+function [weightDMP]=ferncodes_weightnlfvDMP(kmap,elem)
+global inedge centelem coord
 Klef=zeros(3,3);
 Krel=zeros(3,3);
 R=[0 1 0; -1 0 0;0 0 0];

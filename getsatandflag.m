@@ -62,7 +62,7 @@ else
         %Initialize "knownvalinvert" and "knownvalinedge". It indicate if there is
         %or not a prescribed value.
         knownvalinvert =  nflagc(:,3);
-    elseif numcase>200
+    elseif 200<numcase & numcase~=380
         %Initialize the vectors "satonvertices" and "satonedges"
         satonvertices = nflagc(:,2);
         %Initialize "knownvalinvert" and "knownvalinedge". It indicate if there is
