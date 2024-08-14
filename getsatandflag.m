@@ -74,9 +74,9 @@ else
         knownvalinvert= satonvertices;
     end
     satonedges = zeros(bedgesize + inedgesize,1);
-    
+
     knownvalinedge = zeros(bedgesize,1);
-    
+
 end
 %Evaluate if there is non-null Neumann boundary condition (non-null Neumann
 %flux, in pressure indicate saturation, by Dirichlet boundary condition
@@ -92,8 +92,8 @@ if numcase >200
     if any(pointneumann) && any(bcflagc(pointneumann,2) > 0) && ...
             (any(nflagfacec) || length(nflagfacec) > 1)
         %Find the flags for non-null Neumann boundary condition.
-        nonullflag = bcflag(pointneumann,1);
-        
+        nonullflag = bcflagc(pointneumann,1);
+
         %Swept all the edges on the boundary
         for i = 1:bedgesize
             %The element belongs to vector "injecelem" and the flag of the 5th
@@ -104,10 +104,10 @@ if numcase >200
                 pointposit = logical(injecelem == bedge(i,3));
                 %Attribute to "satonedge" the known value of saturation.
                 satonedges(i) = satinbound(pointposit);
-                
+
                 %It is an indication there is a known value over edge
                 knownvalinedge(i) = 1;
-                
+
                 %Attribute the boundary condition for the vertices
                 satonvertices(bedge(i,1:2)) = satinbound(pointposit);
                 %It is an indication there is a known value over vertex
@@ -122,7 +122,7 @@ elseif numcase<200
             (any(satinbound) || length(satinbound) > 1)
         %Find the flags for non-null Neumann boundary condition.
         nonullflag = bcflag(pointneumann,1);
-        
+
         %Swept all the edges on the boundary
         for i = 1:bedgesize
             %The element belongs to vector "injecelem" and the flag of the 5th
@@ -133,10 +133,10 @@ elseif numcase<200
                 pointposit = logical(injecelem == bedge(i,3));
                 %Attribute to "satonedge" the known value of saturation.
                 satonedges(i) = satinbound(pointposit);
-                
+
                 %It is an indication there is a known value over edge
                 knownvalinedge(i) = 1;
-                
+
                 %Attribute the boundary condition for the vertices
                 satonvertices(bedge(i,1:2)) = satinbound(pointposit);
                 %It is an indication there is a known value over vertex
@@ -183,25 +183,34 @@ for i = 1:length(unknownedge)
                 satonedges(unknownedge(i)) = nflagfacec(i,2);
             else
                 satonedges(unknownedge(i))= 0.5*(satonvertices(bedge(i,1)) + satonvertices(bedge(i,2)));
-                
+
             end
         else
             satonedges(unknownedge(i))= 0.5*(satonvertices(bedge(i,1)) + satonvertices(bedge(i,2)));
         end
         %It is an indication there is a known value over edge
         if strcmp(pmethod,'mpfad')|| strcmp(pmethod,'nlfvpp')
-            
+
             if nflagfacec(i,1)<100
                 knownvalinedge(i)=1;
             else
                 knownvalinedge(i)=0;
             end
         end
-    elseif numcase<200
+    elseif numcase<200 || 379<numcase
         %Calculate the saturation into each unknown edge ("bedge")
         satonedges(unknownedge(i)) = ...
             0.5*(satonvertices(bedge(unknownedge(i),1)) + ...
             satonvertices(bedge(unknownedge(i),2)));
+        
+        if strcmp(pmethod,'mpfad')|| strcmp(pmethod,'nlfvpp')
+
+            if nflagfacec(i,1)<100
+                knownvalinedge(i)=1;
+            else
+                knownvalinedge(i)=0;
+            end
+        end
     end
 end  %End of FOR (swept the edges from "bedge")
 
@@ -210,7 +219,7 @@ for i = 1:inedgesize
     %Calculate the saturation into each unknown edge ("inedge")
     satonedges(bedgesize + i) = ...
         0.5*(satonvertices(inedge(i,1)) + satonvertices(inedge(i,2)));
-    
+
 end  %End of FOR (swept the edges from "inedge")
 
 

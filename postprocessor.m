@@ -1,16 +1,7 @@
 %--------------------------------------------------------------------------
-%UNIVERSIDADE FEDERAL DE PERNAMBUCO
-%CENTRO DE TECNOLOGIA E GEOCIENCIAS
-%PROGRAMA DE POS GRADUACAO EM ENGENHARIA CIVIL
-%TOPICOS ESPECIAIS EM DINAMICA DOS FLUIDOS COMPUTACIONAL
-%--------------------------------------------------------------------------
 %Subject: numerical routine to load the geometry in gmsh and to create...
 %the mesh parameter 
-%Type of file: FUNCTION
-%Criate date: 01/05/2012
-%Advisor: Paulo Lyra and Darlan Karlo
-%Programer: Márcio Souza
-%Modified: Fernando Contreras, 2021
+%Programer: Fernando Contreras, 2021
 %--------------------------------------------------------------------------
 %Goals:
 

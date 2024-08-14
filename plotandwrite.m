@@ -1,11 +1,6 @@
-
 %--------------------------------------------------------------------------
 %Subject: numerical routine to load the geometry in gmsh and to create...
 %the mesh parameter
-%Type of file: FUNCTION
-%Criate date: 12/08/2012
-
-%Advisor: Paulo Lyra and Darlan Karlo
 %Programer: Márcio Souza
 %Modified: Fernando Contreras, 2021
 %--------------------------------------------------------------------------
@@ -19,7 +14,7 @@
 %--------------------------------------------------------------------------
 
 function [analsw, presanal]=plotandwrite(producelem,Sw,pressure,...
-    satonvertices,Dmedio,velmedio,gamma,time,overedgecoord)
+    satonvertices,Dmedio,velmedio,gamma,time,overedgecoord,hanalitica,hauxiliar)
 %Define global parameters:
 global filepath satlimit resfolder bcflag bcflagc numcase totaltime ...
     elemarea modflowcompared;
@@ -33,7 +28,7 @@ prfilename = [resfolder '_' 'ProdutionReport.dat'];
 readfile = fopen([filepath '\' prfilename]);
 
 if numcase==245 || numcase==247
-    
+
     %"getgeodata" reads each row of *.geo and store it as a string array.
     %Get the data according to "producelem" size
     %There is one producer well
@@ -47,7 +42,7 @@ if numcase==245 || numcase==247
         %Stabilishes number of columns
         colnum = 2;
     end  %End of IF
-    
+
     %Attribute the data to "getgeodata"
     getmatxdata = cell2mat(getdata);
     %Initialize prodution parameters:
@@ -88,22 +83,22 @@ if numcase >= 31 && numcase <= 31.9
     %Define the flowrate value (to semi-analitical solution)
     Qvalue = bcflag(logical(bcflag(:,1) > 200 & bcflag(:,2) ~= 0),2);
     %Get saturation and position to plot
-    
+
     [posit,satfield,elemonline] = getlineresult(Sw,satonvertices,producelem);
     %Calculate semi-analitical saturation field.
-    
+
     [x,Swanal] = solanalBL(Qvalue,totaltime(2),elemonline,Sw);
-    
+
     %------------------------------------------------------
     %Define the polynimial of interpolation. Bastian (2002)
     %     xanal = flipud(x(2:length(x)));
     %     Sat = fliplr(Swanal(2:length(Swanal)));
     %     blcurve = fit(xanal,Sat','cubicinterp');
     %------------------------------------------------------
-    
+
     %Evaluate the errors and Convergence Rate:
     %     buckey_levalidation(x(1),elemonline,Sw,blcurve);
-    
+
     %Store the results
     storeresult(posit,satfield);
     hold on
@@ -115,12 +110,12 @@ if numcase >= 31 && numcase <= 31.9
     %View "analytical curve"
     %     plot(xanal,blcurve(xanal),'-r','LineWidth',2)
     hold on;
-    
+
     grid on;
     title ('Buckley-Leverett Solution')
     xlabel ('Reservoir Length');
     ylabel ('Water Saturation (Sw)');
-    
+
     %Define the limits according to "numcase" number
     %Bastian (2002) problem
     if numcase == 31.1
@@ -143,7 +138,7 @@ if numcase >= 31 && numcase <= 31.9
         %Define a limit for "y" on the graph
         ylim ([satlimit(1) (1 - satlimit(2))]);
     end  %End of IF
-    
+
     %Kozdon's problems (case 45 and their sub-cases)
 elseif numcase >= 45 && numcase < 46
     %Plot Water Cut
@@ -151,7 +146,7 @@ elseif numcase >= 45 && numcase < 46
     hold on;
     plot(contime,watercutvec(:,2),'-g');
     hold off;
-    
+
     grid on;
     xlabel('Time, [VPI]');
     ylabel('Water Cut, [adm]');
@@ -159,14 +154,14 @@ elseif numcase >= 45 && numcase < 46
     %    legend('Upwind (Sat.) and TPS (Pres.)');
     xlim([0 0.06]);
     ylim([0 0.31]);
-    
+
     %Eymard's problems (case 46 and their sub-cases)
 elseif numcase >= 46 && numcase < 47
     %Get saturation and position to plot
     [satfieldh,satfield,posith,positd] = getlineresultEymardProblem(Sw);
     %Get pressure and position to plot
     [pressfieldh,pressfield,] = getlineresultEymardProblem(pressure);
-    
+
     %Plot Water Saturation
     figure(1)
     %Water Saturation Profile (horizontal)
@@ -175,7 +170,7 @@ elseif numcase >= 46 && numcase < 47
     %Water Saturation Profile (diagonal)
     plot(positd,satfield,'--b');
     hold off;
-    
+
     grid on;
     xlabel('Domain');
     ylabel('Water Saturation');
@@ -184,7 +179,7 @@ elseif numcase >= 46 && numcase < 47
         'Water Saturation (profile along diagonal line)');
     xlim([-0.8 0.8]);
     ylim([0 1.301]);
-    
+
     %Plot Pressure
     figure(2)
     %Pressure Profile (horizontal)
@@ -193,7 +188,7 @@ elseif numcase >= 46 && numcase < 47
     %Pressure Profile (diagonal)
     plot(positd,pressfield,'--b');
     hold off;
-    
+
     grid on;
     xlabel('Domain');
     ylabel('Pressure');
@@ -202,13 +197,13 @@ elseif numcase >= 46 && numcase < 47
         'Pressure (profile along diagonal line)');
     xlim([-0.8 0.8]);
     ylim([0 45]);
-    
+
     %Khoozan's problems (case 48 and their sub-cases)
 elseif numcase > 48 && numcase < 49
     %Plot Oil FLOW RATE, CUMULATIVE OIL and Water Cut
     figure(1);
     plot(contime,oilflowratevec,'-k');
-    
+
     grid on;
     xlabel('Time, [VPI]');
     ylabel('Oil Recovery, [m^3/s]');
@@ -216,7 +211,7 @@ elseif numcase > 48 && numcase < 49
     legend('Upwind (Sat.) and TPS (Pres.)');
     xlim([0 1])
     %     ylim([0 1.21])
-    
+
     %Plot the Cumulative Oil
     figure(2);
     plot(contime,oilaccumvec,'-b');
@@ -227,7 +222,7 @@ elseif numcase > 48 && numcase < 49
     legend('Upwind (Sat.) and TPS (Pres.)');
     xlim([0 1])
     %     ylim([0 1])
-    
+
     %Plot Water Cut
     figure(3);
     %Well 1:
@@ -236,7 +231,7 @@ elseif numcase > 48 && numcase < 49
     %Well 2:
     plot(contime,watercutvec(:,2),'-b');
     hold off;
-    
+
     grid on;
     xlabel('Time, [VPI]');
     ylabel('Water Cut, [adm]');
@@ -244,7 +239,7 @@ elseif numcase > 48 && numcase < 49
     %    legend('Upwind (Sat.) and TPS (Pres.)');
     %     xlim([0 0.06]);
     %     ylim([0 0.31]);
-    
+
     %Another two-phase flow cases (cases 32 on)
 elseif numcase > 200
     switch numcase
@@ -259,42 +254,42 @@ elseif numcase > 200
             analsolutionaux(1)=bcflagc(2,2); % concentratio na fronteira;
             confieldaux(1)=bcflagc(2,2);
             positaux(1)=0;
-            
+
             analsolutionaux(2:length(analsolution)+1,1)=analsolution;
             confieldaux(2:length(confield)+1,1)=confield;
             positaux(2:length(posit)+1,1)=posit;
-            
+
             hold on
-            
+
             %Plot the results (Analitical Solution)
             plot (positaux,analsolutionaux,'k','LineWidth',2)
             %Plot the results (Actual Numerical Solution)
             %hold on;
-            
+
             plot(positaux,confieldaux,'-b','LineWidth',1.5);
-            
+
             hold on;
-            
+
             grid on;
             title ('Concentration Solution')
             xlabel ('Reservoir Length');
             ylabel ('Concentration (C)');
             % Calculo dos erros
-            
+
             %Calculate the relative error of "el2" ("relerrorL2")
             relerrorL2 = (abs(confield - analsolution).^2).*elemarea(elemonline,:);
-            
+
             relerrorL1=  (abs(confield - analsolution).^1).*elemarea(elemonline,:);
             abserrorMAX = abs(analsolution - confield);
-            
+
             %Calculate "emax"
             emaxc = max(abserrorMAX)
             %calculate "el1"
             el1c = sum(relerrorL1)/sum(elemarea(elemonline,:))
             %Calculate "el2"
             el2c = sqrt(sum(relerrorL2)/sum(elemarea(elemonline,:)))
-            
-            
+
+
         case 232
             [posit,confield,elemonline] = getlineresult(Sw,satonvertices);
             [analsolution]=ferncodes_analyticalSolution(satonvertices,Dmedio,velmedio,posit,gamma);
@@ -305,13 +300,13 @@ elseif numcase > 200
             analsolutionaux(1)=bcflagc(2,2); % concentratio na fronteira;
             confieldaux(1)=bcflagc(2,2);
             positaux(1)=0;
-            
+
             analsolutionaux(2:length(analsolution)+1,1)=analsolution;
             confieldaux(2:length(confield)+1,1)=confield;
             positaux(2:length(posit)+1,1)=posit;
-            
+
             hold on
-            
+
             %Plot the results (Analitical Solution)
             plot (positaux,analsolutionaux,'k','LineWidth',2)
             %Plot the results (Actual Numerical Solution)
@@ -319,31 +314,31 @@ elseif numcase > 200
             plot(positaux,confieldaux,'-r','LineWidth',1.5);
             %plot(positaux,confieldaux,'Color',[0,0.7,0.9],'LineWidth',1.5);
             %plot(positaux,confieldaux,'Color', [0.9290 0.6940 0.1250],'LineWidth',1.5);
-            
+
             %View "analytical curve"
             %     plot(xanal,blcurve(xanal),'-r','LineWidth',2)
             hold on;
-            
+
             grid on;
             title ('Concentration Solution')
             xlabel ('Reservoir Length');
             ylabel ('Concentration (C)');
             % Calculo dos erros
-            
+
             %Calculate the relative error of "el2" ("relerrorL2")
             relerrorL2 = (abs(confield - analsolution).^2).*elemarea(elemonline,:);
-            
+
             relerrorL1=  (abs(confield - analsolution).^1).*elemarea(elemonline,:);
             abserrorMAX = abs(analsolution - confield);
-            
+
             %Calculate "emax"
             emaxc = max(abserrorMAX)
             %calculate "el1"
             el1c = sum(relerrorL1)/sum(elemarea(elemonline,:))
             %Calculate "el2"
             el2c = sqrt(sum(relerrorL2)/sum(elemarea(elemonline,:)))
-            
-            
+
+
         case 233
             [posit,confield,elemonline] = getlineresult(Sw,satonvertices);
             [analsolution]=ferncodes_analyticalSolution(satonvertices,...
@@ -357,7 +352,7 @@ elseif numcase > 200
             %View "analytical curve"
             %     plot(xanal,blcurve(xanal),'-r','LineWidth',2)
             hold on;
-            
+
             grid on;
             title ('Concentration Solution')
             xlabel ('Reservoir Length');
@@ -375,7 +370,7 @@ elseif numcase > 200
             %View "analytical curve"
             %     plot(xanal,blcurve(xanal),'-r','LineWidth',2)
             hold on;
-            
+
             grid on;
             title ('Concentration Solution')
             xlabel ('Reservoir Length');
@@ -393,7 +388,7 @@ elseif numcase > 200
             %View "analytical curve"
             %     plot(xanal,blcurve(xanal),'-r','LineWidth',2)
             hold on;
-            
+
             grid on;
             title ('Concentration Solution')
             xlabel ('Reservoir Length');
@@ -410,7 +405,7 @@ elseif numcase > 200
             %View "analytical curve"
             %     plot(xanal,blcurve(xanal),'-r','LineWidth',2)
             hold on;
-            
+
             grid on;
             title ('Concentration Solution')
             xlabel ('Reservoir Length');
@@ -427,7 +422,7 @@ elseif numcase > 200
             %View "analytical curve"
             %     plot(xanal,blcurve(xanal),'-r','LineWidth',2)
             hold on;
-            
+
             grid on;
             title ('Concentration Solution')
             xlabel ('Reservoir Length');
@@ -444,7 +439,7 @@ elseif numcase > 200
             %View "analytical curve"
             %     plot(xanal,blcurve(xanal),'-r','LineWidth',2)
             hold on;
-            
+
             grid on;
             title ('Concentration Solution')
             xlabel ('Reservoir Length');
@@ -452,14 +447,14 @@ elseif numcase > 200
         case 241
             [posit,confield,elemonline] = getlineresult(Sw,satonvertices);
             [analsolution]=ferncodes_analyticalSolution(satonvertices,Dmedio,velmedio,posit,gamma);
-            
+
             analsolutionaux=length(analsolution)+1;
             confieldaux= length(analsolution)+1;
             positaux= length(posit)+1;
             analsolutionaux(1)=1; % concentratio na fronteira;
             confieldaux(1)=1;
             positaux(1)=0;
-            
+
             analsolutionaux(2:length(analsolution)+1,1)=analsolution;
             confieldaux(2:length(confield)+1,1)=confield;
             positaux(2:length(posit)+1,1)=posit;
@@ -472,7 +467,7 @@ elseif numcase > 200
             %View "analytical curve"
             %     plot(xanal,blcurve(xanal),'-r','LineWidth',2)
             hold on;
-            
+
             grid on;
             title ('Concentration Solution')
             xlabel ('Reservoir Length');
@@ -480,19 +475,19 @@ elseif numcase > 200
         case 242
             [posit,confield,elemonline] = getlineresult(Sw,satonvertices);
             [analsolution]=ferncodes_analyticalSolution(satonvertices,Dmedio,velmedio,posit,gamma);
-            
+
             % readequacao ative para malha grossa dx=0.5
-            
+
             confieldaux= length(analsolution)+1;
             positaux= length(posit)+1;
-            
+
             confieldaux(1)=0;
             positaux(1)=0;
-            
-            
+
+
             confieldaux(2:length(confield)+1,1)=confield;
             positaux(2:length(posit)+1,1)=posit;
-            
+
             confield=confieldaux;
             posit=positaux;
             % hold on
@@ -504,13 +499,13 @@ elseif numcase > 200
             %View "analytical curve"
             %     plot(xanal,blcurve(xanal),'-r','LineWidth',2)
             hold on;
-            
+
             grid on;
             title ('Concentration Solution')
             xlabel ('Reservoir Length');
             ylabel ('Concentration (C)');
         case 248
-            
+
             [analsw, presanal]=ferncodes_analyticalSolution(satonvertices,Dmedio,velmedio,0,gamma,time);
             abserrorMAX = abs(analsw - Sw);
             %Calculate the relative error of "el2" ("relerrorL2")
@@ -529,7 +524,7 @@ elseif numcase > 200
             %Plot Oil FLOW RATE, CUMULATIVE OIL and Water Cut
             figure(1);
             plot(contime,oilflowratevec,'--k');
-            
+
             grid on;
             xlabel('Time, [VPI]');
             ylabel('Oil Recovery, [m^3/s]');
@@ -563,7 +558,7 @@ elseif numcase > 200
             figure(1);
             hold on
             plot(contime,oilflowratevec,'--b');
-            
+
             grid on;
             xlabel('Time, [VPI]');
             ylabel('Concenration, [m^3/s]');
@@ -575,19 +570,19 @@ elseif numcase > 200
         case 330
             % solucao numerica numa determinada regiao do dominio
             [posit,confield,] = getlineresult(pressure,satonvertices);
-            
+
             if strcmp(modflowcompared,'n')
                 confieldaux= zeros(length(confield)+2,1);
                 positaux= zeros(length(posit)+2,1);
-                
+
                 confieldaux(1)=100;
                 positaux(1)=0;
                 confieldaux(end)=100;
                 positaux(end)=1000;
-                
+
                 confieldaux(2:length(confield)+1,1)=confield;
                 positaux(2:length(posit)+1,1)=posit;
-                
+
                 plot(positaux,confieldaux,'--b','LineWidth',1.5);
             else
                 plot(posit,confield,'--b','LineWidth',1.5);
@@ -596,7 +591,7 @@ elseif numcase > 200
             grid
             xlabel('y(m)');
             ylabel('Hydraulic head (m)');
-            
+
         case 331
             % solucao numerica numa determinada regiao do dominio
             [posit,confield,] = getlineresult(pressure,satonvertices);
@@ -605,15 +600,15 @@ elseif numcase > 200
                 % fronteita da malha
                 confieldaux= zeros(length(confield)+2,1);
                 positaux= zeros(length(posit)+2,1);
-                
+
                 confieldaux(1)=90;
                 positaux(1)=0;
                 confieldaux(end)=90;
                 positaux(end)=1000;
-                
+
                 confieldaux(2:length(confield)+1,1)=confield;
                 positaux(2:length(posit)+1,1)=posit;
-                
+
                 plot(positaux,confieldaux,'--b','LineWidth',1.5);
             else
                 plot(posit,confield,'--b','LineWidth',1.5);
@@ -622,7 +617,7 @@ elseif numcase > 200
             grid
             xlabel('y(m)');
             ylabel('Hydraulic head (m)');
-            
+
         case 332
             % solucao numerica numa determinada regiao do dominio
             [posit,confield,] = getlineresult(pressure,satonvertices);
@@ -631,15 +626,15 @@ elseif numcase > 200
                 % fronteita da malha
                 confieldaux= zeros(length(confield)+2,1);
                 positaux= zeros(length(posit)+2,1);
-                
+
                 confieldaux(1)=100;
                 positaux(1)=0;
                 confieldaux(end)=100;
                 positaux(end)=1000;
-                
+
                 confieldaux(2:length(confield)+1,1)=confield;
                 positaux(2:length(posit)+1,1)=posit;
-                
+
                 plot(positaux,confieldaux,'--g','LineWidth',1.5);
             else
                 plot(posit,confield,'--g','LineWidth',1.5);
@@ -648,7 +643,7 @@ elseif numcase > 200
             grid
             xlabel('y(m)');
             ylabel('Hydraulic head (m)');
-            
+
         case 333
             % solucao analitica
             [presanalit,] = benchmark(overedgecoord);
@@ -660,67 +655,70 @@ elseif numcase > 200
                 % numerical solution
                 confieldaux= zeros(length(confield)+2,1);
                 positaux= zeros(length(posit)+2,1);
-                
+
                 confieldaux(1)=2;
                 positaux(1)=0;
                 confieldaux(end)=2;
                 positaux(end)=40;
-                
+
                 confieldaux(2:length(confield)+1,1)=confield;
                 positaux(2:length(posit)+1,1)=posit;
-                
+
                 % analytical solution
                 confieldaux1= zeros(length(elemonline)+2,1);
                 positaux1= zeros(length(posit)+2,1);
-                
+
                 confieldaux1(1)=2;
                 positaux1(1)=0;
                 confieldaux1(end)=2;
                 positaux1(end)=40;
-                
+
                 confieldaux1(2:length(confield)+1,1)=presanalit(elemonline);
                 positaux1(2:length(posit)+1,1)=posit;
                 %---------------------------------------------
                 plot(positaux1,confieldaux1,'k','LineWidth',1.)
                 hold on
                 %------------------------------------------------------
-                plot(positaux,confieldaux,'*g','LineWidth',1.5);
+                plot(positaux,confieldaux,'-b','LineWidth',1.5);
                 hold on
             else
                 %---------------------------------------------
                 plot(posit,presanalit(elemonline),'k','LineWidth',1.)
                 hold on
                 %------------------------------------------------------
-                plot(posit,confield,'*g','LineWidth',1.5);
+                plot(posit,confield,'b','LineWidth',1.5);
                 hold on
             end
             grid
             xlabel('y(m)');
             ylabel('Hydraulic head (m)');
         case 342
-            % solucao analitica
-            %[presanalit,] = benchmark(overedgecoord);
             % solucao numerica
             [posit,confield,elemonline] = getlineresult(pressure,satonvertices);
-            
-                %---------------------------------------------
-                %plot(posit,presanalit(elemonline),'k','LineWidth',1.)
-                %hold on
-                %------------------------------------------------------
-                plot(posit,confield,'-<','LineWidth',1.5);
-                hold on
-            
+
+            %---------------------------------------------
+            %plot(posit,presanalit(elemonline),'k','LineWidth',1.)
+            %hold on
+            %------------------------------------------------------
+            figure(1)
+            plot(posit,confield,'-<','LineWidth',1.5);
+            hold on
+            grid
+            figure(2)
+            plot(hauxiliar(:,1), hauxiliar(:,2),'k')
+            hold on
+            plot(hanalitica(:,1), hanalitica(:,2),'r')
             grid
             xlabel('y(m)');
             ylabel('Hydraulic head (m)');
-            
+
     end
-    
+
 else
     %Plot Oil FLOW RATE, CUMULATIVE OIL and Water Cut
     figure(1);
     plot(contime,oilflowratevec,'--k');
-    
+
     grid on;
     xlabel('Time, [VPI]');
     ylabel('Oil Recovery, [m^3/s]');
@@ -750,7 +748,7 @@ else
     title('Water Cut');
     legend('Upwind (Sat.) and TPS (Pres.)');
     xlim([0 1])
-    
+
     %     ylim([0 1.21])
 end  %End of IF
 
@@ -806,7 +804,7 @@ for i = 1:size(centelem,1)
         getxvalue(j) = centelem(i,1);
         %Attribute to "satfield" the value of "Sw".
         getsatfield(j) = Sw(i);
-        
+
         %Attribute the number of element to "getelemonline"
         getelemonline(j) = i;
         %Increment "j"
@@ -818,7 +816,7 @@ for i = 1:size(centelem,1)
         ycolumn = 2*boolean + (1 - boolean);
         %Choose a arbitrary position in "centelem"
         pointer = ceil(0.5*length(producelem));
-        
+
         %Catch the "y" value in "centelem"
         y_value = centelem(producelem(pointer),ycolumn);
         %Initialize "pos" and "satfield"
@@ -851,12 +849,12 @@ for i = 1:size(centelem,1)
                 %Increment "jj"
                 j = j + 1;
             end
-            
+
         elseif numcase==332
             %if (abs(centelem(i,1)-250)/250)<1e-2 && centelem(i,2)<1000
             const=25; % para malha 40x40
             if ((const*29<centelem(i,1)&& centelem(i,1)<const*30) && centelem(i,2)<1000)
-                
+
                 %"y_value"
                 getxvalue(j) = centelem(i,2);
                 %Attribute to "satfield" the value of "Sw".
@@ -867,7 +865,7 @@ for i = 1:size(centelem,1)
                 j = j + 1;
             end
         elseif numcase==333
-            
+
             if (1.25*3<centelem(i,2) && centelem(i,2)<1.25*4) && centelem(i,1)<40
                 getxvalue(j) = centelem(i,1);
                 %Attribute to "satfield" the value of "Sw".
@@ -878,17 +876,17 @@ for i = 1:size(centelem,1)
                 j = j + 1;
             end
         elseif numcase==342
-           if (110<centelem(i,2) && centelem(i,2)<111 && centelem(i,1)<1800)
-            %Attribute to "pos" the value of "centelem" which match with
-            %"y_value"
-            getxvalue(j) = centelem(i,1);
-            %Attribute to "satfield" the value of "Sw".
-            getsatfield(j) = Sw(i);
-            %Attribute the number of element to "getelemonline"
-            getelemonline(j) = i;
-            %Increment "jj"
-            j = j + 1;
-          end  %End of IF
+            if (110<centelem(i,2) && centelem(i,2)<111 && centelem(i,1)<1800)
+                %Attribute to "pos" the value of "centelem" which match with
+                %"y_value"
+                getxvalue(j) = centelem(i,1);
+                %Attribute to "satfield" the value of "Sw".
+                getsatfield(j) = Sw(i);
+                %Attribute the number of element to "getelemonline"
+                getelemonline(j) = i;
+                %Increment "jj"
+                j = j + 1;
+            end  %End of IF
 
         end
     end  %End of IF
@@ -903,7 +901,7 @@ elemonline = satfield;
 for i = 1:length(getxvalue)
     satpointer = logical(getxvalue == posit(i));
     satfield(i) = getsatfield(satpointer);
-    
+
     elemonline(i) = getelemonline(satpointer);
 end  %End of FOR
 
@@ -949,7 +947,7 @@ for i = 1:size(centelem,1)
         %Increment "h"
         h = h + 1;
     end  %End of IF
-    
+
     %Verify the diagonal path
     if abs(centelem(i,2) - centelem(i,1)) <= tol
         %Attribute to "pos" the value of "centelem" which match with

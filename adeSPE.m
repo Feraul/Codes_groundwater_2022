@@ -6,8 +6,8 @@
 %          220           5           0           0         504           1];
 %      
 
-layer = 50;
-% layer 40 
+layer = 40;
+% layer 50 
 % layer 45
 % layer 47
 % layer 59 

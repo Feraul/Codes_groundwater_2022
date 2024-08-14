@@ -9,9 +9,12 @@ function [p,flowrate,flowresult]=ferncodes_solverpressureMPFAH(nflagface,...
 %Add a source therm to independent vector "mvector" 
 
 %Often it may change the global matrix "M"
-[M,I] = addsource(sparse(M),I,wells,P,elembedge,time);
+[M,I] = addsource(sparse(M),I,wells);
 
 %--------------------------------------------------------------------------
+
+% Often with source term
+[I]=sourceterm(I,elembedge,P,time);
 %Solve global algebric system 
 
 % calculo das pressões ou carga hidraulica

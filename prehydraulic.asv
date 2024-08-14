@@ -261,20 +261,12 @@ b8 = 8; % Índice para wells PAROIS
         MM=1;
         % step time
     case 380.1
-        % well 1
         wells(1, 1) = 6071;
         wells(1, 2) = 2;
         wells(1, 3) = 0;
         wells(1, 4) = 0;
         wells(1, 5) = 0;
         wells(1, 6) = -0.001;
-        % well 2
-        wells(2, 1) = 7002;
-        wells(2, 2) = 2;
-        wells(2, 3) = 0;
-        wells(2, 4) = 0;
-        wells(2, 5) = 0;
-        wells(2, 6) = -0.001;
 
 end
 

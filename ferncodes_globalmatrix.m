@@ -237,7 +237,7 @@ end  %End of FOR ("inedge")
 
 %==========================================================================
 % calcula um problema transiente
-if numcase>300
+if 300<numcase && numcase<379 
     %
     if numcase~=336 && numcase~=334 && numcase~=335 &&...
             numcase~=337 && numcase~=338 && numcase~=339 &&...

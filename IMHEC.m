@@ -31,7 +31,7 @@ function IMHEC(Con,injecelem,producelem,satinbound,wells,klb,satonvertices,...
     weight,s,velmedio,transmvecleftcon,transmvecrightcon,...
     knownvecleftcon,knownvecrightcon,storeinvcon,...
     Bleftcon,Brightcon,Fgcon,mapinvcon,maptransmcon,mapknownveccon,...
-    pointedgecon, bodytermcon,gravrate,SS,MM,P)
+    pointedgecon, bodytermcon,gravrate,SS,MM,P,tempo)
 %Define global parameters:
 global timew  totaltime timelevel numcase pmethod filepath  resfolder ...
     order bcflagc ;
@@ -99,12 +99,14 @@ postprocessor_con(ones(elemsize,1),Con,contiterplot - 1,auxkmap);
 % mobility
 mobility=1;
 % calculate the pressure, flow rate advective and dispersive terms
+if numcase<379
 [hydraulic,flowrateadvec,flowresult,flowratedif]=auxiliarysolverhydraulic(Hesq,Kde,Kn,Kt,Ded,nflag,...
     kmap,V,N,contnorm,weight,s,Con,nflagc,wightc,sc,dparameter,...
     nflagface,parameter,weightDMP,p_old,transmvecleft,...
     transmvecright,knownvecleft,knownvecright,storeinv,Bleft,...
     Bright,wells,mapinv,maptransm,mapknownvec,pointedge,mobility,...
-    bodyterm,Kdec,Knc,Ktc,Dedc,weightDMPc,nflagfacec,gravrate,SS,MM,P);
+    bodyterm,Kdec,Knc,Ktc,Dedc,weightDMPc,nflagfacec,gravrate,SS,MM,P,tempo);
+end
 if numcase==241
     %----------------------------------------------------------------------
     %Calculate "dt" using the function "calctimestep"
@@ -127,9 +129,9 @@ while stopcriteria < 100
     timelevel
 
     if numcase==246 || numcase==245 || numcase==247 || numcase==248 ||...
-            numcase==249 || numcase==250 || numcase==251 || numcase==380
+            numcase==249 || numcase==250 || numcase==251 || numcase==380 || numcase==380.1
 
-        if numcase==380
+        if numcase==380 || numcase==380.1
             %[viscosity] = ferncodes_getviscosity(satinbound,injecelem,Con,earlysw,...
             %    Sleft,Sright,c,overedgecoord,nflagc,nflagfacec);
             viscosity=1;
@@ -144,7 +146,7 @@ while stopcriteria < 100
             nflagface,parameter,weightDMP,p_old,transmvecleft,...
             transmvecright,knownvecleft,knownvecright,storeinv,Bleft,...
             Bright,wells,mapinv,maptransm,mapknownvec,pointedge,viscosity,...
-            bodyterm,Kdec,Knc,Ktc,Dedc,weightDMPc,nflagfacec,gravrate,SS,MM,P);
+            bodyterm,Kdec,Knc,Ktc,Dedc,weightDMPc,nflagfacec,gravrate,SS,MM,P,tempo);
         %----------------------------------------------------------------------
         %Calculate "dt" using the function "calctimestep"
 
@@ -168,7 +170,7 @@ while stopcriteria < 100
             dparameter,Kde,Ded,Kn,Kt,Hesq,Kdec,Knc,Ktc,Dedc,time,...
             viscosity,parameter,weightDMP,gravrate);
     end
-    dt=0.01;
+    dt=1;
     %----------------------------------------------------------------------
 
     %Calculate the CONCENTRATION field (choose concentration method):
@@ -250,7 +252,7 @@ while stopcriteria < 100
     %Call the "postprocessor" (plot results in each time step)
 
     %Just create the vtk file if "flagtoplot" reaches 0.1.
-    if numcase~=380
+    if numcase~=380 && numcase~=380.1
         if flagtoplot >= 1
             %This function create the "*.vtk" file used in VISIT to posprocessing
             %the results
@@ -266,7 +268,7 @@ while stopcriteria < 100
     else
         auxkmap=logical(numcase==247)*log(kmap(:,2))+logical(numcase~=247)*normk;
 
-        postprocessor_con(hydraulic,Con,contiterplot,auxkmap);
+        postprocessor_con(hydraulic,Con,contiterplot,kmap(:,2));
 
         flagtoplot = 0;
         %Update "contiterplot"
@@ -287,7 +289,7 @@ while stopcriteria < 100
     %It gives the time spent per "timelevel"
     %if time>1000 && (numcase==242 || numcase==243 || numcase==249 || numcase==250)
     if (time>1 && (numcase==242 || numcase==243 || numcase==245))...
-            || (time>1 && numcase==380)
+            || (time>1 && numcase==380 && numcase==380.1)
         if numcase==245 || numcase==247
             wellsc(1:2,4)=0;
             Con(wells(1,1),1)=wells(1,4);
@@ -301,11 +303,11 @@ while stopcriteria < 100
             %Define flags and known saturation on the vertices and edges.
             [satonvertices,satonedges,] = ...
                 getsatandflag(satinbound,injecelem,Conaux,nflagc,nflagfacec,1);
-        elseif time>1 && numcase==380
-           wellsc(1:20,4)=0; 
-           %Initialize and preprocess the parameters:
+        elseif time>1 && (numcase==380 || numcase==380.1)
+            wellsc(1:20,4)=0;
+            %Initialize and preprocess the parameters:
             [nflagc,nflagfacec] = ferncodes_calflag_con(0);
-           %Define elements associated to INJECTOR and PRODUCER wells.
+            %Define elements associated to INJECTOR and PRODUCER wells.
             [injecelem,producelem,satinbound,Conaux,wells] = wellsparameter(wells,...
                 Conaux,klb);
 
@@ -327,7 +329,7 @@ while stopcriteria < 100
         end
     end
 
-    if numcase==248 
+    if numcase==248
         %Initialize and preprocess the parameters:
         nflag = ferncodes_calflag(time);
         [nflagc,nflagfacec] = ferncodes_calflag_con(time);
@@ -372,7 +374,7 @@ function [pressure,flowrateadvec,flowresult,flowratedif]=...
     weightDMP,p_old,transmvecleft,transmvecright,knownvecleft,...
     knownvecright,storeinv,Bleft,Bright,wells,mapinv,maptransm,...
     mapknownvec,pointedge,mobility,bodyterm,Kdec,Knc,Ktc,Dedc,...
-    weightDMPc,nflagfacec,gravrate,SS,MM,P)
+    weightDMPc,nflagfacec,gravrate,SS,MM,P,tempo)
 
 global numcase pmethod
 pressure=0;
@@ -401,7 +403,7 @@ if numcase~=246 & numcase~=246 & numcase~=247 & numcase~=248 & ...
         %Calculate "pressure", "flowrate" and "flowresult"
         [pressure,flowrateadvec,flowresult,flowratedif] = ferncodes_solverpressure(...
             mobility,wells,Hesq,Kde,Kn,Kt,Ded,nflag,nflagface,weight,s,Con,Kdec,Knc,...
-            Ktc,Dedc,nflagc,wightc,sc,SS,dt,h,MM,gravrate,P,kmap);
+            Ktc,Dedc,nflagc,wightc,sc,SS,dt,h,MM,gravrate,P,kmap,tempo);
 
     elseif strcmp(pmethod,'mpfaql')
         [pressure,flowrateadvec,flowresult]=ferncodes_solverpressureMPFAQL(nflag,...
@@ -410,7 +412,7 @@ if numcase~=246 & numcase~=246 & numcase~=247 & numcase~=248 & ...
     elseif strcmp(pmethod,'mpfah')
 
         [pressure,flowrate,]=ferncodes_solverpressureMPFAH(nflagface,...
-            parameter,weightDMP,wells,SS,dt,h_old,MM,gravrate,1,P);
+            parameter,weightDMP,wells,SS,dt,h_old,MM,gravrate,1,P,tempo);
 
     elseif strcmp(pmethod,'nlfvpp')
         [pressure,flowrateadvec,flowresult,flowratedif]=...

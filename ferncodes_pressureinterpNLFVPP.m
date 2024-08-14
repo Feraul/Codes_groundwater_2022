@@ -25,15 +25,15 @@ for no=1:size(coord,1)
                 c1=c1+w(esurn2(no)+j)*p(element1);
             end
         end
-        
+
     else
         c1=nflagno(no,2);
     end
-    
+
     pressurinterp(no,1)=c1;
     %% interpolacao concentracao nos vertices
-    
-    if (200<numcase && numcase<300)|| numcase==380
+
+    if (200<numcase && numcase<300)|| (379<numcase && numcase<400)
         c1aux=0;
         auxflagc=202; % quando a vazão é diferente de 0
         if nflagc(no,1) >200
@@ -51,14 +51,16 @@ for no=1:size(coord,1)
                     c1aux=c1aux+wightc(esurn2(no)+j)*Con(element1);
                 end
             end
-            
+
         else
             c1aux=nflagc(no,2);
         end
-        if c1aux<0
-            c1aux=0;
-        elseif c1aux>1
-            c1aux=1;
+        if numcase<200
+            if c1aux<0
+                c1aux=0;
+            elseif c1aux>1
+                c1aux=1;
+            end
         end
         cinterp(no,1)=c1aux;
     end

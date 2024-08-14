@@ -1,15 +1,8 @@
 
-%--------------------------------------------------------------------------
-%Subject: numerical routine to solve a two phase flow in porous media
-%Type of file: FUNCTION
-%Criate date: 09/08/2012
-%Modify data:  / /2012
-%Adviser: Paulo Lyra and Darlan Karlo
-%Programer: Márcio Souza
-%Modified: Fernando Contreras, 2021
+%Programer: Fernando Contreras, 2021
+ 
 %--------------------------------------------------------------------------
 %Goals: this FUNCTION maneger the kind of pressure solver
-
 %--------------------------------------------------------------------------
 %Additional comments:
 
@@ -168,21 +161,22 @@ switch phasekey
             pointedgecon, bodytermcon,gravrate);
         
     case 4 % hydraulic head simulation
-        %===========================================================
-        % para problema no estado estacionario
+        %% ===========================================================
+        % steady-state problem
         if numcase==336 || numcase==334 ||numcase==335 || numcase==337 ...
                 || numcase==338 || numcase==339 ||numcase==340 || ...
                 numcase==341 || numcase==347
+            time=0;
             if strcmp(pmethod,'tpfa')
                 %Get "pressure" and "flowrate"
                 [pressure,flowrate,] = ferncodes_solvePressure_TPFA(Kde, Kn,...
-                    nflagface, Hesq,0,0,0,0,0,0,SS,dt,h_old,MM,P);
+                    nflagface, Hesq,0,0,0,0,0,0,SS,dt,h_old,MM,P,time);
                 %MPFA-D (Gao and Wu, 2010)
             elseif strcmp(pmethod,'mpfad')
                 %Get "pressure" and "flowrate"
                 [pressure,flowrate,] = ferncodes_solverpressure(1,...
                     wells,Hesq,Kde,Kn,Kt,Ded,nflag,nflagface,weight,s,Con,Kdec,...
-                    Knc,Ktc,Dedc,nflagnoc,weightc,sc,SS,dt,h_old,MM,gravrate,P,kmap,0);
+                    Knc,Ktc,Dedc,nflagnoc,weightc,sc,SS,dt,h_old,MM,gravrate,P,kmap,time);
                 
             elseif strcmp(pmethod,'mpfaql')
                 [pressure,flowrate,]=ferncodes_solverpressureMPFAQL(nflag,...
@@ -190,7 +184,7 @@ switch phasekey
                 
             elseif strcmp(pmethod,'mpfah')
                 [pressure,flowrate,]=ferncodes_solverpressureMPFAH(nflagface,...
-                    parameter,weightDMP,wells,SS,dt,h_old,MM,gravrate,1,P,0);
+                    parameter,weightDMP,wells,SS,dt,h_old,MM,gravrate,1,P,time);
             elseif strcmp(pmethod,'nlfvpp')
                 [pressure,flowrate,]=ferncodes_solverpressureNLFVPP(nflagno,...
                     parameter,kmap,wells,1,V,1,N,p_old,contnorm);
@@ -217,8 +211,8 @@ switch phasekey
                 plotandwrite(0,0,pressure,0,0,0,0,0,overedgecoord);
             end
         else
-            %===============================================================
-            % para problema no estado transiente
+          %% ===============================================================
+            % transient-state problem
             hydraulic(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
                 parameter,h_old,contnorm,SS,MM,weight,s,dt,gravrate,nflagface,...
                 weightDMP,P);
@@ -229,7 +223,7 @@ switch phasekey
         %          if numcase==243 || numcase==245 || numcase==247
         %              elem(:,5)=1;
         %          end
-        
+        tempo=0;
         %Define elements associated to INJECTOR and PRODUCER wells.
         [injecelem,producelem,satinbound,Con,wellsc] = wellsparameter(wellsc,...
             Con,klb);
@@ -261,7 +255,7 @@ switch phasekey
             weightDMPc,wellsc,weight,s,velmedio,transmvecleftcon,transmvecrightcon,...
             knownvecleftcon,knownvecrightcon,storeinvcon,...
             Bleftcon,Brightcon,Fgcon,mapinvcon,maptransmcon,mapknownveccon,...
-            pointedgecon, bodytermcon,gravrate,SS,MM,P);
+            pointedgecon, bodytermcon,gravrate,SS,MM,P,tempo);
         
          %It Souves only the HYPERBOLIC Equation:
     otherwise
@@ -270,13 +264,13 @@ switch phasekey
         
         %Define flags and known variables on the edges.
         [satonedges,flagknownedge] = hyperb_getknownval;
-        
-        
+                
         %Preprocessor of the Saturation Equation
         [wvector,wmap,constraint,massweigmap,othervertexmap,lsw,swsequence,...
             ntriang,areatriang,prodwellbedg,prodwellinedg,mwmaprodelem,...
             vtxmaprodelem,coordmaprodelem,amountofneigvec,rtmd_storepos,...
-            rtmd_storeleft,rtmd_storeright,isonbound] = preSaturation(flagknownedge,0,0);
+            rtmd_storeleft,rtmd_storeright,isonbound] = ...
+            preSaturation(flagknownedge,0,0);
         
         %"hyperb_getflowrate" calculate the flow rate for the hyperbolic
         %equation.
@@ -312,11 +306,8 @@ if strcmp(pmethod,'nlfvpp')
     %temos usado para muitos estes o seguinte rutina
     [dparameter,]=ferncodes_coefficient(dmap);
     % calculate inpertolation weigts
-    
     [wightc,sc] = ferncodes_Pre_LPEW_2_con(dmap,N);
-    
     weightDMPc=0;
-    
     % adequação dos flags de contorno
     nflag = logical(lastimeval~=0)*ferncodes_calflag(lastimeval)+...
         logical(lastimeval==0)*nflag;

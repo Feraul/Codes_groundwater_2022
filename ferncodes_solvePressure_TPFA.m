@@ -109,27 +109,31 @@ if strcmp(modflowcompared,'y')
         I(elembedge(iw,1))=elembedge(iw,2);
     end
 end
+%--------------------------------------------------------------------------
 % para calcular a carga hidraulica
+% calcula um problema transiente
 if numcase>300
     %
     if numcase~=336 && numcase~=334 && numcase~=335 &&...
             numcase~=337 && numcase~=338 && numcase~=339 &&...
-            numcase~=340 && numcase~=341
-        
+            numcase~=340 && numcase~=341 && numcase~=380 && numcase~=347
         if numcase==333 || numcase==331
+            %para aquifero nao confinado
             coeficiente=dt^-1*SS.*elemarea(:);
         else
+            % para quifero confinado
             coeficiente=dt^-1*MM*SS.*elemarea(:);
         end
         % Euler backward method
         if strcmp(methodhydro,'backward')
-            M=M+coeficiente.*eye(size(elem,1));
+            % equacao 30 Qian et al 2023
+            M=coeficiente.*eye(size(elem,1))+M;
             I=I+coeficiente.*eye(size(elem,1))*h;
         else
             % Crank-Nicolson method
-            I=I+coeficiente.*eye(size(elem,1))*h-0.5*M*h;
-            M=0.5*M+coeficiente.*eye(size(elem,1));
-            
+            % equacao 33 Qian et al 2023
+            I=I+(coeficiente.*eye(size(elem,1))-0.5*M)*h;
+            M=  (coeficiente.*eye(size(elem,1))+0.5*M);
         end
         
     end
@@ -138,11 +142,12 @@ end
 %Add a source therm to independent vector "mvector"
 
 %Often it may change the global matrix "M"
-[M,I] = addsource(M,I,wells,P,elembedge,time);
+[M,I] = addsource(M,I,wells);
 
 %--------------------------------------------------------------------------
 %Solver the algebric system
-
+% Often with source term
+[I]=sourceterm(I,elembedge,P,time);
 %When this is assembled, that is solved using the function "solver".
 %This function returns the pressure field with value put in each colocation
 %point.

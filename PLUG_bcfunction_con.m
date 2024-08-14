@@ -51,5 +51,7 @@ switch numcase
         %bcattrib = sin(pi*(flagptr-2*a));
     case 380
         bcattrib=bcflagc(flagptr,2);
+    case 380.1
+        bcattrib=bcflagc(flagptr,2);
 end
 end

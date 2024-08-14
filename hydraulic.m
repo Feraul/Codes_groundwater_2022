@@ -1,17 +1,8 @@
 %--------------------------------------------------------------------------
-%UNIVERSIDADE FEDERAL DE PERNAMBUCO
-%CENTRO DE TECNOLOGIA E GEOCIENCIAS
-%PROGRAMA DE POS GRADUACAO EM ENGENHARIA CIVIL
-%TOPICOS ESPECIAIS EM DINAMICA DOS FLUIDOS COMPUTACIONAL
-%--------------------------------------------------------------------------
 %Subject: numerical routine to load the geometry in gmsh and to create...
 %the mesh parameter
 %Type of file: FUNCTION
-%Criate date: 10/01/2012
-%Modify data:  / /2012
-%Adviser: Paulo Lyra and Darlan Karlo
-%Programer: Márcio Souza
-%Modified: Fernando Contreras, 2021
+%Programer: Fernando Contreras, 2021
 %--------------------------------------------------------------------------
 %Goals:
 %Determinate the saturation and presure fields (2D) in a eithe homogen or
@@ -27,7 +18,8 @@ function hydraulic(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
     parameter,h_old,contnorm,SS,MM,weight,s,dt,gravrate,...
     nflagface,weightDMP,P)
 %Define global parameters:
-global timew  totaltime  coord pmethod filepath elem numcase inedge bedge interptype centelem ;
+global timew  totaltime coord pmethod filepath elem numcase inedge ...
+        bedge interptype centelem ;
 
 %---------------------------------------------------------------------------
 % h: representa a carga hidraulica 
@@ -35,7 +27,8 @@ global timew  totaltime  coord pmethod filepath elem numcase inedge bedge interp
 % h_old: carga hidraulica inicial
 %--------------------------------------------------------------------------
 %Initialize parameters:
-
+hanalitica=0;
+hauxiliar=0;
 %"time" is a parameter which add "dt" in each looping (dimentional or adm.)
 
 time = 0;
@@ -49,15 +42,14 @@ timew = 0;
 satonvertices=0;producelem=0;h=h_old;Con=0;Kdec=0;Knc=0;nflagc=0;viscosity=1;
 contiterplot=1;auxkmap=0;mobility=1;Ktc=0;Dedc=0;wightc=0;sc=0;dparameter=0;
 % armazena os vtk s no tempo 0
-postprocessor(h_old,zeros(size(inedge,1)+size(bedge,1),1),Con,1-Con,contiterplot,overedgecoord,orderintimestep,'i',1,auxkmap);
-
+postprocessor(h_old,zeros(size(inedge,1)+size(bedge,1),1),Con,1-Con,...
+    contiterplot,overedgecoord,orderintimestep,'i',1,auxkmap);
 if numcase==342
         %----------------------------------------------------------------------
-      
         vx=63; % malha quadrilateral ortogonal e distorcida
         %vx=212;% malha triangular nao-estruturada
-        haux(1,1)=time;
-        haux(1,2)=h_old(vx);
+        hauxiliar(1,1)=time;
+        hauxiliar(1,2)=h_old(vx);
         hanalitica(1,1)=time;
         hanalitica(1,2)=3*erfc(centelem(vx,1)/(2*sqrt(30.5*time/(3.28*10^-3))));
 end
@@ -75,7 +67,7 @@ while stopcriteria < 100
         [h_new,flowrate,] = ferncodes_solverpressure(...
             mobility,wells,Hesq,Kde,Kn,Kt,Ded,nflag,nflagface,...
             weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc,SS,dt,h,MM,...
-            gravrate,P,kmap);
+            gravrate,P,kmap,time);
         % utiliza o metodo MPFA-H para aproximar a carga hidraulica
     elseif strcmp(pmethod,'mpfah')
         % Calculate hydraulic head and flowrate using the MPFA with harmonic
@@ -97,16 +89,6 @@ while stopcriteria < 100
     stopcriteria = concluded;
     concluded = num2str(concluded);
     status = [concluded '% concluded']
-    
-    if numcase==342
-        %----------------------------------------------------------------------
-        vx=63; % malha quadrilateral ortogonal distorcida
-        %vx=212; % malha triangular nao estruturada
-           haux(contiterplot+1,1)=log10(time);
-           haux(contiterplot+1,2)=h_new(vx);
-           hanalitica(contiterplot+1,1)=log10(time);
-           hanalitica(contiterplot+1,2)=3*erfc(centelem(vx,1)/(2*sqrt(30.5*(time)/(3.28*10^-3))));
-    end
     % contador
     contiterplot=contiterplot+1
     % atualiza a carga hidraulica 
@@ -120,11 +102,11 @@ while stopcriteria < 100
             [~,kmap] = calcnormk(kmap,MM,h);
             [pointarmonic]=ferncodes_harmonicopoint(kmap);
             [parameter,]=ferncodes_coefficientmpfaH(facelement,pointarmonic,kmap);
-            [weightDMP]=ferncodes_weightnlfvDMP(kmap);
-        else
+            [weightDMP]=ferncodes_weightnlfvDMP(kmap,elem);
+        elseif strcmp(pmethod,'mpfad')
             [~,kmap] = calcnormk(kmap,MM,h);
             %Get preprocessed terms:
-            [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap);
+            [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap,elem);
             %It switches according to "interptype"
             switch char(interptype)
                 %LPEW 1
@@ -136,8 +118,19 @@ while stopcriteria < 100
                     % calculo dos pesos que correspondem ao LPEW2
                     [weight,s] = ferncodes_Pre_LPEW_2(kmap,N,zeros(size(elem,1),1));
             end  %End of SWITCH
+        else % TPFA
+           [~,kmap] = calcnormk(kmap,MM,h);
+            %Get preprocessed terms:
+            [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap,elem); 
         end
-    elseif numcase==342
+    elseif numcase==342 && strcmp(pmethod,'mpfah')
+        %----------------------------------------------------------------------
+        vx=63; % malha quadrilateral ortogonal distorcida
+        %vx=212; % malha triangular nao estruturada
+           hauxiliar(contiterplot+1,1)=log10(time);
+           hauxiliar(contiterplot+1,2)=h_new(vx);
+           hanalitica(contiterplot+1,1)=log10(time);
+           hanalitica(contiterplot+1,2)=3*erfc(centelem(vx,1)/(2*sqrt(30.5*(time)/(3.28*10^-3)))); 
         % a cada passo de tempo atualiza a condicao de contorno do outro da
         % face a direita
         vv=find(bedge(:,5)==102);
@@ -152,13 +145,10 @@ while stopcriteria < 100
     postprocessor(h,flowrate,Con,1-Con,contiterplot,overedgecoord,orderintimestep,'i',1,auxkmap);
     
 end
-%plot(haux(:,1), haux(:,2),'k')
-%hold on
-%plot(hanalitica(:,1), hanalitica(:,2),'r')
-erro=norm(haux(:,2)-hanalitica(:,2))
+
 toc
 % plotagem dos graficos em determinados regioes do dominio
-plotandwrite(producelem,Con,h,satonvertices,0,0,0,0,overedgecoord);
+plotandwrite(producelem,Con,h,satonvertices,0,0,0,0,overedgecoord,hanalitica,hauxiliar);
 
 %--------------------------------------------------------------------------
 % activate if you want to visualize the hydraulic field in the final time
@@ -174,6 +164,9 @@ disp('------------------------------------------------');
 disp('>> Global Hydraulic head extrema values [hmax hmin]:');
 max_hyval = max(h)
 min_hyval = min(h)
+if numcase==342
+erro=norm(hauxiliar(:,2)-hanalitica(:,2))
+end
 %It deletes the "restart.dat" file
 command = ['del ' char(filepath) '\' 'restart.dat'];
 %It calls system

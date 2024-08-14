@@ -1,15 +1,6 @@
 %--------------------------------------------------------------------------
-%UNIVERSIDADE FEDERAL DE PERNAMBUCO
-%CENTRO DE TECNOLOGIA E GEOCIENCIAS
-%PROGRAMA DE POS GRADUACAO EM ENGENHARIA CIVIL
-%TOPICOS ESPECIAIS EM DINAMICA DOS FLUIDOS COMPUTACIONAL
-%--------------------------------------------------------------------------
-%Subject: numerical routine to solve a two phase flow in porous media
+%Subject: numerical routine to solve a flow in porous media
 %Type of file: FUNCTION
-%Criate date: 30/06/2012
-%Modify data:  / /2012
-%Adviser: Paulo Lyra and Darlan Karlo
-%Programer: Márcio Souza
 %--------------------------------------------------------------------------
 %Goals: this FUNCTION gets the value attributed to source in each control
 %volume
@@ -34,7 +25,7 @@ for isource = 1:size(elem,1)
         %Example 1.6: Axisymmetric example (Silva, 2004)
         case 1.6
             sourcevector(isource) = 2.4*elemarea(isource);
-            
+
             %------------------------------------------------------------------
             %Example 11: The present case is referred to EXAMPLE 5.1 (HYMAN et
             %al. 2007): a exponential boundary condition (-2*exp(xy)*(1 + y^2 +
@@ -44,7 +35,7 @@ for isource = 1:size(elem,1)
                 (-2*exp(centelem(isource,1)*centelem(isource,2))*...
                 (1 + (centelem(isource,1)^2) + (centelem(isource,2)^2) + ...
                 centelem(isource,1)*centelem(isource,2)));
-            
+
             %------------------------------------------------------------------
             %Example 12.1: The present case is referred to EXAMPLE 5.2 (HYMAN
             %et al. 2007): a boundary condition obtaned from analytical solut.
@@ -64,7 +55,7 @@ for isource = 1:size(elem,1)
                     ((2*alpha)*(exp(centelem(isource,1)))*...
                     cos(centelem(isource,2)));
             end  %End of Internal IF
-            
+
             %------------------------------------------------------------------
             %Example 12.2: The present case is referred to EXAMPLE 5.2 (HYMAN
             %et al. 2007): a boundary condition obtaned from analytical solut.
@@ -84,7 +75,7 @@ for isource = 1:size(elem,1)
                     ((2*alpha)*(exp(centelem(isource,1)))*...
                     cos(centelem(isource,2)));
             end  %End of Internal IF
-            
+
             %------------------------------------------------------------------
             %Example 12.3: The present case is referred to EXAMPLE 5.2 (HYMAN
             %et al. 2007): a boundary condition obtaned from analytical solut.
@@ -104,7 +95,7 @@ for isource = 1:size(elem,1)
                     ((2*alpha)*(exp(centelem(isource,1)))*...
                     cos(centelem(isource,2)));
             end  %End of Internal IF
-            
+
             %------------------------------------------------------------------
             %Example 12.4: The present case is referred to EXAMPLE 5.2 (HYMAN
             %et al. 2007): a boundary condition obtaned from analytical solut.
@@ -124,7 +115,7 @@ for isource = 1:size(elem,1)
                     ((2*alpha)*(exp(centelem(isource,1)))*...
                     cos(centelem(isource,2)));
             end  %End of Internal IF
-            
+
             %------------------------------------------------------------------
             %Example 13: proble with domain orthotropic (10:1) and homogen,
             %Dirichlet boundary condition. Analitical solution obtained from
@@ -132,7 +123,7 @@ for isource = 1:size(elem,1)
         case 13
             sourcevector(isource) = elemarea(isource)*(11*(pi^2)*...
                 cos(pi*centelem(isource,1))*cos(pi*centelem(isource,2)));
-            
+
             %------------------------------------------------------------------
             %Example 14.1: obtained from FVCA 5 (Herbin and Hubert, 2008).
             %It is the case 1.1 theirs (mild anisotropy), pp. 2
@@ -142,7 +133,7 @@ for isource = 1:size(elem,1)
                 centelem(isource,1)*(80 - (64*centelem(isource,2))) - ...
                 48*(centelem(isource,2) - 1.43426)*(centelem(isource,2) - ...
                 0.232408));
-            
+
             %------------------------------------------------------------------
             %Example 14.2: obtained from FVCA 5 (Herbin and Hubert, 2008).
             %It is the case 1.2 theirs (mild anisotropy), pp. 3
@@ -160,7 +151,7 @@ for isource = 1:size(elem,1)
                 centelem(isource,1)*centelem(isource,2) + ...
                 1.5*(centelem(isource,2)^2))*...
                 sin((centelem(isource,1) - 1)*(centelem(isource,2) - 1)));
-            
+
             %------------------------------------------------------------------
             %Example 15.1: Adaptaded from FVCA 5 (Herbin and Hubert, 2008).
             %It is the case 5 theirs (highly anisotropic), pp. 6
@@ -177,7 +168,7 @@ for isource = 1:size(elem,1)
                 cos(pi*centelem(isource,2)) + (1 + delta)*pi*...
                 ((centelem(isource,1)^2) + (centelem(isource,2)^2))*...
                 sin(pi*centelem(isource,2)))));
-            
+
             %------------------------------------------------------------------
             %Example 15.2: Adaptaded from FVCA 5 (Herbin and Hubert, 2008).
             %It is the case 5 theirs (highly anisotropic), pp. 6
@@ -194,7 +185,7 @@ for isource = 1:size(elem,1)
                 cos(pi*centelem(isource,2)) + (1 + delta)*pi*...
                 ((centelem(isource,1)^2) + (centelem(isource,2)^2))*...
                 sin(pi*centelem(isource,2)))));
-            
+
             %------------------------------------------------------------------
             %Example 15.3: Adaptaded from FVCA 5 (Herbin and Hubert, 2008).
             %It is the case 5, pp. 6 (highly anisotropic) - MODIFIED by Le
@@ -215,7 +206,7 @@ for isource = 1:size(elem,1)
                 cos(pi*x)*sin(pi*y)*((1 - 3*epsilon)*pi*x1) + ...
                 sin(pi*x)*cos(pi*y)*((1 - 3*epsilon)*pi*y1) + ...
                 cos(pi*x)*cos(pi*y)*(2*(pi^2)*(1 - epsilon)*x1*y1));
-            
+
             %------------------------------------------------------------------
             %Example 15.4: Adaptaded from FVCA 5 (Herbin and Hubert, 2008).
             %It is the case 5, pp. 6 (highly anisotropic) - MODIFIED by Le
@@ -233,7 +224,7 @@ for isource = 1:size(elem,1)
                 %element evaluated.
                 sourcevector(isource) = elemarea(isource);
             end  %End of internal if
-            
+
             %------------------------------------------------------------------
             %Example 16:  In this example there are two material with the first
             %isotropic and the second one orthotropic. Dirichlet's boundary
@@ -250,7 +241,7 @@ for isource = 1:size(elem,1)
                     elemarea(isource)*(9.87059*cos(pi*centelem(isource,1))*...
                     sin(pi*centelem(isource,2)));
             end  %End of Internal IF
-            
+
             %------------------------------------------------------------------
             %Example 17:  Middle anisotropy. Section 3.1, Case 1. Obtained from
             %Gao and Wu (2010)
@@ -269,12 +260,12 @@ for isource = 1:size(elem,1)
                 (y - 1)*csc(1)*sin((x - 1)*(y - 1))) - ...
                 0.25*(-6*((x - 1)^2)*(y - 1) + cos((x - 1)*(y - 1))*csc(1) - ...
                 (x - 1)*(y - 1)*csc(1)*sin((x - 1)*(y - 1))));
-            
-            
+
+
             %------------------------------------------------------------------
             %SOURCE TERM to MONOTONICITY study
             %------------------------------------------------------------------
-            
+
             %------------------------------------------------------------------
             %Example 20.1: Adaptaded from FVCA 5 (Herbin and Hubert, 2008).
             %It is the case 8, pp. 8 (isotropic with well).
@@ -284,7 +275,7 @@ for isource = 1:size(elem,1)
             if isource == 121 || isource == 122
                 sourcevector(isource) = 1;
             end  %End of IF
-            
+
             %------------------------------------------------------------------
             %Example 20.2: Adaptaded from FVCA 5 (Herbin and Hubert, 2008).
             %It is the case 8, pp. 8 (isotropic with well).
@@ -294,7 +285,7 @@ for isource = 1:size(elem,1)
             if isource == 121
                 sourcevector(isource) = elemarea(isource);
             end  %End of IF
-            
+
             %------------------------------------------------------------------
             %Example 21:
             %Lipnikov et al., 2007 - Case 1, equation 45
@@ -311,7 +302,7 @@ for isource = 1:size(elem,1)
             else
                 sourcevector(isource) = 0;
             end  %End of internal if
-            
+
             %----------------------------------------------------------------------
             %Example 21.1: Adapted from Lipnikov et al., 2007 (Example 1)
             %It changes the parameter "epsilon"
@@ -327,7 +318,7 @@ for isource = 1:size(elem,1)
             else
                 sourcevector(isource) = 0;
             end  %End of internal if
-            
+
             %------------------------------------------------------------------
             %Lipnikov et al., 2007 - Case 3 (heterogeneous diffusion tensor)
         case 22
@@ -344,7 +335,7 @@ for isource = 1:size(elem,1)
             else
                 sourcevector(isource) = 0;
             end  %End of internal if
-            
+
             %------------------------------------------------------------------
             %Example 29:
             %Adapted fromm Le Potier presentation
@@ -371,11 +362,11 @@ for isource = 1:size(elem,1)
                 sourcevector(isource) =-8*elemarea(isource);
             end  %End of internal if
         case 333
-            if max(max(elembedge(:,1)==isource))==0
+            %if max(max(elembedge(:,1)==isource))==0
                 sourcevector(isource)=P*elemarea(isource);
-            else
-                sourcevector(isource)=0;
-            end
+            %else
+            %   sourcevector(isource)=0;
+            %end
         case 335
             sourcevector(isource)=P*elemarea(isource);
         case 337
@@ -389,14 +380,12 @@ for isource = 1:size(elem,1)
         case 342
             x=centelem(isource,1);
             if time==0
-                
                 sourcevector(isource)=0;
             else
-                
                 termo1=(0.00880285*x*exp(-0.0000270492*(x^2)/time))/(time^(3/2));
                 termo2=(9.5244*10^-7)*x*exp(-0.0000270492*(x^2)/time)/(time^(3/2));
-               sourcevector(isource) = elemarea(isource)*((3.28*10^-3)*3*termo1-91.5*termo2); 
+                sourcevector(isource) = elemarea(isource)*((3.28*10^-3)*3*termo1-91.5*termo2);
             end
-            
+
     end  %End of SWITCH
 end  %End of FOR

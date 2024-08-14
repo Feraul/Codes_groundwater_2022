@@ -154,6 +154,11 @@ switch numcase
         dmap = [1 0.01 0 0 0.001];
         dmedio=norm(dmap(1,2:4),inf);
         gamma=0;
+    case 380.1
+        dmap = [1 0.01 0 0 0.001];
+        dmedio=norm(dmap(1,2:4),inf);
+        gamma=0;
+
         
 end
 end

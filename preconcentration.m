@@ -17,7 +17,7 @@ elseif numcase==231 || numcase==232 || numcase==243 || ...
         numcase==236 || numcase==237 || numcase==238 ||...
         numcase==239 || numcase==241 || numcase==242 ||...
         numcase==244  || numcase==234|| numcase==233 ||...
-        numcase==248 || numcase==251 || numcase==380
+        numcase==248 || numcase==251 || numcase==380 || numcase==380.1
     velmedio=1;
 end
 %% calculate diffusion tensor
@@ -534,6 +534,35 @@ switch numcase
         wellsc(:,4)=100;
         wellsc(:,5)=0;
         wellsc(:,6)=0;
+    case 380.1
+        bcflagc(1,1)=50;% dicichlet concen
+        bcflagc(1,2)=0;% valor dirich
+        bcflagc(2,1)=51; % dicichlet concen
+        bcflagc(2,2)=0; % valor dirich
+        bcflagc(3,1)=52; % dirichlet boundary
+        bcflagc(3,2)=100;  % valor
+        bcflagc(4,1)=251;  % neumann boundary
+        bcflagc(4,2)=0; % valor
+        
+        c=logical(bedge(:,4)==101);
+        bedge([c],6)=50;
+        d=logical(bedge(:,4)==102);
+        bedge([d],6)=51;
+        e=logical(bedge(:,4)==103);
+        bedge([e],6)=52;
+        f=logical(bedge(:,4)==201);
+        bedge([f],6)=251;
+        
+        c1=logical(bedge(:,5)==101);
+        bedge([c1],7)=50;
+        d1=logical(bedge(:,5)==102);
+        bedge([d1],7)=51;
+        e1=logical(bedge(:,5)==103);
+        bedge([e1],7)=52;
+        f1=logical(bedge(:,5)==201);
+        bedge([f1],7)=251;
+
+
 end
 % end flags
 %% flags adicionais para o problema 5.3.3 Darlan

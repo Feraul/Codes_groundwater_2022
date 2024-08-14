@@ -217,7 +217,7 @@ while (dmp ~= 0 || convwell == 0)
     if strcmp(smethod,'stdr')
         %Chose the numerical flux according benchmark number
         %Petroleum application (IMPES procedure)
-        if (200<numcase && numcase<300) || numcase==380
+        if (200<numcase && numcase<300) || (379<numcase && numcase<400)
              % calculate the numerical flux for concentration field
             %Initialize "earlysw"
             earlysw = zeros(bedgesize + inedgesize,1);

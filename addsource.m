@@ -1,8 +1,4 @@
-%--------------------------------------------------------------------------
-%UNIVERSIDADE FEDERAL DE PERNAMBUCO
-%CENTRO DE TECNOLOGIA E GEOCIENCIAS
-%PROGRAMA DE POS GRADUACAO EM ENGENHARIA CIVIL
-%TOPICOS ESPECIAIS EM DINAMICA DOS FLUIDOS COMPUTACIONAL
+
 %--------------------------------------------------------------------------
 %Subject: numerical routine to be used in SPECTRAL Volume Method
 %(Spectral Preprocessor)
@@ -22,7 +18,7 @@
 
 %--------------------------------------------------------------------------
 
-function [M,mvector] = addsource(M,mvector,wells,P,elembedge,tempo)
+function [M,mvector] = addsource(M,mvector,wells)
 %Define global parameters:
 global elemarea numcase;
 
@@ -106,12 +102,6 @@ if (size(wells,2) > 1)
                 end
             end
         end  %End of FOR (flowrate in producer well)
-        if numcase==347
-            %Catch "source" came from "PLUG_sourcefunction"
-            source = PLUG_sourcefunction(P,elembedge,tempo);
-            %The vector "mvector" is added to vector returned from function below.
-            mvector = mvector + source;
-        end
         %2. Applying PRESSURE:
     elseif any(wells(producrow,5) > 500 & wells(producrow,5) < 601)
         %Define the value of pressure
@@ -137,14 +127,4 @@ if (size(wells,2) > 1)
 
     %Case the source term has came from benchmark case with analitical solution
     %(Benchmark from 10 to 20):
-elseif (numcase >= 10 && numcase <= 30) || numcase == 1.6 ||...
-        numcase==336 || numcase==333 || numcase==335 || numcase==337 ||...
-        numcase==338 || numcase==341 || numcase==342 
-    if numcase==341
-        [P]=ferncodes_calcfonte;
-    end
-    %Catch "source" came from "PLUG_sourcefunction"
-    source = PLUG_sourcefunction(P,elembedge,tempo);
-    %The vector "mvector" is added to vector returned from function below.
-    mvector = mvector + source;
 end  %End of IF

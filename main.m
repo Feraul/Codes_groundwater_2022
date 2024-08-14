@@ -1,13 +1,13 @@
 %--------------------------------------------------------------------------
-%Subject: numerical code used to simulate fluid flow in porous media. That 
-%routine calls several others which defines how the equation will be solved 
+%Subject: numerical code used to simulate fluid flow in porous media. That
+%routine calls several others which defines how the equation will be solved
 %Type of file: MAIN
-%Programer: PhD. Fernando Contreras, 
+%Programer: PhD. Fernando Contreras,
 %--------------------------------------------------------------------------
-%Goals: Do the manegement of simulator. This is a MAIN program. 
+%Goals: Do the manegement of simulator. This is a MAIN program.
 
 %--------------------------------------------------------------------------
-% In this numerical routine the flow may be simulated with one or two phase 
+% In this numerical routine the flow may be simulated with one or two phase
 % or contaminants or groundwater (hydraulic head). The functions below are
 % organized in order give flexibility to software resourcers.
 % For example: the saturation and pressure fields are calculated by IMPES,
@@ -18,7 +18,7 @@
 %|  leia com muita atencao as indicacoes|
 %|--------------------------------------|
 
-%Clear the screem 
+%Clear the screem
 clc;
 %Clear all the memory of the matlab
 clear all;
@@ -46,7 +46,7 @@ global coord centelem elem esurn1 esurn2 nsurn1 nsurn2 bedge inedge ...
     esureface1,esureface2,esurefull1,esurefull2,elemarea,dens,visc,...
     satlimit,pormap,bcflag,courant,totaltime,numcase,phasekey,pmethod,...
     smethod,xyrz,r0,symaxe,keymsfv,coarseratio,auxcvfactor,interptype,...
-   multdopt,goefreeopt,order,timeorder,recovtype,lsneightype,...
+    multdopt,goefreeopt,order,timeorder,recovtype,lsneightype,...
     lsexp,keygravity,g,keycapil,ncaplcorey,filepath,resfolder,benchkey,...
     kmap,wells,klb,limiterflag,rowposit,nltol,maxiter,acel,modflowcompared] = preprocessormod;
 %---------------------------------------------------------------------------
@@ -92,34 +92,36 @@ if 200<numcase && numcase <300
         kmap=kmap;
         %adeSPE; % para um campo de permeabilidade da SPE active descomente.
     end
-    SS=0; h_old=0; MM=0;wells=0; dt=0;P=0; 
+    SS=0; h_old=0; MM=0;wells=0; dt=0;P=0;
     % This numcase is used to simulate head hydraulic in aquifers
 elseif numcase>300
     %% Verifique os dados dos casos ou adicione dados de um novo caso
-    % Benchmark hidrology 
+    % Benchmark hidrology
     auxpar=0; dmap=0; Dmedio=0; gamma=0; velmedio=0; wellsc=0;
-   % Flags adequation for hydrological head problem
-   [SS,h_old,MM,wells,dt,P]=prehydraulic;
-   % Choose Backward method or Crank-Nicolson
-   % use quando o aquifero for confinado
-   methodhydro='backward';
-   % use para o caso aquifero nao confinado
-   %methodhydro='cranknicolson'; 
-   % This numcase is used for two-phase (water-oil) flow problems 
-   if numcase==341
-       % Nmod:Numero de funcoes coseno % vark:varianca
-       Nmod=100;  varK=0.1;
-   end
-   if 350<numcase && numcase <400
-       % Flags adequation for contamination and groundwater problem
-       [bedge,bcflagc,wellsc,auxpar,velmedio,dmap,Dmedio,gamma]=...
-           preconcentration(bedge,wells);
-   end
+    % Flags adequation for hydrological head problem
+    [SS,h_old,MM,wells,dt,P]=prehydraulic;
+    % Choose Backward method or Crank-Nicolson
+    % use quando o aquifero for confinado
+    methodhydro='backward';
+    % use para o caso aquifero nao confinado
+    %methodhydro='cranknicolson';
+    % This numcase is used for two-phase (water-oil) flow problems
+    if numcase==341
+        % Nmod:Numero de funcoes coseno % vark:varianca
+        Nmod=100;  varK=0.1;
+    end
+    if 350<numcase && numcase <400 % hydraulic head and contamination transport
+        % Flags adequation for contamination and groundwater problem
+        [bedge,bcflagc,wellsc,auxpar,velmedio,dmap,Dmedio,gamma]=...
+            preconcentration(bedge,wells);
+    end
 else
-    auxpar=0;dmap=0; Dmedio=0; gamma=0; velmedio=0; wellsc=0; SS=0; 
-    h_old=0; MM=0; dt=0; P=0; 
+    auxpar=0;dmap=0; Dmedio=0; gamma=0; velmedio=0; wellsc=0; SS=0;
+    h_old=0; MM=0; dt=0; P=0;
 end
-%adeSPE; % para um campo de permeabilidade da SPE active descomente.
+if numcase==380.1
+adeSPE; % para um campo de permeabilidade da SPE active descomente.
+end
 %--------------------------------------------------------------------------
 %Call "setmethod"
 %elem(:,5)=1;

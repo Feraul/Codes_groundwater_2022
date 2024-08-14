@@ -529,7 +529,7 @@ viscositytable.dat
 //[y] ==> "yes" (each control volume has a permeability value); 
 //[n] ==> "no" (the permeability value is attributed to layer(s)).
 
-n
+y
 
 //If [r], the matlab generates a randomic distribution with the 
 //component values variating between the minimum and maximum values. 
@@ -587,7 +587,7 @@ y
 //(each one must be associated to its layer).
 
 1
-1    
+0.3    
 
 //If [n], each control volume will have a different value of porosity 
 //Get it from an external file. Write below both the path and name of 
@@ -634,10 +634,10 @@ n
 //(Dirichlet, Neumann or Periodic);
 //3. In the same row, put the algebric value of this BC.  
 
-4
+3
 201 0
 102 6.05
-103 6.10
+102 6.10
 101 6.10   
 
 //--------------------------------------------------------------------
@@ -650,7 +650,7 @@ n
 //each point group. 
 
 3
-101 102 103
+101 102 201
 
 //--------------------------------------------------------------------
 //----------------------- Convergence Criteria -----------------------
