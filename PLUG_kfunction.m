@@ -943,6 +943,7 @@ switch numcase
         %[kmap]=conduchidraulica;
     case 380.1
         kmap=kmap;
+        elem(:,5)=1:size(elem,1);
 end  %End of Switch
 
 %--------------------------------------------------------------------------

@@ -83,7 +83,7 @@ if 200<numcase && numcase <300
         % 
         % ained by: Nicolaides, Cueto-Filgueroso,
         % Juanes 2015.
-        % reorganização da matriz de permeabilidade
+        % reorganizaÃ§Ã£o da matriz de permeabilidade
         load('Perm_Var0p1.mat')
         %==================================================================
         perm=flipud(perm);
@@ -131,7 +131,6 @@ else
 end
 if numcase==380.1
 adeSPE; % para um campo de permeabilidade da SPE active descomente.
-
 end
 %--------------------------------------------------------------------------
 %Call "setmethod"

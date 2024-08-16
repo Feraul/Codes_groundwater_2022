@@ -289,7 +289,7 @@ while stopcriteria < 100
     %It gives the time spent per "timelevel"
     %if time>1000 && (numcase==242 || numcase==243 || numcase==249 || numcase==250)
     if (time>1 && (numcase==242 || numcase==243 || numcase==245))...
-            || (time>1 && numcase==380) || (time>200 && numcase==380.1)
+            || (time>1 && numcase==380 &&) || (time>50 && numcase==380.1)
         if numcase==245 || numcase==247
             wellsc(1:2,4)=0;
             Con(wells(1,1),1)=wells(1,4);
@@ -303,19 +303,7 @@ while stopcriteria < 100
             %Define flags and known saturation on the vertices and edges.
             [satonvertices,satonedges,] = ...
                 getsatandflag(satinbound,injecelem,Conaux,nflagc,nflagfacec,1);
-        elseif time>1 && (numcase==380)
-            wellsc(1:20,4)=0;
-            %Initialize and preprocess the parameters:
-            [nflagc,nflagfacec] = ferncodes_calflag_con(0);
-            %Define elements associated to INJECTOR and PRODUCER wells.
-            [injecelem,producelem,satinbound,Conaux,wells] = wellsparameter(wells,...
-                Conaux,klb);
-
-            %Define flags and known saturation on the vertices and edges.
-            [satonvertices,satonedges,] = ...
-                getsatandflag(satinbound,injecelem,Conaux,nflagc,nflagfacec,1);
-        elseif time>200 &&  numcase==380.1
-             bcflagc(3,2)=0; % Dirichlet value
+        elseif time>1 && (numcase==380 || numcase==380.1)
             wellsc(1:20,4)=0;
             %Initialize and preprocess the parameters:
             [nflagc,nflagfacec] = ferncodes_calflag_con(0);
