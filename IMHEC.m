@@ -40,6 +40,10 @@ global timew  totaltime timelevel numcase pmethod filepath  resfolder ...
 %Initialize parameters:
 c = 0;
 Conaux=Con;
+aux=1;
+aux1=1;
+mm=0;
+nn=0;
 %"time" is a parameter which add "dt" in each looping (dimentional or adm.)
 time = lastimeval;
 stopcriteria = 0;
@@ -99,7 +103,7 @@ postprocessor_con(ones(elemsize,1),Con,contiterplot - 1,auxkmap);
 % mobility
 mobility=1;
 % calculate the pressure, flow rate advective and dispersive terms
-if numcase<379
+if numcase<379 || numcase==380.1
 [hydraulic,flowrateadvec,flowresult,flowratedif]=auxiliarysolverhydraulic(Hesq,Kde,Kn,Kt,Ded,nflag,...
     kmap,V,N,contnorm,weight,s,Con,nflagc,wightc,sc,dparameter,...
     nflagface,parameter,weightDMP,p_old,transmvecleft,...
@@ -129,9 +133,9 @@ while stopcriteria < 100
     timelevel
 
     if numcase==246 || numcase==245 || numcase==247 || numcase==248 ||...
-            numcase==249 || numcase==250 || numcase==251 || numcase==380 || numcase==380.1
+            numcase==249 || numcase==250 || numcase==251 || numcase==380 
 
-        if numcase==380 || numcase==380.1
+        if numcase==380 
             %[viscosity] = ferncodes_getviscosity(satinbound,injecelem,Con,earlysw,...
             %    Sleft,Sright,c,overedgecoord,nflagc,nflagfacec);
             viscosity=1;
@@ -155,7 +159,7 @@ while stopcriteria < 100
         %explicit concentration formulation.
         %dt=1;
         %dt = calctimestep(flowrateadvec,satinbound,gamma,Dmedio)
-    elseif numcase==241 || numcase==242 || numcase==231 || numcase==232
+    elseif numcase==241 || numcase==242 || numcase==231 || numcase==232 || numcase==380.1
         viscosity=1;
 
         % calcula fluxo dispersivo
@@ -314,14 +318,26 @@ while stopcriteria < 100
             %Define flags and known saturation on the vertices and edges.
             [satonvertices,satonedges,] = ...
                 getsatandflag(satinbound,injecelem,Conaux,nflagc,nflagfacec,1);
-        elseif time>200 &&  numcase==380.1
-             bcflagc(3,2)=0; % Dirichlet value
-            wellsc(1:20,4)=0;
-            %Initialize and preprocess the parameters:
-            [nflagc,nflagfacec] = ferncodes_calflag_con(0);
-            %Define elements associated to INJECTOR and PRODUCER wells.
-            [injecelem,producelem,satinbound,Conaux,wells] = wellsparameter(wells,...
-                Conaux,klb);
+        elseif numcase==380.1
+            if time>200
+                bcflagc(3,2)=0; % Dirichlet value
+                wellsc(1:20,4)=0;
+                %Initialize and preprocess the parameters:
+                [nflagc,nflagfacec] = ferncodes_calflag_con(0);
+                %Define elements associated to INJECTOR and PRODUCER wells.
+                [injecelem,producelem,satinbound,Conaux,wells] = wellsparameter(wells,...
+                    Conaux,klb);
+            end
+            
+            if Con(wells(1,1))>0 && aux==1
+                mm=time;
+                aux=aux+1;
+            end
+            if Con(wells(2,1))>0 && aux1==1
+                nn=time;
+                aux1=aux1+1;
+            end
+            
 
             %Define flags and known saturation on the vertices and edges.
             [satonvertices,satonedges,] = ...
@@ -368,6 +384,8 @@ max_conval = max(Con)
 min_conval = min(Con)
 auxCon=Con(Con<0);
 auxCon1=Con(Con>1);
+mm
+nn
 percentCon=((length(auxCon)+length(auxCon1))/length(Con))*100;
 %Mesage for the user:
 disp('------------------------------------------------');

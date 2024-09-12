@@ -49,6 +49,7 @@ global coord centelem elem esurn1 esurn2 nsurn1 nsurn2 bedge inedge ...
     multdopt,goefreeopt,order,timeorder,recovtype,lsneightype,...
     lsexp,keygravity,g,keycapil,ncaplcorey,filepath,resfolder,benchkey,...
     kmap,wells,klb,limiterflag,rowposit,nltol,maxiter,acel,modflowcompared] = preprocessormod;
+
 %---------------------------------------------------------------------------
 % In preprocessormod.m, we include the line: 2737 to 2739
 %-----------------------------------------------------------------------------
@@ -72,15 +73,6 @@ if 200<numcase && numcase <300
     % calculate permeability tensor
     if numcase==247 || numcase==249 || numcase==250
         % permeability field obt
-        % 
-        % 
-        % 
-        % 
-        % 
-        % 
-        % 
-        % 
-        % 
         % ained by: Nicolaides, Cueto-Filgueroso,
         % Juanes 2015.
         % reorganização da matriz de permeabilidade
@@ -116,9 +108,9 @@ elseif numcase>300
     % use para o caso aquifero nao confinado
     %methodhydro='cranknicolson';
     % This numcase is used for two-phase (water-oil) flow problems
-    if numcase==341
+    if numcase==341 || numcase==380.1
         % Nmod:Numero de funcoes coseno % vark:varianca
-        Nmod=100;  varK=0.1;
+        Nmod=100;  varK=6;
     end
     if 350<numcase && numcase <400 % hydraulic head and contamination transport
         % Flags adequation for contamination and groundwater problem
@@ -129,10 +121,10 @@ else
     auxpar=0;dmap=0; Dmedio=0; gamma=0; velmedio=0; wellsc=0; SS=0;
     h_old=0; MM=0; dt=0; P=0;
 end
-if numcase==380.1
-adeSPE; % para um campo de permeabilidade da SPE active descomente.
+%if numcase==380.1
+%adeSPE; % para um campo de permeabilidade da SPE active descomente.
 
-end
+%end
 %--------------------------------------------------------------------------
 %Call "setmethod"
 %elem(:,5)=1;

@@ -14,7 +14,7 @@ function [p,flowrate,flowresult,flowratedif] = ferncodes_solverpressure(viscosit
 [M,I] = addsource(sparse(M),I,wells);
 
 % Often with source term
-[I]=sourceterm(I,elembedge,P,tempo);
+[I]=sourceterm(I,elembedge,P,tempo,wells);
 
 %--------------------------------------------------------------------------
 %Solve global algebric system 

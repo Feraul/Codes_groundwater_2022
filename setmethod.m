@@ -1,6 +1,6 @@
 
 %Programer: Fernando Contreras, 2021
- 
+
 %--------------------------------------------------------------------------
 %Goals: this FUNCTION maneger the kind of pressure solver
 %--------------------------------------------------------------------------
@@ -27,7 +27,7 @@ if phasekey ~= 0
         pointedgecon, bodytermcon,Kdec,Knc,Ktc,Dedc,weightc,sc,weightDMPc,dparameter,...
         nflagnoc,nflagfacec,Con,lastimelevel,lastimeval,...
         gravrate] = preMPFA(kmap,klb,dmap,MM,h_old);
-    
+
 end  %End of IF (execute "preMPFA")
 
 %According "phasekey" the "One-phase" or "Two-phase" procedures are choose.
@@ -38,12 +38,12 @@ switch phasekey
         %Chose the type of scheme according "pmethod"
         %Traditional Two-Point Flux Approximation (TPFA),
         %Aziz and Settary (1979)
-        
+
         if strcmp(pmethod,'tpfa')
             %Get "pressure" and "flowrate"
             [pressure,flowrate,] = solvePressure_TPFA(transmvecleft,...
                 knownvecleft,1,0,Fg,bodyterm);
-            
+
             %MPFA-D (Gao and Wu, 2010)
         elseif strcmp(pmethod,'mpfad')
             %Get "pressure" and "flowrate"
@@ -53,7 +53,7 @@ switch phasekey
         elseif strcmp(pmethod,'mpfaql')
             [pressure,flowrate,]=ferncodes_solverpressureMPFAQL(nflag,...
                 parameter,kmap,weightDMP,wells,1,V,1,N,weight,s);
-            
+
         elseif strcmp(pmethod,'mpfah')
             [pressure,flowrate,]=ferncodes_solverpressureMPFAH(nflagface,...
                 parameter,weightDMP,wells,SS,dt,h_old,MM,gravrate,P);
@@ -74,37 +74,37 @@ switch phasekey
                 knownvecright,storeinv,Bleft,Bright,wells,mapinv,maptransm,...
                 mapknownvec,pointedge,1,bodyterm);
         end  %End of IF (type of pressure solver - one-phase flow)
-        
+
         %Plot the fields (pressure, normal velocity, etc)
         %This function create the "*.vtk" file used in VISIT to
         %postprocessing the results
         postprocessor(pressure,flowrate,0,1,1,overedgecoord,1,keywrite,invh,normk);
-        
+
         %It finishes the time counter and "profile".
         toc
-        
+
         %Two-Phase case:
     case 2
         %Initialize and preprocess the parameters:
-        
+
         %Get the initial condition for the hyperbolic equation
         [Sw,lastimelevel,lastimeval] = applyinicialcond;
-        
+
         %Define elements associated to INJECTOR and PRODUCER wells.
         [injecelem,producelem,satinbound,Sw,wells] = wellsparameter(wells,...
             Sw,klb);
-        
+
         %Define flags and known saturation on the vertices and edges.
         [satonvertices,satonedges,flagknownvert,flagknownedge] = ...
             getsatandflag(satinbound,injecelem,Sw,nflagnoc,nflagfacec,0);
-        
+
         %"preSaturation" - Preprocessor of the Saturation Equation
         [wvector,wmap,constraint,massweigmap,othervertexmap,lsw,swsequence,...
             ntriang,areatriang,prodwellbedg,prodwellinedg,mwmaprodelem,...
             vtxmaprodelem,coordmaprodelem,amountofneigvec,rtmd_storepos,...
             rtmd_storeleft,rtmd_storeright,isonbound] = ...
             preSaturation(flagknownedge,injecelem,producelem);
-        
+
         %"IMPES" function. There, PRESSURE and SATURATION are solved.
         IMPES(Sw,injecelem,producelem,satinbound,wells,klb,satonvertices,...
             satonedges,flagknownvert,flagknownedge,wvector,wmap,constraint,...
@@ -119,29 +119,29 @@ switch phasekey
             weightDMP,nflagface,p_old,contnorm,Kdec,Knc,Ktc,Dedc,weight,s,...
             Con,nflagnoc,weightc,sc,dparameter,SS,dt,h_old,MM,gravrate,...
             Dmedio,velmedio,nflagfacec,weightDMPc);
-     % contaminant transport with pressure   
-    case 3 
-        
-        
+        % contaminant transport with pressure
+    case 3
+
+
         %          if numcase==243 || numcase==245 || numcase==247
         %              elem(:,5)=1;
         %          end
-        
+
         %Define elements associated to INJECTOR and PRODUCER wells.
         [injecelem,producelem,satinbound,Con,wellsc] = wellsparameter(wellsc,...
             Con,klb);
-        
+
         %Define flags and known concentration or saturation on the vertices and edges.
         [satonvertices,satonedges,flagknownvert,flagknownedge] = ...
             getsatandflag(satinbound,injecelem,Con,nflagnoc,nflagfacec,0);
-        
+
         %"preSaturation" - Preprocessor of the concentration or saturation equation
         [wvector,wmap,constraint,massweigmap,othervertexmap,lsw,swsequence,...
             ntriang,areatriang,prodwellbedg,prodwellinedg,mwmaprodelem,...
             vtxmaprodelem,coordmaprodelem,amountofneigvec,rtmd_storepos,...
             rtmd_storeleft,rtmd_storeright,isonbound] = ...
             preSaturation(flagknownedge,injecelem,producelem);
-        
+
         %"IMPEC" function. There, PRESSURE and CONCENTRATION are solved.
         IMPEC(Con,injecelem,producelem,satinbound,wells,klb,satonvertices,...
             satonedges,flagknownvert,flagknownedge,wvector,wmap,constraint,...
@@ -159,7 +159,7 @@ switch phasekey
             knownvecleftcon,knownvecrightcon,storeinvcon,...
             Bleftcon,Brightcon,Fgcon,mapinvcon,maptransmcon,mapknownveccon,...
             pointedgecon, bodytermcon,gravrate);
-        
+
     case 4 % hydraulic head simulation
         %% ===========================================================
         % steady-state problem
@@ -177,11 +177,11 @@ switch phasekey
                 [pressure,flowrate,] = ferncodes_solverpressure(1,...
                     wells,Hesq,Kde,Kn,Kt,Ded,nflag,nflagface,weight,s,Con,Kdec,...
                     Knc,Ktc,Dedc,nflagnoc,weightc,sc,SS,dt,h_old,MM,gravrate,P,kmap,time);
-                
+
             elseif strcmp(pmethod,'mpfaql')
                 [pressure,flowrate,]=ferncodes_solverpressureMPFAQL(nflag,...
                     parameter,kmap,weightDMP,wells,1,V,1,N,weight,s);
-                
+
             elseif strcmp(pmethod,'mpfah')
                 [pressure,flowrate,]=ferncodes_solverpressureMPFAH(nflagface,...
                     parameter,weightDMP,wells,SS,dt,h_old,MM,gravrate,1,P,time);
@@ -202,7 +202,7 @@ switch phasekey
                     knownvecright,storeinv,Bleft,Bright,wells,mapinv,maptransm,...
                     mapknownvec,pointedge,1,bodyterm,P);
             end  %End of IF (type of pressure solver - one-phase flow)
-            
+
             %Plot the fields (pressure, normal velocity, etc)
             %This function create the "*.vtk" file used in VISIT to
             %postprocessing the results
@@ -210,16 +210,23 @@ switch phasekey
             if numcase==333
                 plotandwrite(0,0,pressure,0,0,0,0,0,overedgecoord);
             end
+
+            %Mesage for the user:
+            disp('------------------------------------------------');
+            disp('>> Global hydraulic head extrema values:');
+            max_conval = max(pressure)
+            min_conval = min(pressure)
+
         else
-          %% ===============================================================
+            %% ===============================================================
             % transient-state problem
             hydraulic(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
                 parameter,h_old,contnorm,SS,MM,weight,s,dt,gravrate,nflagface,...
                 weightDMP,P);
         end
-       % contaminant transport with hydarulic head 
+        % contaminant transport with hydarulic head
     case 5
-               
+
         %          if numcase==243 || numcase==245 || numcase==247
         %              elem(:,5)=1;
         %          end
@@ -227,18 +234,18 @@ switch phasekey
         %Define elements associated to INJECTOR and PRODUCER wells.
         [injecelem,producelem,satinbound,Con,wellsc] = wellsparameter(wellsc,...
             Con,klb);
-        
+
         %Define flags and known concentration or saturation on the vertices and edges.
         [satonvertices,satonedges,flagknownvert,flagknownedge] = ...
             getsatandflag(satinbound,injecelem,Con,nflagnoc,nflagfacec,0);
-        
+
         %"precsaturation" - Preprocessor of the concentration or saturation equation
         [wvector,wmap,constraint,massweigmap,othervertexmap,lsw,swsequence,...
             ntriang,areatriang,prodwellbedg,prodwellinedg,mwmaprodelem,...
             vtxmaprodelem,coordmaprodelem,amountofneigvec,rtmd_storepos,...
             rtmd_storeleft,rtmd_storeright,isonbound] = ...
             preSaturation(flagknownedge,injecelem,producelem);
-        
+
         %"IMHEC" function. There, HYDRAULIC HEAD and CONCENTRATION are solved.
         IMHEC(Con,injecelem,producelem,satinbound,wells,klb,satonvertices,...
             satonedges,flagknownvert,flagknownedge,wvector,wmap,constraint,...
@@ -256,32 +263,32 @@ switch phasekey
             knownvecleftcon,knownvecrightcon,storeinvcon,...
             Bleftcon,Brightcon,Fgcon,mapinvcon,maptransmcon,mapknownveccon,...
             pointedgecon, bodytermcon,gravrate,SS,MM,P,tempo);
-        
-         %It Souves only the HYPERBOLIC Equation:
+
+        %It Souves only the HYPERBOLIC Equation:
     otherwise
         %Get the initial condition for the hyperbolic equation
         [Sw,lastimelevel,lastimeval] = applyinicialcond;
-        
+
         %Define flags and known variables on the edges.
         [satonedges,flagknownedge] = hyperb_getknownval;
-                
+
         %Preprocessor of the Saturation Equation
         [wvector,wmap,constraint,massweigmap,othervertexmap,lsw,swsequence,...
             ntriang,areatriang,prodwellbedg,prodwellinedg,mwmaprodelem,...
             vtxmaprodelem,coordmaprodelem,amountofneigvec,rtmd_storepos,...
             rtmd_storeleft,rtmd_storeright,isonbound] = ...
             preSaturation(flagknownedge,0,0);
-        
+
         %"hyperb_getflowrate" calculate the flow rate for the hyperbolic
         %equation.
         [flowrate,v] = hyperb_getflowrate;
-        
+
         %"hyperb_transient" is a function equivalent to "IMPES"
         hyperb_transient(Sw,satonedges,flagknownedge,wvector,wmap,...
             limiterflag,massweigmap,othervertexmap,flowrate,v,constraint,...
             lsw,keywrite,invh,swsequence,ntriang,areatriang,lastimelevel,...
             lastimeval,elemsize,bedgesize,inedgesize,amountofneigvec);
-        
+
 end  %End of SWITCH
 
 
@@ -316,7 +323,7 @@ elseif strcmp(pmethod,'mpfaql')
     [dparameter,]=ferncodes_coefficient(dmap);
     [weightDMPc]=ferncodes_weightnlfvDMP(dmap);
     % calculate inpertolation weigts
-    
+
     [wightc,sc] = ferncodes_Pre_LPEW_2_con(dmap,N);
 elseif strcmp(pmethod,'mpfah')
     %temos usado para muitos estes o seguinte rutina
@@ -329,7 +336,7 @@ elseif strcmp(pmethod,'mpfad')
     % calculate inpertolation weigts
     weightDMPc=0;
     [wightc,sc] = ferncodes_Pre_LPEW_2_con(dmap,N);
-    
+
     % adequação dos flags de contorno
     nflag = logical(lastimeval~=0)*ferncodes_calflag(lastimeval)+...
         logical(lastimeval==0)*nflag;

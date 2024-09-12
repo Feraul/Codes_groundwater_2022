@@ -32,11 +32,11 @@ switch numcase
         wells(1,5)=0;
         wells(1,6)=-10000;
     case 331
-       % Case 2: single pumping well in a unconfined aquifer (Y. Qian et al)
-        
+        % Case 2: single pumping well in a unconfined aquifer (Y. Qian et al)
+
         % initially hydraulic charge
         h_old=90*ones(size(elem,1),1);
-        % the specified yield 
+        % the specified yield
         SS=0.1;
         % aquifer thickness
         MM=100;
@@ -52,7 +52,7 @@ switch numcase
         wells(1,6)=-40000;
     case 332
         % Case 3: multiple pumping wells in a confined aquifer (Y. Qian et al)
-        
+
         % initially hydraulic charge
         h_old=100*ones(size(elem,1),1);
         % coeficiente de armazenamento especifico
@@ -65,9 +65,9 @@ switch numcase
         const=25;
         pumpingrate=2500;
         % find the well element
-        
+
         % the flow rate value in the well is divided by number wells
-        
+
         %b1=find(abs(centelem(:,1)-250)<1e-9 & abs(centelem(:,2)-250)<1e-9);
         b1=find((const*10<centelem(:,1)& centelem(:,1)<const*11) & (const*10<centelem(:,2)& centelem(:,2)<const*11));
         %b1=find((abs(centelem(:,1)-250)/250)<1e-2 & (abs(centelem(:,2)-250)/250)<1e-2);
@@ -90,17 +90,17 @@ switch numcase
         %------------------------------------------------------------------
         b3=find((const*29<centelem(:,1)& centelem(:,1)<const*30) & (const*29<centelem(:,2)& centelem(:,2)<const*30));
         %b3=find((abs(centelem(:,1)-750)/750)<1e-2 & (abs(centelem(:,2)-750)/750)<1e-2);
-        
+
         wells(3,1)=b3;
         wells(3,2)=2;
         wells(3,3)=0;
         wells(3,4)=0;
         wells(3,5)=0;
-        wells(3,6)=-pumpingrate; 
+        wells(3,6)=-pumpingrate;
         %------------------------------------------------------------------
         b4=find((const*10<centelem(:,1)& centelem(:,1)<const*11) & (const*29<centelem(:,2)& centelem(:,2)<const*30));
         %b4=find((abs(centelem(:,1)-250)/250)<1e-2 & (abs(centelem(:,2)-750)/750)<1e-2);
-        
+
         wells(4,1)=b4;
         wells(4,2)=2;
         wells(4,3)=0;
@@ -116,21 +116,21 @@ switch numcase
         SS=0.1;
         % espesura do aquifero
         MM=5;
-        % step time no considered 
+        % step time no considered
         dt=20;
-        % precipitation infiltration 
+        % precipitation infiltration
         P=0.002;
-    case 334 
+    case 334
         % Case flow between two rivers (Mark Bakker), pag. 10
         % aquifer confined flow
         % aquifer thickness
         MM=10;
-    case 335 
+    case 335
         % Case areal recharge between two rivers (Mark Bakker), pag. 13
         % aquifer unconfined flow
         % aquifer thickness
         MM=10;
-        % precipitation infiltration 
+        % precipitation infiltration
         P=0.001;
     case 337
         % Case areal recharge between an impermeable noundary and a river
@@ -138,7 +138,7 @@ switch numcase
         % aquifer unconfined flow
         % aquifer thickness
         MM=10;
-        % precipitation infiltration 
+        % precipitation infiltration
         P=0.001;
     case 338
         % Case areal recharge between an impermeable noundary and a river
@@ -147,9 +147,9 @@ switch numcase
         % aquifer unconfined flow
         % aquifer thickness
         MM=10;
-        % precipitation infiltration 
+        % precipitation infiltration
         P=0.001;
-   case 339
+    case 339
         % Case flow through two zones of different transmissiviteis
         % (Mark Bakker), pag. 23
         % aquifer unconfined flow
@@ -174,21 +174,23 @@ switch numcase
         %wells(1,5)=0;
         %wells(1,6)=-2000; % pumping rate
     case 347
-        
+
         % initially hydraulic charge
         h_old=1*ones(size(elem,1),1);
         % coeficiente de armazenamento especifico
-        SS=0.001;
+        SS=0.001*1000;
         % espesura do aquifero
         MM=100;
-        % step time no considered 
+        % step time no considered
         dt=1;
-        % precipitation infiltration 
+        % precipitation infiltration
         P=0.0009593;
+        %P=0;
         %pumping rate
-        pumpingrate=-0.38475;
-        
-       
+        %pumpingrate=-0;
+        pumpingrate=-0.0038475;
+
+
         b1 = 1; % Índice para wells
         wells(b1, 1) = 5688;            % Define o índice do poço
         wells(b1, 2) = 2;    % Referencia ao elemento correspondente
@@ -197,7 +199,7 @@ switch numcase
         wells(b1, 5) = 0;             % Valor placeholder (exemplo: coordenada z)
         wells(b1, 6) = pumpingrate;   % Define a taxa de bombeamento
 
-b2 = 2; % Índice para wells
+        b2 = 2; % Índice para wells
         wells(b2, 1) = 9466;
         wells(b2, 2) = 2;
         wells(b2, 3) = 0;
@@ -205,7 +207,7 @@ b2 = 2; % Índice para wells
         wells(b2, 5) = 0;
         wells(b2, 6) = pumpingrate;
 
-b3 = 3; % Índice para wells
+        b3 = 3; % Índice para wells
         wells(b3, 1) = 8343;
         wells(b3, 2) = 2;
         wells(b3, 3) = 0;
@@ -213,7 +215,7 @@ b3 = 3; % Índice para wells
         wells(b3, 5) = 0;
         wells(b3, 6) = pumpingrate;
 
-b4 = 4; % Índice para wells
+        b4 = 4; % Índice para wells
         wells(b4, 1) = 7461;
         wells(b4, 2) = 2;
         wells(b4, 3) = 0;
@@ -221,7 +223,7 @@ b4 = 4; % Índice para wells
         wells(b4, 5) = 0;
         wells(b4, 6) = pumpingrate; % Neste caso, a taxa de bombeamento é negativa
 
-b5 = 5; % Índice para wells
+        b5 = 5; % Índice para wells
         wells(b5, 1) = 7462;
         wells(b5, 2) = 2;
         wells(b5, 3) = 0;
@@ -229,7 +231,7 @@ b5 = 5; % Índice para wells
         wells(b5, 5) = 0;
         wells(b5, 6) = pumpingrate;
 
-b6 = 6; % Índice para wells GAMELEIRA
+        b6 = 6; % Índice para wells GAMELEIRA
         wells(b6, 1) = 3955;
         wells(b6, 2) = 2;
         wells(b6, 3) = 0;
@@ -237,7 +239,7 @@ b6 = 6; % Índice para wells GAMELEIRA
         wells(b6, 5) = 0;
         wells(b6, 6) = pumpingrate;
 
-b7 = 7; % Índice para wells LAGOINHA
+        b7 = 7; % Índice para wells LAGOINHA
         wells(b7, 1) = 1280;
         wells(b7, 2) = 2;
         wells(b7, 3) = 0;
@@ -245,7 +247,7 @@ b7 = 7; % Índice para wells LAGOINHA
         wells(b7, 5) = 0;
         wells(b7, 6) = pumpingrate;
 
-b8 = 8; % Índice para wells PAROIS
+        b8 = 8; % Índice para wells PAROIS
         wells(b8, 1) = 3510;
         wells(b8, 2) = 2;
         wells(b8, 3) = 0;
@@ -262,19 +264,21 @@ b8 = 8; % Índice para wells PAROIS
         % step time
     case 380.1
         % well 1
-        wells(1, 1) = 6071;
+        %wells(1, 1) = 6071;
+        wells(1, 1) = 98;
         wells(1, 2) = 2;
         wells(1, 3) = 0;
         wells(1, 4) = 0;
         wells(1, 5) = 0;
-        wells(1, 6) = -0.001;
+        wells(1, 6) = -0.1;
         % well 2
-        wells(2, 1) = 7002;
+        %wells(2, 1) = 7002;
+        wells(2, 1) = 413;
         wells(2, 2) = 2;
         wells(2, 3) = 0;
         wells(2, 4) = 0;
         wells(2, 5) = 0;
-        wells(2, 6) = -0.001;
+        wells(2, 6) = -0.1;
 
 end
 

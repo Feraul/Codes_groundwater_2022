@@ -11,7 +11,7 @@
 %--------------------------------------------------------------------------
 
 %Calculate the value of the source therm
-function [sourcevector] = PLUG_sourcefunction(P,elembedge,time)
+function [sourcevector] = PLUG_sourcefunction(P,elembedge,time,wells)
 %Define global parameters:
 global elem centelem elemarea numcase;
 
@@ -376,7 +376,11 @@ for isource = 1:size(elem,1)
         case 341
             sourcevector(isource)=P(isource)*elemarea(isource);
         case 347
+            if wells(:,1)~=isource
             sourcevector(isource)=P*elemarea(isource);
+            else
+                sourcevector(isource)=0;
+            end
         case 342
             x=centelem(isource,1);
             if time==0

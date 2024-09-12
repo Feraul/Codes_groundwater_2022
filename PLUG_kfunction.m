@@ -942,8 +942,19 @@ switch numcase
         
         %[kmap]=conduchidraulica;
     case 380.1
-        kmap=kmap;
-        elem(:,5)=1:size(elem,1);
+        %kmap=kmap;
+         [auxperm2,]=ferncodes_calcpermeab;
+        for ii=1:size(centelem,1)
+            kmap(ii,:)=[ii auxperm2(ii) 0 0 auxperm2(ii)];
+        end
+%         [riverresults]=xlsread('Teste_6.xlsx');
+%         kmap=zeros(size(riverresults,1),5);
+%         kmap(:,1)=1:size(riverresults,1);
+%         kmap(:,2)= riverresults(:,3);
+%         kmap(:,3)=0*riverresults(:,3);
+%         kmap(:,4)=0*riverresults(:,3);
+%         kmap(:,5)=riverresults(:,3);
+%         elem(:,5)=1:size(elem,1);
 end  %End of Switch
 
 %--------------------------------------------------------------------------
