@@ -147,7 +147,7 @@ end
 %--------------------------------------------------------------------------
 %Solver the algebric system
 % Often with source term
-[I]=sourceterm(I,elembedge,P,time);
+[I]=sourceterm(I,elembedge,P,time,wells);
 %When this is assembled, that is solved using the function "solver".
 %This function returns the pressure field with value put in each colocation
 %point.

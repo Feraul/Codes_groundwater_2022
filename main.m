@@ -110,7 +110,8 @@ elseif numcase>300
     % This numcase is used for two-phase (water-oil) flow problems
     if numcase==341 || numcase==380.1
         % Nmod:Numero de funcoes coseno % vark:varianca
-        Nmod=100;  varK=6;
+       
+        Nmod=100;  varK=1;
     end
     if 350<numcase && numcase <400 % hydraulic head and contamination transport
         % Flags adequation for contamination and groundwater problem

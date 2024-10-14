@@ -96,7 +96,7 @@ while stopcriteria < 100
     %----------------------------------------------------------------------
     % case unconfined aquifer
     % case 1 and 4 of the article Qian, et al 2023
-    if numcase==333 || numcase==331
+    if numcase==333 || numcase==331 || numcase==347
         if strcmp(pmethod,'mpfah')
             [facelement]=ferncodes_elementfacempfaH;
             [~,kmap] = calcnormk(kmap,MM,h);

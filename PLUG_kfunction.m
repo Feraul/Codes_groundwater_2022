@@ -738,8 +738,15 @@ switch numcase
         kmap(1,1:5) = [1 MM*kmap(1,2) MM*kmap(1,3) MM*kmap(1,4) MM*kmap(1,5)];
         elem(:,5)=1;
     case 347
-        kmap(1,1:5) = [1 MM*kmap(1,2) MM*kmap(1,3) MM*kmap(1,4) MM*kmap(1,5)];
-        elem(:,5)=1;
+        %kmap(1,1:5) = [1 MM*kmap(1,2) MM*kmap(1,3) MM*kmap(1,4) MM*kmap(1,5)];
+        kaux = zeros(size(centelem,1),5);
+        for ii = 1:size(centelem,1)
+
+            kaux(ii,:) = [ii h(ii)*9.26 0 0 h(ii)*9.26];
+            elem(ii,5)=ii;
+        end  %End of FOR
+        kmap=kaux;
+         
     case 43
         %Get the permeability field
         kmap = getnikitinperm(centelem);

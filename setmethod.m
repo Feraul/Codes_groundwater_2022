@@ -165,7 +165,7 @@ switch phasekey
         % steady-state problem
         if numcase==336 || numcase==334 ||numcase==335 || numcase==337 ...
                 || numcase==338 || numcase==339 ||numcase==340 || ...
-                numcase==341 || numcase==347
+                numcase==341 %|| numcase==347
             time=0;
             if strcmp(pmethod,'tpfa')
                 %Get "pressure" and "flowrate"

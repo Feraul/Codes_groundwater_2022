@@ -17,7 +17,7 @@ global numcase
 
 if numcase==347
     % preconditioner
-    %globalmatrix=globalmatrix+eye(size(globalmatrix,1));
+    %globalmatrix=globalmatrix+1*eye(size(globalmatrix,1));
 
     [L,U] = ilu(sparse(globalmatrix),struct('type','ilutp','droptol',1e-6));
 
