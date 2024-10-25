@@ -138,15 +138,9 @@ switch char(pmethod)
         %Calculate geometrical and physical terms to be used in MPFA-Diamond
         %(Gao and Wu, 2010).
     case 'mpfad'
-
-        %Get "ferncodes_nflag"
-        %nflag = ferncodes_calflag(0);
         %Get preprocessed terms:
         [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap, elem);
-        %Call another parameters that I don't know.
-        %[V,N,] = ferncodes_elementface(nflag);
-
-        % for the concentration transport
+        % for the concentration transport with pressure
         if 200<numcase && numcase<300
             %Get the initial condition
             [Con,lastimelevel,lastimeval] = applyinicialcond;
@@ -158,6 +152,7 @@ switch char(pmethod)
             % flags boundary conditions
             [nflagnoc,nflagfacec] = ferncodes_calflag_con(lastimeval);
         elseif 350<numcase && numcase<400
+            % for the concentration transport with hydraulic head 
             %Get the initial condition
             [Con,lastimelevel,lastimeval] = applyinicialcond;
             % calculate the auxiliary parameters
@@ -183,7 +178,7 @@ switch char(pmethod)
         p_old=1e1*ones(size(elem,1),1); % inicializando a pressão
 
         % utilize tolerancia menor que 10^-12 para testes de convergencia
-        % Para teste de monotonicidade ou problemas bifásicos utilize 10^-8.
+        % Para teste de monotonicidade ou problemas bifasicos utilize 10^-8.
         % # iterações de Picard
         %temos usado para muitos estes o seguinte rutina
         [parameter,contnorm]=ferncodes_coefficient(kmap);

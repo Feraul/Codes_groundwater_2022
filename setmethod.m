@@ -34,11 +34,8 @@ end  %End of IF (execute "preMPFA")
 switch phasekey
     %One-Phase case:
     case 1
-        %Solve ONLY the PRESSURE equation
-        %Chose the type of scheme according "pmethod"
-        %Traditional Two-Point Flux Approximation (TPFA),
-        %Aziz and Settary (1979)
-
+        %Solve ONLY the PRESSURE equation chose the type of scheme 
+        % according "pmethod"
         if strcmp(pmethod,'tpfa')
             %Get "pressure" and "flowrate"
             [pressure,flowrate,] = solvePressure_TPFA(transmvecleft,...
@@ -83,7 +80,7 @@ switch phasekey
         %It finishes the time counter and "profile".
         toc
 
-        %Two-Phase case:
+        %Two-Phase flow case:
     case 2
         %Initialize and preprocess the parameters:
 
@@ -121,8 +118,6 @@ switch phasekey
             Dmedio,velmedio,nflagfacec,weightDMPc);
         % contaminant transport with pressure
     case 3
-
-
         %          if numcase==243 || numcase==245 || numcase==247
         %              elem(:,5)=1;
         %          end
