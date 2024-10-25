@@ -25,7 +25,7 @@
 %"presanalit" is the value of analitical pressure in each colocation point
 %"presanaloveredge" is the analitical value of pressure in each midpoint
 %(over each edge)
-function [presanalit,flowrateanalit] = benchmark(overedgecoord)
+function [presanalit,flowrateanalit] = benchmark(overedgecoord,time)
 %Define global parameters:
 global bedge inedge centelem normals P numcase modflowcompared bcflag;
 
@@ -37,6 +37,15 @@ presanalit = zeros(size(centelem,1),1);
 flowrateanalit = zeros(size(bedge,1) + size(inedge,1),1);
 
 switch numcase
+    case 343
+        for j=1:size(centelem,1)
+            x=centelem(j,1);
+            soma=0;
+            for k=1:100
+                soma=soma+(((2*(-1)^k)-10)/k)*sin(k*pi*x)*exp(-((k*pi)^2)*1e-4*time/0.01);
+            end
+            presanalit(j,1)=10-8*x+(2/pi)*soma;
+        end
     %------------------------------------------------------------------
     %Solve cases without SOURCE TERM
     %------------------------------------------------------------------

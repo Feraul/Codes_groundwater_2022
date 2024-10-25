@@ -49,7 +49,7 @@ for ifacont=1:size(bedge,1)
             else
                 thetalef1=acos(dot(vei,ve2)/(norm(vei)*norm(ve2)));
             end
-            if ((sign(auxquadrant1(1,3))==sign(auxquadrant2(1,3)) && (abs(auxquadrant1(1,3))>1e-5 || abs(auxquadrant2(1,3))>1e-5))||(sign(auxquadrant1(1,3))==0 && sign(auxquadrant2(1,3))>0)||...
+            if ((sign(auxquadrant1(1,3))==sign(auxquadrant2(1,3)) && (abs(auxquadrant1(1,3))>1e-10 || abs(auxquadrant2(1,3))>1e-10))||(sign(auxquadrant1(1,3))==0 && sign(auxquadrant2(1,3))>0)||...
                     (sign(auxquadrant1(1,3))>0 && sign(auxquadrant2(1,3))==0)) && ((thetalef2 + thetalef1)<pi)
                 ksii=dot(cross(ve2,vej),[0 0 1])/dot(cross(vei,vej),[0 0 1]);
                 ksij=dot(cross(vei,ve2),[0,0,1])/dot(cross(vei,vej),[0 0 1]);
@@ -76,7 +76,7 @@ for ifacont=1:size(bedge,1)
             else
                 thetalef1=acos(dot(vei,ve2)/(norm(vei)*norm(ve2)));
             end
-            if ((sign(auxquadrant1(1,3))==sign(auxquadrant2(1,3)) && (abs(auxquadrant1(1,3))>1e-5 || abs(auxquadrant2(1,3))>1e-5))||(sign(auxquadrant1(1,3))==0 && sign(auxquadrant2(1,3))>0)||...
+            if ((sign(auxquadrant1(1,3))==sign(auxquadrant2(1,3)) && (abs(auxquadrant1(1,3))>1e-10 || abs(auxquadrant2(1,3))>1e-10))||(sign(auxquadrant1(1,3))==0 && sign(auxquadrant2(1,3))>0)||...
                     (sign(auxquadrant1(1,3))>0 && sign(auxquadrant2(1,3))==0)) && ((thetalef2 + thetalef1)<pi)
                 ksii=dot(cross(ve2,vej),[0 0 1])/dot(cross(vei,vej),[0 0 1]);
                 ksij=dot(cross(vei,ve2),[0,0,1])/dot(cross(vei,vej),[0 0 1]);

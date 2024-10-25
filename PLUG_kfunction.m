@@ -4,12 +4,7 @@
 %Type of file: FUNCTION
 %Programer: Fernando R. L. Contreras
 %--------------------------------------------------------------------------
-%Goals: this FUNCTION gets the value to boundary condition according the
-%benchmark which intend to run.
-
-%--------------------------------------------------------------------------
-%Aditional comments:
-
+%Goals: this FUNCTION gets the conductivity hidraulic.
 %--------------------------------------------------------------------------
 
 %Fill the matrix of permeability as a function of element to left and right
@@ -29,6 +24,8 @@ switch numcase
     case 342
         kmap(1,1:5) = [1 MM*kmap(1,2) MM*kmap(1,3) MM*kmap(1,4) MM*kmap(1,5)];
         elem(:,5)=1;
+    case 343
+        kmap=kmap;
         %----------------------------------------------------------------------
         %Example 1.7: Axisymmetric Case (Anisotropic Medium). teta = pi/6
     case 333
@@ -664,39 +661,35 @@ switch numcase
         %K(1,1:5) = [1 k(1,1) k(1,2) k(2,1) k(2,2)];% see Nilson's dissertation, when r=100
         kmap=K;
     case 245
-        for i=1:size(centelem,1)
-            x=centelem(i,1);
-            y=centelem(i,2);
-            k0=1;
-            s=4;
-            m=3;
-            l=3;
-            r=k0*exp(sqrt(s)*cos(2*pi*m*x)*cos(2*pi*l*y));
-            K(i,1:5) = [i r 0 0 r];
+        for ii=1:size(centelem,1)
+            xi=centelem(ii,1);
+            yi=centelem(ii,2);
+            k0=1;s=4;m=3;l=3;
+            r=k0*exp(sqrt(s)*cos(2*pi*m*xi)*cos(2*pi*l*yi));
+            K(ii,1:5) = [ii r 0 0 r];
             %normKmap(i,1)= r;
-            elem(i,5)=i;
-            u=0;
+            elem(ii,5)=ii;u=0;
         end
         kmap=K;
     case 247
-        for i=1:size(centelem,1)
-            K(i,1:5) = [i kmap(i,1) 0 0 kmap(i,1)];
+        for ii=1:size(centelem,1)
+            K(ii,1:5) = [ii kmap(ii,1) 0 0 kmap(ii,1)];
             %normKmap(i,1)= r;
-            elem(i,5)=i;
+            elem(ii,5)=ii;
         end
         kmap=K;
     case 249
-        for i=1:size(centelem,1)
-            K(i,1:5) = [i kmap(i,1) 0 0 kmap(i,1)];
+        for ii=1:size(centelem,1)
+            K(ii,1:5) = [ii kmap(ii,1) 0 0 kmap(ii,1)];
             %normKmap(i,1)= r;
-            elem(i,5)=i;
+            elem(ii,5)=ii;
         end
         kmap=K;
     case 250
-        for i=1:size(centelem,1)
-            K(i,1:5) = [i kmap(i,1) 0 0 kmap(i,1)];
+        for ii=1:size(centelem,1)
+            K(ii,1:5) = [ii kmap(ii,1) 0 0 kmap(ii,1)];
             %normKmap(i,1)= r;
-            elem(i,5)=i;
+            elem(ii,5)=ii;
         end
         kmap=K;
     case 248
@@ -900,10 +893,10 @@ switch numcase
 
         %Initialize "kmap"
         kmap = zeros(size(centelem,1),5);
-        for i = 1:size(centelem,1)
+        for ii = 1:size(centelem,1)
             %Define "x" and "y"
-            x = centelem(i,1);
-            y = centelem(i,2);
+            x = centelem(ii,1);
+            y = centelem(ii,2);
             %Choose the tensor according "x" position
             %            if x < 0.5
             a11=x/(sqrt(x^2+y^2)); a12=y/(sqrt(x^2+y^2));
@@ -911,7 +904,7 @@ switch numcase
             Krot = [a11 -a12; a12 a11]*k*...
                 [a11 a12; -a12 a11];
 
-            kmap (i,:) = [i Krot(1,1) Krot(1,2) Krot(2,1) Krot(2,2)];
+            kmap (ii,:) = [ii Krot(1,1) Krot(1,2) Krot(2,1) Krot(2,2)];
             %             else
             %                 %Define "x1" and "y1"
             %                 x1 = x + 1e-3;

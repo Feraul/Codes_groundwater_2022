@@ -173,6 +173,14 @@ switch numcase
         %wells(1,4)=0;
         %wells(1,5)=0;
         %wells(1,6)=-2000; % pumping rate
+    case 343
+        h_old=0*ones(size(elem,1),1);
+        % the espeficied storage
+        SS=0.01;
+        % aquifer thickness
+        MM= 1;
+        % step time, change for each time
+        dt=0.5;
     case 347
 % initially hydraulic charge
         h_old=1034.5*ones(size(elem,1),1);
