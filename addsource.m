@@ -1,13 +1,5 @@
 
 %--------------------------------------------------------------------------
-%Subject: numerical routine to be used in SPECTRAL Volume Method
-%(Spectral Preprocessor)
-%Type of file: FUNCTION
-%Criate date: 01/11/2013
-%Modify data:   /  /2013
-%Adviser: Paulo Lyra and Darlan Karlo
-%Programer: Márcio Souza
-%--------------------------------------------------------------------------
 %Goals: %It applies a source therm (if there is one) into either a
 %BENCHMARK CASE or into FLOW RATE aplication. The source application
 %depends of parameter "numcase". If "numcase" is "0" and "well" is a
@@ -76,7 +68,10 @@ if (size(wells,2) > 1)
     end  %End of IF (injector)
 
     %----------------------------------------------------------------------
-    %Apply FLOWRATE or PRESSURE in the PRODUCER well
+    %----------------------------------------------------------------------
+    %----------------------------------------------------------------------
+
+    %Apply FLOWRATE or PRESSURE in the PRODUCER well (PUMPING WELL)
 
     %1. Applying FLOWRATE:
     if any(wells(producrow,5) == 0)

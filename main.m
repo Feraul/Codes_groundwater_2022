@@ -106,10 +106,8 @@ elseif numcase>300
     auxpar=0; dmap=0; Dmedio=0; gamma=0; velmedio=0; wellsc=0;
     % Flags adequation for hydrological head problem
     [SS,h_old,MM,wells,dt,P]=prehydraulic;
-    % Choose Backward method or Crank-Nicolson
-    % use quando o aquifero for confinado
+    % Choose Backward (implicit) method or Crank-Nicolson
     methodhydro='backward';
-    % use para o caso aquifero nao confinado
     %methodhydro='cranknicolson';
     %----------------------------------------------------------------------
     % This numcase is used for conductivity hydraulic very heterogeneous
@@ -129,7 +127,6 @@ end
 %if numcase==380.1
 %adeSPE; % para um campo de permeabilidade da SPE active descomente.
 %end
-
 %--------------------------------------------------------------------------
 %Call "setmethod"
 %It preprocess the schemes and set a One-phase or Two-phase simulation.

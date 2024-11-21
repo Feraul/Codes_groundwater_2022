@@ -52,7 +52,7 @@ q = 1;
 
 %Fill the matrix "overedgecoord"
 overedgecoord = overedge;
-%Define the norm of permeability tensor ("normk")
+%Define the norm of permeability or conductivity hidraulic tensor ("normk")
 [normk,kmap] = calcnormk(kmap,MM,h);
 
 %Get the length of the edge with non-null Neumann Boundary Condition.
@@ -292,6 +292,8 @@ function       [Hesq,Kdec,Knc,Ktc,Dedc,weightc,sc,weightDMPc,dparameter ]=...
     parametersauxiliary(dmap,N)
 global interptype elem
 
+% dmap: Valor medio do tensor de difusao molecular, usualmente esse tersor 
+% consiera-se como homogeneo em todo o dominio 
 if max(max(dmap))~=0
     elem(:,5)=1;
 end
@@ -354,9 +356,6 @@ overedgecoord(1:size(bedge,1),:) = overedgesection(bedge);
 %"continedge" is an internal edge's counter
 overedgecoord(size(bedge,1) + 1:size(overedgecoord,1),:) = ...
     overedgesection(inedge);
-
-%--------------------------------------------------------------------------
-%Function "calcnormk"
 %--------------------------------------------------------------------------
 end
 
