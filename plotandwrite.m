@@ -711,6 +711,46 @@ elseif numcase > 200
             grid
             xlabel('y(m)');
             ylabel('Hydraulic head (m)');
+        case 343
+              % solucao analitica
+            [presanalit,] = benchmark(overedgecoord,time);
+            % solucao numerica
+            [posit,confield,elemonline] = getlineresult(pressure,satonvertices);
+            
+            % neste caso as condicoes de contorno esta imposta na
+            % fronteita da malha
+            % numerical solution
+                confieldaux= zeros(length(confield)+2,1);
+                positaux= zeros(length(posit)+2,1);
+
+                confieldaux(1)=10;
+                positaux(1)=0;
+                confieldaux(end)=2;
+                positaux(end)=1;
+
+                confieldaux(2:length(confield)+1,1)=confield;
+                positaux(2:length(posit)+1,1)=posit;
+
+                % analytical solution
+                confieldaux1= zeros(length(elemonline)+2,1);
+                positaux1= zeros(length(posit)+2,1);
+
+                confieldaux1(1)=10;
+                positaux1(1)=0;
+                confieldaux1(end)=2;
+                positaux1(end)=1;
+
+                confieldaux1(2:length(confield)+1,1)=presanalit(elemonline);
+                positaux1(2:length(posit)+1,1)=posit;
+
+
+            figure(1)
+            plot(positaux1,confieldaux,'k-<','LineWidth',1.5);
+            hold on
+            plot(positaux1, confieldaux1,'k','LineWidth',1.5)
+            grid
+            xlabel('x(m)');
+            ylabel('Hydraulic head (m)');
 
     end
 
@@ -887,6 +927,17 @@ for i = 1:size(centelem,1)
                 %Increment "jj"
                 j = j + 1;
             end  %End of IF
+        elseif numcase==343
+            if (0.4<centelem(i,2) && centelem(i,2)<0.56)
+                getxvalue(j) = centelem(i,1);
+                %Attribute to "satfield" the value of "Sw".
+                getsatfield(j) = Sw(i);
+                %Attribute the number of element to "getelemonline"
+                getelemonline(j) = i;
+                %Increment "jj"
+                j = j + 1;
+
+            end
 
         end
     end  %End of IF

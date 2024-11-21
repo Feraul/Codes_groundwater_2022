@@ -180,7 +180,7 @@ switch numcase
         % aquifer thickness
         MM= 1;
         % step time, change for each time
-        dt=0.5;
+        dt=10;
     case 347
 % initially hydraulic charge
         h_old=1034.5*ones(size(elem,1),1);

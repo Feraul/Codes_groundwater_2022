@@ -5,8 +5,8 @@ function [p,flowrate,flowresult,flowratedif] = ferncodes_solverpressure(viscosit
     wells,Hesq,Kde,Kn,Kt,Ded,nflag,nflagface,weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,...
     wc,sc,SS,dt,h,MM,gravrate,P,kmap,tempo)
 % Montagem da matriz global
-[M,I,elembedge] = ferncodes_globalmatrix(weight,s,Kde,Ded,Kn,Kt,Hesq,viscosity,nflag,nflagface,...
-    SS,dt,h,MM,gravrate,kmap);
+[M,I,elembedge] = ferncodes_globalmatrix(weight,s,Kde,Ded,Kn,Kt,Hesq,...
+    viscosity,nflag,nflagface,SS,dt,h,MM,gravrate,kmap);
 %--------------------------------------------------------------------------
 %Add a source therm to independent vector "mvector" 
 

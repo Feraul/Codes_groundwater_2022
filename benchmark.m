@@ -1,16 +1,8 @@
-%--------------------------------------------------------------------------
-%UNIVERSIDADE FEDERAL DE PERNAMBUCO
-%CENTRO DE TECNOLOGIA E GEOCIENCIAS
-%PROGRAMA DE POS GRADUACAO EM ENGENHARIA CIVIL
-%TOPICOS ESPECIAIS EM DINAMICA DOS FLUIDOS COMPUTACIONAL
-%--------------------------------------------------------------------------
+
 %Subject: numerical routine to building the global matrix and solver the
 %linear system contituted by it.
 %Type of file: FUNCTION
-%Criate date: 27/02/2012
-%Modify data:  / /2012
-%Adviser: Paulo Lyra and Darlan Karlo
-%Programer: Márcio Souza
+%Programer: Fernando contreras
 %--------------------------------------------------------------------------
 %Goals:
 %Fill the global matrix and solver the linear system obtained. To do this,
@@ -41,8 +33,8 @@ switch numcase
         for j=1:size(centelem,1)
             x=centelem(j,1);
             soma=0;
-            for k=1:100
-                soma=soma+(((2*(-1)^k)-10)/k)*sin(k*pi*x)*exp(-((k*pi)^2)*1e-4*time/0.01);
+            for n=1:100
+                soma=soma+(((2*(-1)^n)-10)/n)*sin(n*pi*x)*exp(-((n*pi)^2)*1e-5*time/0.01);
             end
             presanalit(j,1)=10-8*x+(2/pi)*soma;
         end

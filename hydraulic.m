@@ -1,19 +1,9 @@
 %--------------------------------------------------------------------------
-%Subject: numerical routine to load the geometry in gmsh and to create...
-%the mesh parameter
+%Subject: obtain the hydraulic head
 %Type of file: FUNCTION
-%Programer: Fernando Contreras, 2021
-%--------------------------------------------------------------------------
-%Goals:
-%Determinate the saturation and presure fields (2D) in a eithe homogen or
-%heterogen domain such as isotropic and anisotropic media for each time
-%step or in the steady state when will be important.
-
+%Programer: Fernando Contreras,
 %--------------------------------------------------------------------------
 %This routine receives geometry and physical data.
-
-%--------------------------------------------------------------------------
-
 function hydraulic(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
     parameter,h_old,contnorm,SS,MM,weight,s,dt,gravrate,...
     nflagface,weightDMP,P)
@@ -38,10 +28,10 @@ orderintimestep = ones(size(elem,1),1)*0;
 %Attribute to time limit ("finaltime") the value put in "Start.dat".
 finaltime = totaltime(2);
 timew = 0;
-% inicialization variables
+% inicialization paramenters 
 satonvertices=0;producelem=0;h=h_old;Con=0;Kdec=0;Knc=0;nflagc=0;viscosity=1;
 count=1;auxkmap=0;mobility=1;Ktc=0;Dedc=0;wightc=0;sc=0;dparameter=0;
-% armazena os vtk s no tempo 0
+% storage the file vtk s in the time 0
 postprocessor(h_old,zeros(size(inedge,1)+size(bedge,1),1),Con,1-Con,...
     count,overedgecoord,orderintimestep,'i',1,auxkmap,0);
 if numcase==342
@@ -139,7 +129,11 @@ while stopcriteria < 100
         %hbound=h(gg);
         hbound=3*erfc(gg(:,1)/(2*sqrt(30.5*(time)/(3.28*10^-3))));
         nflagface(vv,2)=hbound;
-
+    elseif numcase==343
+         b2=find((0.4<centelem(:,1)& centelem(:,1)<0.56) & ...
+            (0.4<centelem(:,2)& centelem(:,2)<0.56));
+         h_time(count,1)=time;
+         h_time(count,2)=h(b2);
     end
     dtaux=dt;
     % armanzena os vtks e calcula alguns erros
@@ -151,9 +145,8 @@ end
 
 toc
 % plotagem dos graficos em determinados regioes do dominio
-plotandwrite(producelem,Con,h,satonvertices,0,0,0,0,overedgecoord,...
+plotandwrite(producelem,Con,h,satonvertices,0,0,0,time,overedgecoord,...
     hanalit,haux);
-
 %--------------------------------------------------------------------------
 % activate if you want to visualize the hydraulic field in the final time
 
@@ -168,9 +161,13 @@ disp('------------------------------------------------');
 disp('>> Global Hydraulic head extrema values [hmax hmin]:');
 max_hyval = max(h)
 min_hyval = min(h)
-if numcase==342
-    erro=norm(haux(:,2)-hanalit(:,2))
-end
+% if numcase==342
+%     erro=norm(haux(:,2)-hanalit(:,2))
+% elseif numcase==343
+%    plot(h_time(:,1),h_time(:,2))
+%    hold on
+%    grid
+% end
 %It deletes the "restart.dat" file
 command = ['del ' char(filepath) '\' 'restart.dat'];
 %It calls system
