@@ -26,7 +26,7 @@ if (size(wells,2) > 1)
     %----------------------------------------------------------------------
     %Apply FLOWRATE or PRESSURE in the INJECTOR well
 
-    %1. Applying FLOWRATE:
+    %1. Applying FLOWRATE in injetor well:
     if any(wells(injecrow,5) == 0)
         %Define the value of flowrate
         flowratevalue = wells(injecrow,6);
@@ -35,17 +35,21 @@ if (size(wells,2) > 1)
         %Swept all eleemnts with source term
         for inj = 1:length(injecrow)
             %Apply the source to "mvector" (algebric system)
-            if numcase==332
+
+            if numcase<300
+                % when there is a well is composed by various elements
+                mvector(wells(injecrow(inj),1)) = ...
+                    mvector(wells(injecrow(inj),1)) +...
+                    (flowratevalue(inj)*elemarea(wells(injecrow(inj),1))/sumelemwell);
+
+            else
+                % when there are various wells in the domain
                 mvector(wells(injecrow(inj),1)) = ...
                     mvector(wells(injecrow(inj),1)) +flowratevalue(inj);
-            else
-
-                mvector(wells(injecrow(inj),1)) = ...
-                    mvector(wells(injecrow(inj),1)) +(flowratevalue(inj)*elemarea(wells(injecrow(inj),1))/sumelemwell);
             end
         end  %End of FOR (flowrate in injector well)
-        %2. Applying PRESSURE:
-    elseif any(wells(injecrow,5) > 400 & wells(injecrow,5) < 501)
+        %2. Applying PRESSURE in injetor well:
+    elseif any(400 < wells(injecrow,5) & wells(injecrow,5) < 501)
         %Define the value of pressure
         presvalue = wells(injecrow,6);
         %Swept all eleemnts with source term
@@ -73,7 +77,7 @@ if (size(wells,2) > 1)
 
     %Apply FLOWRATE or PRESSURE in the PRODUCER well (PUMPING WELL)
 
-    %1. Applying FLOWRATE:
+    %1. Applying FLOWRATE in produtor well:
     if any(wells(producrow,5) == 0)
         %Define the value of flowrate
         flowratevalue = wells(producrow,6);
@@ -83,25 +87,37 @@ if (size(wells,2) > 1)
         for iprod = 1:length(producrow)
             %Apply the source to "mvector" (algebric system)
             if numcase<300
+                % when there is a well is composed by various elements
                 mvector(wells(producrow(iprod),1)) = ...
                     mvector(wells(producrow(iprod),1)) + ...
                     (flowratevalue(iprod)*elemarea(wells(producrow(iprod),1))/sumelemwell);
             else
-                if numcase==332
+                if wells(producrow(iprod),5)==0
+                    % when there are various wells in the domain
                     mvector(wells(producrow(iprod),1)) = ...
                         mvector(wells(producrow(iprod),1)) + flowratevalue(iprod);
-                else
-                    %mvector(wells(producrow(iprod),1)) = ...
-                    %    mvector(wells(producrow(iprod),1)) +...
-                    %    flowratevalue(iprod)*(elemarea(wells(producrow(iprod),1))/sumelemwell);
-
-                    mvector(wells(producrow(iprod),1)) = ...
-                        mvector(wells(producrow(iprod),1)) + flowratevalue(iprod);
+                elseif (500<wells(producrow(iprod),5) & wells(producrow(iprod),5)<601)
+                    presvalue = wells(producrow,6);
+                    %Add to independent vector ("mvector") the terms of matrix "M"
+                    %associated to knouwn pressure
+                    mvector = mvector - ...
+                        M(:,wells(producrow(iprod),1))*presvalue(iprod);
+                    %Attribute the pressure value to position in the independent
+                    %vector
+                    mvector(wells(producrow(iprod),1)) = presvalue(iprod);
+                    %Null both row and column of global matrix:
+                    %Null column
+                    M(:,wells(producrow(iprod),1)) = 0;
+                    %Null row
+                    M(wells(producrow(iprod),1),:) = 0;
+                    %Put 1 in the position (i,i)
+                    M(wells(producrow(iprod),1),wells(producrow(iprod),1)) = 1;
                 end
+
             end
         end  %End of FOR (flowrate in producer well)
-        %2. Applying PRESSURE:
-    elseif any(wells(producrow,5) > 500 & wells(producrow,5) < 601)
+        %2. Applying PRESSURE in produtor well:
+    elseif any(500 < wells(producrow,5) & wells(producrow,5) < 601)
         %Define the value of pressure
         presvalue = wells(producrow,6);
         %Swept all eleemnts with source term

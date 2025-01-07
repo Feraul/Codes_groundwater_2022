@@ -972,7 +972,6 @@ pointvertdone = zeros(size(coord,1),1);
 %Fill "esurn1" (list of elements surrounding each node)
 %Swept from 1 until the last element
 for ielem = 1:nelem 
-   
     %Get "elemcontents"
     elemcontents = elem(ielem,1:4);
     %Get the amount of edges by element.
@@ -983,6 +982,7 @@ for ielem = 1:nelem
     numvert = length(vertices);
     %Swept each node of row's "elem" evaluated
     for inode = 1:numvert
+        
         %"nodeval" receives the index of node on "elem" matrix
         nodeval = vertices(inode);
 

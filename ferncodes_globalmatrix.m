@@ -173,7 +173,7 @@ for iface = 1:inedgesize
         I(inedge(iface,4)) = I(inedge(iface,4)) - visonface*Kde(iface)*...
             Ded(iface)*nflag(inedge(iface,2),2);
     end
-    % quando o nó pertece ao contorno de Neumann
+    % quando o vertice pertence ao contorno de Neumann
     if nflag(inedge(iface,1),1) == 202 || nflag(inedge(iface,1),1) == 201
 
         I(inedge(iface,3)) = I(inedge(iface,3)) - visonface*Kde(iface)*...
@@ -237,12 +237,12 @@ end  %End of FOR ("inedge")
 
 %==========================================================================
 % calcula um problema transiente
-if 300<numcase && numcase<379
+if (300<numcase && numcase<379) && numcase~=347
     %
     if numcase~=336 && numcase~=334 && numcase~=335 &&...
             numcase~=337 && numcase~=338 && numcase~=339 &&...
             numcase~=340 && numcase~=341 && numcase~=380  
-        if numcase==333 || numcase==331 || numcase==347
+        if numcase==333 || numcase==331 %|| numcase==347
             %para aquifero nao confinado
             coeficiente=dt^-1*SS.*elemarea(:);
         else

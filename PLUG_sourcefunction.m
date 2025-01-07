@@ -376,8 +376,11 @@ for isource = 1:size(elem,1)
         case 341
             sourcevector(isource)=P(isource)*elemarea(isource);
         case 347
-            
-            sourcevector(isource)=(P-0.0809)*elemarea(isource);
+            if min(logical(isource~=wells(:,1)))==1
+            sourcevector(isource)=P*elemarea(isource);
+            else
+              sourcevector(isource)=0;
+            end
         case 342
             x=centelem(isource,1);
             if time==0

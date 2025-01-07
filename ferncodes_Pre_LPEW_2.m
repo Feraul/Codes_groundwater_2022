@@ -7,7 +7,7 @@ global coord nsurn1 nsurn2 numcase bcflag bedge inedge normals
 % Retorna todos os parâmetros necessários às expressões dos fluxos.
 apw = ones(size(coord,1),1);
 r = zeros(size(coord,1),2);
-
+s=0;
 for y = 1:size(coord,1),
     No = y;
     % calculos dos vetores O, P, T, Q

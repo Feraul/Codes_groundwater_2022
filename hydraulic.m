@@ -82,8 +82,10 @@ while stopcriteria < 100
     status = [concluded '% concluded']
     % contador
     count=count+1
-    % atualiza a carga hidraulica
+    % update the hydraulic head
     h=h_new;
+    % delta t auxiliar
+    dtaux=dt;
     %----------------------------------------------------------------------
     % case unconfined aquifer
     % case 1 and 4 of the article Qian, et al 2023
@@ -130,17 +132,16 @@ while stopcriteria < 100
         hbound=3*erfc(gg(:,1)/(2*sqrt(30.5*(time)/(3.28*10^-3))));
         nflagface(vv,2)=hbound;
     elseif numcase==343
+        % calculate the element with coordinate (0.5, 0.5) 
          b2=find((0.4<centelem(:,1)& centelem(:,1)<0.56) & ...
             (0.4<centelem(:,2)& centelem(:,2)<0.56));
          h_time(count,1)=time;
          h_time(count,2)=h(b2);
     end
-    dtaux=dt;
-    % armanzena os vtks e calcula alguns erros
-    postprocessor(h,flowrate,Con,1-Con,count,overedgecoord,...
-        orderintimestep,'i',1,auxkmap,time);
-
-
+    
+    % storage the vtks and calculate errors
+    postprocessor(h,flowrate,Con,1-Con,count,overedgecoord,orderintimestep,...
+        'i',1,auxkmap,time);
 end
 
 toc

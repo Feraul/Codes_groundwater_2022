@@ -4,9 +4,9 @@
 //---------- PROGRAMA DE POS GRADUACAO EM ENGENHARIA CIVIL -----------
 //--------------------------------------------------------------------
 
-//Work developed by: Marcio Souza, Luiz E. Queiroz and Fernando Contreras
+//Work developed by: Marcio Souza and Luiz E. Queiroz modify by Fernando
 //Advisor Professors: Paulo Lyra & Darlan Carvalho
-//Create date: ...
+//Create date: .../2022
 
 //--------------------------------------------------------------------
 //------------------- PREPROCESSOR INITIALIZATION --------------------
@@ -26,14 +26,14 @@ y
 //***OBS.: Even if you chose [n], write below both the path and 
 //folder's name where you want to store your results:
 
-C:\Users\flc59\Documents\Benchmark_Cases\BenchHydraulic313
+C:\Users\flc59\Documents\Benchmark_Cases\BenchHydraulic317
 
 //Write below either a number or any other key word to feature the 
 //folder where the results will be stored:
 //***OBS.: If you set "0", the folder "Results" and other will be 
 //created into folder set above:
 
-teste1_t_10
+teste
 
 //--------------------------------------------------------------------
 //------------------------ Solver Properties -------------------------
@@ -53,7 +53,7 @@ teste1_t_10
 4
 
 //--------------------------------------------------------------------
-// Do you want to compare the numerical results with data MODFLOW?
+// Want to compare the numerical results with data MODFLOW
 //[y] ==> "yes"; [n] ==> "no".
 
 n
@@ -105,7 +105,7 @@ n
 //[nlfvpp]==> "Non-Linear Finite Volume" using lpew
 //[nlfvh]==> "Non-Linear Finite Volume" using harmonic point
 
-tpfa
+mpfad
 
 //If you chose [fps] or [mpfae], write below the auxiliary control
 //volume factor. It defines the auxiliary control volume size.
@@ -135,7 +135,7 @@ lpew2
 
 500 
 
-// Qual acelerador da itera  o de Picard desja utilizar:
+// Qual acelerador da iteração de Picard desja utilizar:
 //[FPI] ==> "full Picard"; 
 //[AA] ==> "Aceleration Anderson" ;
 //[RRE] ==> "Rank Reduced Extrapolation" ; 
@@ -238,7 +238,7 @@ n
 //[sb] ==> "SuperBee";
 //[bj] ==> "Barth-Jespersen";
 //[va1] ==> "vanAlbada 1" (see vanAlbada et al., 1982);
-//[va2] ==> "vanAlbada 2" (see L hner, 2001); 
+//[va2] ==> "vanAlbada 2" (see Löhner, 2001); 
 //[vl1] ==> "vanLeer 1";
 //[vl2] ==> "vanLeer 2" (see Berger, 2005);
 //[nl2] ==> "new Limiter type 2" (see Mandal, 2008);
@@ -338,15 +338,15 @@ C:\Users\flc59\Documents\Malhas2
 
 //Write below the name of the mesh file. Use the extension *.msh:
 
-BechHydraulic343_distorcida.msh
+ malha_cha.msh
 
 //If [n], write below the path where the geometry file is:  
 
-C:\Users\flc59\Documents\Benchmark_GeometryFiles
+E:\Qgis\malha real
 
 //Write below the name of the geometry file. Use the extension *.geo.
 
-BechHydraulic343.geo
+malhareal.geo
 
 //--------------------------------------------------------------------
 //----------------- General Options (Configure gmsh) -----------------
@@ -380,13 +380,13 @@ y
 //and two geometric tag)
 
 1
-5 1 1 3
+102 1 1 3
 
 //Direction "y" (number of statments, number of points, growth rate 
 //and two geometric tag)
 
 1
-5 1 2 4
+112 1 2 4
 
 //------------------
 //UNSTRUCTURED MESH:
@@ -567,8 +567,8 @@ n
 //used to "draw" the surfaces during CAD building. (*.geo).  
 
 1
-1e-5 0 
-0 1e-5
+9.26 0 
+0 9.26
 
 //--------------------------------------------------------------------
 //Distribution of porosity:
@@ -634,10 +634,8 @@ n
 //(Dirichlet, Neumann or Periodic);
 //3. In the same row, put the algebric value of this BC.  
 
-3
-101 10
-102 2
-201 0         
+1
+201 0.045
 
 //--------------------------------------------------------------------
 //Treatment of Boundary Points
@@ -648,8 +646,8 @@ n
 //2. In another row, the sequence of codes to be associated with 
 //each point group. 
 
-2
-101 102   
+1
+201 
 
 //--------------------------------------------------------------------
 //----------------------- Convergence Criteria -----------------------
@@ -684,7 +682,7 @@ s
 //state simulation (parameter of stop). Write below the amount of 
 //days or the PVI's value instead:
 
-10
+30
 
 //--------------------------------------------------------------------
 //------------------------------- Wells ------------------------------

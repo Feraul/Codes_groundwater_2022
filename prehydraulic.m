@@ -180,194 +180,69 @@ switch numcase
         % aquifer thickness
         MM= 1;
         % step time, change for each time
-        dt=10;
+        dt=10; % 1, 2, 5, 10, 20 and 50
     case 347
-% initially hydraulic charge
+        % initially hydraulic charge
         h_old=1034.5*ones(size(elem,1),1);
         % coeficiente de armazenamento especifico
         SS=0.04;
         % espesura do aquifero
         MM=136;
-        % step time no considered 
+        % step time no considered
         dt=1;
-        % precipitation or infiltration 
-        P=0.0042; %(4.2mm)
-        %pumping rate             
-%         pumpingrate2=-1.800;
-%         pumpingrate3=-3.000;
-%         pumpingrate4=-0.38475;
-%         pumpingrate5=-0.8000;
-%         pumpingrate6=-2.000;
-%         pumpingrate7=-2.100;
-          pumpingrate=-261;
+        % precipitation or infiltration
+        P=0.042; %(4.2mm)
+        %pumping rate
+        pumpingrate=-261; %261
 
 
         b1 = 1; % Índice para wells
-        wells(b1, 1) = 125;            % Define o índice do poço
+        %wells(b1, 1) = 125;            % Define o índice do poço
+        wells(b1, 1) = 38;   
         wells(b1, 2) = 2;    % Referencia ao elemento correspondente
         wells(b1, 3) = 0;             % Valor placeholder (exemplo: coordenada x)
         wells(b1, 4) = 0;             % Valor placeholder (exemplo: coordenada y)
         wells(b1, 5) = 0;             % Valor placeholder (exemplo: coordenada z)
         wells(b1, 6) = pumpingrate;   % Define a taxa de bombeamento
 
-b2 = 2; % Índice para wells
-        wells(b2, 1) = 230;
+        b2 = 2; % Índice para wells
+        %wells(b2, 1) = 230;
+        wells(b2, 1) = 5;
         wells(b2, 2) = 2;
         wells(b2, 3) = 0;
         wells(b2, 4) = 0;
-        wells(b2, 5) = 0;
-        wells(b2, 6) = pumpingrate;
+        wells(b2, 5) = 501;
+        wells(b2, 6) = 88;
 
-b3 = 3; % Índice para wells
-        wells(b3, 1) = 238;
+        b3 = 3; % Índice para wells
+        %wells(b3, 1) = 238;
+        wells(b3, 1)  =15;
         wells(b3, 2) = 2;
         wells(b3, 3) = 0;
         wells(b3, 4) = 0;
         wells(b3, 5) = 0;
         wells(b3, 6) = pumpingrate;
 
-b4 = 4; % Índice para wells
-        wells(b4, 1) = 371;
+        b4 = 4; % Índice para wells
+        %wells(b4, 1) = 371;
+        wells(b4, 1) = 45;
         wells(b4, 2) = 2;
         wells(b4, 3) = 0;
         wells(b4, 4) = 0;
-        wells(b4, 5) = 0;
-        wells(b4, 6) = pumpingrate; % Neste caso, a taxa de bombeamento é negativa
+        wells(b4, 5) = 501;
+        wells(b4, 6) = 88; % Neste caso, a taxa de bombeamento é negativa
 
-b5 = 5; % Índice para wells
-        wells(b5, 1) = 194;
+        b5 = 5; % Índice para wells
+        %wells(b5, 1) = 194;
+        wells(b5, 1) = 50;
         wells(b5, 2) = 2;
         wells(b5, 3) = 0;
         wells(b5, 4) = 0;
         wells(b5, 5) = 0;
         wells(b5, 6) = pumpingrate;
-
-b6 = 6; % Índice para wells GAMELEIRA
-        wells(b6, 1) = 347;
-        wells(b6, 2) = 2;
-        wells(b6, 3) = 0;
-        wells(b6, 4) = 0;
-        wells(b6, 5) = 0;
-        wells(b6, 6) = pumpingrate;
-
-b7 = 7; % Índice para wells LAGOINHA
-        wells(b7, 1) = 377;
-        wells(b7, 2) = 2;
-        wells(b7, 3) = 0;
-        wells(b7, 4) = 0;
-        wells(b7, 5) = 0;
-        wells(b7, 6) = pumpingrate;
-
-b8 = 8; % Índice para wells PAROIS
-        wells(b8, 1) = 396;
-        wells(b8, 2) = 2;
-        wells(b8, 3) = 0;
-        wells(b8, 4) = 0;
-        wells(b8, 5) = 0;
-        wells(b8, 6) = pumpingrate;
-
-b9 = 9;
-       wells(b9, 1) = 147;
-       wells(b9, 2) = 2;
-       wells(b9, 3) = 0;
-       wells(b9, 4) = 0;
-       wells(b9, 5) = 0;
-       wells(b9, 6) = pumpingrate;
-
-b10 = 10;
-       wells(b10, 1) = 401;
-       wells(b10, 2) = 2;
-       wells(b10, 3) = 0;
-       wells(b10, 4) = 0;
-       wells(b10, 5) = 0;
-       wells(b10, 6) = pumpingrate;
-
-b11 = 11;
-       wells(b11, 1) = 196;
-       wells(b11, 2) = 2;
-       wells(b11, 3) = 0;
-       wells(b11, 4) = 0;
-       wells(b11, 5) = 0;
-       wells(b11, 6) = pumpingrate;
-
-b12 = 12;
-       wells(b12, 1) = 434;
-       wells(b12, 2) = 2;
-       wells(b12, 3) = 0;
-       wells(b12, 4) = 0;
-       wells(b12, 5) = 0;
-       wells(b12, 6) = pumpingrate;
-
-b13 = 13;
-       wells(b13, 1) = 247;
-       wells(b13, 2) = 2;
-       wells(b13, 3) = 0;
-       wells(b13, 4) = 0;
-       wells(b13, 5) = 0;
-       wells(b13, 6) = pumpingrate;
-
-
-%-------------------------------------------------------------------------
-
-
-%         % initially hydraulic charge
-%         h_old=1*ones(size(elem,1),1);
-%         % coeficiente de armazenamento especifico
-%         SS=0.001*1000;
-%         % espesura do aquifero
-%         MM=100;
-%         % step time no considered
-%         dt=1;
-%         % precipitation infiltration
-%         P=0.0009593;
-%         %P=0;
-%         %pumping rate
-%         %pumpingrate=-0;
-%         pumpingrate=-0.0038475;
-% 
-% 
-%         b1 = 1; % Índice para wells
-%         wells(b1, 1) = 5688;            % Define o índice do poço
-%         wells(b1, 2) = 2;    % Referencia ao elemento correspondente
-%         wells(b1, 3) = 0;             % Valor placeholder (exemplo: coordenada x)
-%         wells(b1, 4) = 0;             % Valor placeholder (exemplo: coordenada y)
-%         wells(b1, 5) = 0;             % Valor placeholder (exemplo: coordenada z)
-%         wells(b1, 6) = pumpingrate;   % Define a taxa de bombeamento
-% 
-%         b2 = 2; % Índice para wells
-%         wells(b2, 1) = 9466;
-%         wells(b2, 2) = 2;
-%         wells(b2, 3) = 0;
-%         wells(b2, 4) = 0;
-%         wells(b2, 5) = 0;
-%         wells(b2, 6) = pumpingrate;
-% 
-%         b3 = 3; % Índice para wells
-%         wells(b3, 1) = 8343;
-%         wells(b3, 2) = 2;
-%         wells(b3, 3) = 0;
-%         wells(b3, 4) = 0;
-%         wells(b3, 5) = 0;
-%         wells(b3, 6) = pumpingrate;
-% 
-%         b4 = 4; % Índice para wells
-%         wells(b4, 1) = 7461;
-%         wells(b4, 2) = 2;
-%         wells(b4, 3) = 0;
-%         wells(b4, 4) = 0;
-%         wells(b4, 5) = 0;
-%         wells(b4, 6) = pumpingrate; % Neste caso, a taxa de bombeamento é negativa
-% 
-%         b5 = 5; % Índice para wells
-%         wells(b5, 1) = 7462;
-%         wells(b5, 2) = 2;
-%         wells(b5, 3) = 0;
-%         wells(b5, 4) = 0;
-%         wells(b5, 5) = 0;
-%         wells(b5, 6) = pumpingrate;
 % 
 %         b6 = 6; % Índice para wells GAMELEIRA
-%         wells(b6, 1) = 3955;
+%         wells(b6, 1) = 347;
 %         wells(b6, 2) = 2;
 %         wells(b6, 3) = 0;
 %         wells(b6, 4) = 0;
@@ -375,7 +250,7 @@ b13 = 13;
 %         wells(b6, 6) = pumpingrate;
 % 
 %         b7 = 7; % Índice para wells LAGOINHA
-%         wells(b7, 1) = 1280;
+%         wells(b7, 1) = 377;
 %         wells(b7, 2) = 2;
 %         wells(b7, 3) = 0;
 %         wells(b7, 4) = 0;
@@ -383,12 +258,136 @@ b13 = 13;
 %         wells(b7, 6) = pumpingrate;
 % 
 %         b8 = 8; % Índice para wells PAROIS
-%         wells(b8, 1) = 3510;
+%         wells(b8, 1) = 396;
 %         wells(b8, 2) = 2;
 %         wells(b8, 3) = 0;
 %         wells(b8, 4) = 0;
 %         wells(b8, 5) = 0;
 %         wells(b8, 6) = pumpingrate;
+% 
+%         b9 = 9;
+%         wells(b9, 1) = 147;
+%         wells(b9, 2) = 2;
+%         wells(b9, 3) = 0;
+%         wells(b9, 4) = 0;
+%         wells(b9, 5) = 0;
+%         wells(b9, 6) = pumpingrate;
+% 
+%         b10 = 10;
+%         wells(b10, 1) = 401;
+%         wells(b10, 2) = 2;
+%         wells(b10, 3) = 0;
+%         wells(b10, 4) = 0;
+%         wells(b10, 5) = 0;
+%         wells(b10, 6) = pumpingrate;
+% 
+%         b11 = 11;
+%         wells(b11, 1) = 196;
+%         wells(b11, 2) = 2;
+%         wells(b11, 3) = 0;
+%         wells(b11, 4) = 0;
+%         wells(b11, 5) = 0;
+%         wells(b11, 6) = pumpingrate;
+% 
+%         b12 = 12;
+%         wells(b12, 1) = 434;
+%         wells(b12, 2) = 2;
+%         wells(b12, 3) = 0;
+%         wells(b12, 4) = 0;
+%         wells(b12, 5) = 0;
+%         wells(b12, 6) = pumpingrate;
+% 
+%         b13 = 13;
+%         wells(b13, 1) = 247;
+%         wells(b13, 2) = 2;
+%         wells(b13, 3) = 0;
+%         wells(b13, 4) = 0;
+%         wells(b13, 5) = 0;
+%         wells(b13, 6) = pumpingrate;
+
+
+        %-------------------------------------------------------------------------
+
+
+        %         % initially hydraulic charge
+        %         h_old=1*ones(size(elem,1),1);
+        %         % coeficiente de armazenamento especifico
+        %         SS=0.001*1000;
+        %         % espesura do aquifero
+        %         MM=100;
+        %         % step time no considered
+        %         dt=1;
+        %         % precipitation infiltration
+        %         P=0.0009593;
+        %         %P=0;
+        %         %pumping rate
+        %         %pumpingrate=-0;
+        %         pumpingrate=-0.0038475;
+        %
+        %
+        %         b1 = 1; % Índice para wells
+        %         wells(b1, 1) = 5688;            % Define o índice do poço
+        %         wells(b1, 2) = 2;    % Referencia ao elemento correspondente
+        %         wells(b1, 3) = 0;             % Valor placeholder (exemplo: coordenada x)
+        %         wells(b1, 4) = 0;             % Valor placeholder (exemplo: coordenada y)
+        %         wells(b1, 5) = 0;             % Valor placeholder (exemplo: coordenada z)
+        %         wells(b1, 6) = pumpingrate;   % Define a taxa de bombeamento
+        %
+        %         b2 = 2; % Índice para wells
+        %         wells(b2, 1) = 9466;
+        %         wells(b2, 2) = 2;
+        %         wells(b2, 3) = 0;
+        %         wells(b2, 4) = 0;
+        %         wells(b2, 5) = 0;
+        %         wells(b2, 6) = pumpingrate;
+        %
+        %         b3 = 3; % Índice para wells
+        %         wells(b3, 1) = 8343;
+        %         wells(b3, 2) = 2;
+        %         wells(b3, 3) = 0;
+        %         wells(b3, 4) = 0;
+        %         wells(b3, 5) = 0;
+        %         wells(b3, 6) = pumpingrate;
+        %
+        %         b4 = 4; % Índice para wells
+        %         wells(b4, 1) = 7461;
+        %         wells(b4, 2) = 2;
+        %         wells(b4, 3) = 0;
+        %         wells(b4, 4) = 0;
+        %         wells(b4, 5) = 0;
+        %         wells(b4, 6) = pumpingrate; % Neste caso, a taxa de bombeamento é negativa
+        %
+        %         b5 = 5; % Índice para wells
+        %         wells(b5, 1) = 7462;
+        %         wells(b5, 2) = 2;
+        %         wells(b5, 3) = 0;
+        %         wells(b5, 4) = 0;
+        %         wells(b5, 5) = 0;
+        %         wells(b5, 6) = pumpingrate;
+        %
+        %         b6 = 6; % Índice para wells GAMELEIRA
+        %         wells(b6, 1) = 3955;
+        %         wells(b6, 2) = 2;
+        %         wells(b6, 3) = 0;
+        %         wells(b6, 4) = 0;
+        %         wells(b6, 5) = 0;
+        %         wells(b6, 6) = pumpingrate;
+        %
+        %         b7 = 7; % Índice para wells LAGOINHA
+        %         wells(b7, 1) = 1280;
+        %         wells(b7, 2) = 2;
+        %         wells(b7, 3) = 0;
+        %         wells(b7, 4) = 0;
+        %         wells(b7, 5) = 0;
+        %         wells(b7, 6) = pumpingrate;
+        %
+        %         b8 = 8; % Índice para wells PAROIS
+        %         wells(b8, 1) = 3510;
+        %         wells(b8, 2) = 2;
+        %         wells(b8, 3) = 0;
+        %         wells(b8, 4) = 0;
+        %         wells(b8, 5) = 0;
+        %         wells(b8, 6) = pumpingrate;
     case 380
         % article: Numerical modeling of contaminant transport in a stratified
         % heterogeneous aquifer with dipping anisotropy, author QIN 2013
