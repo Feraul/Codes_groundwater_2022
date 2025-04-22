@@ -1112,6 +1112,15 @@ switch numcase
             presanalit(ianal) =1+sin(2*x+y);
             
         end  %End of FOR (pressure)
+    case 341.1
+        for ianal = 1:size(centelem,1)
+            %Attribute to "x" and "y" "centelem" values
+            x = centelem(ianal,1);
+            % analytical hydraulic head
+            
+            presanalit(ianal) =3+sin(x);
+            
+        end  %End of FOR (pressure)
 end  %End of SWITCH
 
 %User mesage

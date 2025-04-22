@@ -111,10 +111,10 @@ elseif numcase>300
     %methodhydro='cranknicolson';
     %----------------------------------------------------------------------
     % This numcase is used for conductivity hydraulic very heterogeneous
-    if numcase==341 || numcase==380.1
+    if numcase==341 || numcase==380.1 || numcase==341.1
         % Nmod: cosine function number; vark:varianca
         % see ALECSA's article 
-        Nmod=100;  varK=1;
+        Nmod=100;  varK=0.1;
     end
     %----------------------------------------------------------------------
     if 350<numcase && numcase <400 

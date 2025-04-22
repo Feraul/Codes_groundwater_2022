@@ -362,6 +362,17 @@ coordmid = mean(coord(vertices,1:2))*(1 - boolean) + ...
             elseif (y==0 || y==10)&& (x==0 || x>0) % Neumann
                 bcattrib =cos(2*x+y);
             end
+        case 341.1
+            x=coordmid(1);
+            y=coordmid(2);
+            if (x==0) && (y==0 || y>0)% dirichlet
+                bcattrib =3; 
+            elseif (x==20) && (y==0 || y>0) % Dirichlet
+                bcattrib =3+sin(x);
+            elseif (y==0 || y==10)&& (x==0 || x>0)
+                bcattrib=bcflag(flagptr,2);
+          
+            end
 
         otherwise
             %Attribute the boundary condition's value from "bcflag"

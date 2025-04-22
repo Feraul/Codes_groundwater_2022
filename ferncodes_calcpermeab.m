@@ -1,4 +1,4 @@
-function[permeabi,fonte]=ferncodes_calcpermeab
+function[permeabi]=ferncodes_calcpermeab
 
 global Nmod centelem
 %% 2D exponential case: computation of K fields and source terms f
@@ -10,7 +10,6 @@ C(:,1) = wavenumberExp0Nmod10000(1:Nmod);
 C(:,2) = wavenumberExp1Nmod10000(1:Nmod);
 KMean = 15;
 
-fonte=zeros(size(centelem,1),1);
 permeabi=zeros(size(centelem,1),1);
 for i = 1 : size(centelem,1)
     permeabi(i,1) = K(centelem(i,1),centelem(i,2),KMean,C(:,1),C(:,2),phi);

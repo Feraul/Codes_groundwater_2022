@@ -111,11 +111,15 @@ for ifacont = 1:bedgesize
 
         %Neumann boundary
     else
-        if numcase==341
+        if numcase==341 || numcase==341.1
             %-----------------------------------------------------------
 
             aaa=0.5*(coord(bedge(ifacont,1),:) + coord(bedge(ifacont,2),:));
+            if numcase==341
             auxkmap = ferncodes_K(aaa(1,1),aaa(1,2));
+            else
+             auxkmap = ferncodes_K_1D(aaa(1,1));
+            end
             %----------------------------------------------------------
             %auxkmap=kmap(lef, 2);
             I(lef) = I(lef)+ normals(ifacont,2)*auxkmap*nflagface(ifacont,2);
@@ -241,7 +245,7 @@ if (300<numcase && numcase<379) && numcase~=347
     %
     if numcase~=336 && numcase~=334 && numcase~=335 &&...
             numcase~=337 && numcase~=338 && numcase~=339 &&...
-            numcase~=340 && numcase~=341 && numcase~=380  
+            numcase~=340 && numcase~=341 && numcase~=380 && numcase~=341.1 
         if numcase==333 || numcase==331 %|| numcase==347
             %para aquifero nao confinado
             coeficiente=dt^-1*SS.*elemarea(:);

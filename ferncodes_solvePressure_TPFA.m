@@ -116,7 +116,8 @@ if numcase>300
     %
     if numcase~=336 && numcase~=334 && numcase~=335 &&...
             numcase~=337 && numcase~=338 && numcase~=339 &&...
-            numcase~=340 && numcase~=341 && numcase~=380 && numcase~=347
+            numcase~=340 && numcase~=341 && numcase~=380 && numcase~=347 && ...
+            numcase~=341.1
         if numcase==333 || numcase==331
             %para aquifero nao confinado
             coeficiente=dt^-1*SS.*elemarea(:);

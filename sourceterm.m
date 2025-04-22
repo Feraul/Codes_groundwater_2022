@@ -3,9 +3,13 @@ global numcase
 
 if (numcase >= 10 && numcase <= 30) || numcase == 1.6 ||...
         numcase==336 || numcase==333 || numcase==335 || numcase==337 ||...
-        numcase==338 || numcase==341 || numcase==342 || numcase==347
-    if numcase==341
+        numcase==338 || numcase==341 || numcase==342 || numcase==347 || ...
+        numcase==341.1
+    if numcase==341 
+        
         [P]=ferncodes_calcfonte;
+    elseif numcase==341.1
+        [P]=ferncodes_calcfonte_1D;
     end
     %Catch "source" came from "PLUG_sourcefunction"
     source = PLUG_sourcefunction(P,elembedge,tempo,wells);

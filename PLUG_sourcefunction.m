@@ -375,6 +375,8 @@ for isource = 1:size(elem,1)
             sourcevector(isource)=P*elemarea(isource);
         case 341
             sourcevector(isource)=P(isource)*elemarea(isource);
+        case 341.1
+            sourcevector(isource)=P(isource)*elemarea(isource);
         case 347
             if min(logical(isource~=wells(:,1)))==1
             sourcevector(isource)=P*elemarea(isource);

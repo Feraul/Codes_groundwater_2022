@@ -16,11 +16,17 @@ global elem centelem numcase coord;
 
 %Choose the benchmark to attribute permeability.
 switch numcase
-    case 341
-        [auxperm2,]=ferncodes_calcpermeab;
+    case 341 % bidimensional problem 
+        [auxperm2]=ferncodes_calcpermeab;
         for ii=1:size(centelem,1)
             kmap(ii,:)=[ii auxperm2(ii) 0 0 auxperm2(ii)];
         end
+    case 341.1 % unidimensional probleam
+         [auxperm1]=ferncodes_calcpermeab_1D;
+        for ii=1:size(centelem,1)
+            kmap(ii,:)=[ii auxperm1(ii) 0 0 auxperm1(ii)];
+        end
+        
     case 342
         kmap(1,1:5) = [1 MM*kmap(1,2) MM*kmap(1,3) MM*kmap(1,4) MM*kmap(1,5)];
         elem(:,5)=1;
