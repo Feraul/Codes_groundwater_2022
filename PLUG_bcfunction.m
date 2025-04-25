@@ -369,7 +369,7 @@ coordmid = mean(coord(vertices,1:2))*(1 - boolean) + ...
                 bcattrib =3; 
             elseif (x==20) && (y==0 || y>0) % Dirichlet
                 bcattrib =3+sin(x);
-            elseif (y==0 || y==10)&& (x==0 || x>0)
+            elseif (y>=0)&& (x==0 || x>0)
                 bcattrib=bcflag(flagptr,2);
           
             end

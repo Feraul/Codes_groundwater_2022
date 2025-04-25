@@ -7,6 +7,7 @@ nflag = 5000*ones(size(coord,1),2);
 nflagface=0;
 for ifacont = 1:size(bedge,1)
     if numcase==341 || numcase==341.1
+       
        % the fourth column of bedge is vertex flag
         x = logical(bcflag(:,1) == bedge(ifacont,4));
         % label of the vertex
