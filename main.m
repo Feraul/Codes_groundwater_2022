@@ -15,7 +15,8 @@
 % done in the present rountine just call each function.
 
 %|--------------------------------------|
-%|  leia com muita atencao as indicacoes|
+%| read the instructions very carefully |
+%| Warning: See preMPFA.m line 53 and 54|
 %|--------------------------------------|
 
 %Clear the screem

@@ -49,32 +49,35 @@ p = 1;
 %Support (TPS)
 %"q" quadrature point to flux in the sub interaction region
 q = 1;
-
+%==========================================================================
+% When creating a new case or benchmark, add the physical properties in 
+% functions (1), (3), (4) and (5)
+%==========================================================================
 %Fill the matrix "overedgecoord"
 overedgecoord = overedge;
-%(1) Define the norm of permeability or conductivity hidraulic tensor ("normk")
+%% (1) Define the norm of permeability or conductivity hidraulic tensor ("normk")
 [normk,kmap] = calcnormk(kmap,MM,h);
-% source term 
+%Get the length of the edge with non-null Neumann Boundary Condition.
+knownboundlength = getknownboundlength(klb);
+% source term
 %Catch "source" came from "PLUG_sourcefunction"
 if (numcase >= 10 && numcase <= 30) || numcase == 1.6 ||...
         numcase==336 || numcase==333 || numcase==335 || numcase==337 ||...
         numcase==338 || numcase==341 || numcase==342 || numcase==347 || ...
         numcase==341.1
-    if numcase==341 
-        
+    if numcase==341
+
         [P]=ferncodes_calcfonte;
     elseif numcase==341.1
         [P]=ferncodes_calcfonte_1D;
     end
-    %Catch "source" came from "PLUG_sourcefunction"
+    %% (2)Catch "source" came from "PLUG_sourcefunction"
     source = PLUG_sourcefunction(P,0,wells);
 end
-%Get the length of the edge with non-null Neumann Boundary Condition.
-knownboundlength = getknownboundlength(klb);
 
 % calculate the weight
 if strcmp(pmethod,'mpfad')|| strcmp(pmethod,'nlfvpp')|| strcmp(pmethod,'mpfaql')
-    % adequação dos flags de contorno
+    %% (3) adequacao dos flags de contorno
     [nflag,nflagface] = ferncodes_calflag(0);
     %Call another parameters that I don't know.
     [V,N,] = ferncodes_elementface(nflag);
@@ -90,26 +93,26 @@ if strcmp(pmethod,'mpfad')|| strcmp(pmethod,'nlfvpp')|| strcmp(pmethod,'mpfaql')
             [weight,s] = ferncodes_Pre_LPEW_2(kmap,N,zeros(size(elem,1),1),nflagface,nflag);
     end  %End of SWITCH
 end
-
+% Physical and geometric parameters in relation to methods based on harmonic points
 if strcmp(pmethod,'mpfah')|| strcmp(pmethod,'nlfvh')|| strcmp(pmethod,'nlfvdmp')
 
-        p_old=1e1*ones(size(elem,1),1); % inicializando a pressao para metodo nao linear
-        % utilize tolerancia menor que 10^-12 para testes de convergencia
-        % Para teste de monotonicidade ou problemas bifásicos utilize 10^-8.
-        % # iterações de Picard
-        % faces alrededor de um elemento
-        [facelement]=ferncodes_elementfacempfaH;
-        % calculo dos pontos harmonicos
-        [pointarmonic]=ferncodes_harmonicopoint(kmap);
-        % calculo dos parametros ou constantes (ksi)
-        % temos usado este parametro durante muito tempo em muitos testes
-        [parameter,auxface]=ferncodes_coefficientmpfaH(facelement,pointarmonic,kmap);
-        % adequacao dos flag no ponto medio do contorno
-        nflagface= ferncodes_contflagface;
-        % adequacao dos flags no vertice do contorno
-        nflag = ferncodes_calflag(0);
-        % calculo dos pesos da interpolacao dos pontos harmonicos
-        [weightDMP]=ferncodes_weightnlfvDMP(kmap, elem);
+    p_old=1e1*ones(size(elem,1),1); % inicializando a pressao para metodo nao linear
+    % utilize tolerancia menor que 10^-12 para testes de convergencia
+    % Para teste de monotonicidade ou problemas bifásicos utilize 10^-8.
+    % # iterações de Picard
+    % faces alrededor de um elemento
+    [facelement]=ferncodes_elementfacempfaH;
+    % calculo dos pontos harmonicos
+    [pointarmonic]=ferncodes_harmonicopoint(kmap);
+    % calculo dos parametros ou constantes (ksi)
+    % temos usado este parametro durante muito tempo em muitos testes
+    [parameter,auxface]=ferncodes_coefficientmpfaH(facelement,pointarmonic,kmap);
+    %% (4) adequacao dos flag no ponto medio do contorno
+    nflagface= ferncodes_contflagface;
+    %% (5)adequacao dos flags no vertice do contorno
+    nflag = ferncodes_calflag(0);
+    % calculo dos pesos da interpolacao dos pontos harmonicos
+    [weightDMP]=ferncodes_weightnlfvDMP(kmap, elem);
 
 end
 
@@ -156,7 +159,6 @@ switch char(pmethod)
         [transmvecleft,transmvecright,knownvecleft,knownvecright,storeinv,...
             Bleft,Bright,Fg,mapinv,maptransm,mapknownvec,pointedge,...
             bodyterm] = transmFPS(kmap,q,p,knownboundlength);
-
         %-------------------------------------------------------------------
         if phasekey==3
             %Get the length of the edge with non-null Neumann Boundary Condition.
@@ -172,8 +174,7 @@ switch char(pmethod)
             bodyterm] = transmEnriched(kmap,knownboundlength);
 
         %Calculate geometrical and physical terms to be used in MPFA-Diamond
-        %(Gao and Wu, 2010).
-    case 'mpfad'
+    case 'mpfad' %(Gao and Wu, 2010)
         %Get preprocessed terms:
         [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap, elem);
         % for the concentration transport with pressure
@@ -181,46 +182,35 @@ switch char(pmethod)
             %Get the initial condition
             [Con,lastimelevel,lastimeval] = applyinicialcond;
             % calculate the auxiliary parameters
-
             [Hesq,Kdec,Knc,Ktc,Dedc,wightc,sc,weightDMPc,dparameter ]=...
                 parametersauxiliary(dmap,N);
-
             % flags boundary conditions
             [nflagnoc,nflagfacec] = ferncodes_calflag_con(lastimeval);
         elseif 350<numcase && numcase<400
-            % for the concentration transport with hydraulic head 
+            % for the concentration transport with hydraulic head
             %Get the initial condition
             [Con,lastimelevel,lastimeval] = applyinicialcond;
             % calculate the auxiliary parameters
-
             [Hesq,Kdec,Knc,Ktc,Dedc,wightc,sc,weightDMPc,dparameter ]=...
                 parametersauxiliary(dmap,N);
-
             % flags boundary conditions
             [nflagnoc,nflagfacec] = ferncodes_calflag_con(lastimeval);
         end
-        % Contreras et al, 2019
-    case 'mpfaql'
+        
+    case 'mpfaql' % Contreras et al, 2019
         % calculo dos parametros ou constantes (ksi)
         [parameter]=ferncodes_coefficient(kmap);
-
         % calculo dos pesos DMP
         [weightDMP]=ferncodes_weightnlfvDMP(kmap);
-       
-        % Contreras et al., 2021
-    case 'nlfvpp'
+    case 'nlfvpp' % Contreras et al., 2021
         if 200<numcase && numcase<300
-            %
             %Get the initial condition
             [Con,lastimelevel,lastimeval] = applyinicialcond;
             % calculate the auxiliary parameters
             [Hesq,Kdec,Knc,Ktc,Dedc,wightc,sc,weightDMPc,dparameter ]=...
                 parametersauxiliary(dmap,N);
-
             % flags boundary conditions
             [nflagnoc,nflagfacec] = ferncodes_calflag_con(lastimeval);
-            % calculo dos pesos DMP
-
         end
         % contreras et al, 2016
     case 'nlfvh'
@@ -236,12 +226,9 @@ switch char(pmethod)
             [dparameter,]=ferncodes_coefficientmpfaH(facelement, conpointarmonic,dmap);
             % calculo dos pesos DMP
             [weightDMPc]=ferncodes_weightnlfvDMP(dmap);
-
             % flags boundary conditions
             [nflagnoc,nflagfacec] = ferncodes_calflag_con(lastimeval);
-
         end
-        
 end  %End of SWITCH
 
 %Message to user:
@@ -259,8 +246,8 @@ function       [Hesq,Kdec,Knc,Ktc,Dedc,weightc,sc,weightDMPc,dparameter ]=...
     parametersauxiliary(dmap,N)
 global interptype elem
 
-% dmap: Valor medio do tensor de difusao molecular, usualmente esse tersor 
-% consiera-se como homogeneo em todo o dominio 
+% dmap: Valor medio do tensor de difusao molecular, usualmente esse tersor
+% consiera-se como homogeneo em todo o dominio
 if max(max(dmap))~=0
     elem(:,5)=1;
 end
