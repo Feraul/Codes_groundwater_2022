@@ -1,6 +1,6 @@
 function [x,erro,iter] = ferncodes_andersonacc2(x,auxtol,parameter,w,s,nflag,...
     weightDMP,wells,mobility,R0,contnorm,Con,nflagc,wightc,sc,...
-    weightDMPc,nflagfacec,dparameter,SS,dt,h,MM,gravrate)
+    weightDMPc,nflagfacec,dparameter,SS,dt,h,MM,gravrate,source)
 
 global pmethod nltol
 % This performs fixed-point iteration with or without Anderson
@@ -119,6 +119,8 @@ else
     
     %Often it may change the global matrix "M"
     [M_new,RHS_new] = addsource(sparse(M),I,wells);
+    % Often with source term
+    [RHS_new]=sourceterm(RHS_new,source);
     
 end
 
@@ -259,6 +261,8 @@ for iter = 0:itmax
             mobility,contnorm,SS,dt,h,MM,gravrate,x);
         %Often it may change the global matrix "M"
         [M_new,RHS_new] = addsource(sparse(M),I,wells);
+        % Often with source term
+       [RHS_new]=sourceterm(RHS_new,source);
         
     elseif  strcmp(pmethod,'nlfvh')
         [pinterp_new,]=ferncodes_pressureinterpHP(x,nflag,parameter,...
@@ -267,6 +271,8 @@ for iter = 0:itmax
         [M,I]=ferncodes_assemblematrixNLFVH(pinterp_new,parameter,mobility);
         %Often it may change the global matrix "M"
         [M_new,RHS_new] = addsource(sparse(M),I,wells);
+        % Often with source term
+        [RHS_new]=sourceterm(RHS_new,source);
     elseif strcmp(pmethod,'nlfvdmp')
         % interpolação nos nós ou faces
         [pinterp_new]=ferncodes_pressureinterpHP(x,nflag,parameter,weightDMP,mobility);
@@ -278,6 +284,8 @@ for iter = 0:itmax
         
         %Often it may change the global matrix "M"
         [M_new,RHS_new] = addsource(sparse(M),I,wells);
+        % Often with source term
+        [RHS_new]=sourceterm(RHS_new,source);
     else
         [pinterp_new]=ferncodes_pressureinterpHP(x,nflag,parameter,weightDMP,mobility);
         %% Calculo da matriz global
@@ -287,7 +295,8 @@ for iter = 0:itmax
         
         %Often it may change the global matrix "M"
         [M_new,RHS_new] = addsource(sparse(M),I,wells);
-        
+        % Often with source term
+        [RHS_new]=sourceterm(RHS_new,source);
     end
     RR = norm(M_new*x - RHS_new);
     

@@ -1,14 +1,4 @@
-%--------------------------------------------------------------------------
-%UNIVERSIDADE FEDERAL DE PERNAMBUCO
-%CENTRO DE TECNOLOGIA E GEOCIENCIAS
-%PROGRAMA DE POS GRADUACAO EM ENGENHARIA CIVIL
-%TOPICOS ESPECIAIS EM DINAMICA DOS FLUIDOS COMPUTACIONAL
-%--------------------------------------------------------------------------
-%Subject: numerical routine to solve a two phase flow in porous media
-%Type of file: FUNCTION
-%Criate date: 16/04/2015 (My wife is a PHD since yesterday)
-%Modify data:   /  /2015
-%Adviser: Paulo Lyra and Darlan Karlo
+
 %Programer: Márcio Souza
 %Modified: Fernando Contreras, 2021
 %--------------------------------------------------------------------------
@@ -21,7 +11,7 @@
 
 function [pressure,flowrate,flowresult,flowratedif] = ...
     ferncodes_solvePressure_TPFA(Kde, Kn, nflag, Hesq,wells,viscosity,...
-    Kdec, Knc,nflagc,Con,SS,dt,h,MM,P,time)
+    Kdec, Knc,nflagc,Con,SS,dt,h,MM,P,time,source)
 %Define global parameters:
 
 global inedge bedge elem coord bcflag numcase methodhydro elemarea ...
@@ -148,7 +138,7 @@ end
 %--------------------------------------------------------------------------
 %Solver the algebric system
 % Often with source term
-[I]=sourceterm(I,elembedge,P,time,wells);
+[I]=sourceterm(I,source);
 %When this is assembled, that is solved using the function "solver".
 %This function returns the pressure field with value put in each colocation
 %point.

@@ -24,7 +24,7 @@ if phasekey ~= 0
         Bleftcon,Brightcon,Fgcon,mapinvcon,maptransmcon,mapknownveccon,...
         pointedgecon, bodytermcon,Kdec,Knc,Ktc,Dedc,weightc,sc,weightDMPc,dparameter,...
         nflagnoc,nflagfacec,Con,lastimelevel,lastimeval,...
-        gravrate] = preMPFA(kmap,klb,dmap,MM,h_old);
+        gravrate,source] = preMPFA(kmap,klb,dmap,MM,h_old);
 
 end  %End of IF (execute "preMPFA")
 
@@ -162,14 +162,14 @@ switch phasekey
             if strcmp(pmethod,'tpfa')
                 %Get "pressure" and "flowrate"
                 [pressure,flowrate,] = ferncodes_solvePressure_TPFA(Kde, Kn,...
-                    nflagface, Hesq,0,0,0,0,0,0,SS,dt,h_old,MM,P,time);
+                    nflagface, Hesq,0,0,0,0,0,0,SS,dt,h_old,MM,P,time,source);
                 %MPFA-D (Gao and Wu, 2010)
             elseif strcmp(pmethod,'mpfad')
                 %Get "pressure" and "flowrate"
                 [pressure,flowrate,] = ferncodes_solverpressure(1,...
                     wells,Hesq,Kde,Kn,Kt,Ded,nflag,nflagface,weight,s,...
                     Con,Kdec,Knc,Ktc,Dedc,nflagnoc,weightc,sc,SS,dt,...
-                    h_old,MM,gravrate,P,kmap,time);
+                    h_old,MM,gravrate,P,kmap,time,source);
 
             elseif strcmp(pmethod,'mpfaql')
                 [pressure,flowrate,]=ferncodes_solverpressureMPFAQL(nflag,...
@@ -177,10 +177,10 @@ switch phasekey
 
             elseif strcmp(pmethod,'mpfah')
                 [pressure,flowrate,]=ferncodes_solverpressureMPFAH(nflagface,...
-                    parameter,weightDMP,wells,SS,dt,h_old,MM,gravrate,1,P,time);
+                    parameter,weightDMP,wells,SS,dt,h_old,MM,gravrate,1,P,time,source);
             elseif strcmp(pmethod,'nlfvpp')
                 [pressure,flowrate,]=ferncodes_solverpressureNLFVPP(nflagno,...
-                    parameter,kmap,wells,1,V,1,N,p_old,contnorm);
+                    parameter,kmap,wells,1,V,1,N,p_old,contnorm,source);
             elseif strcmp(pmethod,'nlfvh')
                 [pressure,flowrate,]=ferncodes_solverpressureNLFVH(nflagface,...
                     parameter,kmap,wells,1,weightDMP,p_old,contnorm);
@@ -260,7 +260,7 @@ switch phasekey
 
         
     otherwise %It Solves only the HYPERBOLIC Equation:
-        
+
         %Get the initial condition for the hyperbolic equation
         [Sw,lastimelevel,lastimeval] = applyinicialcond;
 

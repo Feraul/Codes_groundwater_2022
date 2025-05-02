@@ -1,6 +1,6 @@
 function [p,flowrate,flowresult,flowratedif]=ferncodes_iterpicard(M_old,RHS_old,...
     parameter,w,s,p_old,nflagno,wells,viscosity,Con,nflagc,wightc,sc,...
-    dparameter,contnorm,SS,dt,h,MM,gravrate)
+    dparameter,contnorm,SS,dt,h,MM,gravrate,source)
 global nltol maxiter
 %% calculo do residuo Inicial
 R0=norm(M_old*p_old-RHS_old);
@@ -33,6 +33,8 @@ while (nltol<er || nltol==er) && (step<maxiter)
     
     %Often it may change the global matrix "M"
     [M_new,RHS_new] = addsource(sparse(M),I,wells);
+    % Often with source term
+    [RHS_new]=sourceterm(RHS_new,source);
     %% Calculo do residuo
     
     R = norm(M_new*p_new - RHS_new);

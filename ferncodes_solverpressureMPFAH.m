@@ -1,5 +1,5 @@
 function [p,flowrate,flowresult]=ferncodes_solverpressureMPFAH(nflagface,...
-             parameter,weightDMP,wells,SS,dt,h,MM,gravrate,viscosity,P,time)
+             parameter,weightDMP,wells,SS,dt,h,MM,gravrate,viscosity,P,time,source)
 
 
 [M,I,elembedge]=ferncodes_assemblematrixMPFAH(parameter,nflagface,weightDMP,SS,dt,h,...
@@ -14,7 +14,7 @@ function [p,flowrate,flowresult]=ferncodes_solverpressureMPFAH(nflagface,...
 %--------------------------------------------------------------------------
 
 % Often with source term
-[I]=sourceterm(I,elembedge,P,time);
+[I]=sourceterm(I,source);
 %Solve global algebric system 
 
 % calculo das pressões ou carga hidraulica

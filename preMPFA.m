@@ -18,7 +18,7 @@ function [transmvecleft,transmvecright,knownvecleft,knownvecright,storeinv,...
     knownvecleftcon,knownvecrightcon,storeinvcon,Bleftcon,Brightcon,Fgcon,...
     mapinvcon,maptransmcon,mapknownveccon,pointedgecon,bodytermcon,Kdec,...
     Knc,Ktc,Dedc,wightc,sc,weightDMPc,dparameter,nflagnoc,nflagfacec,Con,...
-    lastimelevel,lastimeval,gravrate] = preMPFA(kmap,klb,dmap,MM,h)
+    lastimelevel,lastimeval,gravrate,source] = preMPFA(kmap,klb,dmap,MM,h)
 %Define global parameters:
 global pmethod elem interptype phasekey keygravity numcase
 
@@ -40,7 +40,7 @@ knownvecleftcon=0; knownvecrightcon=0; storeinvcon=0; Bleftcon=0;
 Brightcon=0; Fgcon=0; mapinvcon=0; maptransmcon=0; mapknownveccon=0;
 pointedgecon=0; bodytermcon=0; Kdec=0;Knc=0;Ktc=0;Dedc=0;wightc=0;sc=0;
 weightDMPc=0;nflag=0;dparameter=0; nflagnoc=0;nflagfacec=0;Con=0; gravrate=0;
-lastimeval=0;lastimelevel=0;
+lastimeval=0;lastimelevel=0;source=0;
 %Define parametric variables:
 %Parameter Used in Full Pressure Support (FPS)
 %"p" quadrature point to flux in the auxilary sub interaction region
@@ -54,7 +54,21 @@ q = 1;
 overedgecoord = overedge;
 %(1) Define the norm of permeability or conductivity hidraulic tensor ("normk")
 [normk,kmap] = calcnormk(kmap,MM,h);
-
+% source term 
+%Catch "source" came from "PLUG_sourcefunction"
+if (numcase >= 10 && numcase <= 30) || numcase == 1.6 ||...
+        numcase==336 || numcase==333 || numcase==335 || numcase==337 ||...
+        numcase==338 || numcase==341 || numcase==342 || numcase==347 || ...
+        numcase==341.1
+    if numcase==341 
+        
+        [P]=ferncodes_calcfonte;
+    elseif numcase==341.1
+        [P]=ferncodes_calcfonte_1D;
+    end
+    %Catch "source" came from "PLUG_sourcefunction"
+    source = PLUG_sourcefunction(P,0,wells);
+end
 %Get the length of the edge with non-null Neumann Boundary Condition.
 knownboundlength = getknownboundlength(klb);
 

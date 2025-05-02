@@ -3,7 +3,7 @@
 %Modified: Fernando Contreras, 2021
 function [p,flowrate,flowresult,flowratedif] = ferncodes_solverpressure(viscosity,...
     wells,Hesq,Kde,Kn,Kt,Ded,nflag,nflagface,weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,...
-    wc,sc,SS,dt,h,MM,gravrate,P,kmap,tempo)
+    wc,sc,SS,dt,h,MM,gravrate,P,kmap,tempo,source)
 % Montagem da matriz global
 [M,I,elembedge] = ferncodes_globalmatrix(weight,s,Kde,Ded,Kn,Kt,Hesq,...
     viscosity,nflag,nflagface,SS,dt,h,MM,gravrate,kmap);
@@ -14,7 +14,7 @@ function [p,flowrate,flowresult,flowratedif] = ferncodes_solverpressure(viscosit
 [M,I] = addsource(sparse(M),I,wells);
 
 % Often with source term
-[I]=sourceterm(I,elembedge,P,tempo,wells);
+[I]=sourceterm(I,source);
 
 %--------------------------------------------------------------------------
 %Solve global algebric system 

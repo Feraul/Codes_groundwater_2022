@@ -1,10 +1,8 @@
 
 %Modified: Fernando Contreras, 2021
 
-function [p,flowrate,flowresult]=ferncodes_solverpressureMPFAQL(nflagno,parameter,kmap,weightDMP,wells,mobility,V,Sw,N,weight,s)
-%Define global parameters
-global interptype;
- %End of SWITCH
+function [p,flowrate,flowresult]=ferncodes_solverpressureMPFAQL(nflagno,...
+    parameter,kmap,weightDMP,wells,mobility,V,Sw,N,weight,s)
 
 [M,I]=ferncodes_assemblematrixMPFAQL(parameter,weight,s,nflagno,weightDMP,mobility);
 
