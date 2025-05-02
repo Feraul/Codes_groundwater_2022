@@ -807,34 +807,8 @@ for iface=1:inedgesize
         I(inedge(iface,4))=I(inedge(iface,4))-visonface*m;
     end
 end
-%% used to calculate the hydraulic head
-if numcase>300
-    if numcase~=336 && numcase~=334 && numcase~=335 &&...
-            numcase~=337 && numcase~=338 && numcase~=339 &&...
-            numcase~=340 && numcase~=341 
-
-        if numcase==333 || numcase==331 
-            coeficiente=dt^-1*SS.*elemarea(:);
-        else
-            
-            coeficiente=dt^-1*MM*SS.*elemarea(:);
-        end
-        % Euler backward method
-        if strcmp(methodhydro,'backward')
-            % equacao 30 Qian et al 2023
-            M=M+coeficiente.*eye(size(elem,1));
-            I=I+coeficiente.*eye(size(elem,1))*h;
-        else
-            
-            % Crank-Nicolson method
-            % equacao 33 Qian et al 2023
-            I=I+(coeficiente.*eye(size(elem,1))-0.5*M)*h;
-            M=  (coeficiente.*eye(size(elem,1))+0.5*M);
-            
-        end
-        
-    end
-end
+% calcula um problema transiente
+[M,I]=ferncodes_implicitandcranknicolson(M,I,SS,dt,MM,h);
 %% utilize somente quando o teste vai ser comparado com resultados do
 % modflow
 if strcmp(modflowcompared,'y')

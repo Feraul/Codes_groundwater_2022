@@ -17,8 +17,7 @@ function [p,flowrate,flowresult,flowratedif] = ferncodes_solverpressure(viscosit
 [I]=sourceterm(I,source);
 
 %--------------------------------------------------------------------------
-%Solve global algebric system 
-%pressure or hydraulic head 
+%Solve global algebric system: pressure or hydraulic head 
 p = solver(M,I);
 %Message to user:
 disp('>> The Pressure or hydraulic head field was calculated with success!');
