@@ -35,7 +35,7 @@ transmvecleft = 0; transmvecright = 0; knownvecleft = 0; knownvecright = 0;
 storeinv = 0; Bleft = 0; Bright = 0; Fg = 0; mapinv = 0; maptransm = 0;
 mapknownvec = 0; pointedge = 0; bodyterm = 0; Hesq = 0; Kde = 0; Kn = 0;
 Kt = 0; Ded = 0; V = 0; N = 0; parameter=0; weightDMP=0;nflagface=0;p_old=0;
-contnorm=0;weight=0;s=0; transmvecleftcon=0;pointarmonic=0; transmvecrightcon=0;
+contnorm=0;weight=0;s=0; transmvecleftcon=0; transmvecrightcon=0;
 knownvecleftcon=0; knownvecrightcon=0; storeinvcon=0; Bleftcon=0;
 Brightcon=0; Fgcon=0; mapinvcon=0; maptransmcon=0; mapknownveccon=0;
 pointedgecon=0; bodytermcon=0; Kdec=0;Knc=0;Ktc=0;Dedc=0;wightc=0;sc=0;
@@ -52,7 +52,7 @@ q = 1;
 
 %Fill the matrix "overedgecoord"
 overedgecoord = overedge;
-%Define the norm of permeability or conductivity hidraulic tensor ("normk")
+%(1) Define the norm of permeability or conductivity hidraulic tensor ("normk")
 [normk,kmap] = calcnormk(kmap,MM,h);
 
 %Get the length of the edge with non-null Neumann Boundary Condition.
@@ -76,6 +76,29 @@ if strcmp(pmethod,'mpfad')|| strcmp(pmethod,'nlfvpp')|| strcmp(pmethod,'mpfaql')
             [weight,s] = ferncodes_Pre_LPEW_2(kmap,N,zeros(size(elem,1),1),nflagface,nflag);
     end  %End of SWITCH
 end
+
+if strcmp(pmethod,'mpfah')|| strcmp(pmethod,'nlfvh')|| strcmp(pmethod,'nlfvdmp')
+
+        p_old=1e1*ones(size(elem,1),1); % inicializando a pressao para metodo nao linear
+        % utilize tolerancia menor que 10^-12 para testes de convergencia
+        % Para teste de monotonicidade ou problemas bifásicos utilize 10^-8.
+        % # iterações de Picard
+        % faces alrededor de um elemento
+        [facelement]=ferncodes_elementfacempfaH;
+        % calculo dos pontos harmonicos
+        [pointarmonic]=ferncodes_harmonicopoint(kmap);
+        % calculo dos parametros ou constantes (ksi)
+        % temos usado este parametro durante muito tempo em muitos testes
+        [parameter,auxface]=ferncodes_coefficientmpfaH(facelement,pointarmonic,kmap);
+        % adequacao dos flag no ponto medio do contorno
+        nflagface= ferncodes_contflagface;
+        % adequacao dos flags no vertice do contorno
+        nflag = ferncodes_calflag(0);
+        % calculo dos pesos da interpolacao dos pontos harmonicos
+        [weightDMP]=ferncodes_weightnlfvDMP(kmap, elem);
+
+end
+
 % calculation of the gravitational flux
 if strcmp(keygravity,'y')
     [vec_gravelem,vec_gravface,]=PLUG_Gfunction;
@@ -87,7 +110,6 @@ if strcmp(keygravity,'y')
 end
 %--------------------------------------------------------------------------
 %Calculate the TRANSMISSIBILITY parameters:
-
 
 %Chose the type of MPFA according "pmethod"
 switch char(pmethod)
@@ -170,19 +192,9 @@ switch char(pmethod)
 
         % calculo dos pesos DMP
         [weightDMP]=ferncodes_weightnlfvDMP(kmap);
-        %Call another parameters that I don't know.
-        [V,N,] = ferncodes_elementface(nflag);
-
+       
         % Contreras et al., 2021
     case 'nlfvpp'
-        p_old=1e1*ones(size(elem,1),1); % inicializando a pressão
-
-        % utilize tolerancia menor que 10^-12 para testes de convergencia
-        % Para teste de monotonicidade ou problemas bifasicos utilize 10^-8.
-        % # iterações de Picard
-        %temos usado para muitos estes o seguinte rutina
-        [parameter,contnorm]=ferncodes_coefficient(kmap);
-
         if 200<numcase && numcase<300
             %
             %Get the initial condition
@@ -197,46 +209,7 @@ switch char(pmethod)
 
         end
         % contreras et al, 2016
-    case 'mpfah'
-
-        % faces alrededor de um elemento
-        [facelement]=ferncodes_elementfacempfaH;
-        %% calculoa dos pontos armonicos
-        [pointarmonic]=ferncodes_harmonicopoint(kmap);
-        % calculo dos parametros ou constantes (ksi)
-        % temos usado este parametro durante muito tempo em muitos testes
-
-        [parameter,auxface]=ferncodes_coefficientmpfaH(facelement,pointarmonic,kmap);
-
-        % adequação dos flag de face de contorno
-        nflagface= ferncodes_contflagface;
-        % adequação dos nos flags de contorno
-        % adequação dos flags de contorno
-        nflag = ferncodes_calflag(0);
-        %% calculo dos pesos DMP
-        [weightDMP]=ferncodes_weightnlfvDMP(kmap,elem);
-        % contreras et al, 2016
     case 'nlfvh'
-        p_old=1e1*ones(size(elem,1),1); % inicializando a pressão
-
-        % utilize tolerancia menor que 10^-12 para testes de convergencia
-        % Para teste de monotonicidade ou problemas bifásicos utilize 10^-8.
-        % # iterações de Picard
-        % faces alrededor de um elemento
-        [facelement]=ferncodes_elementfacempfaH;
-        % calculoa dos pontos armonicos
-        [pointarmonic]=ferncodes_harmonicopoint(kmap);
-        % calculo dos parametros ou constantes (ksi)
-        % temos usado este parametro durante muito tempo em muitos testes
-        [parameter,auxface]=ferncodes_coefficientmpfaH(facelement,pointarmonic,kmap);
-
-        % adequação dos flag de face de contorno
-        nflagface= ferncodes_contflagface;
-        % adequação dos nos flags de contorno
-        % adequação dos flags de contorno
-        nflag = ferncodes_calflag(0);
-        % calculo dos pesos DMP
-        [weightDMP]=ferncodes_weightnlfvDMP(kmap);
         % contreras et al, 2016
         if 200<numcase && numcase<300
             %==================================================================
@@ -254,27 +227,7 @@ switch char(pmethod)
             [nflagnoc,nflagfacec] = ferncodes_calflag_con(lastimeval);
 
         end
-    case 'nlfvdmp'
-        p_old=1e1*ones(size(elem,1),1); % inicializando a pressão
-
-        % utilize tolerancia menor que 10^-12 para testes de convergencia
-        % Para teste de monotonicidade ou problemas bifásicos utilize 10^-8.
-        % # iterações de Picard
-        % faces alrededor de um elemento
-        [facelement]=ferncodes_elementfacempfaH;
-        %% calculoa dos pontos armonicos
-        [pointarmonic]=ferncodes_harmonicopoint(kmap);
-        % calculo dos parametros ou constantes (ksi)
-        % temos usado este parametro durante muito tempo em muitos testes
-        [parameter,auxface]=ferncodes_coefficientmpfaH(facelement,pointarmonic,kmap);
-
-        % adequação dos flag de face de contorno
-        nflagface= ferncodes_contflagface;
-        % adequação dos nos flags de contorno
-        % adequação dos flags de contorno
-        nflag = ferncodes_calflag(0);
-        %% calculo dos pesos DMP
-        [weightDMP]=ferncodes_weightnlfvDMP(kmap);
+        
 end  %End of SWITCH
 
 %Message to user:

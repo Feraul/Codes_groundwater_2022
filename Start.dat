@@ -33,7 +33,7 @@ C:\Users\flc59\Documents\Benchmark_Cases\BenchHydraulic311_1
 //***OBS.: If you set "0", the folder "Results" and other will be 
 //created into folder set above:
 
-teste1_tpfa_40
+teste1_mpfad_40_uniforme
 
 //--------------------------------------------------------------------
 //------------------------ Solver Properties -------------------------
@@ -105,7 +105,7 @@ n
 //[nlfvpp]==> "Non-Linear Finite Volume" using lpew
 //[nlfvh]==> "Non-Linear Finite Volume" using harmonic point
 
-tpfa
+mpfad
 
 //If you chose [fps] or [mpfae], write below the auxiliary control
 //volume factor. It defines the auxiliary control volume size.
@@ -334,7 +334,7 @@ y
 
 //If [y], write below the path where the mesh file is:
  
-C:\Users\flc59\Documents\Benchmark_Cases\BenchHydraulic311_1\teste1_1D\Malha_1D
+C:\Users\flc59\Documents\Malhas2\Malhas_exemplo_ALECSA\Malha_1D\Malha_1D_uniforme
 
 //Write below the name of the mesh file. Use the extension *.msh:
 

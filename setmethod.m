@@ -31,7 +31,7 @@ end  %End of IF (execute "preMPFA")
 %According "phasekey" the "One-phase" or "Two-phase" procedures are choose.
 switch phasekey
     %One-Phase case:
-    case 1
+    case 1 
         %Solve ONLY the PRESSURE equation chose the type of scheme 
         % according "pmethod"
         if strcmp(pmethod,'tpfa')
@@ -78,8 +78,8 @@ switch phasekey
         %It finishes the time counter and "profile".
         toc
 
-        %Two-Phase flow case:
-    case 2
+        
+    case 2 %Two-Phase flow case:
         %Initialize and preprocess the parameters:
 
         %Get the initial condition for the hyperbolic equation
@@ -114,8 +114,7 @@ switch phasekey
             weightDMP,nflagface,p_old,contnorm,Kdec,Knc,Ktc,Dedc,weight,s,...
             Con,nflagnoc,weightc,sc,dparameter,SS,dt,h_old,MM,gravrate,...
             Dmedio,velmedio,nflagfacec,weightDMPc);
-        % contaminant transport with pressure
-    case 3
+    case 3 % contaminant transport with pressure
         %          if numcase==243 || numcase==245 || numcase==247
         %              elem(:,5)=1;
         %          end
@@ -219,8 +218,8 @@ switch phasekey
                 parameter,h_old,contnorm,SS,MM,weight,s,dt,gravrate,nflagface,...
                 weightDMP,P);
         end
-        % contaminant transport with hydarulic head
-    case 5
+        
+    case 5 % contaminant transport with hydarulic head
 
         %          if numcase==243 || numcase==245 || numcase==247
         %              elem(:,5)=1;
@@ -259,8 +258,9 @@ switch phasekey
             Bleftcon,Brightcon,Fgcon,mapinvcon,maptransmcon,mapknownveccon,...
             pointedgecon, bodytermcon,gravrate,SS,MM,P,tempo);
 
-        %It Souves only the HYPERBOLIC Equation:
-    otherwise
+        
+    otherwise %It Solves only the HYPERBOLIC Equation:
+        
         %Get the initial condition for the hyperbolic equation
         [Sw,lastimelevel,lastimeval] = applyinicialcond;
 

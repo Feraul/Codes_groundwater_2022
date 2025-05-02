@@ -101,7 +101,7 @@ if 200<numcase && numcase <300
     SS=0; h_old=0; MM=0;wells=0; dt=0;P=0;
     % This numcase is used to simulate head hydraulic in aquifers
 elseif numcase>300
-    %% Verifique os dados dos casos ou adicione dados de um novo caso
+    %% Verifique as informacoes dos casos ou adicione informacoes para um novo caso
     % Benchmark hidrology
     auxpar=0; dmap=0; Dmedio=0; gamma=0; velmedio=0; wellsc=0;
     % Flags adequation for hydrological head problem
