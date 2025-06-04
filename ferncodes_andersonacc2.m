@@ -85,10 +85,11 @@ if strcmp(pmethod,'nlfvpp')
     [pinterp_new,]=ferncodes_pressureinterpNLFVPP(x,nflag,w,s,Con,...
         nflagc,wightc,sc);
     [M,I]=ferncodes_assemblematrixNLFVPP(pinterp_new,parameter,mobility,...
-        contnorm,SS,dt,h,MM,gravrate,x);
+        contnorm,SS,dt,h,MM,gravrate,nflag);
     %Often it may change the global matrix "M"
     [M_new,RHS_new] = addsource(sparse(M),I,wells);
-    
+    % Often with source term
+    [RHS_new]=sourceterm(RHS_new,source);
 elseif  strcmp(pmethod,'nlfvh')
     
               
@@ -258,7 +259,7 @@ for iter = 0:itmax
         [pinterp_new,]=ferncodes_pressureinterpNLFVPP(x,nflag,w,s,...
             Con,nflagc,wightc,sc);
         [M,I]=ferncodes_assemblematrixNLFVPP(pinterp_new,parameter,...
-            mobility,contnorm,SS,dt,h,MM,gravrate,x);
+            mobility,contnorm,SS,dt,h,MM,gravrate,nflag);
         %Often it may change the global matrix "M"
         [M_new,RHS_new] = addsource(sparse(M),I,wells);
         % Often with source term

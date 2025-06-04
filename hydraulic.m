@@ -5,8 +5,8 @@
 %--------------------------------------------------------------------------
 %This routine receives geometry and physical data.
 function hydraulic(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
-    parameter,h_old,contnorm,SS,MM,weight,s,dt,gravrate,...
-    nflagface,weightDMP,P)
+    parameter,h_init,contnorm,SS,MM,weight,s,dt,gravrate,...
+    nflagface,weightDMP,P,weightDMPc,nflagfacec,weightc,p_old,source)
 %Define global parameters:
 global timew  totaltime coord pmethod filepath elem numcase inedge ...
     bedge interptype centelem ;
@@ -29,17 +29,17 @@ orderintimestep = ones(size(elem,1),1)*0;
 finaltime = totaltime(2);
 timew = 0;
 % inicialization paramenters 
-satonvertices=0;producelem=0;h=h_old;Con=0;Kdec=0;Knc=0;nflagc=0;viscosity=1;
+satonvertices=0;producelem=0;h=h_init;Con=0;Kdec=0;Knc=0;nflagc=0;viscosity=1;
 count=1;auxkmap=0;mobility=1;Ktc=0;Dedc=0;wightc=0;sc=0;dparameter=0;
 % storage the file vtk s in the time 0
-postprocessor(h_old,zeros(size(inedge,1)+size(bedge,1),1),Con,1-Con,...
+postprocessor(h_init,zeros(size(inedge,1)+size(bedge,1),1),Con,1-Con,...
     count,overedgecoord,orderintimestep,'i',1,auxkmap,0);
 if numcase==342
     %----------------------------------------------------------------------
     vx=63; % malha quadrilateral ortogonal e distorcida
     %vx=212;% malha triangular nao-estruturada
     haux(1,1)=time;
-    haux(1,2)=h_old(vx);
+    haux(1,2)=h_init(vx);
     hanalit(1,1)=time;
     hanalit(1,2)=3*erfc(centelem(vx,1)/(2*sqrt(30.5*time/(3.28*10^-3))));
 end
@@ -58,7 +58,7 @@ while stopcriteria < 100
         [h_new,flowrate,] = ferncodes_solverpressure(...
             mobility,wells,Hesq,Kde,Kn,Kt,Ded,nflag,nflagface,...
             weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc,SS,dt,h,MM,...
-            gravrate,P,kmap,time);
+            gravrate,P,kmap,time,source);
         % utiliza o metodo MPFA-H para aproximar a carga hidraulica
     elseif strcmp(pmethod,'mpfah')
         % Calculate hydraulic head and flowrate using the MPFA with harmonic
@@ -69,8 +69,8 @@ while stopcriteria < 100
     elseif strcmp(pmethod,'nlfvpp')
         [h_new,flowrate,]=...
             ferncodes_solverpressureNLFVPP(nflag,parameter,kmap,wells,...
-            mobility,V,Con,N,p_old,contnorm,weight,s,Con,nflagc,wightc,...
-            sc,dparameter,SS,dt,h,MM);
+            mobility,V,N,p_old,contnorm,weight,s,Con,nflagc,weightc,...
+            sc,weightDMPc,nflagfacec,dparameter,SS,dt,h,MM,gravrate,source);
     end
     %% time step calculation
     disp('>> Time evolution:');

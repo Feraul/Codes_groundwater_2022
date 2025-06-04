@@ -66,7 +66,7 @@ global coord centelem elem esurn1 esurn2 nsurn1 nsurn2 bedge inedge ...
 % necesitamos ajeitar para o campo de pressao quando tem "restart"
 % initialiation of the parameters
 auxpar=0;dmap=0; Dmedio=0; gamma=0; velmedio=0; wellsc=0; SS=0;
-h_old=0; MM=0; dt=0; P=0;elemsize = size(elem,1);
+h_init=0; MM=0; dt=0; P=0;elemsize = size(elem,1);
 bedgesize = size(bedge,1); inedgesize = size(inedge,1);
 
 %permeabilitytest
@@ -99,14 +99,14 @@ if 200<numcase && numcase <300
         kmap=kmap;
         %adeSPE; % para um campo de permeabilidade da SPE active descomente.
     end
-    SS=0; h_old=0; MM=0;wells=0; dt=0;P=0;
+    SS=0; h_init=0; MM=0;wells=0; dt=0;P=0;
     % This numcase is used to simulate head hydraulic in aquifers
 elseif numcase>300
     %% Verifique as informacoes dos casos ou adicione informacoes para um novo caso
     % Benchmark hidrology
     auxpar=0; dmap=0; Dmedio=0; gamma=0; velmedio=0; wellsc=0;
     % Flags adequation for hydrological head problem
-    [SS,h_old,MM,wells,dt,P]=prehydraulic;
+    [SS,h_init,MM,wells,dt,P]=prehydraulic;
     % Choose Backward (implicit) method or Crank-Nicolson
     methodhydro='backward';
     %methodhydro='cranknicolson';
@@ -132,5 +132,5 @@ end
 %Call "setmethod"
 %It preprocess the schemes and set a One-phase or Two-phase simulation.
 setmethod(kmap,wells,'i',8,limiterflag,klb,elemsize,bedgesize,...
-    inedgesize,auxpar, wellsc,velmedio,dmap,Dmedio,gamma,SS,h_old,MM,dt,P);
+    inedgesize,auxpar, wellsc,velmedio,dmap,Dmedio,gamma,SS,h_init,MM,dt,P);
 

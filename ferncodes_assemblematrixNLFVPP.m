@@ -1,5 +1,5 @@
 function [M,I]=ferncodes_assemblematrixNLFVPP(pinterp,parameter,viscosity,...
-    contnorm,SS,dt,h,MM,gravrate,p)
+    contnorm,SS,dt,h,MM,gravrate,nflag)
 global inedge coord bedge bcflag elem numcase keygravity ...
     methodhydro dens modflowcompared elemarea;
 %-----------------------inicio da rOtina ----------------------------------%
@@ -158,20 +158,6 @@ for iface=1:inedgesize
         I(rel)=I(rel)-visonface*m;
     end
 end
-if strcmp(modflowcompared,'y')
-    
-    for iw = 1:size(elembedge,1)
-        
-        M(elembedge(iw,1),:)=0*M(elembedge(iw,1),:);
-        M(elembedge(iw,1),elembedge(iw,1))=1;
-        I(elembedge(iw,1))=elembedge(iw,2);
-        
-    end
-end
-%==========================================================================
-% para calcular a carga hidraulica
-% calcula um problema transiente
-[M,I]=ferncodes_implicitandcranknicolson(M,I,SS,dt,MM,h);
 %==========================================================================
 % utilizase somente quando o teste vai ser comparado com resultados do
 % modflow
@@ -182,4 +168,8 @@ if strcmp(modflowcompared,'y')
         I(elembedge(iw,1))=elembedge(iw,2);
     end
 end
+% para calcular a carga hidraulica
+% calcula um problema transiente
+[M,I]=ferncodes_implicitandcranknicolson(M,I,SS,dt,MM,h);
+
 end

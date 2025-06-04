@@ -1,5 +1,5 @@
 function [M,I]=ferncodes_implicitandcranknicolson(M,I,SS,dt,MM,h)
-global numcase elemarea methodhydro 
+global numcase elemarea methodhydro elem 
 
 if (300<numcase && numcase<379) && numcase~=347
     %

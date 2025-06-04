@@ -203,6 +203,13 @@ switch char(pmethod)
         % calculo dos pesos DMP
         [weightDMP]=ferncodes_weightnlfvDMP(kmap);
     case 'nlfvpp' % Contreras et al., 2021
+        p_old=1e1*ones(size(elem,1),1); % inicializando a pressão
+
+        % utilize tolerancia menor que 10^-12 para testes de convergencia
+        % Para teste de monotonicidade ou problemas bifasicos utilize 10^-8.
+        % # iterações de Picard
+        %temos usado para muitos estes o seguinte rutina
+        [parameter,contnorm]=ferncodes_coefficient(kmap,elem);
         if 200<numcase && numcase<300
             %Get the initial condition
             [Con,lastimelevel,lastimeval] = applyinicialcond;

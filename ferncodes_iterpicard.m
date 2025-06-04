@@ -27,7 +27,7 @@ while (nltol<er || nltol==er) && (step<maxiter)
     %% Calculo da matriz global
     
     [M,I]=ferncodes_assemblematrixNLFVPP(pinterp_new,parameter,viscosity,...
-        contnorm,SS,dt,h,MM,gravrate);
+        contnorm,SS,dt,h,MM,gravrate,nflagno);
     %--------------------------------------------------------------------------
     %Add a source therm to independent vector "mvector"
     
@@ -61,10 +61,11 @@ fprintf('\n Iteration number, iterations = %d \n',step)
 fprintf('\n Residual error, error = %d \n',er)
 %Message to user:
 disp('>> The Pressure field was calculated with success!');
-[pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(p,nflagno,w,s,Con,nflagc,wightc,sc);
+[pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(p,nflagno,w,s,Con,...
+                                                         nflagc,wightc,sc);
 %Get the flow rate (Diamond)
 [flowrate,flowresult,flowratedif]=ferncodes_flowrateNLFVPP(p, pinterp,...
-    parameter,viscosity,Con,nflagc,wightc,sc,dparameter,cinterp,gravrate);
+      parameter,viscosity,Con,nflagc,wightc,sc,dparameter,cinterp,gravrate);
 
 %Message to user:
 disp('>> The Flow Rate field was calculated with success!');
