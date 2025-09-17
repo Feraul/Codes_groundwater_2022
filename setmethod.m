@@ -257,7 +257,14 @@ switch phasekey
             knownvecleftcon,knownvecrightcon,storeinvcon,...
             Bleftcon,Brightcon,Fgcon,mapinvcon,maptransmcon,mapknownveccon,...
             pointedgecon, bodytermcon,gravrate,SS,MM,P,tempo);
-
+    case 6
+           % steady-state problem
+        
+            %% ===============================================================
+            % transient-state problem
+            hydraulic_RE(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
+                parameter,h_init,contnorm,SS,MM,weight,s,dt,gravrate,nflagface,...
+                weightDMP,P,weightDMPc,nflagfacec,weightc,p_old,source);
         
     otherwise %It Solves only the HYPERBOLIC Equation:
 

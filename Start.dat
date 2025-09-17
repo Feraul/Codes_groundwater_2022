@@ -26,7 +26,7 @@ y
 //***OBS.: Even if you chose [n], write below both the path and 
 //folder's name where you want to store your results:
 
-C:\Users\PC\Documents\Benchmark_Cases\BenchHydraulic302
+C:\Users\GHC\Documents\Benchmark_Cases\BenchHydraulic301
 
 //Write below either a number or any other key word to feature the 
 //folder where the results will be stored:
@@ -47,8 +47,9 @@ teste_ivan_mpfad
 //[1] ==> "One Phase-Flow";
 //[2] ==> "Two Phase-Flow".
 //[3] ==> "Contaminant transport"
-//[4] ==> "Water-flow"
-//[5] ==> "Unsatured-flow"
+//[4] ==> "Groundwater"
+//[5] ==> "contaminant transport with hydarulic head"
+//[6] ==> "Richards' equations"
 
 4
 
@@ -128,7 +129,7 @@ lpew2
 
 //Write below the Tolerance for the non-linear system solution: 
 
-1e-12 
+1e-8 
 
 //Write below the Maximum Number of Iteraction allowed for the
 //non-linear system solution:
@@ -141,7 +142,7 @@ lpew2
 //[RRE] ==> "Rank Reduced Extrapolation" ; 
 //[MPE] ==> "Minimal Polynomial Extrapolation ". 
 
-AA
+FPI
 
 //--------------------------------------------------------------------
 //Type of Solver for the Hyperbolic Equation (Saturation Equation)
@@ -334,11 +335,11 @@ y
 
 //If [y], write below the path where the mesh file is:
  
-C:\Users\PC\Documents\Malhas2
+C:\Users\GHC\Documents\GitHub\Malhas2
 
 //Write below the name of the mesh file. Use the extension *.msh:
 
-BenchHydraulic2_4pocos.msh
+BenchHydraulic2.msh
 
 //If [n], write below the path where the geometry file is:  
 

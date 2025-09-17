@@ -1,10 +1,10 @@
 %--------------------------------------------------------------------------
-%Subject: obtain the hydraulic head
+%Subject: obtain the hydraulic head from the Richards' equation
 %Type of file: FUNCTION
 %Programer: Fernando Contreras,
 %--------------------------------------------------------------------------
 %This routine receives geometry and physical data.
-function hydraulic(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
+function hydraulic_RE(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
     parameter,h_init,contnorm,SS,MM,weight,s,dt,gravrate,...
     nflagface,weightDMP,P,weightDMPc,nflagfacec,weightc,p_old,source)
 %Define global parameters:
@@ -54,14 +54,11 @@ while stopcriteria < 100
             MM,P,time);
         % utiliza o metodo MPFA-D para aproximar a carga hidraulica
     elseif strcmp(pmethod,'mpfad')
-        % kickoff for non-linear system
-        h_kickoff=p_old;
         % Calculate hydraulic head and flowrate using the MPFA with diamond pacth
         [h_new,flowrate,] = ferncodes_solverpressure(...
             mobility,wells,Hesq,Kde,Kn,Kt,Ded,nflag,nflagface,...
             weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc,SS,dt,h,MM,...
-            gravrate,P,kmap,time,source,N,h_kickoff);
-
+            gravrate,P,kmap,time,source);
         % utiliza o metodo MPFA-H para aproximar a carga hidraulica
     elseif strcmp(pmethod,'mpfah')
         % Calculate hydraulic head and flowrate using the MPFA with harmonic
@@ -100,20 +97,20 @@ while stopcriteria < 100
             [parameter,]=ferncodes_coefficientmpfaH(facelement,pointarmonic,kmap);
             [weightDMP]=ferncodes_weightnlfvDMP(kmap,elem);
         elseif strcmp(pmethod,'mpfad')
-            % [~,kmap] = calcnormk(kmap,MM,h);
-            % %Get preprocessed terms:
-            % [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap,elem);
-            % %It switches according to "interptype"
-            % switch char(interptype)
-            %     %LPEW 1
-            %     case 'lpew1'
-            %         % calculo dos pesos que correspondem ao LPEW1
-            %         [weight,s] = ferncodes_Pre_LPEW_1(kmap,N);
-            %         %LPEW 2
-            %     case 'lpew2'
-            %         % calculo dos pesos que correspondem ao LPEW2
-            %         [weight,s] = ferncodes_Pre_LPEW_2(kmap,N,zeros(size(elem,1),1));
-            % end  %End of SWITCH
+            [~,kmap] = calcnormk(kmap,MM,h);
+            %Get preprocessed terms:
+            [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap,elem);
+            %It switches according to "interptype"
+            switch char(interptype)
+                %LPEW 1
+                case 'lpew1'
+                    % calculo dos pesos que correspondem ao LPEW1
+                    [weight,s] = ferncodes_Pre_LPEW_1(kmap,N);
+                    %LPEW 2
+                case 'lpew2'
+                    % calculo dos pesos que correspondem ao LPEW2
+                    [weight,s] = ferncodes_Pre_LPEW_2(kmap,N,zeros(size(elem,1),1));
+            end  %End of SWITCH
         else % TPFA
             [~,kmap] = calcnormk(kmap,MM,h);
             %Get preprocessed terms:

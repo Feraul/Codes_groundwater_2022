@@ -1,7 +1,7 @@
 %It is called by "ferncodes_solvepressure.m"
 
 function [M,I,elembedge] = ferncodes_globalmatrix(w,s,Kde,Ded,Kn,Kt,Hesq,viscosity,...
-    nflag,nflagface,SS,dt,h,MM,gravrate,kmap)
+    nflag,nflagface,SS,dt,h,MM,gravrate)
 %Define global variables:
 global coord elem esurn1 esurn2 bedge inedge centelem bcflag ...
     numcase methodhydro keygravity dens elemarea normals modflowcompared;
@@ -209,7 +209,6 @@ for iface = 1:inedgesize
 
             M(inedge(iface,4),esurn1(post_cont)) = M(inedge(iface,4),...
                 esurn1(post_cont)) - visonface*Kde(iface)*Ded(iface)*w(post_cont);
-
         end
     end
     if nflag(inedge(iface,2),1) > 200

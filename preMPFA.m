@@ -56,7 +56,7 @@ q = 1;
 %Fill the matrix "overedgecoord"
 overedgecoord = overedge;
 %% (1) Define the norm of permeability or conductivity hidraulic tensor ("normk")
-[normk,kmap] = calcnormk(kmap,MM,h);
+[normk,kmap] = calcnormk(kmap,MM,ones(size(elem,1),1));
 %Get the length of the edge with non-null Neumann Boundary Condition.
 knownboundlength = getknownboundlength(klb);
 % source term
@@ -175,6 +175,7 @@ switch char(pmethod)
 
         %Calculate geometrical and physical terms to be used in MPFA-Diamond
     case 'mpfad' %(Gao and Wu, 2010)
+        p_old=1e1*ones(size(elem,1),1);
         %Get preprocessed terms:
         [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap, elem);
         % for the concentration transport with pressure
