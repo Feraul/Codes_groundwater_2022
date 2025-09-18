@@ -3,11 +3,11 @@
 % artesanais, condicao inicial hydrologica e alguns outros
 % parametro fisicos necessarios para rodar os problemas, alem disso, pode
 % colocar os parametros para os novos casos
-function [SS,h_old,MM,wells,dt,P]=prehydraulic
+function [SS,h_init,MM,wells,dt,P]=prehydraulic
 
 global numcase elem centelem
 % inicialize os parametros
-SS=0; h_old=0; MM=0; wells=0; dt=0; P=0;
+SS=0; h_init=0; MM=0; wells=0; dt=0; P=0;
 switch numcase
     % The cases 330-333 were obtained of the article -- A local grid-refined
     % numerical groundwater model based on the vertex centered finite
@@ -15,7 +15,7 @@ switch numcase
     case 330
         % Case 1: single pumping well in a confined aquifer (Y. Qian et al)
         % initially hydraulic charge
-        h_old=100*ones(size(elem,1),1);
+        h_init=100*ones(size(elem,1),1);
         % the espeficied storage
         SS=0.001;
         % aquifer thickness
@@ -35,13 +35,13 @@ switch numcase
         % Case 2: single pumping well in a unconfined aquifer (Y. Qian et al)
 
         % initially hydraulic charge
-        h_old=90*ones(size(elem,1),1);
+        h_init=90*ones(size(elem,1),1);
         % the specified yield
         SS=0.1;
         % aquifer thickness
         MM=100;
         % step time
-        dt=0.01;
+        dt=1.25;
         % find the well element
         b=find((abs(centelem(:,1)-500)/500)<1e-2 & (abs(centelem(:,2)-500)/500)<1e-2);
         wells(1,1)=b;
@@ -54,7 +54,7 @@ switch numcase
         % Case 3: multiple pumping wells in a confined aquifer (Y. Qian et al)
 
         % initially hydraulic charge
-        h_old=100*ones(size(elem,1),1);
+        h_init=100*ones(size(elem,1),1);
         % coeficiente de armazenamento especifico
         SS=0.001;
         % espesura do aquifero
@@ -111,7 +111,7 @@ switch numcase
         % Case 4:Two parallel canals (Qian et al)
         elem(:,5)=1:size(elem,1);
         % initially hydraulic charge
-        h_old=2*ones(size(elem,1),1);
+        h_init=2*ones(size(elem,1),1);
         % coeficiente de armazenamento especifico
         SS=0.1;
         % espesura do aquifero
@@ -159,7 +159,7 @@ switch numcase
         % book: introduction to groundwater: Herbert Wang, page 80
 
         % initially hydraulic charge
-        h_old=0*ones(size(elem,1),1);
+        h_init=0*ones(size(elem,1),1);
         % the espeficied storage
         SS=3.28*10^-3;
         % aquifer thickness
@@ -174,7 +174,7 @@ switch numcase
         %wells(1,5)=0;
         %wells(1,6)=-2000; % pumping rate
     case 343
-        h_old=0*ones(size(elem,1),1);
+        h_init=0*ones(size(elem,1),1);
         % the espeficied storage
         SS=0.01;
         % aquifer thickness
@@ -183,7 +183,7 @@ switch numcase
         dt=10; % 1, 2, 5, 10, 20 and 50
     case 347
         % initially hydraulic charge
-        h_old=1034.5*ones(size(elem,1),1);
+        h_init=1034.5*ones(size(elem,1),1);
         % coeficiente de armazenamento especifico
         SS=0.04;
         % espesura do aquifero

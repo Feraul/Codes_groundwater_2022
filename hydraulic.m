@@ -57,10 +57,9 @@ while stopcriteria < 100
         % kickoff for non-linear system
         h_kickoff=p_old;
         % Calculate hydraulic head and flowrate using the MPFA with diamond pacth
-        [h_new,flowrate,] = ferncodes_solverpressure(...
-            mobility,wells,Hesq,Kde,Kn,Kt,Ded,nflag,nflagface,...
-            weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc,SS,dt,h,MM,...
-            gravrate,P,kmap,time,source,N,h_kickoff);
+        [h_new,flowrate,] = ferncodes_solverpressure(mobility,wells,Hesq,...
+            Kde,Kn,Kt,Ded,nflag,nflagface,weight,s,Con,Kdec,Knc,Ktc,Dedc,...
+            nflagc,wightc,sc,SS,dt,h,MM,gravrate,P,kmap,time,source,N,h_kickoff);
 
         % utiliza o metodo MPFA-H para aproximar a carga hidraulica
     elseif strcmp(pmethod,'mpfah')
@@ -86,7 +85,10 @@ while stopcriteria < 100
     % contador
     count=count+1
     % update the hydraulic head
+    %h_init=h;
     h=h_new;
+    
+    %p_old=h_init;
     % delta t auxiliar
     dtaux=dt;
     %----------------------------------------------------------------------

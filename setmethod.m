@@ -8,7 +8,7 @@
 
 function setmethod(kmap,wells,keywrite,invh,limiterflag,klb,elemsize,...
     bedgesize,inedgesize,auxpar,wellsc,velmedio,dmap,Dmedio,gamma,SS,...
-    h_init,MM,dt,P)
+    h_init,MM,dt,P,theta_s,theta_r,alpha,pp,q)
 %Define global parameters:
 global phasekey pmethod numcase
 
@@ -24,7 +24,7 @@ if phasekey ~= 0
         Bleftcon,Brightcon,Fgcon,mapinvcon,maptransmcon,mapknownveccon,...
         pointedgecon, bodytermcon,Kdec,Knc,Ktc,Dedc,weightc,sc,weightDMPc,dparameter,...
         nflagnoc,nflagfacec,Con,lastimelevel,lastimeval,...
-        gravrate,source] = preMPFA(kmap,klb,dmap,MM,h_init,wells);
+        gravrate,source] = preMPFA(kmap,klb,dmap,MM,h_init,wells,theta_s,theta_r,alpha,pp,q);
 
 end  %End of IF (execute "preMPFA")
 
@@ -263,8 +263,8 @@ switch phasekey
             %% ===============================================================
             % transient-state problem
             hydraulic_RE(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
-                parameter,h_init,contnorm,SS,MM,weight,s,dt,gravrate,nflagface,...
-                weightDMP,P,weightDMPc,nflagfacec,weightc,p_old,source);
+                parameter,h_init,SS,MM,weight,s,dt,gravrate,nflagface,...
+                weightDMP,P,p_old,source,theta_s,theta_r,alpha,pp,q);
         
     otherwise %It Solves only the HYPERBOLIC Equation:
 

@@ -101,15 +101,15 @@ if 200<numcase && numcase <300
     end
     SS=0; h_init=0; MM=0;wells=0; dt=0;P=0;
     % This numcase is used to simulate head hydraulic in aquifers
-elseif numcase>300
+elseif 300<numcase && numcase<350
     %% Verifique as informacoes dos casos ou adicione informacoes para um novo caso
     % Benchmark hidrology
     auxpar=0; dmap=0; Dmedio=0; gamma=0; velmedio=0; wellsc=0;
     % Flags adequation for hydrological head problem
     [SS,h_init,MM,wells,dt,P]=prehydraulic;
     % Choose Backward (implicit) method or Crank-Nicolson
-    methodhydro='backward';
-    %methodhydro='cranknicolson';
+    %methodhydro='backward';
+    methodhydro='cranknicolson';
     %----------------------------------------------------------------------
     % This numcase is used for conductivity hydraulic very heterogeneous
     if numcase==341 || numcase==380.1 || numcase==341.1
@@ -123,7 +123,9 @@ elseif numcase>300
         % Flags adequation for contamination and groundwater problem
         [bedge,bcflagc,wellsc,auxpar,velmedio,dmap,Dmedio,gamma]=...
             preconcentration(bedge,wells);
-    end    
+    end
+elseif 400<numcase && numcase<500
+     [theta_s,theta_r,alpha,pp,q,h_init,dt]=preRE;
 end
 %if numcase==380.1
 %adeSPE; % para um campo de permeabilidade da SPE active descomente.
@@ -132,5 +134,6 @@ end
 %Call "setmethod"
 %It preprocess the schemes and set a One-phase or Two-phase simulation.
 setmethod(kmap,wells,'i',8,limiterflag,klb,elemsize,bedgesize,...
-    inedgesize,auxpar, wellsc,velmedio,dmap,Dmedio,gamma,SS,h_init,MM,dt,P);
+    inedgesize,auxpar, wellsc,velmedio,dmap,Dmedio,gamma,SS,h_init,...
+    MM,dt,P,theta_s,theta_r,alpha,pp,q);
 

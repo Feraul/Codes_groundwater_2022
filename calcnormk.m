@@ -1,4 +1,4 @@
-function [normk,kmap] = calcnormk(kmap,MM,h)
+function [normk,kmap] = calcnormk(kmap,MM,h,theta_s,theta_r,alpha,pp,q)
 %Define global parameters:
 global elem centelem;
 
@@ -6,7 +6,7 @@ global elem centelem;
 normk = zeros(size(centelem,1),1);
 %Define the norm of permeability tensor
 %Obtain "kmap" for each case
-kmap = PLUG_kfunction(kmap,h,MM);
+kmap = PLUG_kfunction(kmap,h,MM,theta_s,theta_r,alpha,pp,q);
 %Swept all elements
 for ik = 1:length(normk)
     %Define the material pointer in "elem"

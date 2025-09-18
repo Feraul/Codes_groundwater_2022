@@ -1,8 +1,8 @@
 function [p,flowrate,flowresult,flowratedif]=ferncodes_iterpicard(M_old,RHS_old,...
     parameter,w,s,p_old,nflagno,wells,viscosity,Con,nflagc,wightc,sc,...
     dparameter,contnorm,SS,dt,h,MM,gravrate,source,...
-    kmap,nflagface,N)
-global nltol maxiter  pmethod elem interptype
+    kmap,nflagface,N,theta_s,theta_r,alpha,pp,q,Kde,Ded,Kn,Kt,Hesq)
+global nltol maxiter  pmethod elem interptype numcase
 %% calculo do residuo Inicial
 R0=norm(M_old*p_old-RHS_old);
 
@@ -20,24 +20,25 @@ while (nltol<er || nltol==er) && (step<maxiter)
     % calculo das pressões
     p_new = solver(M_old,RHS_old);
     if strcmp(pmethod,'mpfad')
-        [normk,kmap] = calcnormk(kmap,MM,p_new);
-        [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap, elem);
-        %It switches according to "interptype"
-        switch char(interptype)
-            %LPEW 1
-            case 'lpew1'
-                % calculo dos pesos que correspondem ao LPEW1
-                [weight,s] = ferncodes_Pre_LPEW_1(kmap,N);
-                %LPEW 2
-            case 'lpew2'
-                % calculo dos pesos que correspondem ao LPEW2
-                [weight,s] = ferncodes_Pre_LPEW_2(kmap,N,zeros(size(elem,1),1),...
-                    nflagface,nflagno);
-        end  %End of SWITCH
+        % [~,kmap] = calcnormk(kmap,MM,p_new,theta_s,theta_r,alpha,pp,q);
+        % [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap, elem);
+        % %It switches according to "interptype"
+        % switch char(interptype)
+        %     %LPEW 1
+        %     case 'lpew1'
+        %         % calculo dos pesos que correspondem ao LPEW1
+        %         [weight,s] = ferncodes_Pre_LPEW_1(kmap,N);
+        %         %LPEW 2
+        %     case 'lpew2'
+        %         % calculo dos pesos que correspondem ao LPEW2
+        %         [weight,s] = ferncodes_Pre_LPEW_2(kmap,N,zeros(size(elem,1),1),...
+        %             nflagface,nflagno);
+        % end  %End of SWITCH
 
         % Montagem da matriz global
-        [M,I,] = ferncodes_globalmatrix(weight,s,Kde,Ded,Kn,Kt,Hesq,...
-            viscosity,nflagno,nflagface,SS,dt,p_new,MM,gravrate);
+        [M,I,] = ferncodes_globalmatrix(w,s,Kde,Ded,Kn,Kt,Hesq,...
+            viscosity,nflagno,nflagface,SS,dt,p_new,MM,gravrate,theta_s,...
+            theta_r,alpha,pp,q,p_old);
         %------------------------------------------------------------------
         %Add a source therm to independent vector "mvector"
         %Often it may change the global matrix "M" with wells
@@ -56,8 +57,6 @@ while (nltol<er || nltol==er) && (step<maxiter)
         [M,I]=ferncodes_assemblematrixNLFVPP(pinterp_new,parameter,viscosity,...
             contnorm,SS,dt,h,MM,gravrate,nflagno);
         %--------------------------------------------------------------------------
-        %Add a source therm to independent vector "mvector"
-
         %Often it may change the global matrix "M"
         [M_new,RHS_new] = addsource(sparse(M),I,wells);
         % Often with source term
@@ -81,9 +80,12 @@ while (nltol<er || nltol==er) && (step<maxiter)
 end
 %--------------------------------------------------------------------------
 %Solve global algebric system
+if numcase==331
+    [M,I]=ferncodes_implicitandcranknicolson(M_old,RHS_old,SS,dt,MM,h,theta_s,theta_r,alpha,pp,q);
+    % calculo das pressões
+    p = solver(M,I);
+end
 
-% calculo das pressões
-p = p_new;
 %Message to user:
 fprintf('\n Iteration number, iterations = %d \n',step)
 fprintf('\n Residual error, error = %d \n',er)
@@ -96,7 +98,12 @@ if strcmp(pmethod,'nlfvpp')
     [flowrate,flowresult,flowratedif]=ferncodes_flowrateNLFVPP(p, pinterp,...
         parameter,viscosity,Con,nflagc,wightc,sc,dparameter,cinterp,gravrate);
 else
-    flowrate=0; flowresult=0; flowratedif=0;
+    wc=0;Kdec=0;Knc=0;Ktc=0;Dedc=0;
+    % auxiliary variables interpolation
+    [pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(p,nflagno,weight,s,Con,nflagc,wc,sc);
+    %Get the flow rate (Diamond)
+    [flowrate,flowresult,flowratedif] = ferncodes_flowrate(p,pinterp,cinterp,Kde,...
+        Ded,Kn,Kt,Hesq,viscosity,nflagno,Con,Kdec,Knc,Ktc,Dedc,nflagc,gravrate);
 end
 %Message to user:
 disp('>> The Flow Rate field was calculated with success!');

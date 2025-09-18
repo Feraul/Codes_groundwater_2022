@@ -10,7 +10,7 @@
 %Fill the matrix of permeability as a function of element to left and right
 %of half edge evaluated. This function receives "kmap" and a feature of
 %element which wants to know the permeability ("kfeature").
-function [kmap] = PLUG_kfunction(kmap,h,MM)
+function [kmap] = PLUG_kfunction(kmap,h,MM,theta_s,theta_r,alpha,pp,q)
 %Define global parameters:
 global elem centelem numcase coord;
 
@@ -56,6 +56,20 @@ switch numcase
 
         %Restore "kmap"
         kmap = kaux;
+    case 431
+        
+        for ii = 1:size(centelem,1)
+            if h(ii)<0
+              theta= theta_r +((theta_s -theta_r)/(1+alpha*abs(h(ii))^pp)^q);
+              Se(ii,1)= (theta-theta_r)/(theta_s - theta_r);
+            else
+               Se(ii,1)=1;
+            end
+            coefi=kmap(1,2)*(Se(ii,1)^0.5)*(1-(1-Se(ii,1)^(1/q)))^2;
+            kaux(ii,:) = [ii coefi 0 0 coefi];
+
+        end  %End of FOR
+        kmap=kaux;
     case 1.7
         %Definition of "R" matrix
         %Initialization

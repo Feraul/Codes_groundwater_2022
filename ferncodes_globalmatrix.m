@@ -1,7 +1,8 @@
 %It is called by "ferncodes_solvepressure.m"
 
 function [M,I,elembedge] = ferncodes_globalmatrix(w,s,Kde,Ded,Kn,Kt,Hesq,viscosity,...
-    nflag,nflagface,SS,dt,h,MM,gravrate)
+    nflag,nflagface,SS,dt,h,MM,gravrate,theta_s,theta_r,alpha,pp,q,h_kickoff)
+
 %Define global variables:
 global coord elem esurn1 esurn2 bedge inedge centelem bcflag ...
     numcase methodhydro keygravity dens elemarea normals modflowcompared;
@@ -240,7 +241,10 @@ end  %End of FOR ("inedge")
 
 %==========================================================================
 % calcula um problema transiente
-[M,I]=ferncodes_implicitandcranknicolson(M,I,SS,dt,MM,h);
+if numcase~=331
+[M,I]=ferncodes_implicitandcranknicolson(M,I,SS,dt,MM,h,theta_s,theta_r,...
+                                         alpha,pp,q,h_kickoff);
+end 
 %==========================================================================
 % utilizase somente quando o teste vai ser comparado com resultados do
 % modflow

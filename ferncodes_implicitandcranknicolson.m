@@ -1,11 +1,12 @@
-function [M,I]=ferncodes_implicitandcranknicolson(M,I,SS,dt,MM,h)
+function [M,I]=ferncodes_implicitandcranknicolson(M,I,SS,dt,MM,h_n,...
+    theta_s,theta_r,alpha,p,q,h_kickoff)
 global numcase elemarea methodhydro elem 
 
-if (300<numcase && numcase<379) && numcase~=347
+if ((300<numcase && numcase<379) && numcase~=347) || numcase==431
     %
     if numcase~=336 && numcase~=334 && numcase~=335 &&...
             numcase~=337 && numcase~=338 && numcase~=339 &&...
-            numcase~=340 && numcase~=341 && numcase~=380 && numcase~=341.1 
+            numcase~=340 && numcase~=341 && numcase~=380 && numcase~=341.1 && numcase~=431 
         if numcase==333 || numcase==331 %|| numcase==347
             %para aquifero nao confinado
             coeficiente=dt^-1*SS.*elemarea(:);
@@ -24,6 +25,15 @@ if (300<numcase && numcase<379) && numcase~=347
             I=I+(coeficiente.*eye(size(elem,1))-0.5*M)*h;
             M=  (coeficiente.*eye(size(elem,1))+0.5*M);
         end
+    elseif numcase==431
+        theta_n=thetafunction(h_n,theta_s,theta_r,alpha,p,q);
+
+        theta_n1=thetafunction(h_kickoff,theta_s,theta_r,alpha,p,q);
+
+        coefi=(dt^-1)*(theta_n1 - theta_n);
+
+        M=M;
+        I=I+coefi;
     end
 end
 end
