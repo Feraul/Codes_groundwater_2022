@@ -29,7 +29,7 @@ for y = 1:size(coord,1),
     end
     
     apw(No + 1) = apw(No) + size(O,1);
-    if numcase==341
+    if numcase==341 
         % interpolaçao das pressões nos contornos de Neumann
         vetor = nsurn1(nsurn2(No) + 1:nsurn2(No + 1));
         comp1 = N(No,1);
