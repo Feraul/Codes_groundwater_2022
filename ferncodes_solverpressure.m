@@ -9,7 +9,7 @@ global numcase acel elem interptype
 
 %--------------------------------------------------------------------------
 %Solve global algebric system: pressure or hydraulic head
-if numcase==331 || numcase==431
+if numcase==331 || numcase==431 || numcase==432
      if iterinicial~=1
      [kmap] = PLUG_kfunction(kmap,h,MM,theta_s,theta_r,alpha,pp,q,iterinicial);
      [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap, elem);

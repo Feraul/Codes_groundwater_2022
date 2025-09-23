@@ -2,10 +2,10 @@ function [p,flowrate,flowresult,flowratedif]=ferncodes_iterpicard(M_old,RHS_old,
     parameter,w,s,h_kickoff,nflagno,wells,viscosity,Con,nflagc,wightc,sc,...
     dparameter,contnorm,SS,dt,h,MM,gravrate,source,...
     kmap,nflagface,N,theta_s,theta_r,alpha,pp,q,Kde,Ded,Kn,Kt,Hesq,iterinicial)
-global nltol maxiter  pmethod elem interptype numcase
+global nltol maxiter  pmethod elem interptype numcase centelem
 %% calculo do residuo Inicial
 R0=norm(M_old*h_kickoff-RHS_old);
-M_old=M_old+eye(size(elem,1),size(elem,1));
+M_old=M_old;%+eye(size(elem,1),size(elem,1));
 %% inicializando dados para iteração Picard
 step=0;
 er=1;
@@ -19,6 +19,8 @@ while (nltol<er || nltol==er) && (step<maxiter)
 
     % calculo das pressões
     p_new = solver(M_old,RHS_old);
+
+   
     if strcmp(pmethod,'mpfad')
         % [~,kmap] = calcnormk(kmap,MM,p_new,theta_s,theta_r,alpha,pp,q);
         % [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap, elem);
@@ -74,7 +76,7 @@ while (nltol<er || nltol==er) && (step<maxiter)
     errorelativo(step)=er;
 
     % atualizar
-    M_old=M_new+eye(size(elem,1),size(elem,1));
+    M_old=M_new;%+eye(size(elem,1),size(elem,1));
     RHS_old=RHS_new;
 
 end

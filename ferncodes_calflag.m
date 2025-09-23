@@ -22,6 +22,7 @@ for ifacont = 1:size(bedge,1)
         
         % label of the edge
         vertex1 = bedge(ifacont,1:2);
+        
         nflagface(ifacont,2)=PLUG_bcfunction(vertex1,x1,a);
         nflagface(ifacont,1) = bcflag(x1,1); 
     else
@@ -29,9 +30,19 @@ for ifacont = 1:size(bedge,1)
         x = logical(bcflag(:,1) == bedge(ifacont,4));
         % label of the vertex
         vertex = bedge(ifacont,1);
+        if numcase==432
+            if bcflag(x,1)==101
+                nflag(vertex,2) = PLUG_bcfunction(vertex,x,a);
+                nflag(vertex,1) = bcflag(x,1);
+            else
+                nflag(vertex,2) = bcflag(x,2);
+                nflag(vertex,1) = bcflag(x,1);
+            end
+        else
         %Second column receives the boundary condition value.
         nflag(vertex,2) = PLUG_bcfunction(vertex,x,a);
         %First column receives the boundary condition flag.
         nflag(vertex,1) = bcflag(x,1);
+        end
     end
 end  %End of FOR

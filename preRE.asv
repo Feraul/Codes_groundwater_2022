@@ -8,6 +8,7 @@ switch numcase
         alpha=1.45;
         pp=2.68;
         q=1-(1/pp);
+
         h_init=-100*ones(size(elem,1),1);
         dt=0.05;
     case 432
@@ -17,8 +18,10 @@ switch numcase
         pp=2.06;
         q=1-(1/pp);
         for i=1:size(elem,1)
+            
             h_init(i,1) =1-centelem(i,2);
         end
         dt=0.05;
 end
+
 end

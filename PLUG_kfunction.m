@@ -16,17 +16,17 @@ global elem centelem numcase coord;
 
 %Choose the benchmark to attribute permeability.
 switch numcase
-    case 341 % bidimensional problem 
+    case 341 % bidimensional problem
         [auxperm2]=ferncodes_calcpermeab;
         for ii=1:size(centelem,1)
             kmap(ii,:)=[ii auxperm2(ii) 0 0 auxperm2(ii)];
         end
     case 341.1 % unidimensional probleam
-         [auxperm1]=ferncodes_calcpermeab_1D;
+        [auxperm1]=ferncodes_calcpermeab_1D;
         for ii=1:size(centelem,1)
             kmap(ii,:)=[ii auxperm1(ii) 0 0 auxperm1(ii)];
         end
-        
+
     case 342
         kmap(1,1:5) = [1 MM*kmap(1,2) MM*kmap(1,3) MM*kmap(1,4) MM*kmap(1,5)];
         elem(:,5)=1;
@@ -57,7 +57,7 @@ switch numcase
         %Restore "kmap"
         kmap = kaux;
     case 431
-        
+
         for ii = 1:size(centelem,1)
             if h(ii)<0
                 if iterinicial==1
@@ -65,15 +65,31 @@ switch numcase
                 else
                     theta= theta_r +((theta_s -theta_r)/(1+abs(alpha*h(ii,1))^pp)^q);
                 end
-              Se(ii,1)= (theta-theta_r)/(theta_s - theta_r);
+                Se(ii,1)= (theta-theta_r)/(theta_s - theta_r);
             else
-               Se(ii,1)=1;
+                Se(ii,1)=1;
             end
             coefi=kmap(1,2)*(Se(ii,1)^(0.5))*(1-(1-Se(ii,1)^(1/q)))^2;
             kaux(ii,:) = [ii coefi 0 0 coefi];
 
         end  %End of FOR
         kmap=kaux;
+    case 432
+        for ii = 1:size(centelem,1)
+            if h(ii)<0
+                
+                    theta= theta_r +((theta_s -theta_r)/(1+abs(alpha*h(ii,1))^pp)^q);
+                
+                Se(ii,1)= (theta-theta_r)/(theta_s - theta_r);
+            else
+                Se(ii,1)=1;
+            end
+            coefi=kmap(1,2)*(Se(ii,1)^(0.5))*(1-(1-Se(ii,1)^(1/q)))^2;
+            kaux(ii,:) = [ii coefi 0 0 coefi];
+
+        end  %End of FOR
+        kmap=kaux;
+
     case 1.7
         %Definition of "R" matrix
         %Initialization
@@ -756,14 +772,14 @@ switch numcase
         elem(:,5)=1;
     case 347
         kmap(1,1:5) = [1 kmap(1,2) kmap(1,3) kmap(1,4) kmap(1,5)];
-%         kaux = zeros(size(centelem,1),5);
-%         for ii = 1:size(centelem,1)
-% 
-%             kaux(ii,:) = [ii h(ii)*9.26 0 0 h(ii)*9.26];
-%             elem(ii,5)=ii;
-%         end  %End of FOR
-%         kmap=kaux;
-         
+        %         kaux = zeros(size(centelem,1),5);
+        %         for ii = 1:size(centelem,1)
+        %
+        %             kaux(ii,:) = [ii h(ii)*9.26 0 0 h(ii)*9.26];
+        %             elem(ii,5)=ii;
+        %         end  %End of FOR
+        %         kmap=kaux;
+
     case 43
         %Get the permeability field
         kmap = getnikitinperm(centelem);
@@ -955,7 +971,7 @@ switch numcase
             end
         end
     case 380
-        
+
         [riverresults]=xlsread('Teste_5.xlsx');
         kmap=zeros(size(riverresults,1),5);
         kmap(:,1)=1:size(riverresults,1);
@@ -963,22 +979,22 @@ switch numcase
         kmap(:,3)=0*riverresults(:,3);
         kmap(:,4)=0*riverresults(:,3);
         kmap(:,5)=riverresults(:,3);
-        
+
         %[kmap]=conduchidraulica;
     case 380.1
         %kmap=kmap;
-         [auxperm2,]=ferncodes_calcpermeab;
+        [auxperm2,]=ferncodes_calcpermeab;
         for ii=1:size(centelem,1)
             kmap(ii,:)=[ii auxperm2(ii) 0 0 auxperm2(ii)];
         end
-%         [riverresults]=xlsread('Teste_6.xlsx');
-%         kmap=zeros(size(riverresults,1),5);
-%         kmap(:,1)=1:size(riverresults,1);
-%         kmap(:,2)= riverresults(:,3);
-%         kmap(:,3)=0*riverresults(:,3);
-%         kmap(:,4)=0*riverresults(:,3);
-%         kmap(:,5)=riverresults(:,3);
-%         elem(:,5)=1:size(elem,1);
+        %         [riverresults]=xlsread('Teste_6.xlsx');
+        %         kmap=zeros(size(riverresults,1),5);
+        %         kmap(:,1)=1:size(riverresults,1);
+        %         kmap(:,2)= riverresults(:,3);
+        %         kmap(:,3)=0*riverresults(:,3);
+        %         kmap(:,4)=0*riverresults(:,3);
+        %         kmap(:,5)=riverresults(:,3);
+        %         elem(:,5)=1:size(elem,1);
 end  %End of Switch
 
 %--------------------------------------------------------------------------

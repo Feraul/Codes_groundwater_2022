@@ -31,6 +31,9 @@ coordmid = mean(coord(vertices,1:2))*(1 - boolean) + ...
 %Calculate the value of the boundary condition to parameters attributed
 %throughout the function
     switch numcase
+        case 432
+              bcattrib=1-coordmid (2);
+            
         %------------------------------------------------------------------
         %Example 2: homogeneous media with diagonal permeability tensor and 
         %Dirichlet boundary condition. Edwards and M. Pal, 2008 (Case 2)  

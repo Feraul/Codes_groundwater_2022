@@ -21,7 +21,7 @@ function [transmvecleft,transmvecright,knownvecleft,knownvecright,storeinv,...
     lastimelevel,lastimeval,gravrate,source] = preMPFA(kmap,klb,dmap,MM,...
     h_init,wells,theta_s,theta_r,alpha,pp,qq)
 %Define global parameters:
-global pmethod elem interptype phasekey keygravity numcase
+global pmethod elem interptype phasekey keygravity numcase centelem
 
 %Obtain the coordinate of both CENTER and AUXILARY nodes of elements which
 %constitute the mash. The AREA of each element is also calculated.
@@ -59,7 +59,7 @@ overedgecoord = overedge;
 %% (1) Define the norm of permeability or conductivity hidraulic tensor ("normk")
 if numcase==331
     [normk,kmap] = calcnormk(kmap,MM,90*ones(size(elem,1),1));
-elseif numcase==431
+elseif numcase==431 || numcase==432
     [normk,kmap] = calcnormk(kmap,MM,h_init,theta_s,theta_r,alpha,pp,qq);
 else
     [normk,kmap] = calcnormk(kmap,MM,ones(size(elem,1),1));
@@ -182,7 +182,19 @@ switch char(pmethod)
 
         %Calculate geometrical and physical terms to be used in MPFA-Diamond
     case 'mpfad' %(Gao and Wu, 2010)
-        p_old=0*ones(size(elem,1),1);
+        if numcase==432
+            for i=1:size(centelem,1)
+                if centelem(i,2)<1
+                    p_old(i,1)=1;
+                else
+                    p_old(i,1)=-1;
+                end
+
+            end
+        else
+            p_old=-1*ones(size(elem,1),1);
+        end
+
         %Get preprocessed terms:
         [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap, elem);
         % for the concentration transport with pressure
