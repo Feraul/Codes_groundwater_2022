@@ -1,7 +1,7 @@
 %It is called by "ferncodes_solvepressure.m"
 
 function [M,I,elembedge] = ferncodes_globalmatrix(w,s,Kde,Ded,Kn,Kt,Hesq,viscosity,...
-    nflag,nflagface,SS,dt,h,MM,gravrate,theta_s,theta_r,alpha,pp,q,h_kickoff)
+    nflag,nflagface,SS,dt,h,MM,gravrate,theta_s,theta_r,alpha,pp,q,h_kickoff,iterinicial)
 
 %Define global variables:
 global coord elem esurn1 esurn2 bedge inedge centelem bcflag ...
@@ -63,6 +63,7 @@ for ifacont = 1:bedgesize
             jj=jj+1;
         end
         A = -Kn(ifacont)/(Hesq(ifacont)*norm(v0));
+        %------------------------------------------------------------------
         % contribuicao do termo gravitacional
         if strcmp(keygravity,'y')
             if numcase<200
@@ -134,7 +135,7 @@ end  %End of FOR
 
 % end  %End of IF
 
-% contribuição nas faces internas
+% contribution of the internal  control surfaces
 for iface = 1:inedgesize
     if 200<numcase && numcase<300
         % equacao de concentracao
@@ -243,7 +244,7 @@ end  %End of FOR ("inedge")
 % calcula um problema transiente
 if numcase~=331
 [M,I]=ferncodes_implicitandcranknicolson(M,I,SS,dt,MM,h,theta_s,theta_r,...
-                                         alpha,pp,q,h_kickoff);
+                                         alpha,pp,q,h_kickoff,iterinicial);
 end 
 %==========================================================================
 % utilizase somente quando o teste vai ser comparado com resultados do

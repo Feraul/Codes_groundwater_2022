@@ -1,11 +1,11 @@
 function [p,flowrate,flowresult,flowratedif]=ferncodes_iterpicard(M_old,RHS_old,...
-    parameter,w,s,p_old,nflagno,wells,viscosity,Con,nflagc,wightc,sc,...
+    parameter,w,s,h_kickoff,nflagno,wells,viscosity,Con,nflagc,wightc,sc,...
     dparameter,contnorm,SS,dt,h,MM,gravrate,source,...
-    kmap,nflagface,N,theta_s,theta_r,alpha,pp,q,Kde,Ded,Kn,Kt,Hesq)
+    kmap,nflagface,N,theta_s,theta_r,alpha,pp,q,Kde,Ded,Kn,Kt,Hesq,iterinicial)
 global nltol maxiter  pmethod elem interptype numcase
 %% calculo do residuo Inicial
-R0=norm(M_old*p_old-RHS_old);
-
+R0=norm(M_old*h_kickoff-RHS_old);
+M_old=M_old+eye(size(elem,1),size(elem,1));
 %% inicializando dados para iteração Picard
 step=0;
 er=1;
@@ -37,8 +37,8 @@ while (nltol<er || nltol==er) && (step<maxiter)
 
         % Montagem da matriz global
         [M,I,] = ferncodes_globalmatrix(w,s,Kde,Ded,Kn,Kt,Hesq,...
-            viscosity,nflagno,nflagface,SS,dt,p_new,MM,gravrate,theta_s,...
-            theta_r,alpha,pp,q,p_old);
+            viscosity,nflagno,nflagface,SS,dt,h ,MM,gravrate,theta_s,...
+            theta_r,alpha,pp,q,p_new,iterinicial);
         %------------------------------------------------------------------
         %Add a source therm to independent vector "mvector"
         %Often it may change the global matrix "M" with wells
@@ -74,7 +74,7 @@ while (nltol<er || nltol==er) && (step<maxiter)
     errorelativo(step)=er;
 
     % atualizar
-    M_old=M_new;
+    M_old=M_new+eye(size(elem,1),size(elem,1));
     RHS_old=RHS_new;
 
 end
@@ -84,6 +84,8 @@ if numcase==331
     [M,I]=ferncodes_implicitandcranknicolson(M_old,RHS_old,SS,dt,MM,h,theta_s,theta_r,alpha,pp,q);
     % calculo das pressões
     p = solver(M,I);
+else
+    p=p_new;
 end
 
 %Message to user:
@@ -100,7 +102,7 @@ if strcmp(pmethod,'nlfvpp')
 else
     wc=0;Kdec=0;Knc=0;Ktc=0;Dedc=0;
     % auxiliary variables interpolation
-    [pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(p,nflagno,weight,s,Con,nflagc,wc,sc);
+    [pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(p,nflagno,w,s,Con,nflagc,wc,sc);
     %Get the flow rate (Diamond)
     [flowrate,flowresult,flowratedif] = ferncodes_flowrate(p,pinterp,cinterp,Kde,...
         Ded,Kn,Kt,Hesq,viscosity,nflagno,Con,Kdec,Knc,Ktc,Dedc,nflagc,gravrate);

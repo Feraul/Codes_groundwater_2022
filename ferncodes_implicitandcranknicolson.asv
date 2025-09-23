@@ -1,5 +1,5 @@
 function [M,I]=ferncodes_implicitandcranknicolson(M,I,SS,dt,MM,h_n,...
-    theta_s,theta_r,alpha,p,q,h_kickoff,iterinicial)
+    theta_s,theta_r,alpha,p,q,h_kickoff,)
 global numcase elemarea methodhydro elem 
 
 if ((300<numcase && numcase<379) && numcase~=347) || numcase==431
@@ -33,10 +33,10 @@ if ((300<numcase && numcase<379) && numcase~=347) || numcase==431
 
         soilwatercapac=SWcapacity(h_kickoff,theta_s,theta_r,alpha,p,q);
 
-        coefi=theta_n1 - theta_n;
+        coefi=(dt^-1)*(theta_n1 - theta_n);
 
-        M=M-(dt^-1)*diag(soilwatercapac);
-        I=I+(dt^-1)*coefi-(dt^-1)*soilwatercapac';
+        M=M-diag(soilwatercapac);
+        I=I+coefi-(dt^-1)*soilwatercapac';
     end
 end
 end

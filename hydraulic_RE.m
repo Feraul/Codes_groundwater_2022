@@ -45,6 +45,7 @@ if numcase==342
     hanalit(1,2)=3*erfc(centelem(vx,1)/(2*sqrt(30.5*time/(3.28*10^-3))));
 end
 dtaux=dt;
+iterinicial=1;
 tic
 %Get "hydraulic head" and "flowrate"
 while stopcriteria < 100
@@ -59,7 +60,7 @@ while stopcriteria < 100
         [h_new,flowrate,] = ferncodes_solverpressure(...
             mobility,wells,Hesq,Kde,Kn,Kt,Ded,nflag,nflagface,...
             weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc,SS,dt,h,MM,...
-            gravrate,P,kmap,time,N,p_old,source,theta_s,theta_r,alpha,pp,q);
+            gravrate,P,kmap,time,N,p_old,source,theta_s,theta_r,alpha,pp,q,iterinicial);
 
         % utiliza o metodo MPFA-H para aproximar a carga hidraulica
     elseif strcmp(pmethod,'mpfah')
@@ -135,7 +136,7 @@ while stopcriteria < 100
          h_time(count,1)=time;
          h_time(count,2)=h(b2);
     end
-    
+    iterinicial=iterinicial+1;
     % storage the vtks and calculate errors
     postprocessor(h,flowrate,Con,1-Con,count,overedgecoord,orderintimestep,...
         'i',1,auxkmap,time);

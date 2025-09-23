@@ -182,7 +182,7 @@ switch char(pmethod)
 
         %Calculate geometrical and physical terms to be used in MPFA-Diamond
     case 'mpfad' %(Gao and Wu, 2010)
-        p_old=90*ones(size(elem,1),1);
+        p_old=0*ones(size(elem,1),1);
         %Get preprocessed terms:
         [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap, elem);
         % for the concentration transport with pressure
