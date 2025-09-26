@@ -117,7 +117,7 @@ for ifacont = 1:bedgesize
 
         else
             x = logical(bcflag(:,1) == bedge(ifacont,5));
-            I(lef) = I(lef) - nor*bcflag(x,2);
+            I(lef) = I(lef) + nor*bcflag(x,2);
         end
     end  %End of IF
 end  %End of FOR

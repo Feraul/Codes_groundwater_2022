@@ -39,12 +39,15 @@ for ifacont=1:size(bedge,1)
     Kn1 = (RotH(ve1)'*K*RotH(ve1))/norm(ve1)^2;
     A=-Kn1/(Hesq1);
     %Keq=Klef;
-    if bedge(ifacont,5)>200
+    if bedge(ifacont,5)==201
         
         florateZZ(ifacont,1)=0;
         %florateZZ(ifacont,1)=A*(norm(ve1))*(proj(1,2)-ve2aux(1,2));
         %florateZZ(ifacont,1)=A*(norm(ve1))*(vm(1,2)-C1(1,2));
+    elseif bedge(ifacont,5)==202
+        florateZZ(ifacont,1)=A*(norm(ve1))*(vm(1,2)-C1(1,2));
     else
+
         %florateZZ(ifacont,1)=A*(norm(ve1))*(proj(1,2)-ve2aux(1,2));
         florateZZ(ifacont,1)=A*(norm(ve1))*(vm(1,2)-C1(1,2));
     end

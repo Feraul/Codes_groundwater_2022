@@ -26,14 +26,14 @@ y
 //***OBS.: Even if you chose [n], write below both the path and 
 //folder's name where you want to store your results:
 
-C:\Users\flc59\Documents\Benchmark_Cases\BenchHydraulic402
+C:\Users\GHC\Documents\Benchmark_Cases\BenchHydraulic401
 
 //Write below either a number or any other key word to feature the 
 //folder where the results will be stored:
 //***OBS.: If you set "0", the folder "Results" and other will be 
 //created into folder set above:
 
-teste_mpfad_RE_sin_tratamiento_dt_Yingzhi_Qian
+teste
 
 //--------------------------------------------------------------------
 //------------------------ Solver Properties -------------------------
@@ -331,11 +331,11 @@ upwd
 
 //Do you have a mesh file? [y] ==> "yes"; [n] ==> "no".
 
-y
+n
 
 //If [y], write below the path where the mesh file is:
  
-C:\Users\flc59\Documents\Malhas2
+C:\Users\GHC\Documents\GitHub\Malhas2
 
 //Write below the name of the mesh file. Use the extension *.msh:
 
@@ -343,11 +343,11 @@ malha_RE4.msh
 
 //If [n], write below the path where the geometry file is:  
 
-C:\Users\flc59\Documents\GitHub\Benchmark_GeometryFiles
+C:\Users\GHC\Documents\GitHub\Benchmark_GeometryFiles
 
 //Write below the name of the geometry file. Use the extension *.geo.
 
-malha_RE3.geo
+malha_RE.geo
 
 //--------------------------------------------------------------------
 //----------------- General Options (Configure gmsh) -----------------
@@ -363,7 +363,7 @@ malha_RE3.geo
 
 //Is your mesh structured?  [y] ==> "yes"; [n] ==> "no".
 
-n
+y
 
 //If [y] enter with the informations in the "STRUCTURED MESH": 
 //If [n] enter with the informations in the "UNSTRUCTURED MESH": 
@@ -568,8 +568,8 @@ y
 //used to "draw" the surfaces during CAD building. (*.geo).  
 
 1
-4.96e-2 0 
-0 4.96e-2
+24.96 0 
+0 24.96
 
 //--------------------------------------------------------------------
 //Distribution of porosity:
@@ -635,10 +635,9 @@ n
 //(Dirichlet, Neumann or Periodic);
 //3. In the same row, put the algebric value of this BC.  
 
-3
+2
 201 0
-101 0
-102 -2       
+202 20      
 
 //--------------------------------------------------------------------
 //Treatment of Boundary Points
@@ -649,8 +648,8 @@ n
 //2. In another row, the sequence of codes to be associated with 
 //each point group. 
 
-3
-201 101 102   
+1
+201   
 
 //--------------------------------------------------------------------
 //----------------------- Convergence Criteria -----------------------
@@ -685,7 +684,7 @@ d
 //state simulation (parameter of stop). Write below the amount of 
 //days or the PVI's value instead:
 
-4.5
+20
 
 //--------------------------------------------------------------------
 //------------------------------- Wells ------------------------------

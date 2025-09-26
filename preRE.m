@@ -4,11 +4,11 @@ global elem numcase centelem
 switch numcase
     case 431
         theta_s=0.43;
-        theta_r=0.045;
-        alpha=1.45;
-        pp=2.68;
+        theta_r=0.078;
+        alpha=0.036;
+        pp=1.56;
         q=1-(1/pp);
-        h_init=-100*ones(size(elem,1),1);
+        h_init=-51.3949*ones(size(elem,1),1);
         dt=0.05;
     case 432
         theta_s=0.396;

@@ -132,7 +132,7 @@ if strcmp(keygravity,'y')
     elseif numcase<200
         [vec_gravelem,vec_gravface,]=PLUG_Gfunction;
         [gravrate,]=gravitation(kmap,vec_gravelem,vec_gravface);
-    elseif numcase==432
+    elseif numcase==432 || numcase==431
         [flowrateZZ,flowresultZ]=flowrateZ(kmap);
     end
 end
@@ -195,6 +195,8 @@ switch char(pmethod)
                 end
 
             end
+        elseif numcase==431
+            p_old=-1*ones(size(elem,1),1);
         else
             p_old=-1*ones(size(elem,1),1);
         end

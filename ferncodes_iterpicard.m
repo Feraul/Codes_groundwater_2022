@@ -1,14 +1,15 @@
-function [p,flowrate,flowresult,flowratedif]=ferncodes_iterpicard(M_old,RHS_old,...
+function [p,flowrate,flowresult,flowratedif,dt_aux]=ferncodes_iterpicard(M_old,RHS_old,...
     parameter,w,s,h_kickoff,nflagno,wells,viscosity,Con,nflagc,wightc,sc,...
     dparameter,contnorm,SS,dt,h,MM,gravrate,source,kmap,nflagface,N,...
     theta_s,theta_r,alpha,pp,q,Kde,Ded,Kn,Kt,Hesq,iterinicial,gravresult,flowresultZ)
 global nltol maxiter  pmethod elem interptype numcase centelem keygravity
 %% calculo do residuo Inicial
 R0=norm(M_old*h_kickoff-RHS_old);
-M_old=M_old;%+eye(size(elem,1),size(elem,1));
+
 %% inicializando dados para iteração Picard
 step=0;
 er=1;
+dt_aux=0;
 pinterp_new=0;
 while (nltol<er || nltol==er) && (step<maxiter)
     % atualiza iterações
@@ -18,6 +19,10 @@ while (nltol<er || nltol==er) && (step<maxiter)
     %Solve global algebric system
 
     % calculo das pressões
+    % [L,U] = ilu(M_old,struct('type','ilutp','droptol',1e-5));
+    % 
+    %  [p_new,]=gmres(M_old,RHS_old,10,1e-9,1000,L,U);
+
     p_new = solver(M_old,RHS_old);
     if strcmp(pmethod,'mpfad')
         % kmap = PLUG_kfunction(kmap,p_new,MM,theta_s,theta_r,alpha,pp,q,iterinicial);
@@ -37,13 +42,15 @@ while (nltol<er || nltol==er) && (step<maxiter)
         %         [weight,s] = ferncodes_Pre_LPEW_2(kmap,N,zeros(size(elem,1),1),...
         %             nflagface,nflagno);
         % end  %End of SWITCH
-        % if 7 <step
-        %     dt=0.7*dt;
-        % elseif  3<= step && step<= 7
-        %     dt=1*dt;
-        % elseif step <7
-        %     dt=1.3*dt;
-        % end
+        if numcase==432
+            if 7 <step
+                dt=0.7*dt;
+            elseif  3<= step && step<= 7
+                dt=1*dt;
+            elseif step <7
+                dt=1.3*dt;
+            end
+        end
         % Montagem da matriz global
         [M,I,] = ferncodes_globalmatrix(w,s,Kde,Ded,Kn,Kt,Hesq,...
             viscosity,nflagno,nflagface,SS,dt,h ,MM,gravrate,theta_s,...
@@ -83,10 +90,11 @@ while (nltol<er || nltol==er) && (step<maxiter)
     errorelativo(step)=er;
 
     % atualizar
-    M_old=M_new;%+eye(size(elem,1),size(elem,1));
+    M_old=M_new;
     RHS_old=RHS_new;
 
 end
+dt_aux=dt;
 %--------------------------------------------------------------------------
 %Solve global algebric system
 if numcase==331
