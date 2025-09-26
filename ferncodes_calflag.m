@@ -33,16 +33,17 @@ for ifacont = 1:size(bedge,1)
         if numcase==432
             if bcflag(x,1)==101
                 nflag(vertex,2) = PLUG_bcfunction(vertex,x,a);
+                %nflag(vertex,2) = bcflag(x,2);
                 nflag(vertex,1) = bcflag(x,1);
             else
                 nflag(vertex,2) = bcflag(x,2);
                 nflag(vertex,1) = bcflag(x,1);
             end
         else
-        %Second column receives the boundary condition value.
-        nflag(vertex,2) = PLUG_bcfunction(vertex,x,a);
-        %First column receives the boundary condition flag.
-        nflag(vertex,1) = bcflag(x,1);
+            %Second column receives the boundary condition value.
+            nflag(vertex,2) = PLUG_bcfunction(vertex,x,a);
+            %First column receives the boundary condition flag.
+            nflag(vertex,1) = bcflag(x,1);
         end
     end
 end  %End of FOR

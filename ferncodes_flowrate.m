@@ -48,19 +48,19 @@ for ifacont = 1:bedgesize
     B2=bedge(ifacont,2);
     nor = norm(coord(bedge(ifacont,1),:) - coord(bedge(ifacont,2),:));
     % Termo gravitacional
-    if strcmp(keygravity,'y')
-        if numcase<200
-            % escoamento bifasico oleo-agua
-            averagedensity=(viscosity(ifacont,:)*dens')/visonface;
-            m=averagedensity*gravrate(ifacont);
-        else
-            % concentracao soluto-solvente
-            m=dens(1,1)*gravrate(ifacont)/visonface;
-        end
-        
-    else
-        m=0;
-    end
+    % if strcmp(keygravity,'y')
+    %     if numcase<200
+    %         % escoamento bifasico oleo-agua
+    %         averagedensity=(viscosity(ifacont,:)*dens')/visonface;
+    %         m=averagedensity*gravrate(ifacont);
+    %     else
+    %         % concentracao soluto-solvente
+    %         m=dens(1,1)*gravrate(ifacont)/visonface;
+    %     end
+    % 
+    % else
+    %     m=0;
+    % end
     if bedge(ifacont,5) < 200 % se os nós esteverem na fronteira de DIRICHLET
         c1 = nflag(bedge(ifacont,1),2);
         c2 = nflag(bedge(ifacont,2),2);
@@ -68,7 +68,7 @@ for ifacont = 1:bedgesize
         flowrate(ifacont) =-A*(((O-coord(B2,:)))*(coord(B1,:)-coord(B2,:))'*c1+...
             (O-coord(B1,:))*(coord(B2,:)-coord(B1,:))'*c2-(nor^2)*p(lef))-(c2-c1)*Kt(ifacont);
         
-        flowrate(ifacont) = visonface*flowrate(ifacont)-visonface*m;
+        flowrate(ifacont) = visonface*flowrate(ifacont);%-visonface*m;
         
     else
         x = logical(bcflag(:,1) == bedge(ifacont,5));
@@ -119,20 +119,20 @@ for iface = 1:inedgesize
     end
     
      % contribuicao do termo gravitacional
-    if strcmp(keygravity,'y')
-        if numcase<200
-            % escoamento bifasico oleo-agua
-            averagedensity=(viscosity(bedgesize + iface,:)*dens')/visonface;
-            m=averagedensity*gravrate(bedgesize + iface,1);
-        else
-            % concentracao soluto-solvente
-            m=dens(1,1)*gravrate(bedgesize + iface,1)/visonface;
-        end
-        
-    else
-        m=0;
-       
-    end
+    % if strcmp(keygravity,'y')
+    %     if numcase<200
+    %         % escoamento bifasico oleo-agua
+    %         averagedensity=(viscosity(bedgesize + iface,:)*dens')/visonface;
+    %         m=averagedensity*gravrate(bedgesize + iface,1);
+    %     else
+    %         % concentracao soluto-solvente
+    %         m=dens(1,1)*gravrate(bedgesize + iface,1)/visonface;
+    %     end
+    % 
+    % else
+    %     m=0;
+    % 
+    % end
     
     lef = inedge(iface,3); %indice do elemento a direita da aresta i
     rel = inedge(iface,4); %indice do elemento a esquerda da aresta i
@@ -142,7 +142,8 @@ for iface = 1:inedgesize
     
     %calculo das vazões
     
-    flowrate(bedgesize + iface) =visonface*Kde(iface)*(p(rel)-p(lef)-Ded(iface)*(p2 - p1))-visonface*m;
+    flowrate(bedgesize + iface) =visonface*Kde(iface)*(p(rel)-p(lef)-...
+                                      Ded(iface)*(p2 - p1));%-visonface*m;
     
     %Attribute the flow rate to "flowresult"
     %On the left:

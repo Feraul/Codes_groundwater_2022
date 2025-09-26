@@ -178,7 +178,7 @@ switch numcase
             
         end
         
-        
+   
         % 4.2 Test 3 where a1=1 e a2=1
     case 423
         

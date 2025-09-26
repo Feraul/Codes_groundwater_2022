@@ -6,7 +6,7 @@
 %This routine receives geometry and physical data.
 function hydraulic_RE(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
     parameter,h_init,SS,MM,weight,s,dt,gravrate,nflagface,weightDMP,P,...
-    p_old,source,theta_s,theta_r,alpha,pp,q,gravresult,flowresultZ)
+    p_old,source,theta_s,theta_r,alpha,pp,q)
 %Define global parameters:
 global timew  totaltime coord pmethod filepath elem numcase inedge ...
     bedge interptype centelem bcflag ;
@@ -59,8 +59,7 @@ while stopcriteria < 100
         [h_new,flowrate,] = ferncodes_solverpressure(...
             mobility,wells,Hesq,Kde,Kn,Kt,Ded,nflag,nflagface,...
             weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,sc,SS,dt,h,MM,...
-            gravrate,P,kmap,time,N,p_old,source,theta_s,theta_r,alpha,...
-            pp,q,iterinicial,gravresult,flowresultZ);
+            gravrate,P,kmap,time,N,p_old,source,theta_s,theta_r,alpha,pp,q,iterinicial);
 
         % utiliza o metodo MPFA-H para aproximar a carga hidraulica
     elseif strcmp(pmethod,'mpfah')
@@ -81,8 +80,6 @@ while stopcriteria < 100
     % contador
     count=count+1
     % update the hydraulic head
-    %p_oldaux=h;
-    %p_old=p_oldaux;
     h=h_new;
     % delta t auxiliar
     dtaux=dt;
@@ -139,18 +136,16 @@ while stopcriteria < 100
          h_time(count,2)=h(b2);
     elseif numcase==432
          if time<0.0625 || time==0.0625
-         bcflag(3,2)=-2+(2.2*(time/0.0625));
-         %if time<9.9999 || time==9.9999 
-         %bcflag(3,2)=-2+(2.2*(time/9.9999));
+             bcflag(3,2)=-2+(2.2*(time/0.0625));
              
          else
             bcflag(3,2)=0.2;
          end
            [nflag,nflagface] = ferncodes_calflag(0);
     end
-      p_oldaux1=logical(h<=0 );
-      p_oldaux2=logical(h>0);
-      p_old=p_oldaux2-p_oldaux1;
+    p_oldaux1=logical(h_new<=0 );
+    p_oldaux2=logical(h_new>0);
+    p_old=-p_oldaux1+p_oldaux2;
     
     iterinicial=iterinicial+1;
     % storage the vtks and calculate errors

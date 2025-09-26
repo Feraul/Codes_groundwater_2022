@@ -1,7 +1,8 @@
 %It is called by "ferncodes_solvepressure.m"
 
 function [M,I,elembedge] = ferncodes_globalmatrix(w,s,Kde,Ded,Kn,Kt,Hesq,viscosity,...
-    nflag,nflagface,SS,dt,h,MM,gravrate,theta_s,theta_r,alpha,pp,q,h_kickoff,iterinicial)
+    nflag,nflagface,SS,dt,h,MM,gravrate,theta_s,theta_r,alpha,pp,q,...
+                                 h_kickoff,iterinicial,gravresult,flowresultZ)
 
 %Define global variables:
 global coord elem esurn1 esurn2 bedge inedge centelem bcflag ...
@@ -65,16 +66,18 @@ for ifacont = 1:bedgesize
         A = -Kn(ifacont)/(Hesq(ifacont)*norm(v0));
         %------------------------------------------------------------------
         % contribuicao do termo gravitacional
-        if strcmp(keygravity,'y')
-            if numcase<200
-                % escoamento bifasico oleo-agua
-                averagedensity=(viscosity(ifacont,:)*dens')/visonface;
-                m=averagedensity*gravrate(ifacont);
-            else
-                % concentracao soluto-solvente
-                m=dens(1,1)*gravrate(ifacont)/visonface;
-            end
-        end
+        % if strcmp(keygravity,'y')
+        %     if numcase<200
+        %         % escoamento bifasico oleo-agua
+        %         averagedensity=(viscosity(ifacont,:)*dens')/visonface;
+        %         m=averagedensity*gravrate(ifacont);
+        %     elseif numcase==432
+        %         m=gravrate(ifacont);
+        %     else
+        %         % concentracao soluto-solvente
+        %         m=dens(1,1)*gravrate(ifacont)/visonface;
+        %     end
+        % end
 
         %------------------------------------------------------------------
         % ambos os nos pertenecem ao contorno de Dirichlet
@@ -83,22 +86,8 @@ for ifacont = 1:bedgesize
             %montagem da matriz global
             M(lef,lef)=M(lef,lef)-visonface*A*(norm(v0)^2);
             % termo de fonte
-            I(lef)=I(lef)-visonface*A*(dot(v2,-v0)*c1+dot(v1,v0)*c2)+visonface*(c2-c1)*Kt(ifacont)+visonface*m;
-
-        else
-            % quando um dos nos da quina da malha computacional
-            % pertence ao contorno de Neumann
-            if nflag(bedge(ifacont,1),1)>200
-                %montagem da matriz global
-                M(lef,lef)=M(lef,lef)-visonface*A*(norm(v0)^2)+visonface*Kt(ifacont)+visonface*A*dot(v2,-v0);
-                % termo de fonte
-                I(lef)=I(lef)-visonface*A*(dot(v1,v0)*c2)+visonface*(c2)*Kt(ifacont)+visonface*m;
-            elseif nflag(bedge(ifacont,2),1)>200
-                %montagem da matriz global
-                M(lef,lef)=M(lef,lef)-visonface*A*(norm(v0)^2)-visonface*Kt(ifacont)+visonface*A*dot(v1,v0);
-                % termo de fonte
-                I(lef)=I(lef)-visonface*A*(dot(v2,-v0)*c1)+visonface*(-c1)*Kt(ifacont)+visonface*m;
-            end
+            I(lef)=I(lef)-visonface*A*(dot(v2,-v0)*c1+dot(v1,v0)*c2)+...
+                              visonface*(c2-c1)*Kt(ifacont);%-visonface*m;
         end
         %------------------------------------------------------------------
         %Preenchimento
@@ -226,25 +215,27 @@ for iface = 1:inedgesize
         end
     end
     % contribuicao do termo gravitacional
-    if strcmp(keygravity,'y')
-        if numcase<200
-            % escoamento bifasico oleo-agua
-            averagedensity=(viscosity(bedgesize + iface,:)*dens')/visonface;
-            m=averagedensity*gravrate(bedgesize + iface,1);
-        else
-            % concentracao soluto-solvente
-            m=dens(1,1)*gravrate(bedgesize + iface,1)/visonface;
-        end
-        I(inedge(iface,3))=I(inedge(iface,3))+visonface*m;
-        I(inedge(iface,4))=I(inedge(iface,4))-visonface*m;
-    end
+    % if strcmp(keygravity,'y')
+    %     if numcase<200
+    %         % escoamento bifasico oleo-agua
+    %         averagedensity=(viscosity(bedgesize + iface,:)*dens')/visonface;
+    %         m=averagedensity*gravrate(bedgesize + iface,1);
+    %     elseif numcase==432
+    %         m=gravrate(bedgesize + iface,1);
+    %     else
+    %         % concentracao soluto-solvente
+    %         m=dens(1,1)*gravrate(bedgesize + iface,1)/visonface;
+    %     end
+    %     I(inedge(iface,3))=I(inedge(iface,3))-visonface*m;
+    %     I(inedge(iface,4))=I(inedge(iface,4))+visonface*m;
+    % end
 end  %End of FOR ("inedge")
 
 %==========================================================================
 % calcula um problema transiente
 if numcase~=331
 [M,I]=ferncodes_implicitandcranknicolson(M,I,SS,dt,MM,h,theta_s,theta_r,...
-                                         alpha,pp,q,h_kickoff,iterinicial);
+                                         alpha,pp,q,h_kickoff,iterinicial,flowresultZ);
 end 
 %==========================================================================
 % utilizase somente quando o teste vai ser comparado com resultados do

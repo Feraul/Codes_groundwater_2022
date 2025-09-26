@@ -19,6 +19,7 @@ switch numcase
         for i=1:size(elem,1)
             h_init(i,1) =1-centelem(i,2);
         end
-        dt=0.05;
+        %dt=3.3333;
+        dt=0.021;
 end
 end

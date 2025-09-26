@@ -18,10 +18,10 @@ function [transmvecleft,transmvecright,knownvecleft,knownvecright,storeinv,...
     knownvecleftcon,knownvecrightcon,storeinvcon,Bleftcon,Brightcon,Fgcon,...
     mapinvcon,maptransmcon,mapknownveccon,pointedgecon,bodytermcon,Kdec,...
     Knc,Ktc,Dedc,wightc,sc,weightDMPc,dparameter,nflagnoc,nflagfacec,Con,...
-    lastimelevel,lastimeval,gravrate,source] = preMPFA(kmap,klb,dmap,MM,...
-    h_init,wells,theta_s,theta_r,alpha,pp,qq)
+    lastimelevel,lastimeval,gravrate,source,gravresult,flowresultZ] =...
+    preMPFA(kmap,klb,dmap,MM,h_init,wells,theta_s,theta_r,alpha,pp,qq)
 %Define global parameters:
-global pmethod elem interptype phasekey keygravity numcase centelem
+global pmethod elem interptype phasekey keygravity numcase centelem kmapaux
 
 %Obtain the coordinate of both CENTER and AUXILARY nodes of elements which
 %constitute the mash. The AREA of each element is also calculated.
@@ -41,7 +41,7 @@ knownvecleftcon=0; knownvecrightcon=0; storeinvcon=0; Bleftcon=0;
 Brightcon=0; Fgcon=0; mapinvcon=0; maptransmcon=0; mapknownveccon=0;
 pointedgecon=0; bodytermcon=0; Kdec=0;Knc=0;Ktc=0;Dedc=0;wightc=0;sc=0;
 weightDMPc=0;nflag=0;dparameter=0; nflagnoc=0;nflagfacec=0;Con=0; gravrate=0;
-lastimeval=0;lastimelevel=0;source=0;
+lastimeval=0;lastimelevel=0;source=0;gravresult=0;
 %Define parametric variables:
 %Parameter Used in Full Pressure Support (FPS)
 %"p" quadrature point to flux in the auxilary sub interaction region
@@ -125,11 +125,15 @@ end
 
 % calculation of the gravitational flux
 if strcmp(keygravity,'y')
-    [vec_gravelem,vec_gravface,]=PLUG_Gfunction;
+    
     if 200<numcase && numcase<300
+        [vec_gravelem,vec_gravface,]=PLUG_Gfunction;
         [gravrate,]=gravitation(kmap,vec_gravelem,vec_gravface);
     elseif numcase<200
+        [vec_gravelem,vec_gravface,]=PLUG_Gfunction;
         [gravrate,]=gravitation(kmap,vec_gravelem,vec_gravface);
+    elseif numcase==432
+        [flowrateZZ,flowresultZ]=flowrateZ(kmap);
     end
 end
 %--------------------------------------------------------------------------
@@ -187,7 +191,7 @@ switch char(pmethod)
                 if centelem(i,2)<1
                     p_old(i,1)=1;
                 else
-                    p_old(i,1)=-1;
+                    p_old(i,1)=-2;
                 end
 
             end

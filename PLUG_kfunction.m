@@ -12,7 +12,7 @@
 %element which wants to know the permeability ("kfeature").
 function [kmap] = PLUG_kfunction(kmap,h,MM,theta_s,theta_r,alpha,pp,q,iterinicial)
 %Define global parameters:
-global elem centelem numcase coord;
+global elem centelem numcase coord kmapaux;
 
 %Choose the benchmark to attribute permeability.
 switch numcase
@@ -76,15 +76,13 @@ switch numcase
         kmap=kaux;
     case 432
         for ii = 1:size(centelem,1)
-            if h(ii)<0
-                
-                    theta= theta_r +((theta_s -theta_r)/(1+abs(alpha*h(ii,1))^pp)^q);
-                
-                Se(ii,1)= (theta-theta_r)/(theta_s - theta_r);
+            if h(ii)<0 %|| h(ii)==0
+                theta= theta_r +(theta_s -theta_r)*(1/(1+(-alpha*h(ii,1))^pp))^q;
+                coefi=kmapaux(1,2)*(theta^0.5)*(1-(1-theta^(pp/(pp-1)))^(q))^2;
             else
-                Se(ii,1)=1;
+                coefi= kmapaux(1,2);
             end
-            coefi=kmap(1,2)*(Se(ii,1)^(0.5))*(1-(1-Se(ii,1)^(1/q)))^2;
+            
             kaux(ii,:) = [ii coefi 0 0 coefi];
 
         end  %End of FOR

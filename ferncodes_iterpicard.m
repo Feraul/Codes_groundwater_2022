@@ -1,8 +1,8 @@
 function [p,flowrate,flowresult,flowratedif]=ferncodes_iterpicard(M_old,RHS_old,...
     parameter,w,s,h_kickoff,nflagno,wells,viscosity,Con,nflagc,wightc,sc,...
-    dparameter,contnorm,SS,dt,h,MM,gravrate,source,...
-    kmap,nflagface,N,theta_s,theta_r,alpha,pp,q,Kde,Ded,Kn,Kt,Hesq,iterinicial)
-global nltol maxiter  pmethod elem interptype numcase centelem
+    dparameter,contnorm,SS,dt,h,MM,gravrate,source,kmap,nflagface,N,...
+    theta_s,theta_r,alpha,pp,q,Kde,Ded,Kn,Kt,Hesq,iterinicial,gravresult,flowresultZ)
+global nltol maxiter  pmethod elem interptype numcase centelem keygravity
 %% calculo do residuo Inicial
 R0=norm(M_old*h_kickoff-RHS_old);
 M_old=M_old;%+eye(size(elem,1),size(elem,1));
@@ -19,12 +19,13 @@ while (nltol<er || nltol==er) && (step<maxiter)
 
     % calculo das pressões
     p_new = solver(M_old,RHS_old);
-
-   
     if strcmp(pmethod,'mpfad')
-        % [~,kmap] = calcnormk(kmap,MM,p_new,theta_s,theta_r,alpha,pp,q);
-        % [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap, elem);
-        % %It switches according to "interptype"
+        % kmap = PLUG_kfunction(kmap,p_new,MM,theta_s,theta_r,alpha,pp,q,iterinicial);
+        % %[Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap, elem);
+        % if strcmp(keygravity,'y')
+        %     [flowrateZZ,flowresultZ]=flowrateZ(kmap);
+        % end
+        % %             It switches according to "interptype"
         % switch char(interptype)
         %     %LPEW 1
         %     case 'lpew1'
@@ -36,11 +37,17 @@ while (nltol<er || nltol==er) && (step<maxiter)
         %         [weight,s] = ferncodes_Pre_LPEW_2(kmap,N,zeros(size(elem,1),1),...
         %             nflagface,nflagno);
         % end  %End of SWITCH
-
+        % if 7 <step
+        %     dt=0.7*dt;
+        % elseif  3<= step && step<= 7
+        %     dt=1*dt;
+        % elseif step <7
+        %     dt=1.3*dt;
+        % end
         % Montagem da matriz global
         [M,I,] = ferncodes_globalmatrix(w,s,Kde,Ded,Kn,Kt,Hesq,...
             viscosity,nflagno,nflagface,SS,dt,h ,MM,gravrate,theta_s,...
-            theta_r,alpha,pp,q,p_new,iterinicial);
+            theta_r,alpha,pp,q,p_new,iterinicial,gravresult,flowresultZ);
         %------------------------------------------------------------------
         %Add a source therm to independent vector "mvector"
         %Often it may change the global matrix "M" with wells

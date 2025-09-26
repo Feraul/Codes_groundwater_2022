@@ -1,9 +1,9 @@
-function [gravrate,gravresult]=gravitation(kmap)
+function [florateZZ,flowresultZ]=flowrateZ(kmap)
 global inedge bedge elem centelem coord
 K1=zeros(3,3);
 K2=zeros(3,3);
 K=zeros(3,3);
-gravresult=zeros(size(elem,1),1);
+flowresultZ=zeros(size(elem,1),1);
 R=[0 1 ;-1 0 ];
 
 for ifacont=1:size(bedge,1)
@@ -12,6 +12,7 @@ for ifacont=1:size(bedge,1)
     % vetor de orientacao da face em questao
     ve1=coord(bedge(ifacont,2),:)-coord(bedge(ifacont,1),:);
     vm=0.5*(coord(bedge(ifacont,2),:)+coord(bedge(ifacont,1),:));
+    
     % tensor de permeabilidade do elemento a esquerda
     % Keq(1,1)=kmap(elem(lef,5),2);
     % Keq(1,2)=kmap(elem(lef,5),3);
@@ -21,7 +22,7 @@ for ifacont=1:size(bedge,1)
     %Determinação das alturas dos elementos à esquerda.
     % ve1 = coord(bedge(ifacont,2),:) - coord(bedge(ifacont,1),:); % face
     ve2 = coord(bedge(ifacont,2),:) - C1; %Do centro esquerdo ao fim da face.
-
+   proj=(d(ve2,ve1)/(dot(ve1,ve1)))*ve1;
     ce = cross(ve1,ve2); % produto vetorial
     Hesq1 = norm(ce)/norm(ve1); % altura a relativo as faces do contorno
 
@@ -38,57 +39,19 @@ for ifacont=1:size(bedge,1)
     A=-Kn1/(Hesq1);
     %Keq=Klef;
     if bedge(ifacont,5)>200
-
-        %gravrate(ifacont,1)=dot((R*ve1')'*Keq,([0 1 0]));
-        gravrate(ifacont,1)=0;
-        %gravrate(ifacont,1)=A*(norm(ve1))*(vm(1,2)-centelem(lef,2));
+        %florateZZ(ifacont,1)=0;
+        florateZZ(ifacont,1)=A*(norm(ve1))*(proj(1,2)-centelem(lef,2));
     else
-        % if bedge(ifacont,5)==102
-        %   gravrate(ifacont,1)=dot((R*ve1')'*Keq,([0 centelem(lef,2)]));
-        % else
-        % gravrate(ifacont,1)=dot((R*ve1')'*Keq,([0 1 0]));
-        % end
-
-
-        gravrate(ifacont,1)=A*(norm(ve1))*(vm(1,2)-centelem(lef,2));
+        florateZZ(ifacont,1)=A*(norm(ve1))*(proj(1,2)-centelem(lef,2));
     end
-    gravresult(lef,1)=gravresult(lef,1)-gravrate(ifacont,1);
+    flowresultZ(lef,1)=flowresultZ(lef,1)-florateZZ(ifacont,1);
 
 end
 for iface=1:size(inedge,1)
     % elementos a esquerda e a direita
     lef=inedge(iface,3);
     rel=inedge(iface,4);
-    %
-    %   % calculo do ponto meio da face
-    %   vm=(coord(inedge(iface,1),1:2)+coord(inedge(iface,2),1:2))*0.5;
-    %  % vd1aux=coord(inedge(iface,2),:)-coord(inedge(iface,1),:);
-    %   vd1=coord(inedge(iface,2),1:2)-coord(inedge(iface,1),1:2);
-    %   % calculo da distancia do centro ao ponto meio da face
-    %   dj1=norm(centelem(lef,1:2)-vm);
-    %   dj2=norm(centelem(rel,1:2)-vm);
-    %
-    %   % tensor de permeabilidade do elemento a esquerda
-    %
-    %  R1=[0 1 ;-1 0 ];
-    %  K3(1,1)=kmap(elem(lef,5),2);
-    %  K3(1,2)=kmap(elem(lef,5),3);
-    %  K3(2,1)=kmap(elem(lef,5),4);
-    %  K3(2,2)=kmap(elem(lef,5),5);
-    %
-    %  % tensor de permeabilidade do elemento a direita
-    %  K4(1,1)=kmap(elem(rel,5),2);
-    %  K4(1,2)=kmap(elem(rel,5),3);
-    %  K4(2,1)=kmap(elem(rel,5),4);
-    %  K4(2,2)=kmap(elem(rel,5),5);
-    %
-    %  Keq=inv((dj1*inv(K3)+dj2*inv(K4))); % equation 21
-    %  graveq=((dj1*[0 1]+dj2*[0 1])'); % equation 22
-    % % gravrate(iface+size(bedge,1),1)=dot(((R1*vd1')'),Keq*graveq);% equation 20
-    %
-    %  gravrate(iface+size(bedge,1),1)=norm(vd1)*Keq*(centelem(lef,2)-centelem(rel,2));% equation 20
-    %
-
+    
     %Determinação dos centróides dos elementos à direita e à esquerda.%
     C1 = centelem(inedge(iface,3),:); % baricentro do elemento a esquerda
     C2 = centelem(inedge(iface,4),:); % baricentro do elemento direito
@@ -131,11 +94,10 @@ for iface=1:size(inedge,1)
     Kn2 = (RotH(vd1)'*K2*RotH(vd1))/norm(vd1)^2;
     % calculo das constantes nas faces internas
     Kde = -norm(vd1)*((Kn1*Kn2))/(Kn1*H2 + Kn2*H1);
-    gravrate(iface+size(bedge,1),1)=Kde*(centelem(rel,2)-centelem(lef,2));% equation 20
+    florateZZ(iface+size(bedge,1),1)=Kde*(centelem(rel,2)-centelem(lef,2));% equation 20
 
-
-    gravresult(lef,1)=gravresult(lef,1)-gravrate(iface+size(bedge,1),1);
-    gravresult(rel,1)=gravresult(rel,1)+gravrate(iface+size(bedge,1),1);
+    flowresultZ(lef,1)=flowresultZ(lef,1)-florateZZ(iface+size(bedge,1),1);
+    flowresultZ(rel,1)=flowresultZ(rel,1)+florateZZ(iface+size(bedge,1),1);
 
 end
 end

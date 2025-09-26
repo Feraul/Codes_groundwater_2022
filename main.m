@@ -37,7 +37,7 @@ global coord centelem elem esurn1 esurn2 nsurn1 nsurn2 bedge inedge ...
     numcase pmethod smethod phasekey order timeorder auxcvfactor ...
     interptype multdopt goefreeopt lsneightype lsexp ...
     recovtype keygravity g benchkey rowposit nltol maxiter acel bcflagc...
-    methodhydro SS MM P modflowcompared Nmod varK;
+    methodhydro SS MM P modflowcompared Nmod varK kmapaux;
 
 %--------------------------------------------------------------------------
 %Call the "preprocessor" function
@@ -68,7 +68,7 @@ global coord centelem elem esurn1 esurn2 nsurn1 nsurn2 bedge inedge ...
 auxpar=0;dmap=0; Dmedio=0; gamma=0; velmedio=0; wellsc=0; SS=0;
 h_init=0; MM=0; dt=0; P=0;elemsize = size(elem,1);
 bedgesize = size(bedge,1); inedgesize = size(inedge,1);
-
+kmapaux=kmap;
 %permeabilitytest
 if 200<numcase && numcase <300
     % this numcase is used to simulate concentration solute in aquifers
