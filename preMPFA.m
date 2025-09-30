@@ -59,7 +59,7 @@ overedgecoord = overedge;
 %% (1) Define the norm of permeability or conductivity hidraulic tensor ("normk")
 if numcase==331
     [normk,kmap] = calcnormk(kmap,MM,90*ones(size(elem,1),1));
-elseif numcase==431 || numcase==432
+elseif numcase==431 || numcase==432 || numcase==433 || numcase==434
     [normk,kmap] = calcnormk(kmap,MM,h_init,theta_s,theta_r,alpha,pp,qq);
 else
     [normk,kmap] = calcnormk(kmap,MM,ones(size(elem,1),1));
@@ -132,7 +132,7 @@ if strcmp(keygravity,'y')
     elseif numcase<200
         [vec_gravelem,vec_gravface,]=PLUG_Gfunction;
         [gravrate,]=gravitation(kmap,vec_gravelem,vec_gravface);
-    elseif numcase==432 || numcase==431
+    elseif numcase==432 || numcase==431 || numcase==433 || numcase==434
         [flowrateZZ,flowresultZ]=flowrateZ(kmap);
     end
 end
@@ -186,7 +186,7 @@ switch char(pmethod)
 
         %Calculate geometrical and physical terms to be used in MPFA-Diamond
     case 'mpfad' %(Gao and Wu, 2010)
-        if numcase==432
+        if numcase==432 
             for i=1:size(centelem,1)
                 if centelem(i,2)<1
                     p_old(i,1)=1;
@@ -196,7 +196,18 @@ switch char(pmethod)
 
             end
         elseif numcase==431
-            p_old=-1*ones(size(elem,1),1);
+            p_old=-100*ones(size(elem,1),1);
+        elseif numcase==433
+           p_old=-25*ones(size(elem,1),1); 
+        elseif numcase==434
+           for i=1:size(centelem,1)
+                %if centelem(i,2)<1
+                    p_old(i,1)=(65-centelem(i,2))/10;
+                %else
+                %    p_old(i,1)=-2;
+                %end
+
+            end 
         else
             p_old=-1*ones(size(elem,1),1);
         end

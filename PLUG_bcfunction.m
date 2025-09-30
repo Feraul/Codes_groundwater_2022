@@ -33,7 +33,8 @@ coordmid = mean(coord(vertices,1:2))*(1 - boolean) + ...
     switch numcase
         case 432
               bcattrib=1-coordmid (2);
-            
+        case 434
+            bcattrib=65-coordmid (2);
         %------------------------------------------------------------------
         %Example 2: homogeneous media with diagonal permeability tensor and 
         %Dirichlet boundary condition. Edwards and M. Pal, 2008 (Case 2)  

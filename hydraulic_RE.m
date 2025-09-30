@@ -33,7 +33,7 @@ satonvertices=0;producelem=0;h=h_init;Con=0;Kdec=0;Knc=0;nflagc=0;viscosity=1;
 count=1;auxkmap=0;mobility=1;Ktc=0;Dedc=0;wightc=0;sc=0;dparameter=0;
 % storage the file vtk s in the time 0
 postprocessor(h_init,zeros(size(inedge,1)+size(bedge,1),1),Con,1-Con,...
-    count,overedgecoord,orderintimestep,'i',1,auxkmap,0);
+    count,overedgecoord,orderintimestep,'i',1,kmap(:,2),0);
 if numcase==342
     %----------------------------------------------------------------------
     vx=63; % malha quadrilateral ortogonal e distorcida
@@ -148,10 +148,23 @@ while stopcriteria < 100
          end
            [nflag,nflagface] = ferncodes_calflag(0);
     end
-      p_oldaux1=logical(h<=0 );
-      p_oldaux2=logical(h>0);
-      p_old=p_oldaux2-p_oldaux1;
-    
+    if numcase==431
+        p_oldaux1=logical(h<=0 );
+        p_oldaux2=logical(h>0);
+        p_old=100*p_oldaux2-100*p_oldaux1;
+    elseif numcase==433
+        p_oldaux1=logical(h<=0 );
+        p_oldaux2=logical(h>0);
+        p_old=25*p_oldaux2-25*p_oldaux1;
+    elseif numcase==432 
+       p_oldaux1=logical(h<=0 );
+        p_oldaux2=logical(h>0);
+        p_old=p_oldaux2-p_oldaux1; 
+    elseif numcase==434
+        p_oldaux1=logical(h<=0 );
+        p_oldaux2=logical(h>0);
+        p_old=50*p_oldaux2-50*p_oldaux1; 
+    end
     iterinicial=iterinicial+1;
     % storage the vtks and calculate errors
     postprocessor(h,flowrate,Con,1-Con,count,overedgecoord,orderintimestep,...

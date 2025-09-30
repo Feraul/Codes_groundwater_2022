@@ -26,14 +26,14 @@ y
 //***OBS.: Even if you chose [n], write below both the path and 
 //folder's name where you want to store your results:
 
-C:\Users\flc59\Documents\Benchmark_Cases\BenchHydraulic404
+C:\Users\flc59\Documents\Benchmark_Cases\BenchHydraulic403
 
 //Write below either a number or any other key word to feature the 
 //folder where the results will be stored:
 //***OBS.: If you set "0", the folder "Results" and other will be 
 //created into folder set above:
 
-teste
+teste2
 
 //--------------------------------------------------------------------
 //------------------------ Solver Properties -------------------------
@@ -347,7 +347,7 @@ C:\Users\flc59\Documents\Benchmark_GeometryFiles
 
 //Write below the name of the geometry file. Use the extension *.geo.
 
-malha_RE5.geo
+malha_RE.geo
 
 //--------------------------------------------------------------------
 //----------------- General Options (Configure gmsh) -----------------
@@ -363,7 +363,7 @@ malha_RE5.geo
 
 //Is your mesh structured?  [y] ==> "yes"; [n] ==> "no".
 
-n
+y
 
 //If [y] enter with the informations in the "STRUCTURED MESH": 
 //If [n] enter with the informations in the "UNSTRUCTURED MESH": 
@@ -395,7 +395,7 @@ n
 //Write below the average size for the control volumes: 
 //[1] ==> "DEFAULT value"
 
-10
+0.625
 
 //Write below the maximum size admissible for the control volumes:
 //[1e22] ==> "DEFAULT Option" 
@@ -568,8 +568,8 @@ y
 //used to "draw" the surfaces during CAD building. (*.geo).  
 
 1
-840 0 
-0 840
+24.96 0 
+0 24.96
 
 //--------------------------------------------------------------------
 //Distribution of porosity:
@@ -635,10 +635,9 @@ n
 //(Dirichlet, Neumann or Periodic);
 //3. In the same row, put the algebric value of this BC.  
 
-3
+2
 201 0
-101 0
-202 355     
+202 -20     
 
 //--------------------------------------------------------------------
 //Treatment of Boundary Points
@@ -649,8 +648,8 @@ n
 //2. In another row, the sequence of codes to be associated with 
 //each point group. 
 
-3
-201 101 202   
+2
+101 102   
 
 //--------------------------------------------------------------------
 //----------------------- Convergence Criteria -----------------------
@@ -685,7 +684,7 @@ s
 //state simulation (parameter of stop). Write below the amount of 
 //days or the PVI's value instead:
 
-0.3333
+46800
 
 //--------------------------------------------------------------------
 //------------------------------- Wells ------------------------------
