@@ -61,11 +61,11 @@ switch numcase
         for ii = 1:size(centelem,1)
             if h(ii)<0
                 %if iterinicial==1
-                    %theta=0.3;
+                %theta=0.3;
                 %else
-                    theta= theta_r +((theta_s -theta_r)/(1+abs(alpha*h(ii,1))^pp)^q);
+                theta= theta_r +((theta_s -theta_r)/(1+abs(alpha*h(ii,1))^pp)^q);
 
-                    %hh=-(((((theta_s-theta_r)/(0.3-theta_r))^(1/q))-1)^(1/pp))/alpha;
+                %hh=-(((((theta_s-theta_r)/(0.3-theta_r))^(1/q))-1)^(1/pp))/alpha;
                 %end
                 Se(ii,1)= (theta-theta_r)/(theta_s - theta_r);
             else
@@ -84,11 +84,42 @@ switch numcase
             else
                 coefi= kmapaux(1,2);
             end
-            
+
             kaux(ii,:) = [ii coefi 0 0 coefi];
 
         end  %End of FOR
         kmap=kaux;
+    case 434
+        for ii = 1:size(centelem,1)
+            if h(ii)<0 || h(ii)==0
+                theta= theta_r +(theta_s -theta_r)*(1/(1+(-alpha*h(ii,1))^pp))^q;
+                coefi=kmapaux(1,2)*(theta^0.5)*(1-(1-theta^(pp/(pp-1)))^(q))^2;
+            else
+                coefi= kmapaux(1,2);
+            end
+
+            kaux(ii,:) = [ii coefi 0 0 coefi];
+
+        end  %End of FOR
+        kmap=kaux;
+    case 433
+        for ii = 1:size(centelem,1)
+            if h(ii)<0 || h(ii)==0
+
+                theta= theta_r +((theta_s -theta_r)/(1+abs(alpha*h(ii,1))^pp)^q);
+
+                %hh=-(((((theta_s-theta_r)/(0.3-theta_r))^(1/q))-1)^(1/pp))/alpha;
+
+                Se(ii,1)= (theta-theta_r)/(theta_s - theta_r);
+            else
+                Se(ii,1)=1;
+            end
+            coefi=kmapaux(1,2)*(Se(ii,1)^(0.5))*(1-(1-Se(ii,1)^(1/q)))^2;
+            kaux(ii,:) = [ii coefi 0 0 coefi];
+
+        end  %End of FOR
+        kmap=kaux;
+
 
     case 1.7
         %Definition of "R" matrix

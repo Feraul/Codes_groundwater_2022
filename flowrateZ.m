@@ -1,5 +1,5 @@
 function [florateZZ,flowresultZ]=flowrateZ(kmap)
-global inedge bedge elem centelem coord
+global inedge bedge elem centelem coord numcase
 K1=zeros(3,3);
 K2=zeros(3,3);
 K=zeros(3,3);
@@ -41,9 +41,13 @@ for ifacont=1:size(bedge,1)
     %Keq=Klef;
     if bedge(ifacont,5)==201
         
-        florateZZ(ifacont,1)=0;
+        %florateZZ(ifacont,1)=0;
         %florateZZ(ifacont,1)=A*(norm(ve1))*(proj(1,2)-ve2aux(1,2));
-        %florateZZ(ifacont,1)=A*(norm(ve1))*(vm(1,2)-C1(1,2));
+        if numcase==433
+            florateZZ(ifacont,1)=A*(norm(ve1))*(vm(1,2)-C1(1,2));
+        else
+            florateZZ(ifacont,1)=0;
+        end
     elseif bedge(ifacont,5)==202
         florateZZ(ifacont,1)=A*(norm(ve1))*(vm(1,2)-C1(1,2));
     else

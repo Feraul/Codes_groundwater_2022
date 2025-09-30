@@ -3,13 +3,18 @@ global elem numcase centelem
 
 switch numcase
     case 431
-        theta_s=0.43;
-        theta_r=0.078;
-        alpha=0.036;
-        pp=1.56;
+        
+        %------------------------------------------------------------------
+        theta_s=0.363;
+        theta_r=0.186;
+        alpha=0.01;
+        pp=1.53;
+        % K=0.0001
+        % h=20  CC. Dirichlet
         q=1-(1/pp);
-        h_init=-51.3949*ones(size(elem,1),1);
-        dt=0.05;
+        h_init=-800*ones(size(elem,1),1);
+        dt=195;
+
     case 432
         theta_s=0.396;
         theta_r=0.131;
@@ -21,5 +26,26 @@ switch numcase
         end
         %dt=3.3333;
         dt=0.021;
+    case 433
+         theta_s=0.43;
+         theta_r=0.078;
+         alpha=0.036;
+         pp=1.56;
+         q=1-(1/pp);
+         % K= 24.96
+         %flux 20  CC. Neumann
+         h_init=-51.3949*ones(size(elem,1),1);
+         dt=0.05;
+    case 434
+         theta_s=0.3;
+         theta_r=0.01;
+         alpha=0.033;
+         pp=4.1;
+         q=1-(1/pp);
+        for i=1:size(elem,1)
+            h_init(i,1) =65-centelem(i,2);
+        end
+         dt=0.08;
+
 end
 end

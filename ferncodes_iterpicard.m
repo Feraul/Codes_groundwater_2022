@@ -19,7 +19,7 @@ while (nltol<er || nltol==er) && (step<maxiter)
     %Solve global algebric system
 
     % calculo das pressões
-    % [L,U] = ilu(M_old,struct('type','ilutp','droptol',1e-5));
+    % [L,U] = ilu(M_old,struct('type','ilutp','droptol',1e-8));
     % 
     %  [p_new,]=gmres(M_old,RHS_old,10,1e-9,1000,L,U);
 

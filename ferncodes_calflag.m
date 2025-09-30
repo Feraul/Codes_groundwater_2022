@@ -30,7 +30,7 @@ for ifacont = 1:size(bedge,1)
         x = logical(bcflag(:,1) == bedge(ifacont,4));
         % label of the vertex
         vertex = bedge(ifacont,1);
-        if numcase==432
+        if numcase==432 || numcase==434
             if bcflag(x,1)==101
                 nflag(vertex,2) = PLUG_bcfunction(vertex,x,a);
                 %nflag(vertex,2) = bcflag(x,2);
