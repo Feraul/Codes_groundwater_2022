@@ -46,7 +46,7 @@ for ifacont=1:size(bedge,1)
         if numcase==433
             florateZZ(ifacont,1)=A*(norm(ve1))*(vm(1,2)-C1(1,2));
         else
-            florateZZ(ifacont,1)=0;
+            florateZZ(ifacont,1)=A*(norm(ve1))*(vm(1,2)-C1(1,2));
         end
     elseif bedge(ifacont,5)==202
         florateZZ(ifacont,1)=A*(norm(ve1))*(vm(1,2)-C1(1,2));

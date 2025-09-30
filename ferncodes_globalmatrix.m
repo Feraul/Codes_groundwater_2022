@@ -2,7 +2,7 @@
 
 function [M,I,elembedge] = ferncodes_globalmatrix(w,s,Kde,Ded,Kn,Kt,Hesq,viscosity,...
     nflag,nflagface,SS,dt,h,MM,gravrate,theta_s,theta_r,alpha,pp,q,...
-                                 h_kickoff,iterinicial,gravresult,flowresultZ)
+    h_kickoff,iterinicial,gravresult,flowresultZ)
 
 %Define global variables:
 global coord elem esurn1 esurn2 bedge inedge centelem bcflag ...
@@ -81,14 +81,14 @@ for ifacont = 1:bedgesize
 
         %------------------------------------------------------------------
         % ambos os nos pertenecem ao contorno de Dirichlet
-        if nflag(bedge(ifacont,2),1)<200 && nflag(bedge(ifacont,1),1)<200
+        %if nflag(bedge(ifacont,2),1)<200 && nflag(bedge(ifacont,1),1)<200
 
             %montagem da matriz global
             M(lef,lef)=M(lef,lef)-visonface*A*(norm(v0)^2);
             % termo de fonte
             I(lef)=I(lef)-visonface*A*(dot(v2,-v0)*c1+dot(v1,v0)*c2)+...
-                              visonface*(c2-c1)*Kt(ifacont);%-visonface*m;
-        end
+                visonface*(c2-c1)*Kt(ifacont);%-visonface*m;
+        %end
         %------------------------------------------------------------------
         %Preenchimento
         %
@@ -107,9 +107,9 @@ for ifacont = 1:bedgesize
 
             aaa=0.5*(coord(bedge(ifacont,1),:) + coord(bedge(ifacont,2),:));
             if numcase==341
-            auxkmap = ferncodes_K(aaa(1,1),aaa(1,2));
+                auxkmap = ferncodes_K(aaa(1,1),aaa(1,2));
             else
-             auxkmap = ferncodes_K_1D(aaa(1,1));
+                auxkmap = ferncodes_K_1D(aaa(1,1));
             end
             %----------------------------------------------------------
             %auxkmap=kmap(lef, 2);
@@ -121,8 +121,6 @@ for ifacont = 1:bedgesize
         end
     end  %End of IF
 end  %End of FOR
-
-% end  %End of IF
 
 % contribution of the internal  control surfaces
 for iface = 1:inedgesize
@@ -234,9 +232,9 @@ end  %End of FOR ("inedge")
 %==========================================================================
 % calcula um problema transiente
 if numcase~=331
-[M,I]=ferncodes_implicitandcranknicolson(M,I,SS,dt,MM,h,theta_s,theta_r,...
-                                         alpha,pp,q,h_kickoff,iterinicial,flowresultZ);
-end 
+    [M,I]=ferncodes_implicitandcranknicolson(M,I,SS,dt,MM,h,theta_s,theta_r,...
+        alpha,pp,q,h_kickoff,iterinicial,flowresultZ);
+end
 %==========================================================================
 % utilizase somente quando o teste vai ser comparado com resultados do
 % modflow

@@ -26,7 +26,7 @@ y
 //***OBS.: Even if you chose [n], write below both the path and 
 //folder's name where you want to store your results:
 
-C:\Users\flc59\Documents\Benchmark_Cases\BenchHydraulic404
+C:\Users\GHC\Documents\Benchmark_Cases\BenchHydraulic404
 
 //Write below either a number or any other key word to feature the 
 //folder where the results will be stored:
@@ -343,7 +343,7 @@ malha_RE4.msh
 
 //If [n], write below the path where the geometry file is:  
 
-C:\Users\flc59\Documents\Benchmark_GeometryFiles
+C:\Users\GHC\Documents\GitHub\Benchmark_GeometryFiles
 
 //Write below the name of the geometry file. Use the extension *.geo.
 
@@ -395,7 +395,7 @@ n
 //Write below the average size for the control volumes: 
 //[1] ==> "DEFAULT value"
 
-10
+25
 
 //Write below the maximum size admissible for the control volumes:
 //[1e22] ==> "DEFAULT Option" 
@@ -685,7 +685,7 @@ s
 //state simulation (parameter of stop). Write below the amount of 
 //days or the PVI's value instead:
 
-0.3333
+50
 
 //--------------------------------------------------------------------
 //------------------------------- Wells ------------------------------

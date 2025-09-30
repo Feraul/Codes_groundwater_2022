@@ -42,7 +42,7 @@ while (nltol<er || nltol==er) && (step<maxiter)
         %         [weight,s] = ferncodes_Pre_LPEW_2(kmap,N,zeros(size(elem,1),1),...
         %             nflagface,nflagno);
         % end  %End of SWITCH
-        if numcase==432
+        if numcase==432 
             if 7 <step
                 dt=0.7*dt;
             elseif  3<= step && step<= 7

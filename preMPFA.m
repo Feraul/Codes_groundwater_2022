@@ -202,12 +202,13 @@ switch char(pmethod)
         elseif numcase==434
            for i=1:size(centelem,1)
                 %if centelem(i,2)<1
-                    p_old(i,1)=(65-centelem(i,2))/10;
+                    p_old(i,1)=(65-centelem(i,2))/abs((65-centelem(i,2)));
                 %else
                 %    p_old(i,1)=-2;
                 %end
 
-            end 
+           end 
+           source = PLUG_sourcefunction(0,0,wells); 
         else
             p_old=-1*ones(size(elem,1),1);
         end

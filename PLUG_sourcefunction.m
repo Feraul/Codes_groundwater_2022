@@ -21,6 +21,11 @@ sourcevector = zeros(size(elem,1),1);
 for isource = 1:size(elem,1)
     %Chose the benchmark according with "numcase" value
     switch numcase
+        case 434
+            if 95<centelem(isource,2) && centelem(isource,2)< 105
+             sourcevector(isource) = -355*elemarea(isource);
+
+            end
         %------------------------------------------------------------------
         %Example 1.6: Axisymmetric example (Silva, 2004)
         case 1.6
