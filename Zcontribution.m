@@ -1,4 +1,4 @@
-function [florateZZ,flowresultZ]=flowrateZ(kmap)
+function [flowrateZ,flowresultZ]=Zcontribution(kmap)
 global inedge bedge elem centelem coord numcase
 K1=zeros(3,3);
 K2=zeros(3,3);
@@ -44,18 +44,30 @@ for ifacont=1:size(bedge,1)
         %florateZZ(ifacont,1)=0;
         %florateZZ(ifacont,1)=A*(norm(ve1))*(proj(1,2)-ve2aux(1,2));
         if numcase==433
-            florateZZ(ifacont,1)=A*(norm(ve1))*(vm(1,2)-C1(1,2));
+            flowrateZ(ifacont,1)=A*(norm(ve1))*(vm(1,2)-C1(1,2));
+        elseif numcase==435
+            flowrateZ(ifacont,1)=0;
         else
-            florateZZ(ifacont,1)=A*(norm(ve1))*(vm(1,2)-C1(1,2));
+            flowrateZ(ifacont,1)=A*(norm(ve1))*(vm(1,2)-C1(1,2));
         end
-    elseif bedge(ifacont,5)==202
-        florateZZ(ifacont,1)=A*(norm(ve1))*(vm(1,2)-C1(1,2));
+    elseif bedge(ifacont,5)==202 || numcase==203
+        flowrateZ(ifacont,1)=0;%A*(norm(ve1))*(vm(1,2)-C1(1,2));
     else
+        if numcase==435 && bedge(ifacont,5)==101
+        flowrateZ(ifacont,1)=-A*(norm(ve1))*(vm(1,2)-C1(1,2));
+        else
+            if numcase==431 && bedge(ifacont,5)==101
+        flowrateZ(ifacont,1)=-A*(norm(ve1))*(vm(1,2)-C1(1,2));
+            else
+        flowrateZ(ifacont,1)=A*(norm(ve1))*(vm(1,2)-C1(1,2));
 
-        %florateZZ(ifacont,1)=A*(norm(ve1))*(proj(1,2)-ve2aux(1,2));
-        florateZZ(ifacont,1)=A*(norm(ve1))*(vm(1,2)-C1(1,2));
+            end
+
+        end
+
+        
     end
-    flowresultZ(lef,1)=flowresultZ(lef,1)-florateZZ(ifacont,1);
+    flowresultZ(lef,1)=flowresultZ(lef,1)-flowrateZ(ifacont,1);
 
 end
 for iface=1:size(inedge,1)
@@ -104,11 +116,12 @@ for iface=1:size(inedge,1)
     Kn1 = (RotH(vd1)'*K1*RotH(vd1))/norm(vd1)^2;
     Kn2 = (RotH(vd1)'*K2*RotH(vd1))/norm(vd1)^2;
     % calculo das constantes nas faces internas
-    Kde = -norm(vd1)*((Kn1*Kn2))/(Kn1*H2 + Kn2*H1);
-    florateZZ(iface+size(bedge,1),1)=Kde*(centelem(rel,2)-centelem(lef,2));% equation 20
+    Keq = -norm(vd1)*((Kn1*Kn2))/(Kn1*H2 + Kn2*H1);
+    % equation 20
+    flowrateZ(iface+size(bedge,1),1)=Keq*(centelem(rel,2)-centelem(lef,2));
 
-    flowresultZ(lef,1)=flowresultZ(lef,1)-florateZZ(iface+size(bedge,1),1);
-    flowresultZ(rel,1)=flowresultZ(rel,1)+florateZZ(iface+size(bedge,1),1);
+    flowresultZ(lef,1)=flowresultZ(lef,1)-flowrateZ(iface+size(bedge,1),1);
+    flowresultZ(rel,1)=flowresultZ(rel,1)+flowrateZ(iface+size(bedge,1),1);
 
 end
 end

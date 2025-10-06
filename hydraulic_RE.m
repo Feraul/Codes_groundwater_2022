@@ -6,7 +6,7 @@
 %This routine receives geometry and physical data.
 function hydraulic_RE(wells,overedgecoord,V,N,Hesq,Kde,Kn,Kt,Ded,kmap,nflag,...
     parameter,h_init,SS,MM,weight,s,dt,gravrate,nflagface,weightDMP,P,...
-    p_old,source,theta_s,theta_r,alpha,pp,q,gravresult,flowresultZ)
+    p_old,source,theta_s,theta_r,alpha,pp,q,gravresult,flowrateZ,flowresultZ)
 %Define global parameters:
 global timew  totaltime coord pmethod filepath elem numcase inedge ...
     bedge interptype centelem bcflag ;
@@ -60,7 +60,7 @@ while stopcriteria < 100
             ferncodes_solverpressure(mobility,wells,Hesq,Kde,Kn,Kt,Ded,...
             nflag,nflagface,weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,...
             sc,SS,dt,h,MM,gravrate,P,kmap,time,N,p_old,source,theta_s,...
-            theta_r,alpha,pp,q,iterinicial,gravresult,flowresultZ);
+            theta_r,alpha,pp,q,iterinicial,gravresult,flowrateZ,flowresultZ);
         dt=dt_opcional;
         % utiliza o metodo MPFA-H para aproximar a carga hidraulica
     elseif strcmp(pmethod,'mpfah')
@@ -148,10 +148,10 @@ while stopcriteria < 100
          end
            [nflag,nflagface] = ferncodes_calflag(0);
     end
-    if numcase==431
+    if numcase==431 || numcase==435
         p_oldaux1=logical(h<=0 );
         p_oldaux2=logical(h>0);
-        p_old=100*p_oldaux2-100*p_oldaux1;
+        p_old=10*p_oldaux2-10*p_oldaux1;
     elseif numcase==433
         p_oldaux1=logical(h<=0 );
         p_oldaux2=logical(h>0);
@@ -171,6 +171,30 @@ while stopcriteria < 100
         'i',1,kmap_h(:,2),time);
 end
 
+if numcase==435
+    theta=thetafunction(h,theta_s,theta_r,alpha,pp,q,iterinicial);
+    theta_init=thetafunction(h_init,theta_s,theta_r,alpha,pp,q,iterinicial);
+    figure(1)
+    plot(theta, centelem(:,2))
+    xlabel('\theta(h)')
+    ylabel('z')
+    
+    hold on
+    plot(theta_init, centelem(:,2))
+    grid
+    figure(2)
+      plot(h,centelem(:,2))
+      grid
+     xlabel('h (m)')
+     ylabel('Z(m)')
+     hold on
+elseif numcase==431
+    plot(h,centelem(:,2))
+      grid
+     xlabel('h (m)')
+     ylabel('Z(m)')
+     hold on
+end
 toc
 % plotagem dos graficos em determinados regioes do dominio
 plotandwrite(producelem,Con,h,satonvertices,0,0,0,time,overedgecoord,...

@@ -18,10 +18,10 @@ function [transmvecleft,transmvecright,knownvecleft,knownvecright,storeinv,...
     knownvecleftcon,knownvecrightcon,storeinvcon,Bleftcon,Brightcon,Fgcon,...
     mapinvcon,maptransmcon,mapknownveccon,pointedgecon,bodytermcon,Kdec,...
     Knc,Ktc,Dedc,wightc,sc,weightDMPc,dparameter,nflagnoc,nflagfacec,Con,...
-    lastimelevel,lastimeval,gravrate,source,gravresult,flowresultZ] =...
+    lastimelevel,lastimeval,gravrate,source,gravresult,flowrateZ,flowresultZ] =...
     preMPFA(kmap,klb,dmap,MM,h_init,wells,theta_s,theta_r,alpha,pp,qq)
 %Define global parameters:
-global pmethod elem interptype phasekey keygravity numcase centelem kmapaux
+global pmethod bedge inedge elem interptype phasekey keygravity numcase centelem kmapaux
 
 %Obtain the coordinate of both CENTER and AUXILARY nodes of elements which
 %constitute the mash. The AREA of each element is also calculated.
@@ -30,7 +30,8 @@ disp(' ');
 disp('---------------------------------------------------');
 disp('>> Preprocessing Pressure or Hydraulic head Equation...');
 disp(' ');
-
+bedgesize= size(bedge,1);
+inedgesize=size(inedge,1);
 %Initialize all parameters of output
 transmvecleft = 0; transmvecright = 0; knownvecleft = 0; knownvecright = 0;
 storeinv = 0; Bleft = 0; Bright = 0; Fg = 0; mapinv = 0; maptransm = 0;
@@ -41,7 +42,7 @@ knownvecleftcon=0; knownvecrightcon=0; storeinvcon=0; Bleftcon=0;
 Brightcon=0; Fgcon=0; mapinvcon=0; maptransmcon=0; mapknownveccon=0;
 pointedgecon=0; bodytermcon=0; Kdec=0;Knc=0;Ktc=0;Dedc=0;wightc=0;sc=0;
 weightDMPc=0;nflag=0;dparameter=0; nflagnoc=0;nflagfacec=0;Con=0; gravrate=0;
-lastimeval=0;lastimelevel=0;source=0;gravresult=0;
+lastimeval=0;lastimelevel=0;source=0;gravresult=0;flowrateZ=0*ones(bedgesize+inedgesize,1);flowresultZ=0;
 %Define parametric variables:
 %Parameter Used in Full Pressure Support (FPS)
 %"p" quadrature point to flux in the auxilary sub interaction region
@@ -59,7 +60,7 @@ overedgecoord = overedge;
 %% (1) Define the norm of permeability or conductivity hidraulic tensor ("normk")
 if numcase==331
     [normk,kmap] = calcnormk(kmap,MM,90*ones(size(elem,1),1));
-elseif numcase==431 || numcase==432 || numcase==433 || numcase==434
+elseif numcase==431 || numcase==432 || numcase==433 || numcase==434 || numcase==435
     [normk,kmap] = calcnormk(kmap,MM,h_init,theta_s,theta_r,alpha,pp,qq);
 else
     [normk,kmap] = calcnormk(kmap,MM,ones(size(elem,1),1));
@@ -132,8 +133,8 @@ if strcmp(keygravity,'y')
     elseif numcase<200
         [vec_gravelem,vec_gravface,]=PLUG_Gfunction;
         [gravrate,]=gravitation(kmap,vec_gravelem,vec_gravface);
-    elseif numcase==432 || numcase==431 || numcase==433 || numcase==434
-        [flowrateZZ,flowresultZ]=flowrateZ(kmap);
+    elseif numcase==432 || numcase==431 || numcase==433 || numcase==434 || numcase==435
+        [flowrateZ,flowresultZ]=Zcontribution(kmap);
     end
 end
 %--------------------------------------------------------------------------
@@ -197,6 +198,14 @@ switch char(pmethod)
             end
         elseif numcase==431
             p_old=-100*ones(size(elem,1),1);
+        elseif numcase==435
+            for i=1:size(centelem,1)
+                a=(10-centelem(i,2))/abs((10-centelem(i,2)));
+                
+                    p_old(i,1)=3*a;
+                
+
+            end
         elseif numcase==433
            p_old=-25*ones(size(elem,1),1); 
         elseif numcase==434

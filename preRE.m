@@ -10,7 +10,7 @@ switch numcase
         alpha=0.01;
         pp=1.53;
         % K=0.0001
-        % h=20  CC. Dirichlet
+        % h=0  CC. Dirichlet upper
         q=1-(1/pp);
         h_init=-800*ones(size(elem,1),1);
         dt=195;
@@ -46,6 +46,25 @@ switch numcase
             h_init(i,1) =65-centelem(i,2);
         end
          dt=5;
+    case 435
+        %------------------------------------------------------------------
+        theta_s=0.43;
+        theta_r=0.078;
+        alpha=0.036;
+        pp=1.56;
+        % K=0.0001
+        % h=20  CC. Dirichlet
+        q=1-(1/pp);
+        for i=1:size(elem,1)
+            a =10-centelem(i,2);
+            if a>0
+                h_init(i,1)=10;
+            else
+                h_init(i,1)=-90;
+            end
+        end
+        dt=0.03;
+
 
 end
 end

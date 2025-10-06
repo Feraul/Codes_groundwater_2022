@@ -4,17 +4,17 @@
 function [p,flowrate,flowresult,flowratedif,dt_aux,kmap_h] = ferncodes_solverpressure( viscosity,...
     wells,Hesq,Kde,Kn,Kt,Ded,nflag,nflagface,weight,s,Con,Kdec,Knc,Ktc,Dedc,...
     nflagc,wc,sc,SS,dt,h,MM,gravrate,P,kmap,tempo,N,h_kickoff,source,...
-    theta_s,theta_r,alpha,pp,q,iterinicial,gravresult,flowresultZ)
+    theta_s,theta_r,alpha,pp,q,iterinicial,gravresult,flowrateZ,flowresultZ)
 global numcase acel elem interptype keygravity
 
 %--------------------------------------------------------------------------
 %Solve global algebric system: pressure or hydraulic head
-if numcase==331 || numcase==431 || numcase==432 || numcase==433 || numcase==434
+if numcase==331 || numcase==431 || numcase==432 || numcase==433 || numcase==434 || numcase==435
     if iterinicial~=1
         [kmap] = PLUG_kfunction(kmap,h,MM,theta_s,theta_r,alpha,pp,q,iterinicial);
         [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap, elem);
         if strcmp(keygravity,'y')
-            [flowrateZZ,flowresultZ]=flowrateZ(kmap);
+            [flowrateZ,flowresultZ]=Zcontribution(kmap);
         end
         switch char(interptype)
             %LPEW 1
@@ -47,7 +47,7 @@ if numcase==331 || numcase==431 || numcase==432 || numcase==433 || numcase==434
             parameter,weight,s,h_kickoff,nflag,wells,viscosity,Con,...
             nflagc,weightc,sc,dparameter,contnorm,SS,dt,h,MM,gravrate,...
             source,kmap,nflagface,N,theta_s,theta_r,alpha,pp,q,Kde,Ded,...
-            Kn,Kt,Hesq,iterinicial,gravresult,flowresultZ);
+            Kn,Kt,Hesq,iterinicial,gravresult,flowrateZ,flowresultZ);
 
 
     elseif strcmp(acel,'AA')
@@ -72,7 +72,8 @@ else
     p = solver(M,I);
     wc=0;Kdec=0;Knc=0;Ktc=0;Dedc=0;
     % auxiliary variables interpolation
-    [pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(p,nflagno,weight,s,Con,nflagc,wc,sc);
+    [pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(p,nflagno,weight,...
+        s,Con,nflagc,wc,sc);
     %Get the flow rate (Diamond)
     [flowrate,flowresult,flowratedif] = ferncodes_flowrate(p,pinterp,cinterp,Kde,...
         Ded,Kn,Kt,Hesq,viscosity,nflagno,Con,Kdec,Knc,Ktc,Dedc,nflagc,gravrate);

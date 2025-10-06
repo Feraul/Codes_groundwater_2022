@@ -76,6 +76,25 @@ switch numcase
 
         end  %End of FOR
         kmap=kaux;
+    case 435
+        for ii = 1:size(centelem,1)
+            if h(ii)<0
+                %if iterinicial==1
+                %theta=0.3;
+                %else
+                theta= theta_r +((theta_s -theta_r)/(1+abs(alpha*h(ii,1))^pp)^q);
+
+                %hh=-(((((theta_s-theta_r)/(0.3-theta_r))^(1/q))-1)^(1/pp))/alpha;
+                %end
+                Se(ii,1)= (theta-theta_r)/(theta_s - theta_r);
+            else
+                Se(ii,1)=1;
+            end
+            coefi=kmapaux(1,2)*(Se(ii,1)^(0.5))*(1-(1-Se(ii,1)^(1/q)))^2;
+            kaux(ii,:) = [ii coefi 0 0 coefi];
+
+        end  %End of FOR
+        kmap=kaux;
     case 432
         for ii = 1:size(centelem,1)
             if h(ii)<0 %|| h(ii)==0

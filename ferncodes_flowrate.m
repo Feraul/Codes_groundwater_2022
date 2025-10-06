@@ -4,7 +4,7 @@
 %equacoes 28 e 29 (heterogeneo) ou 15 e 16 (homogeneo)
 
 function [flowrate,flowresult,flowratedif] = ferncodes_flowrate(p,pinterp,cinterp,Kde,Ded,Kn,Kt,...
-    Hesq,viscosity,nflag,Con,Kdec,Knc,Ktc,Dedc,nflagc,gravrate)
+    Hesq,viscosity,nflag,Con,Kdec,Knc,Ktc,Dedc,nflagc,gravrate,flowrateZ)
 
 
 
@@ -67,9 +67,11 @@ for ifacont = 1:bedgesize
         A=(Kn(ifacont)/(Hesq(ifacont)*nor));
         flowrate(ifacont) =-A*(((O-coord(B2,:)))*(coord(B1,:)-coord(B2,:))'*c1+...
             (O-coord(B1,:))*(coord(B2,:)-coord(B1,:))'*c2-(nor^2)*p(lef))-(c2-c1)*Kt(ifacont);
-        
+        if numcase==435
+            flowrate(ifacont) = visonface*flowrate(ifacont)+flowrateZ(ifacont);
+        else
         flowrate(ifacont) = visonface*flowrate(ifacont);%-visonface*m;
-        
+        end
     else
         x = logical(bcflag(:,1) == bedge(ifacont,5));
         flowrate(ifacont)= -nor*bcflag(x,2);
@@ -141,10 +143,13 @@ for iface = 1:inedgesize
     p2=pinterp(inedge(iface,2),1);
     
     %calculo das vazões
-    
-    flowrate(bedgesize + iface) =visonface*Kde(iface)*(p(rel)-p(lef)-...
-                                      Ded(iface)*(p2 - p1));%-visonface*m;
-    
+    if numcase==435
+        flowrate(bedgesize + iface) =visonface*Kde(iface)*(p(rel)-p(lef)-...
+            Ded(iface)*(p2 - p1))-flowrateZ(bedgesize + iface);
+    else
+        flowrate(bedgesize + iface) =visonface*Kde(iface)*(p(rel)-p(lef)-...
+            Ded(iface)*(p2 - p1));%-visonface*m;
+    end
     %Attribute the flow rate to "flowresult"
     %On the left:
     flowresult(lef) = flowresult(lef) + flowrate(bedgesize + iface);
@@ -160,7 +165,6 @@ for iface = 1:inedgesize
             Dedc(iface)*(conno2 - conno1))-visonface*m;
     end
 end  %End of FOR ("inedge")
-
 %--------------------------------------------------------------------------
 %When some multiD schemes are chosen, it is necessary attribute flow rate
 %for each half-edge.
