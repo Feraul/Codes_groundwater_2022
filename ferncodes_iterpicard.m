@@ -1,12 +1,14 @@
-function [p,flowrate,flowresult,flowratedif,dt_aux]=ferncodes_iterpicard(M_old,RHS_old,...
+function [p,flowrate,flowresult,flowratedif,dt_aux,faceaux]=ferncodes_iterpicard(M_old,RHS_old,...
     parameter,w,s,h_kickoff,nflagno,wells,viscosity,Con,nflagc,wightc,sc,...
     dparameter,contnorm,SS,dt,h,MM,gravrate,source,kmap,nflagface,N,...
     theta_s,theta_r,alpha,pp,q,Kde,Ded,Kn,Kt,Hesq,iterinicial,...
     gravresult,flowrateZ,flowresultZ)
-global nltol maxiter  pmethod elem interptype numcase centelem keygravity
+global nltol maxiter  pmethod elem interptype numcase centelem keygravity kmapaux
 %% calculo do residuo Inicial
 R0=norm(M_old*h_kickoff-RHS_old);
-
+MM_old=M_old;
+RRHS_old=RHS_old;
+h_old=h;
 %% inicializando dados para iteração Picard
 step=0;
 er=1;
@@ -16,42 +18,40 @@ while (nltol<er || nltol==er) && (step<maxiter)
     % atualiza iterações
     step=step+1;
 
-    %----------------------------------------------------------------------
-    %Solve global algebric system
-
     % calculo das pressões
     % [L,U] = ilu(M_old,struct('type','ilutp','droptol',1e-8));
-    % 
+     
     %  [p_new,]=gmres(M_old,RHS_old,10,1e-9,1000,L,U);
 
     p_new = solver(M_old,RHS_old);
-    if strcmp(pmethod,'mpfad')
-        % kmap = PLUG_kfunction(kmap,p_new,MM,theta_s,theta_r,alpha,pp,q,iterinicial);
-        % %[Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap, elem);
-        % if strcmp(keygravity,'y')
-        %     [flowrateZZ,flowresultZ]=flowrateZ(kmap);
+    if strcmp(pmethod,'mpfad') 
+          kmap = PLUG_kfunction(kmap,p_new,MM,theta_s,theta_r,alpha,...
+                                 pp,q);
+         [Hesq,Kde,Kn,Kt,Ded,flowrateZ,flowresultZ] = ferncodes_Kde_Ded_Kt_Kn(kmap, elem,...
+                                theta_r,theta_s,pp,alpha,q);
+         %             It switches according to "interptype"
+         switch char(interptype)
+            %LPEW 1
+            case 'lpew1'
+                % calculo dos pesos que correspondem ao LPEW1
+                [w,s] = ferncodes_Pre_LPEW_1(kmap,N);
+                %LPEW 2
+            case 'lpew2'
+                % calculo dos pesos que correspondem ao LPEW2
+                [w,s] = ferncodes_Pre_LPEW_2(kmap,N,zeros(size(elem,1),1),...
+                    nflagface,nflagno);
+        end  %End of SWITCH
+        %==================================================================
+        % if numcase==432 
+        %     if 7 <step
+        %         dt=0.7*dt;
+        %     elseif  3<= step && step<= 7
+        %         dt=1*dt;
+        %     elseif step <7
+        %         dt=1.3*dt;
+        %     end
         % end
-        % %             It switches according to "interptype"
-        % switch char(interptype)
-        %     %LPEW 1
-        %     case 'lpew1'
-        %         % calculo dos pesos que correspondem ao LPEW1
-        %         [weight,s] = ferncodes_Pre_LPEW_1(kmap,N);
-        %         %LPEW 2
-        %     case 'lpew2'
-        %         % calculo dos pesos que correspondem ao LPEW2
-        %         [weight,s] = ferncodes_Pre_LPEW_2(kmap,N,zeros(size(elem,1),1),...
-        %             nflagface,nflagno);
-        % end  %End of SWITCH
-        if numcase==432 
-            if 7 <step
-                dt=0.7*dt;
-            elseif  3<= step && step<= 7
-                dt=1*dt;
-            elseif step <7
-                dt=1.3*dt;
-            end
-        end
+        %==================================================================
         % Montagem da matriz global
         [M,I,] = ferncodes_globalmatrix(w,s,Kde,Ded,Kn,Kt,Hesq,...
             viscosity,nflagno,nflagface,SS,dt,h ,MM,gravrate,theta_s,...
@@ -93,13 +93,15 @@ while (nltol<er || nltol==er) && (step<maxiter)
     % atualizar
     M_old=M_new;
     RHS_old=RHS_new;
+    %h=p_new;
 
 end
 dt_aux=dt;
 %--------------------------------------------------------------------------
 %Solve global algebric system
 if numcase==331
-    [M,I]=ferncodes_implicitandcranknicolson(M_old,RHS_old,SS,dt,MM,h,theta_s,theta_r,alpha,pp,q);
+    [M,I]=ferncodes_implicitandcranknicolson(M_old,RHS_old,SS,dt,MM,h,...
+        theta_s,theta_r,alpha,pp,q);
     % calculo das pressões
     p = solver(M,I);
 else
@@ -122,7 +124,7 @@ else
     % auxiliary variables interpolation
     [pinterp,cinterp]=ferncodes_pressureinterpNLFVPP(p,nflagno,w,s,Con,nflagc,wc,sc);
     %Get the flow rate (Diamond)
-    [flowrate,flowresult,flowratedif] = ...
+    [flowrate,flowresult,flowratedif,faceaux] = ...
         ferncodes_flowrate(p,pinterp,cinterp,Kde,...
         Ded,Kn,Kt,Hesq,viscosity,nflagno,Con,Kdec,Knc,Ktc,...
         Dedc,nflagc,gravrate,flowrateZ);

@@ -3,7 +3,7 @@
 %funçao que calcula os fluxos nas arestas internas
 %equacoes 28 e 29 (heterogeneo) ou 15 e 16 (homogeneo)
 
-function [flowrate,flowresult,flowratedif] = ferncodes_flowrate(p,pinterp,cinterp,Kde,Ded,Kn,Kt,...
+function [flowrate,flowresult,flowratedif,faceaux] = ferncodes_flowrate(p,pinterp,cinterp,Kde,Ded,Kn,Kt,...
     Hesq,viscosity,nflag,Con,Kdec,Knc,Ktc,Dedc,nflagc,gravrate,flowrateZ)
 
 
@@ -22,6 +22,7 @@ bedgeamount = 1:bedgesize;
 flowrate = zeros(bedgesize + inedgesize,1);
 flowresult = zeros(size(centelem,1),1);
 flowratedif = zeros(bedgesize + inedgesize,1);
+jj=1;
 %Swept "bedge"
 for ifacont = 1:bedgesize
      if 200<numcase && numcase<300
@@ -71,6 +72,10 @@ for ifacont = 1:bedgesize
             flowrate(ifacont) = visonface*flowrate(ifacont)+flowrateZ(ifacont);
         else
         flowrate(ifacont) = visonface*flowrate(ifacont);%-visonface*m;
+        end
+        if numcase==435 && bedge(ifacont,5)==102
+            faceaux(jj,1)=ifacont;
+            jj=jj+1;
         end
     else
         x = logical(bcflag(:,1) == bedge(ifacont,5));
@@ -149,6 +154,12 @@ for iface = 1:inedgesize
     else
         flowrate(bedgesize + iface) =visonface*Kde(iface)*(p(rel)-p(lef)-...
             Ded(iface)*(p2 - p1));%-visonface*m;
+    end
+
+    if numcase==435 && ((p(lef)<p(rel) && p(lef)<0 && 0<p(rel))|| (p(rel)<p(lef) && p(rel)<0 && 0<p(lef)))
+
+        faceaux(jj,1)=bedgesize + iface;
+        jj=jj+1;
     end
     %Attribute the flow rate to "flowresult"
     %On the left:

@@ -125,7 +125,7 @@ elseif 300<numcase && numcase<350
             preconcentration(bedge,wells);
     end
 elseif 400<numcase && numcase<500
-     [theta_s,theta_r,alpha,pp,q,h_init,dt]=preRE;
+     [theta_s,theta_r,alpha,pp,q,h_init,dt,h_old]=preRE;
 end
 %if numcase==380.1
 %adeSPE; % para um campo de permeabilidade da SPE active descomente.
@@ -135,5 +135,5 @@ end
 %It preprocess the schemes and set a One-phase or Two-phase simulation.
 setmethod(kmap,wells,'i',8,limiterflag,klb,elemsize,bedgesize,...
     inedgesize,auxpar, wellsc,velmedio,dmap,Dmedio,gamma,SS,h_init,...
-    MM,dt,P,theta_s,theta_r,alpha,pp,q);
+    MM,dt,P,theta_s,theta_r,alpha,pp,q,h_old);
 

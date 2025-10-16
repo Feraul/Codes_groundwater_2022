@@ -30,10 +30,16 @@ finaltime = totaltime(2);
 timew = 0;
 % inicialization paramenters 
 satonvertices=0;producelem=0;h=h_init;Con=0;Kdec=0;Knc=0;nflagc=0;viscosity=1;
-count=1;auxkmap=0;mobility=1;Ktc=0;Dedc=0;wightc=0;sc=0;dparameter=0;
+count=1;auxkmap=0;mobility=1;Ktc=0;Dedc=0;wightc=0;sc=0;dparameter=0; count_aux=1;
 % storage the file vtk s in the time 0
 postprocessor(h_init,zeros(size(inedge,1)+size(bedge,1),1),Con,1-Con,...
     count,overedgecoord,orderintimestep,'i',1,kmap(:,2),0);
+if numcase==432 
+    auxelem22=bedge(57:80,3);
+    plot(h_init(auxelem22), kmap(auxelem22,2))
+    xlabel('h(m)')
+    ylabel('hidraulic conductivity')
+end
 if numcase==342
     %----------------------------------------------------------------------
     vx=63; % malha quadrilateral ortogonal e distorcida
@@ -45,6 +51,9 @@ if numcase==342
 end
 dtaux=dt;
 iterinicial=1;
+theta_init=thetafunction(h_init,theta_s,theta_r,alpha,pp,q);
+sum2=0;
+sum1=0;
 tic
 %Get "hydraulic head" and "flowrate"
 while stopcriteria < 100
@@ -56,12 +65,16 @@ while stopcriteria < 100
         % utiliza o metodo MPFA-D para aproximar a carga hidraulica
     elseif strcmp(pmethod,'mpfad')
         % Calculate hydraulic head and flowrate using the MPFA with diamond pacth
-        [h_new,flowrate,flowresult,flowratedif,dt_opcional,kmap_h] = ...
+        [h_new,flowrate,flowresult,flowratedif,dt_opcional,kmap_h,faceaux] = ...
             ferncodes_solverpressure(mobility,wells,Hesq,Kde,Kn,Kt,Ded,...
             nflag,nflagface,weight,s,Con,Kdec,Knc,Ktc,Dedc,nflagc,wightc,...
             sc,SS,dt,h,MM,gravrate,P,kmap,time,N,p_old,source,theta_s,...
             theta_r,alpha,pp,q,iterinicial,gravresult,flowrateZ,flowresultZ);
         dt=dt_opcional;
+        if count==1
+            sum1=sum(flowresult);
+        end
+        
         % utiliza o metodo MPFA-H para aproximar a carga hidraulica
     elseif strcmp(pmethod,'mpfah')
         % Calculate hydraulic head and flowrate using the MPFA with harmonic
@@ -81,8 +94,6 @@ while stopcriteria < 100
     % contador
     count=count+1
     % update the hydraulic head
-    %p_oldaux=h;
-    %p_old=p_oldaux;
     h=h_new;
     % delta t auxiliar
     dtaux=dt;
@@ -138,20 +149,29 @@ while stopcriteria < 100
          h_time(count,1)=time;
          h_time(count,2)=h(b2);
     elseif numcase==432
-         if time<0.0625 || time==0.0625
+         %if time<1 || time==1 % Beit Netofa clay
+         %bcflag(3,2)=-2+(2.2*(time/1));
+         if time<0.0625 || time==0.0625 %silt loam
          bcflag(3,2)=-2+(2.2*(time/0.0625));
-         %if time<9.9999 || time==9.9999 
-         %bcflag(3,2)=-2+(2.2*(time/9.9999));
-             
          else
             bcflag(3,2)=0.2;
          end
+         % modifica a condicao de Dirichlet
            [nflag,nflagface] = ferncodes_calflag(0);
+         
     end
-    if numcase==431 || numcase==435
+    if numcase==431
         p_oldaux1=logical(h<=0 );
         p_oldaux2=logical(h>0);
+        
         p_old=10*p_oldaux2-10*p_oldaux1;
+        % balanco de massa
+    
+    theta_n=thetafunction(h,theta_s,theta_r,alpha,pp,q);
+    sum2=sum2+ (flowrate(1,1)-flowrate(402,1));
+    MBE(count_aux)=100*((sum(theta_n-theta_init)*0.25- sum(flowresult)*time)/(-sum1*time));
+    DT(count_aux)=time;
+    count_aux=count_aux+1;
     elseif numcase==433
         p_oldaux1=logical(h<=0 );
         p_oldaux2=logical(h>0);
@@ -159,41 +179,85 @@ while stopcriteria < 100
     elseif numcase==432 
        p_oldaux1=logical(h<=0 );
         p_oldaux2=logical(h>0);
-        p_old=p_oldaux2-p_oldaux1; 
+        p_old=2*p_oldaux2-2*p_oldaux1; 
     elseif numcase==434
         p_oldaux1=logical(h<=0 );
         p_oldaux2=logical(h>0);
         p_old=50*p_oldaux2-50*p_oldaux1; 
+    elseif  numcase==435
+        p_oldaux1=logical(h<=0 );
+        p_oldaux2=logical(h>0);
+        
+        p_old=5*p_oldaux2-5*p_oldaux1;
     end
     iterinicial=iterinicial+1;
     % storage the vtks and calculate errors
     postprocessor(h,flowrate,Con,1-Con,count,overedgecoord,orderintimestep,...
         'i',1,kmap_h(:,2),time);
+    if numcase==432 && count==2
+    auxelem22=bedge(49:80,3);
+    plot(h(auxelem22), kmap(auxelem22,2))
+    xlabel('h(m)')
+    ylabel('hidraulic conductivity')
+    end
+    if stopcriteria <100
+        faceaux(:,1)=0;
+    end
 end
-
+flowrate (faceaux(:,1),1)
 if numcase==435
-    theta=thetafunction(h,theta_s,theta_r,alpha,pp,q,iterinicial);
-    theta_init=thetafunction(h_init,theta_s,theta_r,alpha,pp,q,iterinicial);
+    theta=thetafunction(h,theta_s,theta_r,alpha,pp,q);
+    theta_init=thetafunction(h_init,theta_s,theta_r,alpha,pp,q);
     figure(1)
-    plot(theta, centelem(:,2))
-    xlabel('\theta(h)')
-    ylabel('z')
+    plot(centelem(:,2),theta)
+    xlabel('Elevation (cm)')
+    ylabel('\theta(h)')
     
     hold on
-    plot(theta_init, centelem(:,2))
+    plot(centelem(:,2),theta_init )
     grid
     figure(2)
-      plot(h,centelem(:,2))
-      grid
-     xlabel('h (m)')
-     ylabel('Z(m)')
-     hold on
+    plot(centelem(:,2),h)
+    grid
+    xlabel('Elevantion (cm)')
+    ylabel('h(cm)')
+    hold on
 elseif numcase==431
+    
+    figure(1)
+    theta=thetafunction(h,theta_s,theta_r,alpha,pp,q);
+    plot(h, theta)
+    xlabel('h(cm)')
+    ylabel('\theta(h)')
+    grid 
+
+    figure(2)
     plot(h,centelem(:,2))
-      grid
-     xlabel('h (m)')
-     ylabel('Z(m)')
-     hold on
+    hold on
+
+% Warrick solution 11700
+% BBB=[-343.291	73.1783
+% -170.127	74.5736
+% -78.9873	77.5194];
+
+% Warrick solution 23400
+ % BBB=[-345.291	60.7752
+ % -170.127	62.3256
+ % -78.9873	65.8915];
+% Warrick solution 46800
+BBB=[-343.291	39.8450
+-170.127	41.7054
+-78.9873	45.8915];
+plot(BBB(:,1),BBB(:,2), 's')
+xlabel('h (cm)')
+ylabel('Elevation(cm)')
+hold on
+grid
+figure(3)
+plot(DT, MBE)
+xlabel('Time(s)')
+ylabel('Massa Balance Error (%)')
+grid
 end
 toc
 % plotagem dos graficos em determinados regioes do dominio

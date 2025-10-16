@@ -133,8 +133,8 @@ if strcmp(keygravity,'y')
     elseif numcase<200
         [vec_gravelem,vec_gravface,]=PLUG_Gfunction;
         [gravrate,]=gravitation(kmap,vec_gravelem,vec_gravface);
-    elseif numcase==432 || numcase==431 || numcase==433 || numcase==434 || numcase==435
-        [flowrateZ,flowresultZ]=Zcontribution(kmap);
+    %elseif numcase==432 || numcase==431 || numcase==433 || numcase==434 || numcase==435
+    %    [flowrateZ,flowresultZ]=Zcontribution(kmap,theta_s,theta_r,alpha,pp,q);
     end
 end
 %--------------------------------------------------------------------------
@@ -187,43 +187,10 @@ switch char(pmethod)
 
         %Calculate geometrical and physical terms to be used in MPFA-Diamond
     case 'mpfad' %(Gao and Wu, 2010)
-        if numcase==432 
-            for i=1:size(centelem,1)
-                if centelem(i,2)<1
-                    p_old(i,1)=1;
-                else
-                    p_old(i,1)=-2;
-                end
-
-            end
-        elseif numcase==431
-            p_old=-100*ones(size(elem,1),1);
-        elseif numcase==435
-            for i=1:size(centelem,1)
-                a=(10-centelem(i,2))/abs((10-centelem(i,2)));
-                
-                    p_old(i,1)=3*a;
-                
-
-            end
-        elseif numcase==433
-           p_old=-25*ones(size(elem,1),1); 
-        elseif numcase==434
-           for i=1:size(centelem,1)
-                %if centelem(i,2)<1
-                    p_old(i,1)=(65-centelem(i,2))/abs((65-centelem(i,2)));
-                %else
-                %    p_old(i,1)=-2;
-                %end
-
-           end 
-           source = PLUG_sourcefunction(0,0,wells); 
-        else
-            p_old=-1*ones(size(elem,1),1);
-        end
-
+        
         %Get preprocessed terms:
-        [Hesq,Kde,Kn,Kt,Ded] = ferncodes_Kde_Ded_Kt_Kn(kmap, elem);
+        [Hesq,Kde,Kn,Kt,Ded,flowrateZ,flowresultZ] = ferncodes_Kde_Ded_Kt_Kn(kmap, elem,...
+                               theta_r,theta_s,pp,alpha,q);
         % for the concentration transport with pressure
         if 200<numcase && numcase<300
             %Get the initial condition

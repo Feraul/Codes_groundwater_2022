@@ -33,7 +33,6 @@ for ifacont = 1:size(bedge,1)
         if numcase==432 || numcase==434
             if bcflag(x,1)==101
                 nflag(vertex,2) = PLUG_bcfunction(vertex,x,a);
-                %nflag(vertex,2) = bcflag(x,2);
                 nflag(vertex,1) = bcflag(x,1);
             else
                 nflag(vertex,2) = bcflag(x,2);

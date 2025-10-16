@@ -1,5 +1,5 @@
-function [flowrateZ,flowresultZ]=Zcontribution(kmap)
-global inedge bedge elem centelem coord numcase
+function [flowrateZ,flowresultZ]=Zcontribution(kmap,theta_s,theta_r,alpha,pp,q)
+global inedge bedge elem centelem coord numcase bcflag kmapaux
 K1=zeros(3,3);
 K2=zeros(3,3);
 K=zeros(3,3);
@@ -12,27 +12,22 @@ for ifacont=1:size(bedge,1)
     % vetor de orientacao da face em questao
     ve1=coord(bedge(ifacont,2),:)-coord(bedge(ifacont,1),:);
     vm=0.5*(coord(bedge(ifacont,2),:)+coord(bedge(ifacont,1),:));
-    
-    % tensor de permeabilidade do elemento a esquerda
-    % Keq(1,1)=kmap(elem(lef,5),2);
-    % Keq(1,2)=kmap(elem(lef,5),3);
-    % Keq(2,1)=kmap(elem(lef,5),4);
-    % Keq(2,2)=kmap(elem(lef,5),5);
+
     C1 = centelem(bedge(ifacont,3),:);
     %Determinação das alturas dos elementos à esquerda.
     % ve1 = coord(bedge(ifacont,2),:) - coord(bedge(ifacont,1),:); % face
     ve2 = coord(bedge(ifacont,2),:) - C1; %Do centro esquerdo ao fim da face.
     ve2aux= C1-coord(bedge(ifacont,1),:);
-   proj=(dot(ve2aux,ve1)/(dot(ve1,ve1)))*(ve1);
+    proj=(dot(ve2aux,ve1)/(dot(ve1,ve1)))*(ve1);
     ce = cross(ve1,ve2); % produto vetorial
     Hesq1 = norm(ce)/norm(ve1); % altura a relativo as faces do contorno
-
 
     %Essa é UMA maneira de construir os tensores
     K(1,1) = kmap(elem(bedge(ifacont,3),5),2);
     K(1,2) = kmap(elem(bedge(ifacont,3),5),3);
     K(2,1) = kmap(elem(bedge(ifacont,3),5),4);
     K(2,2) = kmap(elem(bedge(ifacont,3),5),5);
+  
 
     %Cálculo das constantes tangenciais e normais
 
@@ -40,12 +35,14 @@ for ifacont=1:size(bedge,1)
     A=-Kn1/(Hesq1);
     %Keq=Klef;
     if bedge(ifacont,5)==201
-        
+
         %florateZZ(ifacont,1)=0;
         %florateZZ(ifacont,1)=A*(norm(ve1))*(proj(1,2)-ve2aux(1,2));
         if numcase==433
             flowrateZ(ifacont,1)=A*(norm(ve1))*(vm(1,2)-C1(1,2));
         elseif numcase==435
+            flowrateZ(ifacont,1)=0;
+        elseif numcase==432
             flowrateZ(ifacont,1)=0;
         else
             flowrateZ(ifacont,1)=A*(norm(ve1))*(vm(1,2)-C1(1,2));
@@ -54,18 +51,21 @@ for ifacont=1:size(bedge,1)
         flowrateZ(ifacont,1)=0;%A*(norm(ve1))*(vm(1,2)-C1(1,2));
     else
         if numcase==435 && bedge(ifacont,5)==101
-        flowrateZ(ifacont,1)=-A*(norm(ve1))*(vm(1,2)-C1(1,2));
+            flowrateZ(ifacont,1)=-A*(norm(ve1))*(vm(1,2)-C1(1,2));
         else
             if numcase==431 && bedge(ifacont,5)==101
-        flowrateZ(ifacont,1)=-A*(norm(ve1))*(vm(1,2)-C1(1,2));
+                flowrateZ(ifacont,1)=-A*(norm(ve1))*(vm(1,2)-C1(1,2));
+            elseif numcase==432 && bedge(ifacont,5)==102
+                flowrateZ(ifacont,1)=A*(norm(ve1))*(vm(1,2)-C1(1,2));
+
             else
-        flowrateZ(ifacont,1)=A*(norm(ve1))*(vm(1,2)-C1(1,2));
+                flowrateZ(ifacont,1)=A*(norm(ve1))*(vm(1,2)-C1(1,2));
 
             end
 
         end
 
-        
+
     end
     flowresultZ(lef,1)=flowresultZ(lef,1)-flowrateZ(ifacont,1);
 
@@ -74,7 +74,7 @@ for iface=1:size(inedge,1)
     % elementos a esquerda e a direita
     lef=inedge(iface,3);
     rel=inedge(iface,4);
-    
+
     %Determinação dos centróides dos elementos à direita e à esquerda.%
     C1 = centelem(inedge(iface,3),:); % baricentro do elemento a esquerda
     C2 = centelem(inedge(iface,4),:); % baricentro do elemento direito

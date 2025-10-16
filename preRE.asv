@@ -81,15 +81,20 @@ switch numcase
             a =10-centelem(i,2);
             if a>0
                 h_init(i,1)=10;
-                h_old(i,1)=1;
             else
                 h_init(i,1)=-90;
-                h_old(i,1)=-1;
             end
         end
         dt=0.03;
         % chute inicial
-          
+            for i=1:size(centelem,1)
+                if centelem(i,2)<10
+                    h_old(i,1)=2.5;
+                else
+                    h_old(i,1)=-2.5;
+                end
+
+            end  
 
 end
 end

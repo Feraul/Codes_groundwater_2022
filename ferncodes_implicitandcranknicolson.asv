@@ -1,6 +1,6 @@
 function [M,I]=ferncodes_implicitandcranknicolson(M,I,SS,dt,MM,h_n,...
     theta_s,theta_r,alpha,pp,q,h_kickoff,iterinicial,flowresultZ)
-global numcase elemarea methodhydro elem
+global numcase elemarea methodhydro elem 
 
 if ((300<numcase && numcase<379) && numcase~=347) || numcase==431 ...
         || numcase==432 ||numcase==433 || numcase==434 || numcase==435
@@ -27,20 +27,20 @@ if ((300<numcase && numcase<379) && numcase~=347) || numcase==431 ...
             I=I+(coeficiente.*eye(size(elem,1))-0.5*M)*h;
             M=  (coeficiente.*eye(size(elem,1))+0.5*M);
         end
-    elseif numcase==431 || numcase==432 || numcase==433 || ...
-            numcase==434 || numcase==435
+    elseif numcase==431 || numcase==432 || numcase==433 || numcase==434 || numcase==435
+        
+        
+            theta_n=thetafunction(h_n,theta_s,theta_r,alpha,pp,q);
 
-        theta_n=thetafunction(h_n,theta_s,theta_r,alpha,pp,q);
+            theta_n1=thetafunction(h_kickoff,theta_s,theta_r,alpha,pp,q);
 
-        theta_n1=thetafunction(h_kickoff,theta_s,theta_r,alpha,pp,q);
-
-        soilwatercapac=SWcapacity(h_kickoff,theta_s,theta_r,alpha,pp,q);
-
+            soilwatercapac=SWcapacity(h_kickoff,theta_s,theta_r,alpha,pp,q);
+        
         diff_theta=theta_n1 - theta_n;
 
         M=M+(dt^-1)*diag(soilwatercapac.*elemarea(:));
         I=I+(dt^-1)*diag(soilwatercapac.*elemarea(:))*h_kickoff-...
-            (dt^-1)*diff_theta.*elemarea(:)+flowresultZ;
+                                    (dt^-1)*diff_theta.*elemarea(:)+flowresultZ;
     end
 end
 end
