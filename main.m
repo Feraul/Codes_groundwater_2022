@@ -1,4 +1,4 @@
-%--------------------------------------------------------------------------
+
 %Subject: numerical code used to simulate fluid flow in porous media. That
 %routine calls several others which defines how the equation will be solved
 %Type of file: MAIN
@@ -28,6 +28,7 @@ format short;
 %It begins the time counter and "profile".
 tic
 % profile on
+
 
 %--------------------------------------------------------------------------
 %Define the global variables:
@@ -136,4 +137,5 @@ end
 setmethod(kmap,wells,'i',8,limiterflag,klb,elemsize,bedgesize,...
     inedgesize,auxpar, wellsc,velmedio,dmap,Dmedio,gamma,SS,h_init,...
     MM,dt,P,theta_s,theta_r,alpha,pp,q,h_old);
+
 
